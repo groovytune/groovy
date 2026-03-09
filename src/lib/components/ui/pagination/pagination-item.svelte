@@ -3,9 +3,9 @@
 	import type { WithElementRef } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		children,
-		...restProps
+	    ref = $bindable(null),
+	    children,
+	    ...restProps
 	}: WithElementRef<HTMLLiAttributes> = $props();
 </script>
 

@@ -3,9 +3,9 @@
 	import { cn } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    ...restProps
 	}: TabsPrimitive.ListProps = $props();
 </script>
 
@@ -13,8 +13,8 @@
 	bind:ref
 	data-slot="tabs-list"
 	class={cn(
-		"bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]",
-		className
+	    "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]",
+	    className
 	)}
 	{...restProps}
 />

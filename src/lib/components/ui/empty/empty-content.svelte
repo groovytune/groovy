@@ -3,10 +3,10 @@
 	import type { HTMLAttributes } from "svelte/elements";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		children,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    children,
+	    ...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
 </script>
 
@@ -14,8 +14,8 @@
 	bind:this={ref}
 	data-slot="empty-content"
 	class={cn(
-		"flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance",
-		className
+	    "flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance",
+	    className
 	)}
 	{...restProps}
 >

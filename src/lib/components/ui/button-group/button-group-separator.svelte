@@ -4,10 +4,10 @@
 	import { Separator } from "$lib/components/ui/separator/index.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		orientation = "vertical",
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    orientation = "vertical",
+	    ...restProps
 	}: ComponentProps<typeof Separator> = $props();
 </script>
 

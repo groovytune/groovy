@@ -3,9 +3,9 @@
 	import { cn, type WithoutChild } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    ...restProps
 	}: WithoutChild<FormPrimitive.LegendProps> = $props();
 </script>
 

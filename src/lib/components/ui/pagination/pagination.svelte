@@ -4,13 +4,13 @@
 	import { cn } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		count = 0,
-		perPage = 10,
-		page = $bindable(1),
-		siblingCount = 1,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    count = 0,
+	    perPage = 10,
+	    page = $bindable(1),
+	    siblingCount = 1,
+	    ...restProps
 	}: PaginationPrimitive.RootProps = $props();
 </script>
 

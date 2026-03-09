@@ -4,16 +4,16 @@
 	import { type Props, buttonVariants } from "$lib/components/ui/button/index.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		size = "icon",
-		isActive,
-		page,
-		children,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    size = "icon",
+	    isActive,
+	    page,
+	    children,
+	    ...restProps
 	}: PaginationPrimitive.PageProps &
 		Props & {
-			isActive: boolean;
+		    isActive: boolean;
 		} = $props();
 </script>
 
@@ -28,11 +28,11 @@
 	data-slot="pagination-link"
 	data-active={isActive}
 	class={cn(
-		buttonVariants({
-			variant: isActive ? "outline" : "ghost",
-			size,
-		}),
-		className
+	    buttonVariants({
+	        variant: isActive ? "outline" : "ghost",
+	        size,
+	    }),
+	    className
 	)}
 	children={children || Fallback}
 	{...restProps}

@@ -3,10 +3,10 @@
 	import { cn } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		value = $bindable(""),
-		class: className,
-		...restProps
+	    ref = $bindable(null),
+	    value = $bindable(""),
+	    class: className,
+	    ...restProps
 	}: TabsPrimitive.RootProps = $props();
 </script>
 

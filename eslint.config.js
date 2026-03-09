@@ -24,6 +24,7 @@ export default defineConfig(
             '@stylistic': stylistic
         },
         rules: {
+            'svelte/no-navigation-without-resolve': 'off',
             '@typescript-eslint/no-explicit-any': 'warn',
             '@stylistic/indent': 'error'
         }

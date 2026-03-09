@@ -5,12 +5,12 @@
 	import { cn, type WithElementRef, type WithoutChildren } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		form,
-		name,
-		children: childrenProp,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    form,
+	    name,
+	    children: childrenProp,
+	    ...restProps
 	}: WithoutChildren<WithElementRef<HTMLAttributes<HTMLDivElement>>> &
 		FormPrimitive.ElementFieldProps<T, U> = $props();
 </script>

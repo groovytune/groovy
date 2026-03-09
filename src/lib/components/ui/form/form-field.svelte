@@ -5,12 +5,12 @@
 	import type { HTMLAttributes } from "svelte/elements";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		form,
-		name,
-		children: childrenProp,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    form,
+	    name,
+	    children: childrenProp,
+	    ...restProps
 	}: FormPrimitive.FieldProps<T, U> &
 		WithoutChildren<WithElementRef<HTMLAttributes<HTMLDivElement>>> = $props();
 </script>

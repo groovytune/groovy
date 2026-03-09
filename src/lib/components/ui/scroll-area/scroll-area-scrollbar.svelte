@@ -3,11 +3,11 @@
 	import { cn, type WithoutChild } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		orientation = "vertical",
-		children,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    orientation = "vertical",
+	    children,
+	    ...restProps
 	}: WithoutChild<ScrollAreaPrimitive.ScrollbarProps> = $props();
 </script>
 
@@ -16,10 +16,10 @@
 	data-slot="scroll-area-scrollbar"
 	{orientation}
 	class={cn(
-		"flex touch-none p-px transition-colors select-none",
-		orientation === "vertical" && "h-full w-2.5 border-s border-s-transparent",
-		orientation === "horizontal" && "h-2.5 flex-col border-t border-t-transparent",
-		className
+	    "flex touch-none p-px transition-colors select-none",
+	    orientation === "vertical" && "h-full w-2.5 border-s border-s-transparent",
+	    orientation === "horizontal" && "h-2.5 flex-col border-t border-t-transparent",
+	    className
 	)}
 	{...restProps}
 >

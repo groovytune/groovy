@@ -4,9 +4,9 @@
 	import { cn, type WithoutChildrenOrChild } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    ...restProps
 	}: WithoutChildrenOrChild<SelectPrimitive.ScrollDownButtonProps> = $props();
 </script>
 

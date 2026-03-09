@@ -3,10 +3,10 @@
 	import { cn, type WithElementRef } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		children,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    children,
+	    ...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
 </script>
 

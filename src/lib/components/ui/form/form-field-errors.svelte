@@ -3,13 +3,13 @@
 	import { cn, type WithoutChild } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		errorClasses,
-		children: childrenProp,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    errorClasses,
+	    children: childrenProp,
+	    ...restProps
 	}: WithoutChild<FormPrimitive.FieldErrorsProps> & {
-		errorClasses?: string | undefined | null;
+	    errorClasses?: string | undefined | null;
 	} = $props();
 </script>
 

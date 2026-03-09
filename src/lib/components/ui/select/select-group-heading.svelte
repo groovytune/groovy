@@ -4,10 +4,10 @@
 	import type { ComponentProps } from "svelte";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		children,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    children,
+	    ...restProps
 	}: ComponentProps<typeof SelectPrimitive.GroupHeading> = $props();
 </script>
 

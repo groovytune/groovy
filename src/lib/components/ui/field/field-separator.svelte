@@ -5,12 +5,12 @@
 	import type { Snippet } from "svelte";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		children,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    children,
+	    ...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
-		children?: Snippet;
+	    children?: Snippet;
 	} = $props();
 
 	const hasContent = $derived(!!children);
@@ -21,8 +21,8 @@
 	data-slot="field-separator"
 	data-content={hasContent}
 	class={cn(
-		"relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2",
-		className
+	    "relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2",
+	    className
 	)}
 	{...restProps}
 >

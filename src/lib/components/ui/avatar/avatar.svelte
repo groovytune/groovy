@@ -3,10 +3,10 @@
 	import { cn } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		loadingStatus = $bindable("loading"),
-		class: className,
-		...restProps
+	    ref = $bindable(null),
+	    loadingStatus = $bindable("loading"),
+	    class: className,
+	    ...restProps
 	}: AvatarPrimitive.RootProps = $props();
 </script>
 

@@ -4,9 +4,9 @@
 	import type { ComponentProps } from "svelte";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    ...restProps
 	}: ComponentProps<typeof Separator> = $props();
 </script>
 

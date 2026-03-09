@@ -5,9 +5,9 @@
 	import { cn } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    ...restProps
 	}: PaginationPrimitive.NextButtonProps = $props();
 </script>
 
@@ -15,12 +15,12 @@
 	bind:ref
 	aria-label="Go to next page"
 	class={cn(
-		buttonVariants({
-			size: "default",
-			variant: "ghost",
-			class: "gap-1 px-2.5 sm:pe-2.5",
-		}),
-		className
+	    buttonVariants({
+	        size: "default",
+	        variant: "ghost",
+	        class: "gap-1 px-2.5 sm:pe-2.5",
+	    }),
+	    className
 	)}
 	{...restProps}
 >

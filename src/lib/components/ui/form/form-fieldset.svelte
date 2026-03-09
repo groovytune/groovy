@@ -4,11 +4,11 @@
 	import { cn, type WithoutChild } from "$lib/helpers/utils.js";
 
 	let {
-		ref = $bindable(null),
-		class: className,
-		form,
-		name,
-		...restProps
+	    ref = $bindable(null),
+	    class: className,
+	    form,
+	    name,
+	    ...restProps
 	}: WithoutChild<FormPrimitive.FieldsetProps<T, U>> = $props();
 </script>
 
