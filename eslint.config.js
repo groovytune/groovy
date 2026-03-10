@@ -1,7 +1,7 @@
 import { includeIgnoreFile } from '@eslint/compat';
 import stylistic from '@stylistic/eslint-plugin';
 import svelteConfig from './svelte.config.js';
-import { defineConfig } from 'eslint/config';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import svelte from 'eslint-plugin-svelte';
 import ts from 'typescript-eslint';
 import globals from 'globals';
@@ -10,6 +10,9 @@ import js from '@eslint/js';
 
 export default defineConfig(
     includeIgnoreFile(path.resolve(import.meta.dirname, '.gitignore')),
+    globalIgnores([
+        'src/lib/components/ui/**/*'
+    ]),
     js.configs.recommended,
     ...ts.configs.recommended,
     ...svelte.configs.recommended,
@@ -24,7 +27,6 @@ export default defineConfig(
             '@stylistic': stylistic
         },
         rules: {
-            'svelte/no-navigation-without-resolve': 'off',
             '@typescript-eslint/no-explicit-any': 'warn',
             '@stylistic/indent': 'error'
         }
