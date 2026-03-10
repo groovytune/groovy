@@ -1,0 +1,20 @@
+name: Feature Request
+description: Request a new feature for the website
+labels: ['Type: Feature']
+body:
+  - id: description
+    type: textarea
+    attributes:
+      label: Feature description
+      description: A clear and concise description of something you want to be implemented.
+      placeholder: Something new...
+    validations:
+      required: true
+  - id: context
+    type: textarea
+    attributes:
+      label: Additional context
+      description: Any other context, screenshots, or file uploads that help us understand your feature request.
+      placeholder: Something like this...
+    validations:
+      required: true

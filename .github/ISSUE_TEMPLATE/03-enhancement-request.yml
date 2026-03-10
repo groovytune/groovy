@@ -1,0 +1,35 @@
+name: Enhancement Request
+description: Request an enhancement for a certain feature of the website
+labels: ['Type: Enhancement']
+body:
+  - id: section
+    type: dropdown
+    attributes:
+      label: Which part of the website is this enhancement for?
+      options:
+        - Homepage
+        - Music Player
+        - Lyrics Viewer
+        - Search
+        - Settings
+        - Sign in / Sign up
+        - User Profile
+        - Other (please specify below)
+    validations:
+      required: true
+  - id: description
+    type: textarea
+    attributes:
+      label: Description
+      description: A clear and concise description of something you want to be implemented.
+      placeholder: This feature should...
+    validations:
+      required: true
+  - id: context
+    type: textarea
+    attributes:
+      label: Additional context
+      description: Any other context, screenshots, or file uploads that help us understand your request.
+      placeholder: Something like this...
+    validations:
+      required: true

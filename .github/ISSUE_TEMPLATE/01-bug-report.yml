@@ -1,0 +1,40 @@
+name: Bug Report
+description: Report a bug with the website
+labels: ['Type: Bug']
+body:
+  - id: section
+    type: dropdown
+    attributes:
+      label: Which part of the website is this bug report for?
+      options:
+        - Homepage
+        - Music Player
+        - Lyrics Viewer
+        - Search
+        - Settings
+        - Sign in / Sign up
+        - User Profile
+        - Other (please specify below)
+    validations:
+      required: true
+  - id: description
+    type: textarea
+    attributes:
+      label: Issue description
+      description: Describe the issue in as much detail as possible.
+      placeholder: Something like this...
+    validations:
+      required: true
+  - id: snippet
+    type: textarea
+    attributes:
+      label: Reproduce Procedure
+      description: |
+        Please provide the steps to reproduce the issue. You can include any necessary code snippets. The more information the better!
+      placeholder: |
+        1. Go to...
+        2. Click...
+        3. See...
+        4. So on...
+    validations:
+      required: true
