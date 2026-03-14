@@ -4,7 +4,6 @@ An open music sharing & library
 
 ## Prerequisites
 
-- [Bun](https://bun.sh/)
 - [Node.js](https://nodejs.org/en/)
 - [Git](https://git-scm.com/)
 - [VS Code](https://code.visualstudio.com/)
