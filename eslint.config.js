@@ -28,6 +28,7 @@ export default defineConfig(
         },
         rules: {
             '@typescript-eslint/no-explicit-any': 'warn',
+            '@typescript-eslint/no-namespace': 'off',
             '@stylistic/indent': 'error'
         }
     },
