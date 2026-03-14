@@ -46,7 +46,7 @@
 		"vite": "^7.3.1"
 	},
 	"dependencies": {
-		"@uploadthing/svelte": "^7.3.3",
-		"uploadthing": "^7.7.4"
+		"appwrite": "^23.0.0",
+		"node-appwrite": "^22.1.3"
 	}
 }
