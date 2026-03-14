@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private';
+import { env as envPublic } from '$env/dynamic/public';
 import { Client, ID as AppwriteID, Storage, Tokens, type Models } from 'node-appwrite';
 
 export namespace Appwrite {
@@ -8,8 +9,8 @@ export namespace Appwrite {
     export const tokens = new Tokens(client);
 
     Appwrite.client
-        .setEndpoint(env.APPWRITE_ENDPOINT)
-        .setProject(env.APPWRITE_PROJECT_ID)
+        .setEndpoint(envPublic.PUBLIC_APPWRITE_ENDPOINT)
+        .setProject(envPublic.PUBLIC_APPWRITE_PROJECT_ID)
         .setKey(env.APPWRITE_API_KEY);
 
     export function uploadFile(file: File, bucketId: string, permissions?: string[]): Promise<Models.File> {
