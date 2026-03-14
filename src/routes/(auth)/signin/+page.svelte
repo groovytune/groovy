@@ -53,7 +53,7 @@
     </CardContent>
     <CardFooter>
         <FieldDescription class="px-6 text-center text-xs">
-            By clicking signing in, you agree to our <a href={resolve('/(resource)/terms')}>Terms of Service</a> and <a href={resolve('/(resource)/privacy')}>Privacy Policy</a>.
+            By signing in, you agree to our <a href={resolve('/(resource)/terms')}>Terms of Service</a> and <a href={resolve('/(resource)/privacy')}>Privacy Policy</a>.
         </FieldDescription>
     </CardFooter>
 </Card>

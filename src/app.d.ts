@@ -1,4 +1,5 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
+import type { userSchema, z } from 'better-auth';
 import type { MetaTagsProps } from 'svelte-meta-tags';
 
 // for information about these interfaces
