@@ -26,7 +26,7 @@
 
 <Card>
     <CardHeader class="text-center">
-        <CardTitle class="text-xl">Welcome back</CardTitle>
+        <CardTitle class="text-xl">Welcome</CardTitle>
         <CardDescription>Login with your social account to continue</CardDescription>
     </CardHeader>
     <CardContent>
