@@ -7,6 +7,7 @@
     import { Textarea } from '../../../../lib/components/ui/textarea/index.js';
     import { Select, SelectContent, SelectItem, SelectTrigger } from '../../../../lib/components/ui/select/index.js';
     import { Button } from '../../../../lib/components/ui/button/index.js';
+    import FileInput from '../../../../lib/components/shared/FileInput.svelte';
 
     let { data } = $props();
 
@@ -22,8 +23,6 @@
     const cover = fileProxy(form, 'cover', {
         empty: 'undefined'
     });
-
-    let coverInput = $state<HTMLInputElement|null>(null);
 </script>
 
 <div class="size-full flex justify-center">
@@ -86,14 +85,7 @@
             <FormControl>
                 {#snippet children({ props })}
                     <FormLabel>Cover</FormLabel>
-                    <Input {...props} type="file" accept="image/*" hidden bind:files={$cover} bind:ref={coverInput}/>
-                    <Button type="button" variant="outline" onclick={() => coverInput?.click()}>
-                        {#if $cover.item?.(0)}
-                            {$cover.item(0)?.name}
-                        {:else}
-                            Upload Image
-                        {/if}
-                    </Button>
+                    <FileInput {...props} accept="image/*" bind:files={$cover}/>
                 {/snippet}
             </FormControl>
             <FormFieldErrors/>
