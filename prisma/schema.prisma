@@ -1,10 +1,16 @@
 generator client {
-    provider = "prisma-client"
-    output   = "../src/lib/server/prisma"
+  provider = "prisma-client"
+  output   = "../src/lib/server/prisma"
 }
 
 datasource db {
-    provider = "postgresql"
+  provider = "postgresql"
+}
+
+enum Privacy {
+  PUBLIC
+  PRIVATE
+  UNLISTED
 }
 
 model User {
@@ -19,6 +25,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  releases      Release[]
 
   @@unique([email])
   @@map("user")
@@ -70,4 +77,55 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+enum ReleaseType {
+  SINGLE
+  ALBUM
+  EP
+}
+
+model Release {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        ReleaseType
+  name        String
+  description String?
+  privacy     Privacy     @default(PUBLIC)
+  cover       String?
+  tracks      Track[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Track {
+  id        String   @id @default(cuid())
+  releaseId String
+  release   Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  name      String
+  cover     String?
+  file      String
+  duration  Int
+  lyrics    Lyrics[]
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum LyricsFormat {
+  LRC
+  TTML
+  TXT
+}
+
+model Lyrics {
+  id        String       @id @default(cuid())
+  trackId   String
+  track     Track        @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  format    LyricsFormat
+  name      String
+  content   String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 }

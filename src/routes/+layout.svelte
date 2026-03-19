@@ -11,10 +11,6 @@
 	let { children, data } = $props();
 </script>
 
-<svelte:head>
-    <script src="https://tweakcn.com/live-preview.min.js"></script>
-</svelte:head>
-
 <Toaster/>
 <ModeWatcher/>
 <MetaTags {...deepMerge(data.baseMetaTags, page.data.pageMetaTags)}/>

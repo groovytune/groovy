@@ -1,0 +1,12 @@
+import z from 'zod';
+
+export const newReleaseSchema = z.object({
+    type: z.literal(['ALBUM', 'SINGLE', 'EP']).default('SINGLE'),
+    name: z.string().min(1).max(255),
+    description: z.string().max(5000).optional(),
+    privacy: z.enum(['PUBLIC', 'PRIVATE', 'UNLISTED']).default('PUBLIC'),
+    cover: z.instanceof(File)
+        .refine(file => file.type.startsWith('image/jpg') || file.type.startsWith('image/jpeg') || file.type.startsWith('image/png'), { message: 'Cover must be a JPG or PNG file' })
+        .refine(file => file.size <= 10 * 1024 * 1024, { message: 'Cover must be less than 5MB' })
+        .optional()
+});
