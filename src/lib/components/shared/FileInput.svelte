@@ -1,8 +1,9 @@
 <script lang="ts">
     import type { HTMLInputAttributes } from 'svelte/elements';
-    import type { WithElementRef } from '../../helpers/utils';
+    import { cn, type WithElementRef } from '../../helpers/utils';
     import type { Snippet } from 'svelte';
     import Button from '../ui/button/button.svelte';
+    import { FileIcon, FilesIcon, UploadIcon } from '@lucide/svelte';
 
 	type Props = WithElementRef<
         Omit<HTMLInputAttributes, "type"> & { files?: FileList }
@@ -32,12 +33,17 @@
 {#if ref && children}
     {@render children({ ref, props: { onclick: () => ref?.click() } })}
 {:else}
-    <Button variant="outline" class={className} onclick={() => ref?.click()}>
-        {files && files.length > 0
-            ? files.length === 1
-                ? files[0].name
-                : `${files.length} files selected`
-            : "Select a file"
-        }
+    <Button variant="outline" class={cn("w-full justify-start rounded-md", className)} onclick={() => ref?.click()}>
+        {#if files && files.length > 0}
+            {#if files.length > 1}
+                <FilesIcon/>
+            {:else}
+                <FileIcon/>
+            {/if}
+            <span>{files.length > 1 ? `${files.length} files selected` : files[0].name}</span>
+        {:else}
+            <UploadIcon/>
+            <span>Select a file{restProps.multiple ? 's' : ''}</span>
+        {/if}
     </Button>
 {/if}
