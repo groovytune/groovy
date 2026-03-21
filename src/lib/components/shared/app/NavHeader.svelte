@@ -1,10 +1,11 @@
 <script lang="ts">
     import { resolve } from '$app/paths';
-    import { BoomBoxIcon, HouseIcon, LibraryIcon, PlusIcon, SearchIcon, StarIcon } from '@lucide/svelte';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
+    import { BoomBoxIcon, HouseIcon, LibraryIcon, MoonIcon, PlusIcon, SearchIcon, StarIcon, SunIcon } from '@lucide/svelte';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
     import { Button } from '$lib/components/ui/button';
     import { auth } from '$lib/client/auth';
+    import { mode, toggleMode } from 'mode-watcher';
 
     const session = auth.useSession();
 </script>
@@ -56,7 +57,17 @@
                         </Button>
                     {/snippet}
                 </DropdownMenuTrigger>
-                <DropdownMenuContent side="top" align="end" sideOffset={18}></DropdownMenuContent>
+                <DropdownMenuContent side="top" align="end" sideOffset={18}>
+                    <DropdownMenuItem closeOnSelect={false} onclick={toggleMode}>
+                        {#if mode.current === 'light'}
+                            <MoonIcon/>
+                            Dark Mode
+                        {:else}
+                            <SunIcon/>
+                            Light Mode
+                        {/if}
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
             </DropdownMenu>
         </div>
     </div>

@@ -3,8 +3,8 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { newReleaseSchema } from '$lib/schema/release.js';
 import { redirect } from '@sveltejs/kit';
 import { resolve } from '$app/paths';
-import { Appwrite } from '../../../../lib/server/appwrite.js';
-import { prisma } from '../../../../lib/server/prisma.js';
+import { Appwrite } from '$lib/server/appwrite.js';
+import { prisma } from '$lib/server/prisma.js';
 
 export async function load({ locals }) {
     if (!locals.session) {

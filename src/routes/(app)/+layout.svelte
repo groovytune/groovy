@@ -7,7 +7,9 @@
 
 <NavHeader/>
 
-<main class="size-full pt-16">{@render children?.()}
-    <div class="size-full bg-accent"></div>
-    <div class="block sm:hidden h-20"></div>
+<main class="size-full pt-16 flex justify-center">
+    <div class="container">
+        {@render children?.()}
+        <div class="block sm:hidden h-16"></div>
+    </div>
 </main>
