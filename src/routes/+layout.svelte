@@ -7,8 +7,12 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import { page } from '$app/state';
 	import '$lib/styles/app.css';
+	import { ActiveNavigationPage } from '../lib/contexts/navigation.js';
 
 	let { children, data } = $props();
+    let activeNavigationPage = $state({ id: '' });
+
+    ActiveNavigationPage.set(activeNavigationPage);
 </script>
 
 <Toaster/>
