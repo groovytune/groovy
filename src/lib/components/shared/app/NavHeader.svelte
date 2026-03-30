@@ -1,13 +1,12 @@
 <script lang="ts">
     import { resolve } from '$app/paths';
-    import { BoomBoxIcon, HouseIcon, LibraryIcon, MoonIcon, PlusIcon, SearchIcon, StarIcon, SunIcon } from '@lucide/svelte';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
+    import { BoomBoxIcon, HouseIcon, LibraryIcon, PlusIcon, SearchIcon, StarIcon } from '@lucide/svelte';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import { Button } from '$lib/components/ui/button';
     import { auth } from '$lib/client/auth';
-    import { mode, toggleMode } from 'mode-watcher';
-    import { ActiveNavigationPage } from '../../../contexts/navigation';
-    import { cn } from '../../../helpers/utils';
+    import { ActiveNavigationPage } from '$lib/contexts/navigation';
+    import { cn } from '$lib/helpers/utils';
+    import AvatarDropdown from '../AvatarDropdown.svelte';
 
     const session = auth.useSession();
     const active = ActiveNavigationPage.get();
@@ -63,29 +62,9 @@
                 </DropdownMenuTrigger>
                 <DropdownMenuContent side="top" align="end" sideOffset={18}></DropdownMenuContent>
             </DropdownMenu>
-            <DropdownMenu>
-                <DropdownMenuTrigger>
-                    {#snippet child({ props })}
-                        <Button {...props} variant="ghost" class="rounded-full sm:size-9 size-10 p-0">
-                            <Avatar class="size-full">
-                                <AvatarImage src={$session?.data?.user?.image} />
-                                <AvatarFallback>{$session?.data?.user?.name?.[0] ?? 'U'}</AvatarFallback>
-                            </Avatar>
-                        </Button>
-                    {/snippet}
-                </DropdownMenuTrigger>
-                <DropdownMenuContent side="top" align="end" sideOffset={18}>
-                    <DropdownMenuItem closeOnSelect={false} onclick={toggleMode}>
-                        {#if mode.current === 'light'}
-                            <MoonIcon/>
-                            Dark Mode
-                        {:else}
-                            <SunIcon/>
-                            Light Mode
-                        {/if}
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+            {#if $session.data?.user}
+                <AvatarDropdown user={$session?.data?.user}/>
+            {/if}
         </div>
     </div>
 </header>
