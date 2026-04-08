@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
-import { Appwrite } from '../../../../../lib/server/appwrite.js';
+import { Appwrite } from '$lib/server/appwrite.js';
 import { ImageFormat } from 'node-appwrite';
 
 export async function load({ params, locals }) {
