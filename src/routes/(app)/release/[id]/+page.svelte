@@ -52,7 +52,7 @@
     >
         {#each tracks as track, i (track.id)}
             <div animate:flip={{ duration: 300 }}>
-                <Item variant="muted">
+                <Item class="p-2 hover:bg-secondary/50 rounded-md">
                     <ItemContent>
                         <ItemTitle>{i + 1} - {track.name}</ItemTitle>
                         <ItemDescription>{track.duration}</ItemDescription>
