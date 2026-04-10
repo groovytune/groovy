@@ -11,7 +11,7 @@
     const session = auth.useSession();
     const active = ActiveNavigationPage.get();
 
-    const mobileButtonActiveClass = "text-primary! [&_svg]:stroke-3 font-bold relative before:absolute before:top-full before:right-1/2 before:translate-x-1/2 before:w-1/4 before:h-1 before:bg-current before:rounded-full";
+    const mobileButtonActiveClass = "text-primary! [&_svg]:stroke-3 font-bold relative before:absolute before:top-full before:right-1/2 before:translate-x-1/2 before:w-1/4 before:h-1 before:bg-primary before:rounded-full";
 </script>
 
 <header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b w-full h-16 flex justify-center">
@@ -80,29 +80,6 @@
             )}
         >
             <HouseIcon class="size-5"/>
-            <span class="text-current/55">Home</span>
-        </Button>
-        <Button
-            href={resolve('/(app)/discover')}
-            variant="ghost"
-            class={cn(
-                "flex-col h-13 text-xs gap-0 w-1/5 shrink px-0! hover:bg-transparent",
-                active?.id === 'discover' && mobileButtonActiveClass
-            )}
-        >
-            <StarIcon class="size-5"/>
-            <span class="text-current/55">Discover</span>
-        </Button>
-        <Button
-            href={resolve('/(app)/release/new')}
-            variant="ghost"
-            class={cn(
-                "flex-col h-13 text-xs gap-0 w-1/5 shrink px-0! py-0! hover:bg-transparent",
-                active?.id === 'create' && mobileButtonActiveClass
-            )}
-        >
-            <PlusIcon class="size-5 bg-primary text-primary-foreground rounded-sm w-8 h-6 py-0.5 stroke-3!"/>
-            <span class="text-current/55">Create</span>
         </Button>
         <Button
             href={resolve('/(app)/search')}
@@ -113,7 +90,26 @@
             )}
         >
             <SearchIcon class="size-5"/>
-            <span class="text-current/55">Search</span>
+        </Button>
+        <Button
+            href={resolve('/(app)/release/new')}
+            variant="ghost"
+            class={cn(
+                "flex-col h-13 text-xs gap-0 w-1/5 shrink px-0! py-0! hover:bg-transparent",
+                active?.id === 'create' && mobileButtonActiveClass
+            )}
+        >
+            <PlusIcon class="size-5 bg-primary text-primary-foreground rounded-sm w-9 h-6 py-0.5 stroke-3!"/>
+        </Button>
+        <Button
+            href={resolve('/(app)/discover')}
+            variant="ghost"
+            class={cn(
+                "flex-col h-13 text-xs gap-0 w-1/5 shrink px-0! hover:bg-transparent",
+                active?.id === 'discover' && mobileButtonActiveClass
+            )}
+        >
+            <StarIcon class="size-5"/>
         </Button>
         <Button
             href={resolve('/(app)/library')}
@@ -124,7 +120,6 @@
             )}
         >
             <LibraryIcon class="size-5"/>
-            <span class="text-current/55">Library</span>
         </Button>
     </nav>
 </div>
