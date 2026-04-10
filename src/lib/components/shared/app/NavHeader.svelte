@@ -1,12 +1,12 @@
 <script lang="ts">
     import { resolve } from '$app/paths';
     import { BoomBoxIcon, HouseIcon, LibraryIcon, PlusIcon, SearchIcon, StarIcon } from '@lucide/svelte';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import { Button } from '$lib/components/ui/button';
     import { auth } from '$lib/client/auth';
     import { ActiveNavigationPage } from '$lib/contexts/navigation';
     import { cn } from '$lib/helpers/utils';
     import AvatarDropdown from '../AvatarDropdown.svelte';
+    import NewReleaseDropdown from '../NewReleaseDropdown.svelte';
 
     const session = auth.useSession();
     const active = ActiveNavigationPage.get();
@@ -51,17 +51,7 @@
                 <SearchIcon/>
                 <span class="md:inline hidden">Search</span>
             </Button>
-            <DropdownMenu>
-                <DropdownMenuTrigger>
-                    {#snippet child({ props })}
-                        <Button {...props} class="md:w-auto w-9 sm:inline-flex hidden">
-                            <PlusIcon/>
-                            <span class="md:inline hidden">Create</span>
-                        </Button>
-                    {/snippet}
-                </DropdownMenuTrigger>
-                <DropdownMenuContent side="top" align="end" sideOffset={18}></DropdownMenuContent>
-            </DropdownMenu>
+            <NewReleaseDropdown/>
             {#if $session.data?.user}
                 <AvatarDropdown user={$session?.data?.user}/>
             {/if}

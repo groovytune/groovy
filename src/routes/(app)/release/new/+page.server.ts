@@ -5,13 +5,16 @@ import { redirect } from '@sveltejs/kit';
 import { resolve } from '$app/paths';
 import { Appwrite } from '$lib/server/appwrite.js';
 import { prisma } from '$lib/server/prisma.js';
+import type z from 'zod';
 
-export async function load({ locals }) {
+export async function load({ locals, url }) {
     if (!locals.session) {
         throw redirect(302, resolve('/(auth)/signin'));
     }
 
-    const form = await superValidate({}, zod4(newReleaseSchema));
+    const form = await superValidate({
+        type: url.searchParams.get('type')?.toUpperCase() as z.infer<typeof newReleaseSchema.shape.type>|undefined
+    }, zod4(newReleaseSchema));
 
     return { form };
 }
