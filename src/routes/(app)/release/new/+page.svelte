@@ -30,7 +30,7 @@
     const session = auth.useSession();
 </script>
 
-<div class="flex flex-col md:flex-row">
+<div class="flex-col md:flex-row">
     <section class="w-full md:max-w-sm">
         <div class="flex justify-center">
             <div class="p-5 w-full max-w-sm relative">
@@ -43,7 +43,7 @@
                 {/key}
             </div>
         </div>
-        <div class="flex flex-col items-center text-center px-5">
+        <div class="w-full flex flex-col items-center text-center px-5 truncate">
             <h1 class="text-2xl leading-tight font-semibold line-clamp-3 whitespace-break-spaces max-w-sm" style="word-wrap: break-word;">
                 {$formData.name || 'New Release'}
                 {#if $formData.explicit}
@@ -53,7 +53,7 @@
             <p class="text-sm leading-tight text-muted-foreground">
                 {$session.data?.user.name}
             </p>
-            <p class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 mt-2 mb-5 text-center max-w-sm">
+            <p class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 whitespace-break-spaces mt-2 mb-5 text-center max-w-sm">
                 {$formData.description || ''}
             </p>
         </div>
