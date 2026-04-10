@@ -30,21 +30,19 @@
     const session = auth.useSession();
 </script>
 
-<div class="flex-col md:flex-row">
-    <section class="w-full md:max-w-sm">
-        <div class="flex justify-center">
-            <div class="p-5 w-full max-w-sm relative">
-                {#key $formData.cover}
-                    {@const url = $formData.cover ? URL.createObjectURL($formData.cover) : null}
-                    <AspectRatio class="w-full rounded-md bg-muted">
-                        <img src={url} alt=" " class="size-full object-cover rounded-md"/>
-                        <img src={url} alt=" " class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
-                    </AspectRatio>
-                {/key}
-            </div>
+<div class="flex flex-col md:flex-row">
+    <section class="w-full flex flex-col items-center md:max-w-sm">
+        <div class="p-5 w-full max-w-sm relative">
+            {#key $formData.cover}
+                {@const url = $formData.cover ? URL.createObjectURL($formData.cover) : null}
+                <AspectRatio class="w-full rounded-md bg-muted">
+                    <img src={url} alt=" " class="size-full object-cover rounded-md"/>
+                    <img src={url} alt=" " class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
+                </AspectRatio>
+            {/key}
         </div>
-        <div class="w-full flex flex-col items-center text-center px-5 truncate">
-            <h1 class="text-2xl leading-tight font-semibold line-clamp-3 whitespace-break-spaces max-w-sm" style="word-wrap: break-word;">
+        <div class="w-full max-w-sm text-center px-5">
+            <h1 class="text-2xl leading-tight font-semibold line-clamp-3 whitespace-break-spaces" style="word-wrap: break-word;">
                 {$formData.name || 'New Release'}
                 {#if $formData.explicit}
                     <ExplicitIcon/>
@@ -53,7 +51,7 @@
             <p class="text-sm leading-tight text-muted-foreground">
                 {$session.data?.user.name}
             </p>
-            <p class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 whitespace-break-spaces mt-2 mb-5 text-center max-w-sm">
+            <p class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 whitespace-break-spaces">
                 {$formData.description || ''}
             </p>
         </div>
