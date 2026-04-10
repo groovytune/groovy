@@ -5,8 +5,10 @@ export const newReleaseSchema = z.object({
     name: z.string().min(1).max(255),
     description: z.string().max(5000).optional(),
     privacy: z.enum(['PUBLIC', 'PRIVATE', 'UNLISTED']).default('PUBLIC'),
+    explicit: z.boolean().default(false),
     cover: z.instanceof(File)
         .refine(file => file.type.startsWith('image/jpg') || file.type.startsWith('image/jpeg') || file.type.startsWith('image/png'), { message: 'Cover must be a JPG or PNG file' })
         .refine(file => file.size <= 10 * 1024 * 1024, { message: 'Cover must be less than 5MB' })
-        .optional()
+        .optional(),
+    genres: z.array(z.string()).max(5).optional(),
 });

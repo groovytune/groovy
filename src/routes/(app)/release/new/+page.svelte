@@ -8,6 +8,9 @@
     import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select/index.js';
     import { Button } from '$lib/components/ui/button/index.js';
     import FileInput from '$lib/components/shared/FileInput.svelte';
+    import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
+    import { auth } from '$lib/client/auth.js';
+    import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
 
     let { data } = $props();
 
@@ -23,9 +26,36 @@
     const cover = fileProxy(form, 'cover', {
         empty: 'undefined'
     });
+
+    const session = auth.useSession();
 </script>
 
-<form method="POST" enctype="multipart/form-data" use:enhance class="size-full">
+<div class="flex justify-center">
+    <div class="p-5 w-full max-w-sm relative">
+        {#key $formData.cover}
+            {@const url = $formData.cover ? URL.createObjectURL($formData.cover) : null}
+            <AspectRatio class="w-full rounded-md bg-muted">
+                <img src={url} alt=" " class="size-full object-cover rounded-md"/>
+                <img src={url} alt=" " class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-3xl"/>
+            </AspectRatio>
+        {/key}
+    </div>
+</div>
+<div class="flex flex-col items-center text-center px-5">
+    <h1 class="text-2xl leading-tight font-semibold line-clamp-3 whitespace-break-spaces max-w-sm" style="word-wrap: break-word;">
+        {$formData.name || 'New Release'}
+        {#if $formData.explicit}
+            <ExplicitIcon/>
+        {/if}
+    </h1>
+    <p class="text-sm leading-tight text-muted-foreground">
+        {$session.data?.user.name}
+    </p>
+    <p class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 mt-2 mb-5 text-center max-w-sm">
+        {$formData.description || ''}
+    </p>
+</div>
+<form method="POST" enctype="multipart/form-data" use:enhance class="p-5">
     <FormField {form} name="type">
         <FormControl>
             {#snippet children({ props })}

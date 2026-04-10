@@ -41,7 +41,11 @@ export const actions = {
                 name: form.data.name,
                 description: form.data.description,
                 privacy: form.data.privacy,
+                explicit: form.data.explicit,
                 cover: cover?.$id,
+                genres: {
+                    connect: form.data.genres?.map(id => ({ id }))
+                },
             }
         });
 

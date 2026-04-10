@@ -14,7 +14,7 @@
     const mobileButtonActiveClass = "text-primary! [&_svg]:stroke-3 font-bold relative before:absolute before:top-full before:right-1/2 before:translate-x-1/2 before:w-1/4 before:h-1 before:bg-primary before:rounded-full";
 </script>
 
-<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b w-full h-16 flex justify-center">
+<header class="sm:fixed top-0 left-0 right-0 z-50 sm:border-b sm:bg-background/80 sm:backdrop-blur-sm w-full h-16 flex justify-center">
     <div class="container h-full flex items-center justify-between gap-6 px-5">
         <a href={resolve('/')} class="shrink-0 flex items-center gap-1 self-center font-bold font-fugaz sm:text-lg text-xl text-primary">
 			<BoomBoxIcon class="sm:size-6 size-7"/>
@@ -99,7 +99,7 @@
                 active?.id === 'create' && mobileButtonActiveClass
             )}
         >
-            <PlusIcon class="size-5 bg-primary text-primary-foreground rounded-sm w-9 h-6 py-0.5 stroke-3!"/>
+            <PlusIcon class="size-5 bg-primary text-primary-foreground rounded-sm w-9 h-6 py-1 stroke-3!"/>
         </Button>
         <Button
             href={resolve('/(app)/discover')}

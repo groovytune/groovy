@@ -22,7 +22,7 @@
 <section class="w-full flex md:flex-row flex-col gap-5">
     <side class="size-full flex flex-col items-center md:max-w-96">
         <div class="p-5 w-full max-w-sm relative">
-            <AspectRatio class="w-full rounded-md bg-muted">
+            <AspectRatio class="rounded-md bg-muted">
                 <img src={data.release.cover} alt="Release Cover" class="size-full object-cover rounded-md"/>
                 <img src={data.release.cover} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-3xl"/>
             </AspectRatio>
@@ -37,7 +37,7 @@
                 </p>
             </div>
             <div class="text-center md:relative md:p-0">
-                <Button href={resolve('/(app)/release/[id]/tracks', { id: page.params.id! })}>
+                <Button href={resolve('/(app)/release/[id]', { id: page.params.id! })}>
                     <PlusIcon/>
                     <span>Add Track</span>
                 </Button>
