@@ -42,7 +42,7 @@
             {/key}
         </div>
         <div class="w-full max-w-sm text-center px-5">
-            <h1 class="text-2xl leading-tight font-semibold line-clamp-3 whitespace-break-spaces" style="word-wrap: break-word;">
+            <h1 class="text-2xl leading-tight font-semibold line-clamp-3" style="word-wrap: break-word;">
                 {$formData.name || 'New Release'}
                 {#if $formData.explicit}
                     <ExplicitIcon/>
@@ -51,7 +51,7 @@
             <p class="text-sm leading-tight text-muted-foreground">
                 {$session.data?.user.name}
             </p>
-            <p class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 whitespace-break-spaces">
+            <p class="text-xs leading-tight text-muted-foreground/60 line-clamp-2" style="word-wrap: break-word;">
                 {$formData.description || ''}
             </p>
         </div>
