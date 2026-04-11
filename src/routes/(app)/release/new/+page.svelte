@@ -5,13 +5,16 @@
     import { FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form/index.js';
     import { Input } from '$lib/components/ui/input/index.js';
     import { Textarea } from '$lib/components/ui/textarea/index.js';
-    import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select/index.js';
     import { Button } from '$lib/components/ui/button/index.js';
     import FileInput from '$lib/components/shared/FileInput.svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
     import { auth } from '$lib/client/auth.js';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
-    import { Switch } from '../../../../lib/components/ui/switch/index.js';
+    import { Switch } from '$lib/components/ui/switch';
+    import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
+    import { Disc3Icon, ListMusicIcon, MusicIcon, Icon, UsersIcon, LockIcon, EyeOffIcon } from '@lucide/svelte';
+    import { cn } from '../../../../lib/helpers/utils';
+    import type { ClassValue } from 'tailwind-variants';
 
     let { data } = $props();
 
@@ -33,13 +36,62 @@
     let nameInput: HTMLInputElement|null = $state(null);
 </script>
 
+{#snippet ItemSelect({
+    icon,
+    title,
+    description,
+    active,
+    disabled,
+    onclick,
+    class: className,
+    ...props
+}: {
+    icon?: typeof Icon;
+    title: string;
+    description: string;
+    active?: boolean;
+    disabled?: boolean;
+    onclick?: () => void;
+    class?: ClassValue;
+    [key: string]: unknown;
+})}
+    <Item
+        {...props}
+        variant={disabled ? "muted" : "outline"}
+        class={cn(
+            active ? "border-primary" : "",
+            className,
+            disabled ? "cursor-not-allowed opacity-50" : ""
+        )}
+    >
+        {#snippet child({ props: itemProps })}
+            <a href="#/" {...itemProps} {...props} onclick={!disabled ? onclick : undefined}>
+                {#if icon}
+                    {@const Icon = icon}
+                    <ItemMedia variant="icon" class={active ? "text-primary bg-primary/10 border-primary/50" : ""}>
+                        <Icon/>
+                    </ItemMedia>
+                {/if}
+                <ItemContent>
+                    <ItemTitle class={active ? "text-primary" : ""}>
+                        {title}
+                    </ItemTitle>
+                    <ItemDescription class="line-clamp-3">
+                        {description}
+                    </ItemDescription>
+                </ItemContent>
+            </a>
+        {/snippet}
+    </Item>
+{/snippet}
+
 <div class="flex flex-col md:flex-row">
     <section class="w-full flex flex-col items-center md:max-w-sm">
         <div class="p-5 w-full max-w-sm relative">
             {#key $formData.cover}
                 {@const url = $formData.cover ? URL.createObjectURL($formData.cover) : null}
                 <AspectRatio
-                    class="w-full rounded-md bg-muted"
+                    class="w-full rounded-md bg-muted cursor-pointer"
                     onclick={() => coverInput?.click()}
                 >
                     <img src={url} alt=" " class="size-full object-cover rounded-md"/>
@@ -70,25 +122,7 @@
             </p>
         </div>
     </section>
-    <form class="w-full p-5" method="POST" enctype="multipart/form-data" use:enhance>
-        <FormField {form} name="type">
-            <FormControl>
-                {#snippet children({ props })}
-                    <FormLabel>Type</FormLabel>
-                    <Select {...props} type="single" bind:value={$formData.type}>
-                        <SelectTrigger class={$formData.type !== 'EP' ? 'capitalize' : 'uppercase'}>
-                            {$formData.type.toLowerCase() || 'Select a release type'}
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="ALBUM">Album</SelectItem>
-                            <SelectItem value="SINGLE">Single</SelectItem>
-                            <SelectItem value="EP">EP</SelectItem>
-                        </SelectContent>
-                    </Select>
-                {/snippet}
-            </FormControl>
-            <FormFieldErrors/>
-        </FormField>
+    <form class="w-full p-5 grid gap-2" method="POST" enctype="multipart/form-data" use:enhance>
         <FormField {form} name="name">
             <FormControl>
                 {#snippet children({ props })}
@@ -116,14 +150,83 @@
             </FormControl>
             <FormFieldErrors/>
         </FormField>
+        <FormField {form} name="cover">
+            <FormControl>
+                {#snippet children({ props })}
+                    <FormLabel>Cover Image</FormLabel>
+                    <FileInput
+                        {...props}
+                        bind:files={$cover}
+                        bind:ref={coverInput}
+                        accept="image/*"
+                    />
+                {/snippet}
+            </FormControl>
+            <FormFieldErrors/>
+        </FormField>
         <FormField {form} name="explicit">
             <FormControl>
                 {#snippet children({ props })}
-                    <FormLabel>Explicit</FormLabel>
-                    <Switch
-                        {...props}
-                        bind:checked={$formData.explicit}
-                    />
+                    <Item variant="outline">
+                        {#snippet child({ props: itemProps })}
+                            <FormLabel {...itemProps}>
+                                <ItemMedia variant="icon" class={$formData.explicit ? "text-red-500" : "text-muted-foreground"}>
+                                    <ExplicitIcon class="leading-3.5! mb-0"/>
+                                </ItemMedia>
+                                <ItemContent>
+                                    <ItemTitle>
+                                        Mark this release as explicit
+                                    </ItemTitle>
+                                    <ItemDescription>
+                                        Explicit content may include strong language, sexual content, or violence. Marking your release as explicit helps ensure it is properly labeled and filtered on platforms that support content warnings.
+                                    </ItemDescription>
+                                </ItemContent>
+                                <ItemActions>
+                                    <Switch
+                                        {...props}
+                                        bind:checked={$formData.explicit}
+                                    />
+                                </ItemActions>
+                            </FormLabel>
+                        {/snippet}
+                    </Item>
+                {/snippet}
+            </FormControl>
+            <FormFieldErrors/>
+        </FormField>
+        <FormField {form} name="type">
+            <FormControl>
+                {#snippet children({ props })}
+                    <FormLabel class="text-lg">Release Type</FormLabel>
+                    <div class="flex gap-2 flex-col lg:flex-row">
+                        {@render ItemSelect({
+                            icon: Disc3Icon,
+                            title: 'Album',
+                            description: 'A collection of tracks that are released together as a cohesive unit.',
+                            class: "cursor-pointer",
+                            props,
+                            active: $formData.type === 'ALBUM',
+                            onclick: () => $formData.type = 'ALBUM'
+                        })}
+                        {@render ItemSelect({
+                            icon: MusicIcon,
+                            title: 'Single',
+                            description: 'A release that typically features one main track, often accompanied by additional tracks such as remixes or B-sides.',
+                            class: "cursor-pointer",
+                            props,
+                            active: $formData.type === 'SINGLE',
+                            onclick: () => $formData.type = 'SINGLE'
+                        })}
+                        {@render ItemSelect({
+                            icon: ListMusicIcon,
+                            title: 'EP',
+                            description: 'A release that contains a few tracks, typically more than a single but fewer than an album.',
+                            class: "cursor-pointer",
+                            props,
+                            active: $formData.type === 'EP',
+                            onclick: () => $formData.type = 'EP'
+                        })}
+                    </div>
                 {/snippet}
             </FormControl>
             <FormFieldErrors/>
@@ -131,31 +234,36 @@
         <FormField {form} name="privacy">
             <FormControl>
                 {#snippet children({ props })}
-                    <FormLabel>Privacy</FormLabel>
-                    <Select {...props} type="single" bind:value={$formData.privacy}>
-                        <SelectTrigger class="capitalize">
-                            {$formData.privacy.toLowerCase() || 'Select a privacy level'}
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="PUBLIC">Public</SelectItem>
-                            <SelectItem value="PRIVATE">Private</SelectItem>
-                            <SelectItem value="UNLISTED">Unlisted</SelectItem>
-                        </SelectContent>
-                    </Select>
-                {/snippet}
-            </FormControl>
-            <FormFieldErrors/>
-        </FormField>
-        <FormField {form} name="cover">
-            <FormControl>
-                {#snippet children({ props })}
-                    <FormLabel>Cover</FormLabel>
-                    <FileInput
-                        {...props}
-                        bind:files={$cover}
-                        bind:ref={coverInput}
-                        accept="image/*"
-                    />
+                    <FormLabel class="text-lg">Privacy</FormLabel>
+                    <div class="flex gap-2 flex-col lg:flex-row">
+                        {@render ItemSelect({
+                            icon: UsersIcon,
+                            title: 'Public',
+                            description: 'Your release will be visible to everyone and can be shared on social media and other platforms.',
+                            class: "cursor-pointer",
+                            props,
+                            active: $formData.privacy === 'PUBLIC',
+                            onclick: () => $formData.privacy = 'PUBLIC'
+                        })}
+                        {@render ItemSelect({
+                            icon: LockIcon,
+                            title: 'Private',
+                            description: 'Your release will only be visible to you. It will not be discoverable on the platform.',
+                            class: "cursor-pointer",
+                            props,
+                            active: $formData.privacy === 'PRIVATE',
+                            onclick: () => $formData.privacy = 'PRIVATE'
+                        })}
+                        {@render ItemSelect({
+                            icon: EyeOffIcon,
+                            title: 'Unlisted',
+                            description: 'Your release will not be visible on your profile or in search results, but anyone with the direct link can view it.',
+                            class: "cursor-pointer",
+                            props,
+                            active: $formData.privacy === 'UNLISTED',
+                            onclick: () => $formData.privacy = 'UNLISTED'
+                        })}
+                    </div>
                 {/snippet}
             </FormControl>
             <FormFieldErrors/>
