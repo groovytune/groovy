@@ -66,7 +66,12 @@
         )}
     >
         {#snippet child({ props: itemProps })}
-            <a href="#/" {...itemProps} {...props} onclick={!disabled ? onclick : undefined}>
+            <a
+                {...itemProps}
+                {...props}
+                onclick={!disabled ? onclick : undefined}
+                href="#/"
+            >
                 {#if icon}
                     {@const Icon = icon}
                     <ItemMedia variant="icon" class={active ? "text-primary bg-primary/10 border-primary/50" : ""}>
@@ -134,6 +139,7 @@
                         {...props}
                         bind:value={$formData.name}
                         bind:ref={nameInput}
+                        disabled={$submitting}
                         placeholder="Release Name"
                     />
                 {/snippet}
@@ -147,6 +153,7 @@
                     <Textarea
                         {...props}
                         bind:value={$formData.description}
+                        disabled={$submitting}
                         placeholder="Release Description"
                     />
                 {/snippet}
@@ -161,6 +168,7 @@
                         {...props}
                         bind:files={$cover}
                         bind:ref={coverInput}
+                        disabled={$submitting}
                         accept="image/*"
                     />
                 {/snippet}
@@ -188,6 +196,7 @@
                                     <Switch
                                         {...props}
                                         bind:checked={$formData.explicit}
+                                        disabled={$submitting}
                                     />
                                 </ItemActions>
                             </FormLabel>
@@ -208,6 +217,7 @@
                             description: 'A collection of tracks that are released together as a cohesive unit.',
                             class: "cursor-pointer lg:w-1/3",
                             props,
+                            disabled: $submitting,
                             active: $formData.type === 'ALBUM',
                             onclick: () => $formData.type = 'ALBUM'
                         })}
@@ -217,6 +227,7 @@
                             description: 'A release that typically features one main track, often accompanied by additional tracks such as remixes or B-sides.',
                             class: "cursor-pointer lg:w-1/3",
                             props,
+                            disabled: $submitting,
                             active: $formData.type === 'SINGLE',
                             onclick: () => $formData.type = 'SINGLE'
                         })}
@@ -226,6 +237,7 @@
                             description: 'A release that contains a few tracks, typically more than a single but fewer than an album.',
                             class: "cursor-pointer lg:w-1/3",
                             props,
+                            disabled: $submitting,
                             active: $formData.type === 'EP',
                             onclick: () => $formData.type = 'EP'
                         })}
@@ -245,6 +257,7 @@
                             description: 'Your release will be visible to everyone and can be shared on social media and other platforms.',
                             class: "cursor-pointer lg:w-1/3",
                             props,
+                            disabled: $submitting,
                             active: $formData.privacy === 'PUBLIC',
                             onclick: () => $formData.privacy = 'PUBLIC'
                         })}
@@ -254,6 +267,7 @@
                             description: 'Your release will only be visible to you. It will not be discoverable on the platform.',
                             class: "cursor-pointer lg:w-1/3",
                             props,
+                            disabled: $submitting,
                             active: $formData.privacy === 'PRIVATE',
                             onclick: () => $formData.privacy = 'PRIVATE'
                         })}
@@ -263,6 +277,7 @@
                             description: 'Your release will not be visible on your profile or in search results, but anyone with the direct link can view it.',
                             class: "cursor-pointer lg:w-1/3",
                             props,
+                            disabled: $submitting,
                             active: $formData.privacy === 'UNLISTED',
                             onclick: () => $formData.privacy = 'UNLISTED'
                         })}
