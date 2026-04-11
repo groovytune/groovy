@@ -81,7 +81,11 @@
         </header>
     </side>
     <div
-        use:dndzone={{ items: tracks, flipDurationMs: 300, delayTouchStart: 1000 }}
+        use:dndzone={{
+            items: tracks,
+            flipDurationMs: 300,
+            delayTouchStart: 500
+        }}
         onconsider={e => tracks = e.detail.items}
         onfinalize={e => tracks = e.detail.items}
         class="grid gap-2 p-5 w-full pt-0 md:pt-5 outline-none!"
