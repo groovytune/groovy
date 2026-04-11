@@ -18,8 +18,10 @@
 
     let { data } = $props();
 
+    // svelte-ignore state_referenced_locally
     const form = superForm(data.form, {
         validators: zod4(newReleaseSchema),
+        dataType: 'json',
         clearOnSubmit: 'errors-and-message',
         autoFocusOnError: true,
         validationMethod: 'auto',
