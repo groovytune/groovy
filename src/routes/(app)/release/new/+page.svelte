@@ -12,7 +12,7 @@
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { Switch } from '$lib/components/ui/switch';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
-    import { Disc3Icon, ListMusicIcon, MusicIcon, Icon, UsersIcon, LockIcon, EyeOffIcon } from '@lucide/svelte';
+    import { Disc3Icon, ListMusicIcon, MusicIcon, Icon, UsersIcon, LockIcon, EyeOffIcon, LoaderIcon } from '@lucide/svelte';
     import { cn } from '$lib/helpers/utils';
     import type { ClassValue } from 'tailwind-variants';
     import { toast } from 'svelte-sonner';
@@ -293,8 +293,11 @@
             </FormControl>
             <FormFieldErrors/>
         </FormField>
-        <div>
+        <div class="flex justify-end">
             <Button type="submit" disabled={$submitting || !!$allErrors.length}>
+                {#if $submitting}
+                    <LoaderIcon class="animate-spin"/>
+                {/if}
                 Submit
             </Button>
         </div>

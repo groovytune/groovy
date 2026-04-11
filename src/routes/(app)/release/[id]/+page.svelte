@@ -49,7 +49,7 @@
             >
                 {data.release.description || ''}
             </p>
-            <div class="flex gap-2 justify-center mt-5 max-w-sm px-20">
+            <div class="flex gap-2 justify-center my-5 max-w-sm px-20">
                 <Button variant="outline" size="icon">
                     <PlayIcon/>
                 </Button>
@@ -81,7 +81,7 @@
         </header>
     </side>
     <div
-        use:dndzone={{ items: tracks, flipDurationMs: 300 }}
+        use:dndzone={{ items: tracks, flipDurationMs: 300, delayTouchStart: 1000 }}
         onconsider={e => tracks = e.detail.items}
         onfinalize={e => tracks = e.detail.items}
         class="grid gap-2 p-5 w-full pt-0 md:pt-5 outline-none!"
