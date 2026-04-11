@@ -16,12 +16,5 @@ export const newReleaseSchema = z.object({
     })
         .array()
         .max(5)
-        .optional()
-        .default([
-            { id: 'rock', name: 'Rock' },
-            { id: 'pop', name: 'Pop' },
-            { id: 'hip-hop', name: 'Hip-Hop' },
-            { id: 'electronic', name: 'Electronic' },
-            { id: 'jazz', name: 'Jazz' }
-        ]),
+        .default([]),
 });
