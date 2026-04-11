@@ -13,7 +13,7 @@
     import { Switch } from '$lib/components/ui/switch';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { Disc3Icon, ListMusicIcon, MusicIcon, Icon, UsersIcon, LockIcon, EyeOffIcon } from '@lucide/svelte';
-    import { cn } from '../../../../lib/helpers/utils';
+    import { cn } from '$lib/helpers/utils';
     import type { ClassValue } from 'tailwind-variants';
 
     let { data } = $props();
