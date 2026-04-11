@@ -11,6 +11,7 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
     import { auth } from '$lib/client/auth.js';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
+    import { Switch } from '../../../../lib/components/ui/switch/index.js';
 
     let { data } = $props();
 
@@ -23,11 +24,13 @@
 
     const { form: formData, enhance, submitting, allErrors } = form;
 
+    const session = auth.useSession();
     const cover = fileProxy(form, 'cover', {
         empty: 'undefined'
     });
 
-    const session = auth.useSession();
+    let coverInput: HTMLInputElement|null = $state(null);
+    let nameInput: HTMLInputElement|null = $state(null);
 </script>
 
 <div class="flex flex-col md:flex-row">
@@ -35,20 +38,31 @@
         <div class="p-5 w-full max-w-sm relative">
             {#key $formData.cover}
                 {@const url = $formData.cover ? URL.createObjectURL($formData.cover) : null}
-                <AspectRatio class="w-full rounded-md bg-muted">
+                <AspectRatio
+                    class="w-full rounded-md bg-muted"
+                    onclick={() => coverInput?.click()}
+                >
                     <img src={url} alt=" " class="size-full object-cover rounded-md"/>
                     <img src={url} alt=" " class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
                 </AspectRatio>
             {/key}
         </div>
         <div class="w-full max-w-sm text-center px-5">
-            <h1 class="text-2xl leading-tight font-semibold line-clamp-3" style="word-wrap: break-word;">
+            <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+            <!-- svelte-ignore a11y_click_events_have_key_events -->
+            <h1
+                class="text-2xl leading-tight font-semibold line-clamp-3"
+                style="word-wrap: break-word;"
+                onclick={() => nameInput?.focus()}
+            >
                 {$formData.name || 'New Release'}
                 {#if $formData.explicit}
                     <ExplicitIcon/>
                 {/if}
             </h1>
-            <p class="text-sm leading-tight text-muted-foreground">
+            <p
+                class="text-sm leading-tight text-muted-foreground"
+            >
                 {$session.data?.user.name}
             </p>
             <p class="text-xs leading-tight text-muted-foreground/60 line-clamp-2" style="word-wrap: break-word;">
@@ -79,7 +93,12 @@
             <FormControl>
                 {#snippet children({ props })}
                     <FormLabel>Name</FormLabel>
-                    <Input {...props} bind:value={$formData.name} placeholder="Release Name"/>
+                    <Input
+                        {...props}
+                        bind:value={$formData.name}
+                        bind:ref={nameInput}
+                        placeholder="Release Name"
+                    />
                 {/snippet}
             </FormControl>
             <FormFieldErrors/>
@@ -88,7 +107,23 @@
             <FormControl>
                 {#snippet children({ props })}
                     <FormLabel>Description</FormLabel>
-                    <Textarea {...props} bind:value={$formData.description} placeholder="Release Description"/>
+                    <Textarea
+                        {...props}
+                        bind:value={$formData.description}
+                        placeholder="Release Description"
+                    />
+                {/snippet}
+            </FormControl>
+            <FormFieldErrors/>
+        </FormField>
+        <FormField {form} name="explicit">
+            <FormControl>
+                {#snippet children({ props })}
+                    <FormLabel>Explicit</FormLabel>
+                    <Switch
+                        {...props}
+                        bind:checked={$formData.explicit}
+                    />
                 {/snippet}
             </FormControl>
             <FormFieldErrors/>
@@ -115,7 +150,12 @@
             <FormControl>
                 {#snippet children({ props })}
                     <FormLabel>Cover</FormLabel>
-                    <FileInput {...props} accept="image/*" bind:files={$cover}/>
+                    <FileInput
+                        {...props}
+                        bind:files={$cover}
+                        bind:ref={coverInput}
+                        accept="image/*"
+                    />
                 {/snippet}
             </FormControl>
             <FormFieldErrors/>

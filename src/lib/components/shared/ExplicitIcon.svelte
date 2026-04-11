@@ -8,7 +8,7 @@
 <span
     {...props}
     class={cn(
-        "text-xs inline-block bg-foreground/70 text-primary-foreground rounded-xs size-4 align-middle leading-4 mb-1",
+        "text-xs inline-block bg-foreground/70 text-background rounded-xs size-4 align-middle leading-4 mb-1",
         props.class
     )}
 >
