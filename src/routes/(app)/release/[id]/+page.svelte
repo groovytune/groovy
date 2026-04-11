@@ -1,7 +1,7 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
-    import { EllipsisIcon, PencilIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
+    import { CirclePlusIcon, EllipsisIcon, PencilIcon, PlayIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
     import { dndzone } from 'svelte-dnd-action';
@@ -22,7 +22,7 @@
 </script>
 
 <section class="w-full flex md:flex-row flex-col">
-    <side class="size-full flex flex-col items-center md:max-w-96 pb-10">
+    <side class="size-full flex flex-col items-center md:max-w-96 pb-5">
         <div class="p-5 w-full max-w-sm relative">
             <AspectRatio class="w-full rounded-md bg-muted">
                 <img src={data.release.cover} alt="Release Cover" class="size-full object-cover rounded-md"/>
@@ -49,6 +49,35 @@
             >
                 {data.release.description || ''}
             </p>
+            <div class="flex gap-2 justify-center mt-5 max-w-sm px-20">
+                <Button variant="outline" size="icon">
+                    <PlayIcon/>
+                </Button>
+                <Button class="w-full">
+                    <CirclePlusIcon/>
+                    Add Tracks
+                </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        {#snippet child({ props })}
+                            <Button {...props} variant="outline" size="icon">
+                                <EllipsisIcon/>
+                            </Button>
+                        {/snippet}
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent class="mx-2">
+                        <DropdownMenuItem>
+                            <PencilIcon/>
+                            Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator/>
+                        <DropdownMenuItem class="text-destructive!">
+                            <Trash2Icon class="text-current"/>
+                            Delete
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
         </header>
     </side>
     <div
