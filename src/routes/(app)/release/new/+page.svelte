@@ -113,12 +113,14 @@
                     <ExplicitIcon/>
                 {/if}
             </h1>
-            <p
-                class="text-sm leading-tight text-muted-foreground"
-            >
+            <p class="text-sm leading-tight text-muted-foreground">
                 {$session.data?.user.name}
             </p>
-            <p class="text-xs leading-tight text-muted-foreground/60 line-clamp-2" style="word-wrap: break-word;">
+            <p
+                class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 mt-2"
+                style="word-wrap: break-word;"
+                title={$formData.description}
+            >
                 {$formData.description || ''}
             </p>
         </div>
