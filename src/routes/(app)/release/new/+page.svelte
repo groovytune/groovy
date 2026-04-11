@@ -77,7 +77,7 @@
                     <ItemTitle class={active ? "text-primary" : ""}>
                         {title}
                     </ItemTitle>
-                    <ItemDescription class="line-clamp-3">
+                    <ItemDescription class="line-clamp-3" title={description}>
                         {description}
                     </ItemDescription>
                 </ItemContent>
@@ -204,7 +204,7 @@
                             icon: Disc3Icon,
                             title: 'Album',
                             description: 'A collection of tracks that are released together as a cohesive unit.',
-                            class: "cursor-pointer w-1/3",
+                            class: "cursor-pointer lg:w-1/3",
                             props,
                             active: $formData.type === 'ALBUM',
                             onclick: () => $formData.type = 'ALBUM'
@@ -213,7 +213,7 @@
                             icon: MusicIcon,
                             title: 'Single',
                             description: 'A release that typically features one main track, often accompanied by additional tracks such as remixes or B-sides.',
-                            class: "cursor-pointer w-1/3",
+                            class: "cursor-pointer lg:w-1/3",
                             props,
                             active: $formData.type === 'SINGLE',
                             onclick: () => $formData.type = 'SINGLE'
@@ -222,7 +222,7 @@
                             icon: ListMusicIcon,
                             title: 'EP',
                             description: 'A release that contains a few tracks, typically more than a single but fewer than an album.',
-                            class: "cursor-pointer w-1/3",
+                            class: "cursor-pointer lg:w-1/3",
                             props,
                             active: $formData.type === 'EP',
                             onclick: () => $formData.type = 'EP'
@@ -241,7 +241,7 @@
                             icon: UsersIcon,
                             title: 'Public',
                             description: 'Your release will be visible to everyone and can be shared on social media and other platforms.',
-                            class: "cursor-pointer w-1/3",
+                            class: "cursor-pointer lg:w-1/3",
                             props,
                             active: $formData.privacy === 'PUBLIC',
                             onclick: () => $formData.privacy = 'PUBLIC'
@@ -250,7 +250,7 @@
                             icon: LockIcon,
                             title: 'Private',
                             description: 'Your release will only be visible to you. It will not be discoverable on the platform.',
-                            class: "cursor-pointer w-1/3",
+                            class: "cursor-pointer lg:w-1/3",
                             props,
                             active: $formData.privacy === 'PRIVATE',
                             onclick: () => $formData.privacy = 'PRIVATE'
@@ -259,7 +259,7 @@
                             icon: EyeOffIcon,
                             title: 'Unlisted',
                             description: 'Your release will not be visible on your profile or in search results, but anyone with the direct link can view it.',
-                            class: "cursor-pointer w-1/3",
+                            class: "cursor-pointer lg:w-1/3",
                             props,
                             active: $formData.privacy === 'UNLISTED',
                             onclick: () => $formData.privacy = 'UNLISTED'

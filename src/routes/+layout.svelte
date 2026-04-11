@@ -8,6 +8,7 @@
 	import { page } from '$app/state';
 	import '$lib/styles/app.css';
 	import { ActiveNavigationPage } from '../lib/contexts/navigation.js';
+	import { TooltipProvider } from '../lib/components/ui/tooltip/index.js';
 
 	let { children, data } = $props();
     let activeNavigationPage = $state({ id: '' });
@@ -19,4 +20,6 @@
 <ModeWatcher/>
 <MetaTags {...deepMerge(data.baseMetaTags, page.data.pageMetaTags)}/>
 
-{@render children()}
+<TooltipProvider>
+    {@render children()}
+</TooltipProvider>
