@@ -181,7 +181,7 @@
                     <Item variant="outline">
                         {#snippet child({ props: itemProps })}
                             <FormLabel {...itemProps}>
-                                <ItemMedia variant="icon" class={$formData.explicit ? "text-red-500" : "text-muted-foreground"}>
+                                <ItemMedia variant="icon">
                                     <ExplicitIcon class="leading-3.5! mb-0"/>
                                 </ItemMedia>
                                 <ItemContent>
