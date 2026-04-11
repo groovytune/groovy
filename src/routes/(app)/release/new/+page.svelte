@@ -15,6 +15,7 @@
     import { Disc3Icon, ListMusicIcon, MusicIcon, Icon, UsersIcon, LockIcon, EyeOffIcon } from '@lucide/svelte';
     import { cn } from '$lib/helpers/utils';
     import type { ClassValue } from 'tailwind-variants';
+    import { toast } from 'svelte-sonner';
 
     let { data } = $props();
 
@@ -25,7 +26,11 @@
         clearOnSubmit: 'errors-and-message',
         autoFocusOnError: true,
         validationMethod: 'auto',
-        taintedMessage: true
+        taintedMessage: true,
+        onError: event => {
+            console.error('Form submission error:', event.result);
+            toast.error(event.result.error.message);
+        }
     });
 
     const { form: formData, enhance, submitting, allErrors } = form;
@@ -102,12 +107,12 @@
                     class="w-full rounded-md bg-muted cursor-pointer"
                     onclick={() => coverInput?.click()}
                 >
-                    <img src={url} alt=" " class="size-full object-cover rounded-md"/>
-                    <img src={url} alt=" " class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
+                    <img src={url} alt="Release Cover" class="size-full object-cover rounded-md"/>
+                    <img src={url} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
                 </AspectRatio>
             {/key}
         </div>
-        <div class="w-full max-w-sm text-center px-5">
+        <header class="w-full max-w-sm text-center px-5">
             <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
             <!-- svelte-ignore a11y_click_events_have_key_events -->
             <h1
@@ -121,16 +126,16 @@
                 {/if}
             </h1>
             <p class="text-sm leading-tight text-muted-foreground">
-                {$session.data?.user.name}
+                {$session.data?.user.name || 'Unknown Artist'}
             </p>
             <p
-                class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 mt-2"
+                class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 hover:line-clamp-none mt-2"
                 style="word-wrap: break-word;"
                 title={$formData.description}
             >
                 {$formData.description || ''}
             </p>
-        </div>
+        </header>
     </section>
     <form class="w-full p-5 grid gap-2" method="POST" enctype="multipart/form-data" use:enhance>
         <FormField {form} name="name">

@@ -1,4 +1,4 @@
-import { fail, message, superValidate } from 'sveltekit-superforms';
+import { fail, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { newReleaseSchema } from '$lib/schema/release.js';
 import { redirect } from '@sveltejs/kit';
@@ -47,11 +47,20 @@ export const actions = {
                 explicit: form.data.explicit,
                 cover: cover?.$id,
                 genres: {
-                    connect: form.data.genres?.map(id => ({ id }))
+                    connect: form.data.genres
+                        ?.map(genre => ({ id: genre.id }))
                 },
             }
+        }).catch(async error => {
+            if (cover) {
+                await Appwrite.storage
+                    .deleteFile({ fileId: cover.$id, bucketId: cover.bucketId })
+                    .catch(() => null);
+            }
+
+            throw error;
         });
 
-        return message(form, { release });
+        return redirect(302, resolve(`/release/${release.id}`));
     }
 };
