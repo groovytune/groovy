@@ -32,7 +32,7 @@
                 <AvatarFallback>{user.name?.[0] ?? 'U'}</AvatarFallback>
             </Avatar>
             <div class="flex flex-col ml-2 truncate">
-                <p class="font-medium leading-tight truncate">{user.name} Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente commodi, sit aliquid quod eos ipsa eaque animi facilis atque consequatur inventore praesentium perspiciatis temporibus blanditiis, omnis quisquam laudantium. Debitis, deserunt.</p>
+                <p class="font-medium leading-tight truncate">{user.name}</p>
                 <p class="text-sm text-muted-foreground truncate">{user.email}</p>
             </div>
         </DropdownMenuItem>

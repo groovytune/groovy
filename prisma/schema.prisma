@@ -103,6 +103,7 @@ model Release {
 
 model Track {
   id        String   @id @default(cuid())
+  position  Int      @default(1)
   releaseId String
   release   Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
   name      String

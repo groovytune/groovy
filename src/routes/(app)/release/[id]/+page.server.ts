@@ -2,6 +2,9 @@ import { error, redirect } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
 import { Appwrite } from '$lib/server/appwrite.js';
 import { ImageFormat } from 'node-appwrite';
+import { superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { editTracklistSchema } from '../../../../lib/schema/track.js';
 
 export async function load({ params, locals }) {
     const { id } = params;
@@ -25,15 +28,20 @@ export async function load({ params, locals }) {
     }
 
     release.cover = release.cover
-        ? await Appwrite.storage.getFilePreview({
+        ? await Appwrite.createImagePreviewURL({
             bucketId: 'image',
             fileId: release.cover,
             output: ImageFormat.Webp,
             width: 300,
             height: 300,
             quality: 100
-        }).then((url) => `data:image/webp;base64,${Buffer.from(url).toString('base64')}`)
+        })
         : null;
 
-    return { release };
+    const form = await superValidate({
+        releaseId: release.id,
+        tracks: release.tracks
+    }, zod4(editTracklistSchema));
+
+    return { release, form };
 }

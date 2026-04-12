@@ -1,27 +1,39 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
-    import { CirclePlusIcon, EllipsisIcon, PencilIcon, PlayIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
+    import { CirclePlusIcon, EllipsisIcon, ListMusicIcon, PencilIcon, PlayIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
     import { dndzone } from 'svelte-dnd-action';
     import { flip } from 'svelte/animate';
-    import { createId } from '@paralleldrive/cuid2';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { auth } from '$lib/client/auth.js';
+    import { toast } from 'svelte-sonner';
+    import { superForm } from 'sveltekit-superforms';
+    import { zod4 } from 'sveltekit-superforms/adapters';
+    import { editTracklistSchema } from '$lib/schema/track.js';
+    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
 
     let { data } = $props();
 
     const session = auth.useSession();
 
-    let tracks = $state(
-        Array(20)
-            .fill({})
-            .map(() => ({ id: createId(), name: createId(), duration: '4:20' }))
-    );
+    // svelte-ignore state_referenced_locally
+    const form = superForm(data.form, {
+        validators: zod4(editTracklistSchema),
+        clearOnSubmit: 'errors-and-message',
+        dataType: 'json',
+        taintedMessage: true,
+        onError: event => {
+            console.error('Form submission error:', event.result);
+            toast.error(event.result.error.message);
+        }
+    })
+
+    const { form: formData, enhance, submitting, tainted } = form;
 </script>
 
-<section class="w-full flex md:flex-row flex-col">
+<form use:enhance method="POST" class="w-full flex md:flex-row flex-col">
     <side class="size-full flex flex-col items-center md:max-w-96 pb-5">
         <div class="p-5 w-full max-w-sm relative">
             <AspectRatio class="w-full rounded-md bg-muted">
@@ -80,53 +92,89 @@
             </div>
         </header>
     </side>
-    <div
-        use:dndzone={{
-            items: tracks,
-            flipDurationMs: 300,
-            delayTouchStart: 500
-        }}
-        onconsider={e => tracks = e.detail.items}
-        onfinalize={e => tracks = e.detail.items}
-        class="grid gap-2 p-5 w-full pt-0 md:pt-5 outline-none!"
-    >
-        {#each tracks as track (track.id)}
-            <div animate:flip={{ duration: 300 }}>
-                <Item class="p-2 hover:bg-secondary/50 rounded-md">
-                    <ItemContent>
-                        <ItemTitle>
-                            {track.name}
-                        </ItemTitle>
-                        <ItemDescription>{track.duration}</ItemDescription>
-                    </ItemContent>
-                    <ItemActions>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger>
-                                {#snippet child({ props })}
-                                    <Button {...props} variant="ghost" size="icon">
-                                        <EllipsisIcon/>
-                                    </Button>
-                                {/snippet}
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent class="mx-2">
-                                <DropdownMenuItem>
-                                    <PencilIcon/>
-                                    Edit
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <TextAlignStartIcon/>
-                                    Edit Lyrics
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator/>
-                                <DropdownMenuItem class="text-destructive!">
-                                    <Trash2Icon class="text-current"/>
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </ItemActions>
-                </Item>
-            </div>
-        {/each}
-    </div>
-</section>
+    {#if $formData.tracks.length}
+        <div
+            use:dndzone={{
+                items: $formData.tracks,
+                flipDurationMs: 300,
+                delayTouchStart: 500,
+                dragDisabled: $submitting
+            }}
+            onconsider={e => $formData.tracks = e.detail.items}
+            onfinalize={e => $formData.tracks = e.detail.items}
+            class="grid gap-2 p-5 w-full pt-0 md:pt-5 outline-none!"
+        >
+            {#each $formData.tracks as track (track.name)}
+                <a
+                    href="#/"
+                    onclick={() => toast(track.name)}
+                    animate:flip={{ duration: 300 }}
+                >
+                    <Item class="p-2 hover:bg-secondary/50 rounded-md">
+                        <ItemContent>
+                            <ItemTitle
+                                class="line-clamp-2 w-full"
+                                style="word-wrap: break-word;"
+                            >
+                                <span>
+                                    {track.name}
+                                    {#if track.explicit}
+                                        <ExplicitIcon class="size-4.5"/>
+                                    {/if}
+                                </span>
+                            </ItemTitle>
+                            <ItemDescription>
+                                {$session.data?.user.name || 'Unknown Artist'}
+                            </ItemDescription>
+                        </ItemContent>
+                        <ItemActions>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                    {#snippet child({ props })}
+                                        <Button {...props} variant="ghost" size="icon">
+                                            <EllipsisIcon/>
+                                        </Button>
+                                    {/snippet}
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent class="mx-2">
+                                    <DropdownMenuItem>
+                                        <PencilIcon/>
+                                        Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <TextAlignStartIcon/>
+                                        Edit Lyrics
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator/>
+                                    <DropdownMenuItem class="text-destructive!">
+                                        <Trash2Icon class="text-current"/>
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </ItemActions>
+                    </Item>
+                </a>
+            {/each}
+        </div>
+        {#if $tainted}
+            <Button>Save</Button>
+        {/if}
+    {:else}
+        <div class="flex justify-center">
+            <Empty class="bg-muted/50 m-5 py-10 gap-0 min-h-72 max-w-sm">
+                <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                        <ListMusicIcon/>
+                    </EmptyMedia>
+                </EmptyHeader>
+                <EmptyTitle>
+                    No tracks added yet
+                </EmptyTitle>
+                <EmptyDescription>
+                    Click the "Add Tracks" to add your first track
+                </EmptyDescription>
+            </Empty>
+        </div>
+    {/if}
+</form>
