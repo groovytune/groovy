@@ -1,39 +1,57 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
-    import { CirclePlusIcon, EllipsisIcon, ListMusicIcon, PencilIcon, PlayIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
-    import { AspectRatio } from '$lib/components/ui/aspect-ratio';
-    import { Button } from '$lib/components/ui/button';
-    import { dndzone } from 'svelte-dnd-action';
-    import { flip } from 'svelte/animate';
+    import { CirclePlusIcon, EllipsisIcon, LoaderIcon, PencilIcon, PlayIcon, Trash2Icon } from '@lucide/svelte';
+    import EditTracksForm from '$lib/components/shared/app/release/EditTracksForm.svelte';
+    import AddTracksForm from '$lib/components/shared/app/release/AddTracksForm.svelte';
+    import { editTracksSchema, uploadTracksSchema } from '$lib/schema/track.js';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
+    import { AspectRatio } from '$lib/components/ui/aspect-ratio';
+    import { zod4 } from 'sveltekit-superforms/adapters';
+    import { Button } from '$lib/components/ui/button';
+    import { superForm } from 'sveltekit-superforms';
     import { auth } from '$lib/client/auth.js';
     import { toast } from 'svelte-sonner';
-    import { superForm } from 'sveltekit-superforms';
-    import { zod4 } from 'sveltekit-superforms/adapters';
-    import { editTracklistSchema } from '$lib/schema/track.js';
-    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
-
+ 
     let { data } = $props();
 
-    const session = auth.useSession();
-
-    // svelte-ignore state_referenced_locally
-    const form = superForm(data.form, {
-        validators: zod4(editTracklistSchema),
+    const tracklistForm = superForm(data.tracksForm, {
+        validators: zod4(editTracksSchema),
         clearOnSubmit: 'errors-and-message',
         dataType: 'json',
         taintedMessage: true,
         onError: event => {
             console.error('Form submission error:', event.result);
             toast.error(event.result.error.message);
-        }
-    })
+        },
+        onResult: event => {
+            const { type } = event.result;
+            if (type != 'success') return;
 
-    const { form: formData, enhance, submitting, tainted } = form;
+            toast.success(`Successfully updated track(s)`);
+        }
+    });
+
+    const trackUploadForm = superForm(data.tracksUploadForm, {
+        validators: zod4(uploadTracksSchema),
+        clearOnSubmit: 'errors-and-message',
+        dataType: 'json',
+        taintedMessage: true,
+        onError: event => {
+            console.error('Form submission error:', event.result);
+            toast.error(event.result.error.message);
+        },
+        onResult: event => {
+            const { type } = event.result;
+            if (type != 'success') return;
+
+            toast.success(`Successfully uploaded track(s)`);
+        }
+    });
+
+    const session = auth.useSession();
 </script>
 
-<form use:enhance method="POST" class="w-full flex md:flex-row flex-col">
+<div class="w-full flex md:flex-row flex-col">
     <side class="size-full flex flex-col items-center md:max-w-96 pb-5">
         <div class="p-5 w-full max-w-sm relative">
             <AspectRatio class="w-full rounded-md bg-muted">
@@ -65,10 +83,23 @@
                 <Button variant="outline" size="icon">
                     <PlayIcon/>
                 </Button>
-                <Button class="w-full">
-                    <CirclePlusIcon/>
-                    Add Tracks
-                </Button>
+                <AddTracksForm form={trackUploadForm}>
+                    {#snippet children({ input, disabled, submitting })}
+                        <Button
+                            class="w-full"
+                            onclick={() => input?.click()}
+                            disabled={disabled}
+                        >
+                            {#if submitting}
+                                <LoaderIcon class="animate-spin"/>
+                                Uploading...
+                            {:else}
+                                <CirclePlusIcon/>
+                                Add Tracks
+                            {/if}
+                        </Button>
+                    {/snippet}
+                </AddTracksForm>
                 <DropdownMenu>
                     <DropdownMenuTrigger>
                         {#snippet child({ props })}
@@ -92,89 +123,5 @@
             </div>
         </header>
     </side>
-    {#if $formData.tracks.length}
-        <div
-            use:dndzone={{
-                items: $formData.tracks,
-                flipDurationMs: 300,
-                delayTouchStart: 500,
-                dragDisabled: $submitting
-            }}
-            onconsider={e => $formData.tracks = e.detail.items}
-            onfinalize={e => $formData.tracks = e.detail.items}
-            class="grid gap-2 p-5 w-full pt-0 md:pt-5 outline-none!"
-        >
-            {#each $formData.tracks as track (track.name)}
-                <a
-                    href="#/"
-                    onclick={() => toast(track.name)}
-                    animate:flip={{ duration: 300 }}
-                >
-                    <Item class="p-2 hover:bg-secondary/50 rounded-md">
-                        <ItemContent>
-                            <ItemTitle
-                                class="line-clamp-2 w-full"
-                                style="word-wrap: break-word;"
-                            >
-                                <span>
-                                    {track.name}
-                                    {#if track.explicit}
-                                        <ExplicitIcon class="size-4.5"/>
-                                    {/if}
-                                </span>
-                            </ItemTitle>
-                            <ItemDescription>
-                                {$session.data?.user.name || 'Unknown Artist'}
-                            </ItemDescription>
-                        </ItemContent>
-                        <ItemActions>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger>
-                                    {#snippet child({ props })}
-                                        <Button {...props} variant="ghost" size="icon">
-                                            <EllipsisIcon/>
-                                        </Button>
-                                    {/snippet}
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent class="mx-2">
-                                    <DropdownMenuItem>
-                                        <PencilIcon/>
-                                        Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <TextAlignStartIcon/>
-                                        Edit Lyrics
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator/>
-                                    <DropdownMenuItem class="text-destructive!">
-                                        <Trash2Icon class="text-current"/>
-                                        Delete
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </ItemActions>
-                    </Item>
-                </a>
-            {/each}
-        </div>
-        {#if $tainted}
-            <Button>Save</Button>
-        {/if}
-    {:else}
-        <div class="flex justify-center">
-            <Empty class="bg-muted/50 m-5 py-10 gap-0 min-h-72 max-w-sm">
-                <EmptyHeader>
-                    <EmptyMedia variant="icon">
-                        <ListMusicIcon/>
-                    </EmptyMedia>
-                </EmptyHeader>
-                <EmptyTitle>
-                    No tracks added yet
-                </EmptyTitle>
-                <EmptyDescription>
-                    Click the "Add Tracks" to add your first track
-                </EmptyDescription>
-            </Empty>
-        </div>
-    {/if}
-</form>
+    <EditTracksForm form={tracklistForm}/>
+</div>
