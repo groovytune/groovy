@@ -102,15 +102,19 @@
                     <PlayIcon/>
                 </Button>
                 <UploadTracksForm releaseId={data.release.id} form={trackUploadForm}>
-                    {#snippet children({ input, disabled, submitting })}
+                    {#snippet children({ input, disabled, submitting, analyzing })}
                         <Button
                             class="w-full"
                             onclick={() => input?.click()}
                             disabled={disabled}
                         >
-                            {#if submitting}
+                            {#if submitting || analyzing}
                                 <LoaderIcon class="animate-spin"/>
-                                Uploading...
+                                {#if analyzing}
+                                    Analyzing...
+                                {:else}
+                                    Uploading...
+                                {/if}
                             {:else}
                                 <CirclePlusIcon/>
                                 Add Tracks

@@ -15,7 +15,7 @@ export async function extractFileMetadata(file: File, useWorker?: boolean|Worker
         return {
             title: common.title || file.name || null,
             cover: selectCover(common.picture),
-            duration: format.duration ?? null,
+            duration: format.duration || null,
             common,
             format,
         };

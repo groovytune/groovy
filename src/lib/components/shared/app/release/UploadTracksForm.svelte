@@ -1,5 +1,4 @@
 <script lang="ts">
-    import ParseAudioMetadata from '$lib/helpers/workers/ParseAudioMetadata.ts?worker';
     import type { newTrackSchema, uploadTracksSchema } from '$lib/schema/track';
     import { extractFileMetadata } from '$lib/helpers/metadata';
     import type { SuperForm } from 'sveltekit-superforms';
@@ -24,14 +23,17 @@
             input: HTMLInputElement|null;
             disabled: boolean;
             submitting: boolean;
+            analyzing: boolean;
         }]>;
     } = $props();
+
+    let analyzing = $state(false);
 
     // svelte-ignore state_referenced_locally
     const { form: formData, enhance, submitting, allErrors } = form;
 
     async function analyzeFiles(files: FileList) {
-        const worker = new ParseAudioMetadata();
+        analyzing = true;
 
         const tracks: (z.infer<typeof newTrackSchema>|null)[] = await Promise.all(
             Array
@@ -41,7 +43,9 @@
                         return null;
                     }
 
-                    const metadata = await extractFileMetadata(file, worker)
+                    console.log(`Analyzing file: ${file.name}`);
+
+                    const metadata = await extractFileMetadata(file, true)
                         .catch(err => {
                             console.error(`Error extracting metadata for file ${file.name}:`, err);
                             toast.error(`Failed to extract metadata for file: ${file.name}`);
@@ -67,20 +71,25 @@
                         )
                         : null;
 
+                    console.log(`Extracted metadata for file ${file.name}:`, {
+                        title: metadata.common.title,
+                        duration: metadata.duration,
+                        cover: !!cover
+                    });
+
                     return {
                         name: metadata.common.title || file.name,
                         cover,
                         file,
                         explicit: false,
-                        duration: metadata.format.duration ? Math.round(metadata.format.duration) : 0,
+                        duration: metadata.duration,
                         metadata
                     };
                 })
         );
 
-        worker.terminate();
-
         $formData.tracks = tracks.filter(t => !!t);
+        analyzing = false;
 
         if (!$formData.tracks.length) {
             return;
@@ -91,6 +100,8 @@
             toast.error('Some files have invalid metadata. Please review and correct the errors before submitting.');
             return;
         }
+
+        console.log('Submitting form with tracks:', $formData.tracks);
 
         form.submit();
     }
@@ -108,13 +119,14 @@
         type="file"
         accept={supportedAudioMimeTypes.join(',')}
         bind:this={input}
-        disabled={disabled || $submitting}
-        onchange={e => e.currentTarget.files ? analyzeFiles(e.currentTarget.files) : null}
+        disabled={disabled || $submitting || analyzing}
+        onchange={e => e.currentTarget.files?.length ? analyzeFiles(e.currentTarget.files) : null}
     />
 </form>
 
 {@render children?.({
     input,
-    disabled: disabled || $submitting,
-    submitting: $submitting
+    disabled: disabled || $submitting || analyzing,
+    submitting: $submitting,
+    analyzing
 })}

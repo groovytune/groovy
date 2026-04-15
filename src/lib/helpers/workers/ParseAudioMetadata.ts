@@ -8,7 +8,7 @@ self.onmessage = async event => {
     self.postMessage({
         title: common.title || file.name || null,
         cover: selectCover(common.picture),
-        duration: format.duration ?? null,
+        duration: format.duration || null,
         common,
         format,
     });
