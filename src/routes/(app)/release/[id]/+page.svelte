@@ -18,9 +18,9 @@
     const sortTracksForm = superForm(data.sortTracksForm, {
         id: 'sort-tracks-form',
         validators: zod4(sortTracksSchema),
-        clearOnSubmit: 'errors-and-message',
         dataType: 'json',
         taintedMessage: true,
+        invalidateAll: false,
         resetForm: false,
         onError: event => {
             console.error('Form submission error:', event.result);
@@ -44,9 +44,13 @@
 
             toast.success(message.text ?? `Successfully updated track(s)`);
 
-            sortTracksForm.form.set({
-                tracks: message.tracks
-            }, { taint: false });
+            sortTracksForm.form.update(
+                f => {
+                    f.tracks = message.tracks;
+                    return f;
+                },
+                { taint: false }
+            );
         }
     });
 
@@ -56,9 +60,9 @@
     const trackUploadForm = superForm(data.uploadTracksForm, {
         id: 'upload-tracks-form',
         validators: zod4(uploadTracksSchema),
-        clearOnSubmit: 'errors-and-message',
         dataType: 'json',
         taintedMessage: true,
+        invalidateAll: false,
         onError: event => {
             console.error('Form submission error:', event.result);
             toast.error(event.result.error.message);
@@ -86,12 +90,17 @@
                 toast.error(`Some files were invalid: ${invalidFiles}`);
             }
 
-            sortTracksForm.form.set({
-                tracks: [
-                    ...$sortFormData.tracks,
-                    ...(message.tracks || [])
-                ].sort((a, b) => a.position - b.position)
-            }, { taint: false });
+            sortTracksForm.form.update(
+                f => {
+                    f.tracks = [
+                        ...f.tracks,
+                        ...(message.tracks || [])
+                    ].sort((a, b) => a.position - b.position);
+
+                    return f;
+                },
+                { taint: false }
+            );
         }
     });
 
