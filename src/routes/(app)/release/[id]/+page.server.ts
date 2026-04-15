@@ -111,7 +111,7 @@ export const actions = {
                 cover: t.cover?.$id,
                 file: t.file!.$id,
                 explicit: t.track.explicit,
-                duration: t.track.duration,
+                duration: t.track.duration ?? null,
                 metadata: t.track.metadata,
                 releaseId: release.id
             }));

@@ -1,4 +1,5 @@
 import z from 'zod';
+import { supportedAudioMimeTypes } from '../helpers/constants';
 
 export const newTrackSchema = z.object({
     name: z.string().min(1).max(255),
@@ -8,9 +9,9 @@ export const newTrackSchema = z.object({
         .nullable(),
     file: z
         .instanceof(File)
-        .refine(file => file.type.startsWith('audio/'), { message: 'File must be an audio file' }),
+        .refine(file => supportedAudioMimeTypes.includes(file.type), { message: 'File must be an audio file' }),
     explicit: z.boolean().default(false),
-    duration: z.number().int().positive(),
+    duration: z.number().int().positive().nullable(),
     metadata: z.any().optional()
 });
 
@@ -21,7 +22,7 @@ export const sortTracksSchema = z.object({
         position: z.number().int(),
         cover: z.string().nullable(),
         explicit: z.boolean().default(false),
-        duration: z.number().int().positive(),
+        duration: z.number().int().positive().nullable(),
         metadata: z.any().optional()
     })
         .array()

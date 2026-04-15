@@ -110,7 +110,7 @@ model Track {
   explicit  Boolean  @default(false)
   cover     String?
   file      String
-  duration  Int
+  duration  Int?
   lyrics    Lyrics[]
   genres    Genre[]  @relation("TrackGenres")
   metadata  Json?

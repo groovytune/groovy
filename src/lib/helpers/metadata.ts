@@ -1,4 +1,5 @@
 import { parseBlob, selectCover, type IAudioMetadata, type IPicture } from 'music-metadata';
+import ParseAudioMetadata from '$lib/helpers/workers/parseAudioMetadata.ts?worker';
 
 export type FileMetadata = Pick<IAudioMetadata, 'common'|'format'> & {
     title: string|null;
@@ -7,17 +8,36 @@ export type FileMetadata = Pick<IAudioMetadata, 'common'|'format'> & {
     [key: string]: unknown;
 };
 
-export async function extractFileMetadata(file: File): Promise<FileMetadata> {
-    const { common, format } = await parseBlob(file);
+export async function extractFileMetadata(file: File, useWorker?: boolean): Promise<FileMetadata> {
+    if (!useWorker) {
+        const { common, format } = await parseBlob(file);
 
-    const cover = selectCover(common.picture);
-    const duration = format.duration ?? null;
+        return {
+            title: common.title || file.name || null,
+            cover: selectCover(common.picture),
+            duration: format.duration ?? null,
+            common,
+            format,
+        };
+    }
 
-    return {
-        title: common.title || file.name || null,
-        common,
-        format,
-        cover,
-        duration
-    };
+    const worker = new ParseAudioMetadata();
+
+    console.log('Extracting metadata for file:', file.name);
+
+    const promise = new Promise<FileMetadata>((resolve, reject) => {
+        worker.onmessage = event => {
+            resolve(event.data);
+            worker.terminate();
+        };
+
+        worker.onerror = error => {
+            reject(error);
+            worker.terminate();
+        };
+    });
+
+    worker.postMessage({ file });
+
+    return promise;
 }

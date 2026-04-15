@@ -8,7 +8,7 @@ import { prisma } from '$lib/server/prisma.js';
 import type z from 'zod';
 
 export async function load({ locals, url }) {
-    if (!locals.session) {
+    if (!locals.user) {
         throw redirect(302, resolve('/(auth)/signin'));
     }
 
@@ -21,7 +21,7 @@ export async function load({ locals, url }) {
 
 export const actions = {
     default: async ({ request, locals }) => {
-        if (!locals.session) {
+        if (!locals.user) {
             return fail(401, { message: 'Unauthorized' });
         }
 
@@ -39,7 +39,7 @@ export const actions = {
 
         const release = await prisma.release.create({
             data: {
-                userId: locals.session.user.id,
+                userId: locals.user.id,
                 type: form.data.type,
                 name: form.data.name,
                 description: form.data.description,

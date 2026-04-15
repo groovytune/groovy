@@ -2,7 +2,7 @@
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import { CirclePlusIcon, EllipsisIcon, LoaderIcon, PencilIcon, PlayIcon, Trash2Icon } from '@lucide/svelte';
     import SortTracksForm from '$lib/components/shared/app/release/SortTracksForm.svelte';
-    import AddTracksForm from '$lib/components/shared/app/release/AddTracksForm.svelte';
+    import UploadTracksForm from '$lib/components/shared/app/release/UploadTracksForm.svelte';
     import { sortTracksSchema, uploadTracksSchema } from '$lib/schema/track.js';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
@@ -40,6 +40,7 @@
 
     const { form: sortFormData } = sortTracksForm;
 
+    // svelte-ignore state_referenced_locally
     const trackUploadForm = superForm(data.uploadTracksForm, {
         validators: zod4(uploadTracksSchema),
         clearOnSubmit: 'errors-and-message',
@@ -100,7 +101,7 @@
                 <Button variant="outline" size="icon">
                     <PlayIcon/>
                 </Button>
-                <AddTracksForm releaseId={data.release.id} form={trackUploadForm}>
+                <UploadTracksForm releaseId={data.release.id} form={trackUploadForm}>
                     {#snippet children({ input, disabled, submitting })}
                         <Button
                             class="w-full"
@@ -116,7 +117,7 @@
                             {/if}
                         </Button>
                     {/snippet}
-                </AddTracksForm>
+                </UploadTracksForm>
                 <DropdownMenu>
                     <DropdownMenuTrigger>
                         {#snippet child({ props })}

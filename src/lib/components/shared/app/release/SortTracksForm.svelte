@@ -22,8 +22,9 @@
         form: SuperForm<z.infer<typeof sortTracksSchema>, unknown>;
     } = $props();
 
-    const session = auth.useSession();
+    // svelte-ignore state_referenced_locally
     const { form: formData, enhance, submitting, tainted } = form;
+    const session = auth.useSession();
 
     let tracks = $derived($formData.tracks.toSorted((a, b) => a.position - b.position));
 </script>
