@@ -125,7 +125,7 @@
             </div>
         {/if}
         <div class="text-center pt-5">
-            <p class="text-sm text-muted-foreground">
+            <p class="text-xs text-muted-foreground">
                 {$formData.tracks.length} track{$formData.tracks.length !== 1 ? 's' : ''} • Drag and drop to reorder
             </p>
         </div>
