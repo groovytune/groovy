@@ -109,7 +109,7 @@
             {/each}
         </div>
         {#if $tainted}
-            <div class="flex justify-end py-5">
+            <div class="flex justify-center sm:justify-end py-5 pb-0">
                 <Button
                     onclick={() => form.submit()}
                     disabled={$submitting || $formData.tracks.length === 0}
@@ -124,6 +124,11 @@
                 </Button>
             </div>
         {/if}
+        <div class="text-center pt-5">
+            <p class="text-sm text-muted-foreground">
+                {$formData.tracks.length} track{$formData.tracks.length !== 1 ? 's' : ''} • Drag and drop to reorder
+            </p>
+        </div>
     </form>
 {:else}
     <div class="flex justify-center w-full" style="content-visibility: auto;">
