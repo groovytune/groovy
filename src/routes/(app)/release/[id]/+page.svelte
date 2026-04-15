@@ -26,6 +26,9 @@
             console.error('Form submission error:', event.result);
             toast.error(event.result.error.message);
         },
+        onSubmit: () => {
+            console.log('Updating track order...', $sortFormData.tracks);
+        },
         onResult: event => {
             const { type } = event.result;
 
@@ -60,6 +63,9 @@
             console.error('Form submission error:', event.result);
             toast.error(event.result.error.message);
         },
+        onSubmit: () => {
+            console.log('Uploading tracks...', $tracksUploadForm.tracks);
+        },
         onResult: event => {
             const { type } = event.result;
 
@@ -81,11 +87,15 @@
             }
 
             sortTracksForm.form.set({
-                tracks: [...$sortFormData.tracks, ...(message.tracks || [])]
-                    .sort((a, b) => a.position - b.position)
+                tracks: [
+                    ...$sortFormData.tracks,
+                    ...(message.tracks || [])
+                ].sort((a, b) => a.position - b.position)
             }, { taint: false });
         }
     });
+
+    const { form: tracksUploadForm } = trackUploadForm;
 
     const session = auth.useSession();
 </script>
