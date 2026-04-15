@@ -66,7 +66,7 @@ export const actions = {
         );
 
         if (!form.valid) {
-            return fail(400, { form, text: 'Please fix the errors below and try again.' });
+            return fail(400, { form, text: 'Uploaded files are invalid.' });
         }
 
         if (!locals.user) {
@@ -211,7 +211,7 @@ export const actions = {
         );
 
         if (!form.valid) {
-            return fail(400, { form });
+            return fail(400, { form, text: 'Tracks data are invalid.' });
         }
 
         if (!locals.user) {
