@@ -27,6 +27,7 @@
         },
         onResult: event => {
             const { type } = event.result;
+            console.log('Form submission result:', event.result);
             if (type != 'success') return;
 
             const message = event.result.data?.form.message;
@@ -53,6 +54,7 @@
         },
         onResult: event => {
             const { type } = event.result;
+            console.log('Form submission result:', event.result);
             if (type != 'success') return;
 
             const message = event.result.data?.form.message;
