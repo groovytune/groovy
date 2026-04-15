@@ -51,8 +51,9 @@
             {#each tracks as track (track.id)}
                 <a
                     onclick={() => toast(track.name)}
+                    oncontextmenu={e =>  e.preventDefault()}
                     animate:flip={{ duration: 100 }}
-                    class="h-fit"
+                    class="h-fit select-none"
                     href="#/"
                 >
                     <Item class="p-2 hover:bg-secondary/50 rounded-md">
