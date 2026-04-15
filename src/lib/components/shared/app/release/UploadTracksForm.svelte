@@ -1,11 +1,10 @@
 <script lang="ts">
     import type { uploadTracksSchema } from '$lib/schema/track';
     import type { SuperForm } from 'sveltekit-superforms';
-    import type { Snippet } from 'svelte';
+    import { type Snippet } from 'svelte';
     import type z from 'zod';
     import { resolve } from '$app/paths';
     import { supportedAudioMimeTypes } from '$lib/helpers/constants';
-    import { toast } from 'svelte-sonner';
 
     let {
         releaseId,
@@ -26,21 +25,15 @@
     } = $props();
 
     // svelte-ignore state_referenced_locally
-    const { form: formData, enhance, submitting, allErrors } = form;
+    const { form: formData, enhance, submitting } = form;
 
     async function analyzeFiles(files: FileList) {
+        if (!files.length) {
+            return;
+        }
+
+
         $formData.tracks = Array.from(files);
-
-        if (!$formData.tracks.length) {
-            return;
-        }
-
-        if ($allErrors.length) {
-            console.error('Validation errors:', $allErrors);
-            toast.error('Some files are invalid.');
-            return;
-        }
-
         form.submit();
     }
 </script>
