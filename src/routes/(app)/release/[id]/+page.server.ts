@@ -43,24 +43,27 @@ export async function load({ params, locals }) {
         })
         : null;
 
-    const sortTracksForm = await superValidate({
-        tracks: release.tracks.sort((a, b) => a.position - b.position)
-    }, zod4(sortTracksSchema), {
-        id: 'sort-tracks-form'
-    });
+    const sortTracksForm = await superValidate(
+        { tracks: release.tracks.sort((a, b) => a.position - b.position) },
+        zod4(sortTracksSchema),
+        { id: 'sort-tracks-form' }
+    );
 
-    const uploadTracksForm = await superValidate({
-        tracks: []
-    }, zod4(uploadTracksSchema), {
-        id: 'upload-tracks-form'
-    });
+    const uploadTracksForm = await superValidate(
+        { tracks: [] },
+        zod4(uploadTracksSchema),
+        { id: 'upload-tracks-form' }
+    );
 
     return { release, sortTracksForm, uploadTracksForm };
 }
 
 export const actions = {
     upload: async ({ request, locals, params }) => {
-        const form = await superValidate(request, zod4(uploadTracksSchema));
+        const form = await superValidate(
+            request,
+            zod4(uploadTracksSchema)
+        );
 
         if (!form.valid) {
             return fail(400, { form, text: 'Please fix the errors below and try again.' });
@@ -166,34 +169,34 @@ export const actions = {
                 releaseId: release.id
             }));
 
-        const created = await prisma.track.createManyAndReturn({
-            data
-        }).catch(async err => {
-            await Promise.all(
-                uploaded.map(async t => {
-                    if (t.file) {
-                        await Appwrite.storage
-                            .deleteFile({
-                                fileId: t.file.$id,
-                                bucketId: t.file.bucketId
-                            })
-                            .catch(() => null);
-                    }
+        const created = await prisma.track
+            .createManyAndReturn({ data })
+            .catch(async err => {
+                await Promise.all(
+                    uploaded.map(async t => {
+                        if (t.file) {
+                            await Appwrite.storage
+                                .deleteFile({
+                                    fileId: t.file.$id,
+                                    bucketId: t.file.bucketId
+                                })
+                                .catch(() => null);
+                        }
 
-                    if (t.cover) {
-                        await Appwrite.storage
-                            .deleteFile({
-                                fileId: t.cover.$id,
-                                bucketId: t.cover.bucketId
-                            })
-                            .catch(() => null);
-                    }
-                })
-            );
+                        if (t.cover) {
+                            await Appwrite.storage
+                                .deleteFile({
+                                    fileId: t.cover.$id,
+                                    bucketId: t.cover.bucketId
+                                })
+                                .catch(() => null);
+                        }
+                    })
+                );
 
-            console.error('Error creating tracks:', err);
-            throw err;
-        });
+                console.error('Error creating tracks:', err);
+                throw err;
+            });
 
         return message(form, {
             text: `Successfully uploaded ${created.length} track${created.length > 1 ? 's' : ''}`,
@@ -202,7 +205,10 @@ export const actions = {
         }, { removeFiles: true })
     },
     sort: async ({ request, locals, params }) => {
-        const form = await superValidate(request, zod4(sortTracksSchema));
+        const form = await superValidate(
+            request,
+            zod4(sortTracksSchema)
+        );
 
         if (!form.valid) {
             return fail(400, { form });

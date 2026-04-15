@@ -16,6 +16,7 @@
 
     // svelte-ignore state_referenced_locally
     const sortTracksForm = superForm(data.sortTracksForm, {
+        id: 'sort-tracks-form',
         validators: zod4(sortTracksSchema),
         clearOnSubmit: 'errors-and-message',
         dataType: 'json',
@@ -44,6 +45,7 @@
 
     // svelte-ignore state_referenced_locally
     const trackUploadForm = superForm(data.uploadTracksForm, {
+        id: 'upload-tracks-form',
         validators: zod4(uploadTracksSchema),
         clearOnSubmit: 'errors-and-message',
         dataType: 'json',
