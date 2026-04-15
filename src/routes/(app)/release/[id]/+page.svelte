@@ -1,9 +1,9 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import { CirclePlusIcon, EllipsisIcon, LoaderIcon, PencilIcon, PlayIcon, Trash2Icon } from '@lucide/svelte';
-    import EditTracksForm from '$lib/components/shared/app/release/EditTracksForm.svelte';
+    import SortTracksForm from '$lib/components/shared/app/release/SortTracksForm.svelte';
     import AddTracksForm from '$lib/components/shared/app/release/AddTracksForm.svelte';
-    import { editTracksSchema, uploadTracksSchema } from '$lib/schema/track.js';
+    import { sortTracksSchema, uploadTracksSchema } from '$lib/schema/track.js';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { zod4 } from 'sveltekit-superforms/adapters';
@@ -14,11 +14,12 @@
  
     let { data } = $props();
 
-    const tracklistForm = superForm(data.tracksForm, {
-        validators: zod4(editTracksSchema),
+    const sortTracksForm = superForm(data.sortTracksForm, {
+        validators: zod4(sortTracksSchema),
         clearOnSubmit: 'errors-and-message',
         dataType: 'json',
         taintedMessage: true,
+        resetForm: false,
         onError: event => {
             console.error('Form submission error:', event.result);
             toast.error(event.result.error.message);
@@ -27,11 +28,19 @@
             const { type } = event.result;
             if (type != 'success') return;
 
-            toast.success(`Successfully updated track(s)`);
+            const message = event.result.data?.form.message;
+
+            toast.success(message.text ?? `Successfully updated track(s)`);
+
+            sortTracksForm.form.set({
+                tracks: message.tracks
+            }, { taint: false });
         }
     });
 
-    const trackUploadForm = superForm(data.tracksUploadForm, {
+    const { form: sortFormData } = sortTracksForm;
+
+    const trackUploadForm = superForm(data.uploadTracksForm, {
         validators: zod4(uploadTracksSchema),
         clearOnSubmit: 'errors-and-message',
         dataType: 'json',
@@ -44,7 +53,15 @@
             const { type } = event.result;
             if (type != 'success') return;
 
-            toast.success(`Successfully uploaded track(s)`);
+            const message = event.result.data?.form.message;
+
+            toast.success(message.text ?? `Successfully uploaded track(s)`);
+            sortTracksForm.form.set({
+                tracks: [...$sortFormData.tracks, ...(message.tracks || [])]
+                    .sort((a, b) => a.position - b.position)
+            }, { taint: false });
+
+            console.log('New tracks:', message.tracks);
         }
     });
 
@@ -83,7 +100,7 @@
                 <Button variant="outline" size="icon">
                     <PlayIcon/>
                 </Button>
-                <AddTracksForm form={trackUploadForm}>
+                <AddTracksForm releaseId={data.release.id} form={trackUploadForm}>
                     {#snippet children({ input, disabled, submitting })}
                         <Button
                             class="w-full"
@@ -123,5 +140,5 @@
             </div>
         </header>
     </side>
-    <EditTracksForm form={tracklistForm}/>
+    <SortTracksForm releaseId={data.release.id} form={sortTracksForm}/>
 </div>

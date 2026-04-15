@@ -5,13 +5,16 @@
     import type { SuperForm } from 'sveltekit-superforms';
     import type { Snippet } from 'svelte';
     import type z from 'zod';
+    import { resolve } from '$app/paths';
 
     let {
+        releaseId,
         form,
         input = $bindable(null),
         disabled = false,
         children
     }: {
+        releaseId: string;
         form: SuperForm<z.infer<typeof uploadTracksSchema>, unknown>;
         input?: HTMLInputElement|null;
         disabled?: boolean;
@@ -69,7 +72,7 @@
 
 <form
     use:enhance
-    action="?/upload"
+    action={resolve('/(app)/release/[id]', { id: releaseId }) + '?/upload'}
     method="POST"
     enctype="multipart/form-data"
     class="hidden"

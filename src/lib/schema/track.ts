@@ -14,10 +14,11 @@ export const newTrackSchema = z.object({
     metadata: z.any().optional()
 });
 
-export const editTracksSchema = z.object({
+export const sortTracksSchema = z.object({
     tracks: z.object({
         id: z.string(),
         name: z.string().min(1).max(255),
+        position: z.number().int(),
         cover: z.string().nullable(),
         explicit: z.boolean().default(false),
         duration: z.number().int().positive(),

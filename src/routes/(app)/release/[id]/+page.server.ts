@@ -4,7 +4,7 @@ import { Appwrite } from '$lib/server/appwrite.js';
 import { ImageFormat } from 'node-appwrite';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { editTracksSchema, uploadTracksSchema } from '$lib/schema/track.js';
+import { sortTracksSchema, uploadTracksSchema } from '$lib/schema/track.js';
 import type { Actions } from './$types.js';
 import { fail } from 'sveltekit-superforms';
 
@@ -18,7 +18,7 @@ export async function load({ params, locals }) {
     const release = await prisma.release.findUnique({
         where: {
             id,
-            userId: locals.user.id
+            userId: locals.user.id,
         },
         include: {
             tracks: true
@@ -40,19 +40,19 @@ export async function load({ params, locals }) {
         })
         : null;
 
-    const tracksForm = await superValidate({
-        tracks: release.tracks
-    }, zod4(editTracksSchema), {
-        id: 'tracklist-form'
+    const sortTracksForm = await superValidate({
+        tracks: release.tracks.sort((a, b) => a.position - b.position)
+    }, zod4(sortTracksSchema), {
+        id: 'sort-tracks-form'
     });
 
-    const tracksUploadForm = await superValidate({
+    const uploadTracksForm = await superValidate({
         tracks: []
     }, zod4(uploadTracksSchema), {
-        id: 'tracks-upload-form'
+        id: 'upload-tracks-form'
     });
 
-    return { release, tracksForm, tracksUploadForm };
+    return { release, sortTracksForm, uploadTracksForm };
 }
 
 export const actions = {
@@ -103,18 +103,21 @@ export const actions = {
                 })
         );
 
+        const data = uploaded
+            .filter(t => t.file)
+            .map(t => ({
+                name: t.track.name,
+                position: 0,
+                cover: t.cover?.$id,
+                file: t.file!.$id,
+                explicit: t.track.explicit,
+                duration: t.track.duration,
+                metadata: t.track.metadata,
+                releaseId: release.id
+            }));
+
         const tracks = await prisma.track.createManyAndReturn({
-            data: uploaded
-                .filter(t => t.file)
-                .map(t => ({
-                    name: t.track.name,
-                    cover: t.cover?.$id,
-                    file: t.file!.$id,
-                    explicit: t.track.explicit,
-                    duration: t.track.duration,
-                    metadata: t.track.metadata,
-                    releaseId: release.id
-                }))
+            data
         }).catch(async err => {
             await Promise.all(
                 uploaded.map(async t => {
@@ -143,8 +146,39 @@ export const actions = {
         });
 
         return message(form, {
-            text: `Successfully uploaded ${tracks.length} track(s)`,
+            text: `Successfully uploaded ${tracks.length} track${tracks.length > 1 ? 's' : ''}`,
             tracks
         }, { removeFiles: true })
+    },
+    sort: async ({ request, locals, params }) => {
+        const form = await superValidate(request, zod4(sortTracksSchema));
+
+        if (!form.valid) {
+            return fail(400, { form });
+        }
+
+        if (!locals.user) {
+            throw redirect(302, '/login');
+        }
+
+        const tracks = await prisma.$transaction(
+            form.data.tracks
+                .map(track => prisma.track.update({
+                    where: {
+                        release: {
+                            id: params.id,
+                            userId: locals.user!.id
+                        },
+                        id: track.id
+                    },
+                    data: {
+                        position: track.position
+                    }
+                }))
+        );
+        return message(form, {
+            text: `Successfully updated order of ${tracks.length} track${tracks.length > 1 ? 's' : ''}`,
+            tracks
+        });
     }
 } satisfies Actions;
