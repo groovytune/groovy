@@ -63,7 +63,7 @@ export const actions = {
         const form = await superValidate(request, zod4(uploadTracksSchema));
 
         if (!form.valid) {
-            return fail(400, { form });
+            return fail(400, { form, text: 'Please fix the errors below and try again.' });
         }
 
         if (!locals.user) {
@@ -81,7 +81,7 @@ export const actions = {
         });
 
         if (!release) {
-            throw error(404, 'Release not found');
+            throw fail(404, { form, text: 'Release not found.' });
         }
 
         const invalid: { file: File; reason?: string; }[] = [];
@@ -227,6 +227,7 @@ export const actions = {
                     }
                 }))
         );
+
         return message(form, {
             text: `Successfully updated order of ${tracks.length} track${tracks.length > 1 ? 's' : ''}`,
             tracks

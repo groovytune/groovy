@@ -32,8 +32,8 @@
 {#if $formData.tracks.length > 0}
     <form
         use:enhance
-        action={resolve('/(app)/release/[id]', { id: releaseId }) + '?/sort'}
         method="POST"
+        action={resolve('/(app)/release/[id]', { id: releaseId }) + '?/sort'}
         class="py-5 px-2.5 w-full pt-0 md:pt-5"
     >
         <div

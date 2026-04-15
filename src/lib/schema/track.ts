@@ -34,5 +34,6 @@ export const uploadTracksSchema = z.object({
         .instanceof(File)
         .refine(file => supportedAudioMimeTypes.includes(file.type), { message: 'File must be an audio file' })
         .array()
+        .min(1, { message: 'At least one track must be uploaded' })
         .default([])
 });
