@@ -14,6 +14,7 @@
  
     let { data } = $props();
 
+    // svelte-ignore state_referenced_locally
     const sortTracksForm = superForm(data.sortTracksForm, {
         validators: zod4(sortTracksSchema),
         clearOnSubmit: 'errors-and-message',
@@ -57,12 +58,16 @@
             const message = event.result.data?.form.message;
 
             toast.success(message.text ?? `Successfully uploaded track(s)`);
+
+            if (message.invalid?.length) {
+                const invalidFiles = message.invalid.map((i: { file: File }) => i.file.name).join(', ');
+                toast.error(`Some files were invalid: ${invalidFiles}`);
+            }
+
             sortTracksForm.form.set({
                 tracks: [...$sortFormData.tracks, ...(message.tracks || [])]
                     .sort((a, b) => a.position - b.position)
             }, { taint: false });
-
-            console.log('New tracks:', message.tracks);
         }
     });
 
@@ -102,19 +107,15 @@
                     <PlayIcon/>
                 </Button>
                 <UploadTracksForm releaseId={data.release.id} form={trackUploadForm}>
-                    {#snippet children({ input, disabled, submitting, analyzing })}
+                    {#snippet children({ input, disabled, submitting })}
                         <Button
                             class="w-full"
                             onclick={() => input?.click()}
                             disabled={disabled}
                         >
-                            {#if submitting || analyzing}
+                            {#if submitting}
                                 <LoaderIcon class="animate-spin"/>
-                                {#if analyzing}
-                                    Analyzing...
-                                {:else}
                                     Uploading...
-                                {/if}
                             {:else}
                                 <CirclePlusIcon/>
                                 Add Tracks

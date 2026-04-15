@@ -30,7 +30,9 @@ export const sortTracksSchema = z.object({
 });
 
 export const uploadTracksSchema = z.object({
-    tracks: newTrackSchema
+    tracks: z
+        .instanceof(File)
+        .refine(file => supportedAudioMimeTypes.includes(file.type), { message: 'File must be an audio file' })
         .array()
         .default([])
 });

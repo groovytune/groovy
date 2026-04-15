@@ -4,9 +4,12 @@ import { Appwrite } from '$lib/server/appwrite.js';
 import { ImageFormat } from 'node-appwrite';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { sortTracksSchema, uploadTracksSchema } from '$lib/schema/track.js';
+import { sortTracksSchema, uploadTracksSchema, type newTrackSchema } from '$lib/schema/track.js';
 import type { Actions } from './$types.js';
 import { fail } from 'sveltekit-superforms';
+import { supportedAudioMimeTypes } from '../../../../lib/helpers/constants.js';
+import { extractFileMetadata } from '../../../../lib/helpers/metadata.js';
+import type z from 'zod';
 
 export async function load({ params, locals }) {
     const { id } = params;
@@ -81,22 +84,69 @@ export const actions = {
             throw error(404, 'Release not found');
         }
 
-        const uploaded = await Promise.all(
+        const invalid: { file: File; reason?: string; }[] = [];
+        const tracks: (z.infer<typeof newTrackSchema>|null)[] = await Promise.all(
             form.data.tracks
-                .map(async t => {
+                .map(async file => {
+                    if (!supportedAudioMimeTypes.includes(file.type)) {
+                        invalid.push({ file, reason: 'Unsupported audio format' });
+                        return null;
+                    }
+
+                    const metadata = await extractFileMetadata(file)
+                        .catch(err => {
+                            invalid.push({ file, reason: String(err) });
+                            console.error(`Error extracting metadata from file ${file.name}:`, err);
+                            return null;
+                        });
+
+                    if (!metadata) {
+                        return null;
+                    }
+
+                    const cover: File|null = metadata.cover
+                        ? new File(
+                            [
+                                metadata.cover.data instanceof Uint8Array
+                                    ? metadata.cover.data.buffer instanceof ArrayBuffer
+                                        ? new Uint8Array(metadata.cover.data).buffer
+                                        : metadata.cover.data
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    : metadata.cover.data as any
+                            ],
+                            `cover.${metadata.cover.format.split('/')[1]?.toLowerCase() || 'jpg'}`,
+                            { type: metadata.cover.format }
+                        )
+                        : null;
+
+                    return {
+                        name: metadata.common.title || file.name,
+                        cover,
+                        file,
+                        explicit: false,
+                        duration: metadata.duration,
+                        metadata
+                    };
+                })
+        );
+
+        const uploaded = await Promise.all(
+            tracks
+                .filter(track => track !== null)
+                .map(async track => {
                     const file = await Appwrite
-                        .uploadFile(t.file, 'audio')
+                        .uploadFile(track.file, 'audio')
                         .catch(() => null);
 
-                    const cover = t.cover
+                    const cover = track.cover
                         ? await Appwrite
-                            .uploadFile(t.cover, 'image')
+                            .uploadFile(track.cover, 'image')
                             .catch(() => null)
                         : null;
 
                     return { 
-                        id: t.file.name,
-                        track: t,
+                        id: track.file.name,
+                        track: track,
                         cover,
                         file
                     };
@@ -116,7 +166,7 @@ export const actions = {
                 releaseId: release.id
             }));
 
-        const tracks = await prisma.track.createManyAndReturn({
+        const created = await prisma.track.createManyAndReturn({
             data
         }).catch(async err => {
             await Promise.all(
@@ -146,8 +196,9 @@ export const actions = {
         });
 
         return message(form, {
-            text: `Successfully uploaded ${tracks.length} track${tracks.length > 1 ? 's' : ''}`,
-            tracks
+            text: `Successfully uploaded ${created.length} track${created.length > 1 ? 's' : ''}`,
+            tracks: created,
+            invalid
         }, { removeFiles: true })
     },
     sort: async ({ request, locals, params }) => {
