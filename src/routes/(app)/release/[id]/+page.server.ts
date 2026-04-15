@@ -15,7 +15,7 @@ export async function load({ params, locals }) {
     const { id } = params;
 
     if (!locals.user) {
-        throw redirect(302, '/login');
+        throw redirect(302, '/signin');
     }
 
     const release = await prisma.release.findUnique({
@@ -67,7 +67,7 @@ export const actions = {
         }
 
         if (!locals.user) {
-            throw redirect(302, '/login');
+            throw redirect(302, '/signin');
         }
 
         const release = await prisma.release.findUnique({
@@ -209,7 +209,7 @@ export const actions = {
         }
 
         if (!locals.user) {
-            throw redirect(302, '/login');
+            throw redirect(302, '/signin');
         }
 
         const tracks = await prisma.$transaction(
