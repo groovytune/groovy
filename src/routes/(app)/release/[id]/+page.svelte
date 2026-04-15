@@ -28,7 +28,13 @@
         },
         onResult: event => {
             const { type } = event.result;
-            console.log('Form submission result:', event.result);
+
+            if (type === 'failure') {
+                console.error('Sort form submission failed:', event.result);
+                toast.error(event.result.data?.text ?? 'Failed to update track order.');
+                return;
+            }
+
             if (type != 'success') return;
 
             const message = event.result.data?.form.message;
@@ -56,7 +62,13 @@
         },
         onResult: event => {
             const { type } = event.result;
-            console.log('Form submission result:', event.result);
+
+            if (type === 'failure') {
+                console.error('Upload form submission failed:', event.result);
+                toast.error(event.result.data?.text ?? 'Failed to upload tracks.');
+                return;
+            }
+
             if (type != 'success') return;
 
             const message = event.result.data?.form.message;
