@@ -1,4 +1,5 @@
 <script lang="ts">
+    import ParseAudioMetadata from '$lib/helpers/workers/ParseAudioMetadata.ts?worker';
     import type { newTrackSchema, uploadTracksSchema } from '$lib/schema/track';
     import { extractFileMetadata } from '$lib/helpers/metadata';
     import type { SuperForm } from 'sveltekit-superforms';
@@ -30,6 +31,8 @@
     const { form: formData, enhance, submitting, allErrors } = form;
 
     async function analyzeFiles(files: FileList) {
+        const worker = new ParseAudioMetadata();
+
         const tracks: (z.infer<typeof newTrackSchema>|null)[] = await Promise.all(
             Array
                 .from(files)
@@ -38,11 +41,12 @@
                         return null;
                     }
 
-                    const metadata = await extractFileMetadata(file).catch(err => {
-                        console.error(`Error extracting metadata for file ${file.name}:`, err);
-                        toast.error(`Failed to extract metadata for file: ${file.name}`);
-                        return null;
-                    });
+                    const metadata = await extractFileMetadata(file, worker)
+                        .catch(err => {
+                            console.error(`Error extracting metadata for file ${file.name}:`, err);
+                            toast.error(`Failed to extract metadata for file: ${file.name}`);
+                            return null;
+                        });
 
                     if (!metadata) {
                         return null;
@@ -73,6 +77,8 @@
                     };
                 })
         );
+
+        worker.terminate();
 
         $formData.tracks = tracks.filter(t => !!t);
 
