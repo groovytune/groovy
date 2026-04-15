@@ -34,7 +34,7 @@
         use:enhance
         action={resolve('/(app)/release/[id]', { id: releaseId }) + '?/sort'}
         method="POST"
-        class="p-5 w-full pt-0 md:pt-5"
+        class="py-5 px-2.5 w-full pt-0 md:pt-5"
     >
         <div
             use:dndzone={{
