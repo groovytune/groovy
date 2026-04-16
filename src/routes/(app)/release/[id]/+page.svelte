@@ -63,7 +63,7 @@
     // svelte-ignore state_referenced_locally
     const trackUploadForm = superForm(data.uploadTracksForm, {
         validators: zod4Client(uploadTracksSchema),
-        dataType: 'json',
+        dataType: 'form',
         invalidateAll: false,
         resetForm: false,
         onError: event => {

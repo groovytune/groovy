@@ -61,8 +61,9 @@ export async function load({ params, locals }) {
 
 export const actions = {
     upload: async ({ request, locals, params }) => {
+        const formData = await request.formData();
         const form = await superValidate(
-            request,
+            formData,
             zod4(uploadTracksSchema)
         );
 
