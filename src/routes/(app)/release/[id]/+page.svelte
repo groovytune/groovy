@@ -6,7 +6,7 @@
     import { sortTracksSchema, uploadTracksSchema } from '$lib/schema/track.js';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
-    import { zod4 } from 'sveltekit-superforms/adapters';
+    import { zod4Client } from 'sveltekit-superforms/adapters';
     import { Button } from '$lib/components/ui/button';
     import { superForm } from 'sveltekit-superforms';
     import { auth } from '$lib/client/auth.js';
@@ -19,7 +19,7 @@
 
     // svelte-ignore state_referenced_locally
     const sortTracksForm = superForm(data.sortTracksForm, {
-        validators: zod4(sortTracksSchema),
+        validators: zod4Client(sortTracksSchema),
         dataType: 'json',
         taintedMessage: true,
         invalidateAll: false,
@@ -62,7 +62,7 @@
 
     // svelte-ignore state_referenced_locally
     const trackUploadForm = superForm(data.uploadTracksForm, {
-        validators: zod4(uploadTracksSchema),
+        validators: zod4Client(uploadTracksSchema),
         dataType: 'json',
         invalidateAll: false,
         resetForm: false,

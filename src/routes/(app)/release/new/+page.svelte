@@ -1,6 +1,6 @@
 <script lang="ts">
     import { fileProxy, superForm } from 'sveltekit-superforms';
-    import { zod4 } from 'sveltekit-superforms/adapters';
+    import { zod4Client } from 'sveltekit-superforms/adapters';
     import { newReleaseSchema } from '$lib/schema/release.js';
     import { FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form/index.js';
     import { Input } from '$lib/components/ui/input/index.js';
@@ -21,7 +21,7 @@
 
     // svelte-ignore state_referenced_locally
     const form = superForm(data.form, {
-        validators: zod4(newReleaseSchema),
+        validators: zod4Client(newReleaseSchema),
         clearOnSubmit: 'errors-and-message',
         dataType: 'json',
         autoFocusOnError: true,
