@@ -13,7 +13,7 @@
     import { toast } from 'svelte-sonner';
     import type z from 'zod';
     import { resolve } from '$app/paths';
-    import type { Track } from '../../../../server/prisma/browser';
+    import type { Track } from '$lib/server/prisma/browser';
 
     let {
         releaseId,

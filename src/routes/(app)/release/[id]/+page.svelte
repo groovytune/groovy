@@ -11,7 +11,7 @@
     import { superForm } from 'sveltekit-superforms';
     import { auth } from '$lib/client/auth.js';
     import { toast } from 'svelte-sonner';
-    import type { Track } from '../../../../lib/server/prisma/browser.js';
+    import type { Track } from '$lib/server/prisma/browser.js';
  
     let { data } = $props();
 
@@ -45,7 +45,8 @@
             const message = event.result.data?.form.message;
             const newTracks = message.tracks as { id: string; position: number; }[];
 
-            toast.success(message.message ?? `Successfully updated track(s)`);
+            console.log('Updated track order:', newTracks);
+            toast.success(message.message ?? `Updated track order for ${newTracks.length} track${newTracks.length > 1 ? 's' : ''}`);
 
             sortTracksForm.form.update(
                 f => {
@@ -85,8 +86,6 @@
 
             const message = event.result.data?.form.message;
 
-            toast.success(message.message ?? `Successfully uploaded track(s)`);
-
             if (message.invalid?.length) {
                 const invalidFiles = message.invalid.map((i: { file: File }) => i.file.name).join(', ');
                 toast.error(`Some files were invalid: ${invalidFiles}`);
@@ -96,6 +95,8 @@
             const newTracks = (message.tracks ?? []) as Track[];
 
             tracks.push(...newTracks);
+            console.log('Uploaded tracks:', newTracks);
+            toast.success(message.message ?? `Uploaded ${newTracks.length} track${newTracks.length > 1 ? 's' : ''}.`);
 
             sortTracksForm.form.update(
                 f => {
