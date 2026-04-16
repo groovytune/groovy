@@ -133,8 +133,7 @@ export const actions = {
                         metadata: getPartialMetadata(metadata)
                     };
 
-                    const data = newTrackSchema
-                        .safeParse(raw);
+                    const data = newTrackSchema.safeParse(raw);
 
                     if (!data.success) {
                         invalid.push({ file, reason: data.error.message });
