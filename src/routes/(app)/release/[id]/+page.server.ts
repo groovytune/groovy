@@ -4,7 +4,7 @@ import { Appwrite } from '$lib/server/appwrite.js';
 import { ImageFormat } from 'node-appwrite';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { sortTracksSchema, uploadTracksSchema, type newTrackSchema } from '$lib/schema/track.js';
+import { newTrackSchema, sortTracksSchema, uploadTracksSchema } from '$lib/schema/track.js';
 import type { Actions } from './$types.js';
 import { fail } from 'sveltekit-superforms';
 import { supportedAudioMimeTypes } from '../../../../lib/helpers/constants.js';
@@ -124,14 +124,15 @@ export const actions = {
                         )
                         : null;
 
-                    return {
-                        name: metadata.common.title || file.name,
-                        cover,
-                        file,
-                        explicit: false,
-                        duration: metadata.duration,
-                        metadata: getPartialMetadata(metadata)
-                    };
+                    return newTrackSchema
+                        .safeParse({
+                            name: metadata.common.title || file.name,
+                            cover,
+                            file,
+                            explicit: false,
+                            duration: metadata.duration,
+                            metadata: getPartialMetadata(metadata)
+                        }).data ?? null;
                 })
         );
 
