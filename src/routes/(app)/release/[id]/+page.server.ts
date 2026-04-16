@@ -48,10 +48,7 @@ export async function load({ params, locals }) {
         zod4(sortTracksSchema)
     );
 
-    const uploadTracksForm = await superValidate(
-        { files: [] },
-        zod4(uploadTracksSchema)
-    );
+    const uploadTracksForm = await superValidate(zod4(uploadTracksSchema));
 
     return {
         release,
@@ -90,9 +87,15 @@ export const actions = {
             throw fail(404, { form, message: 'Release not found.' });
         }
 
+        const files: File[] = Array.isArray(form.data.files)
+            ? form.data.files
+            : Array.from(form.data.files as FileList);
+
+        console.log('Processing uploaded files:', files);
+
         const invalid: { file: File; reason?: string; }[] = [];
         const tracks: (z.infer<typeof newTrackSchema>|null)[] = await Promise.all(
-            form.data.files
+            files
                 .map(async file => {
                     if (!supportedAudioMimeTypes.includes(file.type)) {
                         invalid.push({ file, reason: 'Unsupported audio format' });

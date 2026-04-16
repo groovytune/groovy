@@ -28,11 +28,7 @@ export const sortTracksSchema = z.object({
 
 export const uploadTracksSchema = z.object({
     files: z
-        .instanceof(File)
-        .refine(file => supportedAudioMimeTypes.includes(file.type), { message: 'File must be an audio file' })
-        .refine(file => file.size <= 100 * 1024 * 1024, { message: 'File size must be less than 100MB' })
-        .array()
-        .min(1, { message: 'At least one track must be uploaded' })
-        .max(5, { message: 'You can upload a maximum of 5 tracks at once' })
-        .default([])
+        .unknown()
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .refine((files: any) => !('length' in files) || files.length > 0, { message: 'At least one file must be uploaded' })
 });

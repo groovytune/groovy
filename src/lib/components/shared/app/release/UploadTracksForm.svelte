@@ -38,7 +38,7 @@
             return;
         }
 
-        $formData.files = Array.from(files);
+        $formData.files = files;
         form.submit();
     }
 </script>
