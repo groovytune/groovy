@@ -33,5 +33,6 @@ export const uploadTracksSchema = z.object({
         .refine(file => file.size <= 100 * 1024 * 1024, { message: 'File size must be less than 100MB' })
         .array()
         .min(1, { message: 'At least one track must be uploaded' })
+        .max(5, { message: 'You can upload a maximum of 5 tracks at once' })
         .default([])
 });

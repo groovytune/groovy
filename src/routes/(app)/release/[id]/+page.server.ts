@@ -7,8 +7,8 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { newTrackSchema, sortTracksSchema, uploadTracksSchema } from '$lib/schema/track.js';
 import type { Actions } from './$types.js';
 import { fail } from 'sveltekit-superforms';
-import { supportedAudioMimeTypes } from '../../../../lib/helpers/constants.js';
-import { extractFileMetadata, getPartialMetadata } from '../../../../lib/helpers/metadata.js';
+import { supportedAudioMimeTypes } from '$lib/helpers/constants.js';
+import { extractFileMetadata, getPartialMetadata } from '$lib/helpers/metadata.js';
 import type z from 'zod';
 
 export async function load({ params, locals }) {

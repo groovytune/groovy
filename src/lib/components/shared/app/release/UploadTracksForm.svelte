@@ -5,6 +5,7 @@
     import type z from 'zod';
     import { resolve } from '$app/paths';
     import { supportedAudioMimeTypes } from '$lib/helpers/constants';
+    import { toast } from 'svelte-sonner';
 
     let {
         releaseId,
@@ -32,8 +33,16 @@
             return;
         }
 
+        if (files.length > 5) {
+            toast.error('You can upload a maximum of 5 tracks at once.');
+            return;
+        }
 
-        $formData.files = Array.from(files);
+        formData.update(f => {
+            f.files = Array.from(files);
+            return f;
+        });
+
         form.submit();
     }
 </script>
