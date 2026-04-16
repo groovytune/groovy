@@ -80,8 +80,8 @@ export const actions = {
                 id: params.id,
                 userId: locals.user.id
             },
-            include: {
-                tracks: true
+            select: {
+                id: true
             }
         });
 
