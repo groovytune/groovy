@@ -124,15 +124,25 @@ export const actions = {
                         )
                         : null;
 
-                    return newTrackSchema
-                        .safeParse({
-                            name: metadata.common.title || file.name,
-                            cover,
-                            file,
-                            explicit: false,
-                            duration: metadata.duration,
-                            metadata: getPartialMetadata(metadata)
-                        }).data ?? null;
+                    const raw = {
+                        name: metadata.common.title || file.name,
+                        cover,
+                        file,
+                        explicit: false,
+                        duration: metadata.duration || null,
+                        metadata: getPartialMetadata(metadata)
+                    };
+
+                    const data = newTrackSchema
+                        .safeParse(raw);
+
+                    if (!data.success) {
+                        invalid.push({ file, reason: data.error.message });
+                        console.error(`Metadata validation failed for file ${file.name}:`, data.error, raw);
+                        return null;
+                    }
+
+                    return data.success ? data.data : null;
                 })
         );
 

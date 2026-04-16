@@ -44,7 +44,7 @@ export async function extractFileMetadata(file: File): Promise<FileMetadata> {
     return {
         title: common.title || file.name || null,
         cover: selectCover(common.picture),
-        duration: format.duration || null,
+        duration: format.duration ? (Math.round(format.duration) || null) : null,
         common,
         format,
     };

@@ -93,10 +93,19 @@
 
 
             const newTracks = (message.tracks ?? []) as Track[];
+            const invalid = message.invalid as { file: File; reason: string }[];
+
+            console.log('Uploaded tracks:', newTracks);
+            console.log('Invalid files:', invalid);
+
+            toast.success(message.message ?? `Uploaded ${newTracks.length} track${newTracks.length > 1 ? 's' : ''}.`);
+
+            if (invalid?.length) {
+                const invalidFiles = invalid.map(i => i.file.name).join(', ');
+                toast.error(`Some files were invalid: ${invalidFiles}`);
+            }
 
             tracks.push(...newTracks);
-            console.log('Uploaded tracks:', newTracks);
-            toast.success(message.message ?? `Uploaded ${newTracks.length} track${newTracks.length > 1 ? 's' : ''}.`);
 
             sortTracksForm.form.update(
                 f => {

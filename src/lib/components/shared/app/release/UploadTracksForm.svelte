@@ -38,11 +38,7 @@
             return;
         }
 
-        formData.update(f => {
-            f.files = Array.from(files);
-            return f;
-        });
-
+        $formData.files = Array.from(files);
         form.submit();
     }
 </script>
