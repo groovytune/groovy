@@ -32,5 +32,5 @@ export const uploadTracksSchema = z.object({
     files: z
         .unknown()
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .refine((files: any) => !('length' in files) || files.length > 0, { message: 'At least one file must be uploaded' })
+        .refine((files: any) => files && !('length' in files) || files.length > 0, { message: 'At least one file must be uploaded' })
 });
