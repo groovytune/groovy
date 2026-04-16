@@ -68,6 +68,7 @@ export const actions = {
         );
 
         if (!form.valid) {
+            console.log('Uploaded files validation failed:', form.data.files, form.errors.files);
             return fail(400, { form, message: 'Uploaded files are invalid.' });
         }
 
