@@ -4,10 +4,9 @@ import { Appwrite } from '$lib/server/appwrite.js';
 import { ImageFormat } from 'node-appwrite';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { newTrackSchema, sortTracksSchema, uploadTracksSchema } from '$lib/schema/track.js';
+import { newTrackSchema, sortTracksSchema, trackFileSchema, uploadTracksSchema } from '$lib/schema/track.js';
 import type { Actions } from './$types.js';
 import { fail } from 'sveltekit-superforms';
-import { supportedAudioMimeTypes } from '$lib/helpers/constants.js';
 import { extractFileMetadata, getPartialMetadata } from '$lib/helpers/metadata.js';
 import type z from 'zod';
 
@@ -91,13 +90,11 @@ export const actions = {
             ? form.data.files
             : Array.from(form.data.files as FileList);
 
-        console.log('Processing uploaded files:', files);
-
         const invalid: { file: File; reason?: string; }[] = [];
         const tracks: (z.infer<typeof newTrackSchema>|null)[] = await Promise.all(
             files
                 .map(async file => {
-                    if (!supportedAudioMimeTypes.includes(file.type)) {
+                    if (!trackFileSchema.safeParse(file).success) {
                         invalid.push({ file, reason: 'Unsupported audio format' });
                         return null;
                     }

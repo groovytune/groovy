@@ -1,6 +1,11 @@
 import z from 'zod';
 import { supportedAudioMimeTypes } from '../helpers/constants';
 
+export const trackFileSchema = z
+    .instanceof(File)
+    .refine(file => supportedAudioMimeTypes.includes(file.type), { message: 'File must be an audio file' })
+    .refine(file => file.size <= 100 * 1024 * 1024, { message: 'File size must be less than 100MB' })
+
 export const newTrackSchema = z.object({
     name: z.string().min(1).max(255),
     cover: z
@@ -8,10 +13,7 @@ export const newTrackSchema = z.object({
         .refine(file => file.type.startsWith('image/'), { message: 'Cover must be an image file' })
         .refine(file => file.size <= 10 * 1024 * 1024, { message: 'Cover image size must be less than 10MB' })
         .nullable(),
-    file: z
-        .instanceof(File)
-        .refine(file => supportedAudioMimeTypes.includes(file.type), { message: 'File must be an audio file' })
-        .refine(file => file.size <= 100 * 1024 * 1024, { message: 'File size must be less than 100MB' }),
+    file: trackFileSchema,
     explicit: z.boolean().default(false),
     duration: z.number().int().positive().nullable(),
     metadata: z.any().optional()
