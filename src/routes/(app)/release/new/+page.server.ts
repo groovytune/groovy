@@ -30,7 +30,7 @@ export const actions = {
         });
 
         if (!form.valid) {
-            return fail(400, { form });
+            return fail(400, { form, message: 'Please correct the errors in the form' });
         }
 
         const cover = form.data.cover

@@ -19,7 +19,6 @@
 
     // svelte-ignore state_referenced_locally
     const sortTracksForm = superForm(data.sortTracksForm, {
-        id: 'sort-tracks-form',
         validators: zod4(sortTracksSchema),
         dataType: 'json',
         taintedMessage: true,
@@ -37,7 +36,7 @@
 
             if (type === 'failure') {
                 console.error('Sort form submission failed:', event.result);
-                toast.error(event.result.data?.text ?? 'Failed to update track order.');
+                toast.error(event.result.data?.message ?? 'Failed to update track order.');
                 return;
             }
 
@@ -46,7 +45,7 @@
             const message = event.result.data?.form.message;
             const newTracks = message.tracks as { id: string; position: number; }[];
 
-            toast.success(message.text ?? `Successfully updated track(s)`);
+            toast.success(message.message ?? `Successfully updated track(s)`);
 
             sortTracksForm.form.update(
                 f => {
@@ -62,7 +61,6 @@
 
     // svelte-ignore state_referenced_locally
     const trackUploadForm = superForm(data.uploadTracksForm, {
-        id: 'upload-tracks-form',
         validators: zod4(uploadTracksSchema),
         dataType: 'json',
         taintedMessage: true,
@@ -79,7 +77,7 @@
 
             if (type === 'failure') {
                 console.error('Upload form submission failed:', event.result);
-                toast.error(event.result.data?.text ?? 'Failed to upload tracks.');
+                toast.error(event.result.data?.message ?? 'Failed to upload tracks.');
                 return;
             }
 
@@ -87,7 +85,7 @@
 
             const message = event.result.data?.form.message;
 
-            toast.success(message.text ?? `Successfully uploaded track(s)`);
+            toast.success(message.message ?? `Successfully uploaded track(s)`);
 
             if (message.invalid?.length) {
                 const invalidFiles = message.invalid.map((i: { file: File }) => i.file.name).join(', ');

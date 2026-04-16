@@ -30,6 +30,20 @@
         onError: event => {
             console.error('Form submission error:', event.result);
             toast.error(event.result.error.message);
+        },
+        onResult: event => {
+            const { type } = event.result;
+
+            if (type === 'failure') {
+                console.error('Form submission failed:', event.result);
+                toast.error(event.result.data?.message ?? 'Failed to create release.');
+                return;
+            }
+
+            if (type != 'success') return;
+
+            const message = event.result.data?.form.message;
+            toast.success(message ?? 'Release created successfully!');
         }
     });
 

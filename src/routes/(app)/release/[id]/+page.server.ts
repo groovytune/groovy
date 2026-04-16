@@ -45,14 +45,12 @@ export async function load({ params, locals }) {
 
     const sortTracksForm = await superValidate(
         { tracks: release.tracks.map(t => ({ id: t.id, position: t.position })) },
-        zod4(sortTracksSchema),
-        { id: 'sort-tracks-form' }
+        zod4(sortTracksSchema)
     );
 
     const uploadTracksForm = await superValidate(
         { files: [] },
-        zod4(uploadTracksSchema),
-        { id: 'upload-tracks-form' }
+        zod4(uploadTracksSchema)
     );
 
     return {
@@ -70,7 +68,7 @@ export const actions = {
         );
 
         if (!form.valid) {
-            return fail(400, { form, text: 'Uploaded files are invalid.' });
+            return fail(400, { form, message: 'Uploaded files are invalid.' });
         }
 
         if (!locals.user) {
@@ -88,7 +86,7 @@ export const actions = {
         });
 
         if (!release) {
-            throw fail(404, { form, text: 'Release not found.' });
+            throw fail(404, { form, message: 'Release not found.' });
         }
 
         const invalid: { file: File; reason?: string; }[] = [];
@@ -203,7 +201,7 @@ export const actions = {
             });
 
         return message(form, {
-            text: `Successfully uploaded ${created.length} track${created.length > 1 ? 's' : ''}`,
+            message: `Successfully uploaded ${created.length} track${created.length > 1 ? 's' : ''}`,
             tracks: created,
             invalid
         }, { removeFiles: true })
@@ -215,7 +213,7 @@ export const actions = {
         );
 
         if (!form.valid) {
-            return fail(400, { form, text: 'Tracks data are invalid.' });
+            return fail(400, { form, message: 'Tracks data are invalid.' });
         }
 
         if (!locals.user) {
@@ -243,7 +241,7 @@ export const actions = {
         );
 
         return message(form, {
-            text: `Successfully updated order of ${tracks.length} track${tracks.length > 1 ? 's' : ''}`,
+            message: `Successfully updated order of ${tracks.length} track${tracks.length > 1 ? 's' : ''}`,
             tracks
         });
     }
