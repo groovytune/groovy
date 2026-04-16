@@ -11,8 +11,11 @@
     import { superForm } from 'sveltekit-superforms';
     import { auth } from '$lib/client/auth.js';
     import { toast } from 'svelte-sonner';
+    import type { Track } from '../../../../lib/server/prisma/browser.js';
  
     let { data } = $props();
+
+    let tracks = $derived(data.release.tracks);
 
     // svelte-ignore state_referenced_locally
     const sortTracksForm = superForm(data.sortTracksForm, {
@@ -41,12 +44,13 @@
             if (type != 'success') return;
 
             const message = event.result.data?.form.message;
+            const newTracks = message.tracks as { id: string; position: number; }[];
 
             toast.success(message.text ?? `Successfully updated track(s)`);
 
             sortTracksForm.form.update(
                 f => {
-                    f.tracks = message.tracks;
+                    f.tracks = newTracks.sort((a, b) => a.position - b.position);
                     return f;
                 },
                 { taint: false }
@@ -68,7 +72,7 @@
             toast.error(event.result.error.message);
         },
         onSubmit: () => {
-            console.log('Uploading tracks...', $tracksUploadForm.tracks);
+            console.log('Uploading tracks...', $tracksUploadForm.files);
         },
         onResult: event => {
             const { type } = event.result;
@@ -90,11 +94,16 @@
                 toast.error(`Some files were invalid: ${invalidFiles}`);
             }
 
+
+            const newTracks = (message.tracks ?? []) as Track[];
+
+            tracks.push(...newTracks);
+
             sortTracksForm.form.update(
                 f => {
                     f.tracks = [
                         ...f.tracks,
-                        ...(message.tracks || [])
+                        ...newTracks.map(t => ({ id: t.id, position: t.position }))
                     ].sort((a, b) => a.position - b.position);
 
                     return f;
@@ -181,5 +190,5 @@
             </div>
         </header>
     </side>
-    <SortTracksForm releaseId={data.release.id} form={sortTracksForm}/>
+    <SortTracksForm {tracks} releaseId={data.release.id} form={sortTracksForm}/>
 </div>

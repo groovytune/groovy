@@ -33,7 +33,7 @@
         }
 
 
-        $formData.tracks = Array.from(files);
+        $formData.files = Array.from(files);
         form.submit();
     }
 </script>

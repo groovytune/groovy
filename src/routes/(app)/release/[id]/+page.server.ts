@@ -8,7 +8,7 @@ import { sortTracksSchema, uploadTracksSchema, type newTrackSchema } from '$lib/
 import type { Actions } from './$types.js';
 import { fail } from 'sveltekit-superforms';
 import { supportedAudioMimeTypes } from '../../../../lib/helpers/constants.js';
-import { extractFileMetadata } from '../../../../lib/helpers/metadata.js';
+import { extractFileMetadata, getPartialMetadata } from '../../../../lib/helpers/metadata.js';
 import type z from 'zod';
 
 export async function load({ params, locals }) {
@@ -44,18 +44,22 @@ export async function load({ params, locals }) {
         : null;
 
     const sortTracksForm = await superValidate(
-        { tracks: release.tracks.sort((a, b) => a.position - b.position) },
+        { tracks: release.tracks.map(t => ({ id: t.id, position: t.position })) },
         zod4(sortTracksSchema),
         { id: 'sort-tracks-form' }
     );
 
     const uploadTracksForm = await superValidate(
-        { tracks: [] },
+        { files: [] },
         zod4(uploadTracksSchema),
         { id: 'upload-tracks-form' }
     );
 
-    return { release, sortTracksForm, uploadTracksForm };
+    return {
+        release,
+        sortTracksForm,
+        uploadTracksForm
+    };
 }
 
 export const actions = {
@@ -89,7 +93,7 @@ export const actions = {
 
         const invalid: { file: File; reason?: string; }[] = [];
         const tracks: (z.infer<typeof newTrackSchema>|null)[] = await Promise.all(
-            form.data.tracks
+            form.data.files
                 .map(async file => {
                     if (!supportedAudioMimeTypes.includes(file.type)) {
                         invalid.push({ file, reason: 'Unsupported audio format' });
@@ -128,7 +132,7 @@ export const actions = {
                         file,
                         explicit: false,
                         duration: metadata.duration,
-                        metadata
+                        metadata: getPartialMetadata(metadata)
                     };
                 })
         );
@@ -230,6 +234,10 @@ export const actions = {
                     },
                     data: {
                         position: track.position
+                    },
+                    select: {
+                        id: true,
+                        position: true
                     }
                 }))
         );

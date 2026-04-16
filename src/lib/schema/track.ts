@@ -18,19 +18,14 @@ export const newTrackSchema = z.object({
 export const sortTracksSchema = z.object({
     tracks: z.object({
         id: z.string(),
-        name: z.string().min(1).max(255),
-        position: z.number().int(),
-        cover: z.string().nullable(),
-        explicit: z.boolean().default(false),
-        duration: z.number().int().positive().nullable(),
-        metadata: z.any().optional()
+        position: z.number().int()
     })
         .array()
         .default([])
 });
 
 export const uploadTracksSchema = z.object({
-    tracks: z
+    files: z
         .instanceof(File)
         .refine(file => supportedAudioMimeTypes.includes(file.type), { message: 'File must be an audio file' })
         .array()

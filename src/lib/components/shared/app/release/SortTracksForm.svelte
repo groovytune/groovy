@@ -13,12 +13,15 @@
     import { toast } from 'svelte-sonner';
     import type z from 'zod';
     import { resolve } from '$app/paths';
+    import type { Track } from '../../../../server/prisma/browser';
 
     let {
         releaseId,
+        tracks,
         form
     }: {
         releaseId: string;
+        tracks: Track[];
         form: SuperForm<z.infer<typeof sortTracksSchema>, unknown>;
     } = $props();
 
@@ -26,7 +29,7 @@
     const { form: formData, enhance, submitting, tainted } = form;
     const session = auth.useSession();
 
-    let tracks = $derived($formData.tracks.toSorted((a, b) => a.position - b.position));
+    let dndTracks = $derived($formData.tracks.toSorted((a, b) => a.position - b.position));
 </script>
 
 {#if $formData.tracks.length > 0}
@@ -39,18 +42,19 @@
         <div
             use:dndzone={{
                 dragDisabled: $submitting || $formData.tracks.length < 2,
-                items: tracks,
+                items: dndTracks,
                 flipDurationMs: 100,
                 delayTouchStart: 500,
                 dropTargetStyle: {},
             }}
-            onconsider={e => tracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }))}
-            onfinalize={e => tracks = $formData.tracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }))}
+            onconsider={e => dndTracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }))}
+            onfinalize={e => dndTracks = $formData.tracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }))}
             class="grid gap-2"
         >
-            {#each tracks as track (track.id)}
+            {#each dndTracks as dndTrack (dndTrack.id)}
+                {@const track = tracks.find(t => t.id == dndTrack.id)}
                 <a
-                    onclick={() => toast(track.name)}
+                    onclick={() => track && toast(track.name)}
                     oncontextmenu={e =>  e.preventDefault()}
                     animate:flip={{ duration: 100 }}
                     class="h-fit select-none"
@@ -63,8 +67,8 @@
                                 style="word-wrap: break-word;"
                             >
                                 <span>
-                                    {track.name}
-                                    {#if track.explicit}
+                                    {track?.name ?? 'Unavailable Track'}
+                                    {#if track?.explicit}
                                         <ExplicitIcon class="size-4.5"/>
                                     {/if}
                                 </span>
