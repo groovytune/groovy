@@ -47,7 +47,10 @@ export async function load({ params, locals }) {
         zod4(sortTracksSchema)
     );
 
-    const uploadTracksForm = await superValidate(zod4(uploadTracksSchema));
+    const uploadTracksForm = await superValidate(
+        { files: null },
+        zod4(uploadTracksSchema)
+    );
 
     return {
         release,
@@ -86,10 +89,9 @@ export const actions = {
             throw fail(404, { form, message: 'Release not found.' });
         }
 
-        const files: File[] = Array.isArray(form.data.files)
-            ? form.data.files
-            : Array.from(form.data.files as FileList);
+        console.log('Processing uploaded files:', form);
 
+        const files: File[] = form.data.files ?? [];
         const invalid: { file: File; reason?: string; }[] = [];
         const tracks: (z.infer<typeof newTrackSchema>|null)[] = await Promise.all(
             files

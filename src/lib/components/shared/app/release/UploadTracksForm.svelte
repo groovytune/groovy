@@ -1,11 +1,10 @@
 <script lang="ts">
     import type { uploadTracksSchema } from '$lib/schema/track';
-    import type { SuperForm } from 'sveltekit-superforms';
-    import { type Snippet } from 'svelte';
+    import { filesProxy, type SuperForm } from 'sveltekit-superforms';
+    import { tick, type Snippet } from 'svelte';
     import type z from 'zod';
     import { resolve } from '$app/paths';
     import { supportedAudioMimeTypes } from '$lib/helpers/constants';
-    import { toast } from 'svelte-sonner';
 
     let {
         releaseId,
@@ -28,19 +27,9 @@
     // svelte-ignore state_referenced_locally
     const { form: formData, enhance, submitting } = form;
 
-    async function analyzeFiles(files: FileList) {
-        if (!files.length) {
-            return;
-        }
-
-        if (files.length > 5) {
-            toast.error('You can upload a maximum of 5 tracks at once.');
-            return;
-        }
-
-        $formData.files = files;
-        form.submit();
-    }
+    const formFiles = filesProxy(formData, 'files', {
+        empty: 'null'
+    });
 </script>
 
 <form
@@ -55,8 +44,9 @@
         type="file"
         accept={supportedAudioMimeTypes.join(',')}
         bind:this={input}
+        bind:files={$formFiles}
         disabled={disabled || $submitting}
-        onchange={e => e.currentTarget.files?.length ? analyzeFiles(e.currentTarget.files) : null}
+        onchange={() => tick().then(() => form.submit())}
     />
 </form>
 

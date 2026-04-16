@@ -63,7 +63,7 @@
     // svelte-ignore state_referenced_locally
     const trackUploadForm = superForm(data.uploadTracksForm, {
         validators: zod4(uploadTracksSchema),
-        dataType: 'form',
+        dataType: 'json',
         invalidateAll: false,
         resetForm: false,
         onError: event => {
@@ -95,8 +95,7 @@
             const newTracks = (message.tracks ?? []) as Track[];
             const invalid = message.invalid as { file: File; reason: string }[];
 
-            console.log('Uploaded tracks:', newTracks);
-            console.log('Invalid files:', invalid);
+            console.log(event.result);
 
             toast.success(message.message ?? `Uploaded ${newTracks.length} track${newTracks.length > 1 ? 's' : ''}.`);
 
