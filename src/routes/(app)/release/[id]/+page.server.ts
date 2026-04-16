@@ -92,7 +92,7 @@ export const actions = {
 
         console.log('Processing uploaded files:', form);
 
-        const files: File[] = form.data.files ?? [];
+        const files: File[] = (form.data.files ?? []) as File[];
         const invalid: { file: File; reason?: string; }[] = [];
         const tracks: (z.infer<typeof newTrackSchema>|null)[] = await Promise.all(
             files

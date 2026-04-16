@@ -63,15 +63,15 @@
     // svelte-ignore state_referenced_locally
     const trackUploadForm = superForm(data.uploadTracksForm, {
         validators: zod4Client(uploadTracksSchema),
-        dataType: 'form',
         invalidateAll: false,
         resetForm: false,
+        dataType: 'json',
         onError: event => {
             console.error('Form submission error:', event.result);
             toast.error(event.result.error.message);
         },
         onSubmit: () => {
-            console.log('Uploading tracks...', $tracksUploadForm.files);
+            console.log('Uploading tracks...', $uploadFormData);
         },
         onResult: event => {
             const { type } = event.result;
@@ -120,7 +120,7 @@
         }
     });
 
-    const { form: tracksUploadForm } = trackUploadForm;
+    const { form: uploadFormData } = trackUploadForm;
 
     const session = auth.useSession();
 </script>

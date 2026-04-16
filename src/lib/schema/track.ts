@@ -31,6 +31,5 @@ export const sortTracksSchema = z.object({
 export const uploadTracksSchema = z.object({
     files: trackFileSchema
         .array()
-        .min(1, { message: 'At least one file must be uploaded' })
         .nullable()
 });
