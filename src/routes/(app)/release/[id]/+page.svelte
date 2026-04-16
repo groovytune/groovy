@@ -64,6 +64,7 @@
         validators: zod4(uploadTracksSchema),
         dataType: 'json',
         invalidateAll: false,
+        resetForm: false,
         onError: event => {
             console.error('Form submission error:', event.result);
             toast.error(event.result.error.message);
