@@ -63,7 +63,6 @@
     const trackUploadForm = superForm(data.uploadTracksForm, {
         validators: zod4(uploadTracksSchema),
         dataType: 'json',
-        taintedMessage: true,
         invalidateAll: false,
         onError: event => {
             console.error('Form submission error:', event.result);
