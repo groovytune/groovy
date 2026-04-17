@@ -12,6 +12,7 @@
     import { auth } from '$lib/client/auth.js';
     import { toast } from 'svelte-sonner';
     import type { Track } from '$lib/server/prisma/browser.js';
+    import { resolve } from '$app/paths';
  
     let { data } = $props();
 
@@ -129,8 +130,16 @@
     <side class="size-full flex flex-col items-center md:max-w-96 pb-5">
         <div class="p-5 w-full max-w-sm relative">
             <AspectRatio class="w-full rounded-md bg-muted">
-                <img src={data.release.cover} alt="Release Cover" class="size-full object-cover rounded-md"/>
-                <img src={data.release.cover} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
+                <img
+                    alt="Release Cover"
+                    src={resolve('/(app)/api/release/[id]/cover?quality=70', { id: data.release.id })}
+                    class="size-full object-cover rounded-md"
+                />
+                <img
+                    alt="Release Cover"
+                    src={resolve('/(app)/api/release/[id]/cover?quality=70', { id: data.release.id })}
+                    class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"
+                />
             </AspectRatio>
         </div>
         <header class="w-full max-w-sm text-center px-5">

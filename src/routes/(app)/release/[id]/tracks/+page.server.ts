@@ -1,7 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
 import { Appwrite } from '$lib/server/appwrite.js';
-import { ImageFormat } from 'node-appwrite';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { newTrackSchema, sortTracksSchema, trackFileSchema, uploadTracksSchema } from '$lib/schema/track.js';
@@ -30,17 +29,6 @@ export async function load({ params, locals }) {
     if (!release) {
         throw error(404, 'Release not found');
     }
-
-    release.cover = release.cover
-        ? await Appwrite.createImagePreviewURL({
-            bucketId: 'image',
-            fileId: release.cover,
-            output: ImageFormat.Webp,
-            width: 500,
-            height: 500,
-            quality: 100
-        })
-        : null;
 
     const sortTracksForm = await superValidate(
         { tracks: release.tracks.map(t => ({ id: t.id, position: t.position })) },

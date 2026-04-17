@@ -16,6 +16,7 @@
     import { cn } from '$lib/helpers/utils';
     import type { ClassValue } from 'tailwind-variants';
     import { toast } from 'svelte-sonner';
+    import placeholderCover from '$lib/assets/cover.webp';
 
     let { data } = $props();
 
@@ -116,7 +117,7 @@
     <section class="w-full flex flex-col items-center md:max-w-sm">
         <div class="p-5 w-full max-w-sm relative">
             {#key $formData.cover}
-                {@const url = $formData.cover ? URL.createObjectURL($formData.cover) : null}
+                {@const url = $formData.cover ? URL.createObjectURL($formData.cover) : placeholderCover}
                 <AspectRatio
                     class="w-full rounded-md bg-muted cursor-pointer"
                     onclick={() => coverInput?.click()}

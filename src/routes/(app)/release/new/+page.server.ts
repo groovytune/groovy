@@ -61,6 +61,6 @@ export const actions = {
             throw error;
         });
 
-        return redirect(302, resolve(`/release/${release.id}`));
+        return redirect(302, resolve(`/release/${release.id}/tracks`));
     }
 };
