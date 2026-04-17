@@ -36,7 +36,7 @@
     <form
         use:enhance
         method="POST"
-        action={resolve('/(app)/release/[id]', { id: releaseId }) + '?/sort'}
+        action={resolve('/(app)/release/[id]/tracks', { id: releaseId }) + '?/sort'}
         class="py-5 px-2.5 w-full pt-0 md:pt-5"
     >
         <div

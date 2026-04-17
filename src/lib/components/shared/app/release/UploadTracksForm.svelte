@@ -30,7 +30,7 @@
 
 <form
     use:enhance
-    action={resolve('/(app)/release/[id]', { id: releaseId }) + '?/upload'}
+    action={resolve('/(app)/release/[id]/tracks', { id: releaseId }) + '?/upload'}
     method="POST"
     enctype="multipart/form-data"
     class="hidden"
