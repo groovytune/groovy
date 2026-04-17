@@ -52,7 +52,7 @@ export async function GET({ locals, params }) {
         headers: {
             'Content-Type': 'application/octet-stream',
             'Content-Disposition': `attachment; filename="${file.name}"`,
-            'Content-Length': `${file.sizeOriginal}`,
+            'Content-Length': `${data.byteLength}`,
         },
     });
 }
