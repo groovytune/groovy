@@ -87,11 +87,18 @@
                                     {/snippet}
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent class="mx-2 min-w-40">
-                                    <DropdownMenuItem>
-                                        <DownloadIcon/>
-                                        Download File
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator/>
+                                    {#if track}
+                                        <DropdownMenuItem>
+                                            {#snippet child({ props })}
+                                                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+                                                <a {...props} href={resolve('/(app)/api/track/[id]/download', { id: track.id })} target="_blank" rel="noopener noreferrer">
+                                                    <DownloadIcon/>
+                                                    Download File
+                                                </a>
+                                            {/snippet}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator/>
+                                    {/if}
                                     <DropdownMenuItem>
                                         <PencilIcon/>
                                         Edit
