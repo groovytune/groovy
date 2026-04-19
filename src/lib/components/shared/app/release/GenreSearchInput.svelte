@@ -9,6 +9,7 @@
     let {
         value = $bindable([]),
         query = $bindable(''),
+        disabled = false,
         ...props
     }: {
         value?: Record<'id'|'name', string>[];
@@ -39,6 +40,7 @@
 <InputGroup>
     <InputGroupInput
         {...props}
+        {disabled}
         bind:value={query}
         onfocus={() => {
             if (!initialFocus) {
@@ -69,6 +71,7 @@
                 class="text-sm px-2 h-6"
                 variant="default"
                 size="sm"
+                disabled={disabled}
                 onclick={() => value = value.filter((v) => v.id !== genre.id)}
             >
                 {genre.name}
@@ -79,6 +82,7 @@
                 class="text-sm px-2 h-6"
                 variant="outline"
                 size="sm"
+                disabled={disabled}
                 onclick={() => value = [...value, genre]}
             >
                 {genre.name}
