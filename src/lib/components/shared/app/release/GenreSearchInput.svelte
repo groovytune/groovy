@@ -58,7 +58,7 @@
     </InputGroupAddon>
 </InputGroup>
 
-{#if genresResource.current?.length || value.length || initialFocus}
+{#if (genresResource.current?.length || value.length) && initialFocus}
     <div class="flex flex-wrap gap-2 mt-2">
         {#each value as genre (genre.id)}
             <Button
