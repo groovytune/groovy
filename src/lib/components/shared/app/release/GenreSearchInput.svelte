@@ -18,7 +18,7 @@
         type?: Exclude<HTMLInputTypeAttribute, "file">;
     } = $props();
 
-    let initialFocus = false;
+    let initialFocus = $state(false);
 
     const genresResource = resource(
         [() => query],
@@ -31,8 +31,7 @@
             return res.json() as Promise<Record<'id'|'name', string>[]>;
         },
         {
-            debounce: 500,
-            lazy: true,
+            debounce: 500
         }
     );
 </script>
@@ -42,12 +41,7 @@
         {...props}
         {disabled}
         bind:value={query}
-        onfocus={() => {
-            if (!initialFocus) {
-                genresResource.refetch();
-                initialFocus = true;
-            }
-        }}
+        onfocus={() => initialFocus = true}
         onkeydown={(e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -64,7 +58,7 @@
     </InputGroupAddon>
 </InputGroup>
 
-{#if genresResource.current?.length || value.length}
+{#if genresResource.current?.length || value.length || initialFocus}
     <div class="flex flex-wrap gap-2 mt-2">
         {#each value as genre (genre.id)}
             <Button
