@@ -7,14 +7,20 @@ export const newReleaseSchema = z.object({
     privacy: z.enum(['PUBLIC', 'PRIVATE', 'UNLISTED']).default('PUBLIC'),
     explicit: z.boolean().default(false),
     cover: z.instanceof(File)
-        .refine(file => file.type.startsWith('image/jpg') || file.type.startsWith('image/jpeg') || file.type.startsWith('image/png'), { message: 'Cover must be a JPG or PNG file' })
-        .refine(file => file.size <= 10 * 1024 * 1024, { message: 'Cover must be less than 5MB' })
+        .refine(
+            file => file.type.startsWith('image/jpg') || file.type.startsWith('image/jpeg') || file.type.startsWith('image/png'),
+            { message: 'Cover must be a JPG or PNG file' }
+        )
+        .refine(
+            file => file.size <= 10 * 1024 * 1024,
+            { message: 'Cover must be less than 5MB' }
+        )
         .optional(),
     genres: z.object({
         id: z.string(),
         name: z.string()
     })
         .array()
-        .max(5)
+        .max(5, { error: 'You can only select up to 5 genres' })
         .default([]),
 });
