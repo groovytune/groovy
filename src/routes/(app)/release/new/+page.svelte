@@ -211,7 +211,7 @@
                                     <ItemTitle>
                                         Mark this release as explicit
                                     </ItemTitle>
-                                    <ItemDescription>
+                                    <ItemDescription class={$formData.explicit ? "line-clamp-none" : "line-clamp-3"}>
                                         Explicit content may include strong language, sexual content, or violence. Marking your release as explicit helps ensure it is properly labeled and filtered on platforms that support content warnings.
                                     </ItemDescription>
                                 </ItemContent>
