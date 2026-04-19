@@ -5,18 +5,14 @@
     import Button from '../ui/button/button.svelte';
     import { FileIcon, FilesIcon, UploadIcon } from '@lucide/svelte';
 
-	type Props = WithElementRef<
-        Omit<HTMLInputAttributes, "type"> & { files?: FileList }
-    > & {
-        children?: Snippet<[data: { ref: HTMLElement|null; props: { onclick: () => void; } }]>;
-    };
+	type Props = WithElementRef<Omit<HTMLInputAttributes, "type"> & { files?: FileList }> & { children?: Snippet<[data: { ref: HTMLElement|null; props: { onclick: () => void; } }]>; };
 
 	let {
 	    ref = $bindable(null),
 	    files = $bindable(),
 	    class: className,
 	    "data-slot": dataSlot = "input",
-        children,
+	    children,
 	    ...restProps
 	}: Props = $props();
 </script>
@@ -33,17 +29,17 @@
 {#if ref && children}
     {@render children({ ref, props: { onclick: () => ref?.click() } })}
 {:else}
-    <Button variant="outline" class={cn("w-full justify-start rounded-md", className)} onclick={() => ref?.click()}>
+    <Button variant="outline" class={cn("w-full justify-start rounded-md overflow-clip", className)} onclick={() => ref?.click()}>
         {#if files && files.length > 0}
             {#if files.length > 1}
                 <FilesIcon/>
             {:else}
                 <FileIcon/>
             {/if}
-            <span>{files.length > 1 ? `${files.length} files selected` : files[0].name}</span>
+            <span class="truncate">{files.length > 1 ? `${files.length} files selected` : files[0].name}</span>
         {:else}
             <UploadIcon/>
-            <span>Select a file{restProps.multiple ? 's' : ''}</span>
+            <span class="truncate">Select a file{restProps.multiple ? 's' : ''}</span>
         {/if}
     </Button>
 {/if}

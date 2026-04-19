@@ -17,6 +17,7 @@
     import type { ClassValue } from 'tailwind-variants';
     import { toast } from 'svelte-sonner';
     import placeholderCover from '$lib/assets/cover.webp';
+    import GenreSearchInput from '../../../../lib/components/shared/app/release/GenreSearchInput.svelte';
 
     let { data } = $props();
 
@@ -114,7 +115,7 @@
 {/snippet}
 
 <div class="flex flex-col md:flex-row">
-    <section class="w-full flex flex-col items-center md:max-w-sm">
+    <section class="w-full shrink-0 flex flex-col items-center md:max-w-sm">
         <div class="p-5 w-full max-w-sm relative">
             {#key $formData.cover}
                 {@const url = $formData.cover ? URL.createObjectURL($formData.cover) : placeholderCover}
@@ -152,7 +153,7 @@
             </p>
         </header>
     </section>
-    <form class="w-full p-5 grid gap-2" method="POST" enctype="multipart/form-data" use:enhance>
+    <form class="w-full md:max-w-[calc(100%-24rem)] p-5 flex flex-col gap-2" method="POST" enctype="multipart/form-data" use:enhance>
         <FormField {form} name="name">
             <FormControl>
                 {#snippet children({ props })}
@@ -224,6 +225,20 @@
                             </FormLabel>
                         {/snippet}
                     </Item>
+                {/snippet}
+            </FormControl>
+            <FormFieldErrors/>
+        </FormField>
+        <FormField {form} name="genres">
+            <FormControl>
+                {#snippet children({ props })}
+                    <FormLabel class="text-lg">Genres</FormLabel>
+                    <GenreSearchInput
+                        {...props}
+                        bind:value={$formData.genres}
+                        disabled={$submitting}
+                        placeholder="Search and add genres to your release"
+                    />
                 {/snippet}
             </FormControl>
             <FormFieldErrors/>
