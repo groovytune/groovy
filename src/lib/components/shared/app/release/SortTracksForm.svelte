@@ -188,6 +188,7 @@
                             <Button
                                 variant="destructive"
                                 onclick={() => {
+                                    // TODO: Implement track deletion in the backend and replace this with a call to the API
                                     dialogState.close();
                                     tracks = tracks.filter(t => t.id !== dndTrack.id);
                                     form?.form.update(f => {
