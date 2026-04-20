@@ -14,6 +14,7 @@
     import type z from 'zod';
     import { resolve } from '$app/paths';
     import type { Track } from '$lib/server/prisma/browser';
+    import { Appwrite } from '../../../../client/appwrite';
 
     let {
         releaseId,
@@ -91,7 +92,7 @@
                                         <DropdownMenuItem>
                                             {#snippet child({ props })}
                                                 <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-                                                <a {...props} href={resolve('/(app)/api/track/[id]/download', { id: track.id })} target="_blank" rel="noopener noreferrer">
+                                                <a {...props} href={Appwrite.storage.getFileDownload({ bucketId: 'audio', fileId: track.file })} target="_blank" rel="noopener noreferrer">
                                                     <DownloadIcon/>
                                                     Download File
                                                 </a>
