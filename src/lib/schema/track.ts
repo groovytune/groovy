@@ -9,7 +9,7 @@ export const trackFileSchema = z
     )
     .refine(
         file => file.size <= 20 * 1024 * 1024,
-        { message: 'File size must be less than 100MB' }
+        { message: 'File size must be less than 20MB' }
     );
 
 export const newTrackSchema = z.object({
@@ -43,5 +43,9 @@ export const sortTracksSchema = z.object({
 export const uploadTracksSchema = z.object({
     files: trackFileSchema
         .array()
+        .refine(
+            files => files.reduce((c, f) => f.size + c, 0) <= 20 * 1024 * 1024,
+            { message: 'Total file size must be less than 20MB' }
+        )
         .nullable()
 });

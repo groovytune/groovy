@@ -56,7 +56,6 @@ export const actions = {
         );
 
         if (!form.valid) {
-            console.log('Uploaded files validation failed:', form.data.files, form.errors.files);
             return fail(400, { form, message: 'Uploaded files are invalid.' });
         }
 
@@ -77,8 +76,6 @@ export const actions = {
         if (!release) {
             throw fail(404, { form, message: 'Release not found.' });
         }
-
-        console.log('Processing uploaded files:', form);
 
         const files: File[] = (form.data.files ?? []) as File[];
         const invalid: { file: File; reason?: string; }[] = [];

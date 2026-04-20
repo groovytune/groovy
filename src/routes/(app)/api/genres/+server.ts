@@ -9,8 +9,6 @@ export async function GET({ url }) {
     const afterTimestamp = after && !isNaN(parseInt(after)) ? parseInt(after) : null;
     const beforeTimestamp = before && !isNaN(parseInt(before)) ? parseInt(before) : null;
 
-    console.log('Fetching genres with parameters:', { after: afterTimestamp, before: beforeTimestamp, search });
-
     const genres = await prisma.genre.findMany({
         where: {
             createdAt: {
