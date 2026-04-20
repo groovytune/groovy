@@ -13,7 +13,7 @@ export const newReleaseSchema = z.object({
         )
         .refine(
             file => file.size <= 10 * 1024 * 1024,
-            { message: 'Cover must be less than 5MB' }
+            { message: 'Cover must be less than 10MB' }
         )
         .optional(),
     genres: z.object({

@@ -8,7 +8,7 @@ export const trackFileSchema = z
         { message: 'File must be an audio file' }
     )
     .refine(
-        file => file.size <= 100 * 1024 * 1024,
+        file => file.size <= 20 * 1024 * 1024,
         { message: 'File size must be less than 100MB' }
     );
 

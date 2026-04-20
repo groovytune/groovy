@@ -12,7 +12,9 @@
     import { auth } from '$lib/client/auth.js';
     import { toast } from 'svelte-sonner';
     import type { Track } from '$lib/server/prisma/browser.js';
-    import { resolve } from '$app/paths';
+    import { Appwrite } from '$lib/client/appwrite.js';
+    import { ImageGravity } from 'appwrite';
+    import placeholderCover from '$lib/assets/cover.webp';
  
     let { data } = $props();
 
@@ -124,6 +126,18 @@
     const { form: uploadFormData } = trackUploadForm;
 
     const session = auth.useSession();
+
+    let coverURL = $derived(
+        data.release.cover
+            ? Appwrite.storage.getFilePreview({
+                bucketId: 'image',
+                fileId: data.release.cover,
+                gravity: ImageGravity.Center,
+                height: 500,
+                width: 500,
+            })
+            : placeholderCover
+    );
 </script>
 
 <div class="w-full flex md:flex-row flex-col">
@@ -132,12 +146,12 @@
             <AspectRatio class="w-full rounded-md bg-muted">
                 <img
                     alt="Release Cover"
-                    src={resolve('/(app)/api/release/[id]/cover?quality=70', { id: data.release.id })}
+                    src={coverURL}
                     class="size-full object-cover rounded-md"
                 />
                 <img
                     alt="Release Cover"
-                    src={resolve('/(app)/api/release/[id]/cover?quality=70', { id: data.release.id })}
+                    src={coverURL}
                     class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"
                 />
             </AspectRatio>

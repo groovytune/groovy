@@ -1,6 +1,7 @@
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
 import { Client, ID as AppwriteID, Storage, Tokens, type Models, type ImageFormat, type ImageGravity } from 'node-appwrite';
+import { Appwrite as AppwriteClient } from '../client/appwrite';
 
 export namespace Appwrite {
     export const ID = AppwriteID;
@@ -55,5 +56,23 @@ export namespace Appwrite {
         return await Appwrite.storage
             .getFilePreview(options)
             .then((url) => `data:image/webp;base64,${Buffer.from(url).toString('base64')}`)
+    }
+
+    export async function createFileEphemeralURL(options: Record<'fileId'|'bucketId', string> & { expire?: Date; }): Promise<string> {
+        const token = await createFileToken(
+            {
+                $id: options.fileId,
+                bucketId: options.bucketId,
+            },
+            options.expire
+        );
+
+        const url = AppwriteClient.storage.getFileView({
+            bucketId: options.bucketId,
+            fileId: options.fileId,
+            token: token.$id
+        });
+
+        return url;
     }
 }
