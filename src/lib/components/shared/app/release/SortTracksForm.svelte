@@ -16,6 +16,8 @@
     import type { Track } from '$lib/server/prisma/browser';
     import { Appwrite } from '../../../../client/appwrite';
     import { zod4Client } from 'sveltekit-superforms/adapters';
+    import ResponsiveDialog from '../../ResponsiveDialog.svelte';
+    import { DialogState } from '../../../../helpers/classes/DialogState.svelte';
 
     let {
         releaseId,
@@ -65,7 +67,7 @@
                     f.tracks = newTracks;
                     return f;
                 },
-                { taint: false }
+                { taint: 'untaint-all' }
             );
 
             onupdate?.(newTracks);
@@ -94,6 +96,7 @@
         >
             {#each dndTracks as dndTrack (dndTrack.id)}
                 {@const track = tracks.find(t => t.id == dndTrack.id)}
+                {@const dialogState = new DialogState({ id: `delete-track-${dndTrack.id}` })}
                 <a
                     onclick={() => track && toast(track.name)}
                     oncontextmenu={e =>  e.preventDefault()}
@@ -141,15 +144,23 @@
                                         <DropdownMenuSeparator/>
                                     {/if}
                                     <DropdownMenuItem>
-                                        <PencilIcon/>
-                                        Edit
+                                        {#snippet child({ props })}
+                                            <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]', { id: releaseId, trackId: dndTrack.id })}>
+                                                <PencilIcon/>
+                                                Edit
+                                            </a>
+                                        {/snippet}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem>
-                                        <TextAlignStartIcon/>
-                                        Edit Lyrics
+                                        {#snippet child({ props })}
+                                            <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]/lyrics', { id: releaseId, trackId: dndTrack.id })}>
+                                                <TextAlignStartIcon/>
+                                                Edit Lyrics
+                                            </a>
+                                        {/snippet}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator/>
-                                    <DropdownMenuItem class="text-destructive!">
+                                    <DropdownMenuItem class="text-destructive!" onclick={() => dialogState.open()}>
                                         <Trash2Icon class="text-current"/>
                                         Delete
                                     </DropdownMenuItem>
@@ -157,6 +168,38 @@
                             </DropdownMenu>
                         </ItemActions>
                     </Item>
+                    <ResponsiveDialog {dialogState}>
+                        {#snippet title()}
+                            Delete Track {track?.name ?? ''}
+                        {/snippet}
+                        {#snippet content()}
+                            <p>
+                                Are you sure you want to delete this track? This action cannot be undone.
+                            </p>
+                        {/snippet}
+                        {#snippet footer()}
+                            <Button
+                                onclick={() => {
+                                    dialogState.close();
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="destructive"
+                                onclick={() => {
+                                    dialogState.close();
+                                    tracks = tracks.filter(t => t.id !== dndTrack.id);
+                                    form?.form.update(f => {
+                                        f.tracks = f.tracks.filter(t => t.id !== dndTrack.id);
+                                        return f;
+                                    }, { taint: 'untaint-all' });
+                                }}
+                            >
+                                Delete
+                            </Button>
+                        {/snippet}
+                    </ResponsiveDialog>
                 </a>
             {/each}
         </div>

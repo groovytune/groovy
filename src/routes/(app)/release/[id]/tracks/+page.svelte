@@ -84,7 +84,7 @@
                                 ...newTracks.map(t => ({ id: t.id, position: t.position }))
                             ].sort((a, b) => a.position - b.position);
                             return f;
-                        });
+                        }, { taint: 'untaint-all' });
                     }}
                 >
                     {#snippet children({ input, disabled, submitting })}
