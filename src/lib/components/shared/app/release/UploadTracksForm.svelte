@@ -1,6 +1,6 @@
 <script lang="ts">
     import { uploadTracksSchema } from '$lib/schema/track';
-    import { superForm, type SuperValidated } from 'sveltekit-superforms';
+    import { superForm, type SuperForm, type SuperValidated } from 'sveltekit-superforms';
     import { tick, type Snippet } from 'svelte';
     import type z from 'zod';
     import { resolve } from '$app/paths';
@@ -14,6 +14,7 @@
         input = $bindable(null),
         disabled = false,
         data,
+        form = $bindable(null),
         onupload,
         children
     }: {
@@ -21,6 +22,7 @@
         input?: HTMLInputElement|null;
         disabled?: boolean;
         data?: SuperValidated<z.infer<typeof uploadTracksSchema>, unknown>;
+        form?: SuperForm<z.infer<typeof uploadTracksSchema>, unknown>|null;
         onupload?: (tracks: Track[]) => void;
         children?: Snippet<[{
             input: HTMLInputElement|null;
@@ -30,7 +32,7 @@
     } = $props();
 
     // svelte-ignore state_referenced_locally
-    const form = superForm(data ?? { files: null }, {
+    form = superForm(data ?? { files: null }, {
         validators: zod4Client(uploadTracksSchema),
         validationMethod: 'onsubmit',
         invalidateAll: false,

@@ -4,7 +4,7 @@
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
-    import { type SuperForm } from 'sveltekit-superforms';
+    import { superForm, type SuperForm, type SuperValidated } from 'sveltekit-superforms';
     import { sortTracksSchema } from '$lib/schema/track';
     import { Button } from '$lib/components/ui/button';
     import { dndzone } from 'svelte-dnd-action';
@@ -15,18 +15,63 @@
     import { resolve } from '$app/paths';
     import type { Track } from '$lib/server/prisma/browser';
     import { Appwrite } from '../../../../client/appwrite';
+    import { zod4Client } from 'sveltekit-superforms/adapters';
 
     let {
         releaseId,
         tracks,
-        form
+        data,
+        form = $bindable(null),
+        onupdate
     }: {
         releaseId: string;
         tracks: Track[];
-        form: SuperForm<z.infer<typeof sortTracksSchema>, unknown>;
+        data?: SuperValidated<z.infer<typeof sortTracksSchema>, unknown>;
+        form?: SuperForm<z.infer<typeof sortTracksSchema>, unknown>|null;
+        onupdate?: (tracks: { id: string; position: number; }[]) => void;
     } = $props();
 
     // svelte-ignore state_referenced_locally
+    form = superForm(data ?? { tracks: [] }, {
+        validators: zod4Client(sortTracksSchema),
+        dataType: 'json',
+        taintedMessage: true,
+        invalidateAll: false,
+        resetForm: false,
+        onError: event => {
+            console.error('Form submission error:', event.result);
+            toast.error(event.result.error.message);
+        },
+        onResult: event => {
+            const { type } = event.result;
+
+            if (type === 'failure') {
+                console.error('Sort form submission failed:', event.result);
+                toast.error(event.result.data?.message ?? 'Failed to update track order.');
+                return;
+            }
+
+            if (type != 'success') return;
+
+            const message = event.result.data?.form.message;
+            const newTracks = message.tracks as { id: string; position: number; }[];
+
+            toast.success(message.message ?? `Updated track order for ${newTracks.length} track${newTracks.length > 1 ? 's' : ''}`);
+
+            newTracks.sort((a, b) => a.position - b.position);
+
+            form?.form.update(
+                f => {
+                    f.tracks = newTracks;
+                    return f;
+                },
+                { taint: false }
+            );
+
+            onupdate?.(newTracks);
+        }
+    });
+
     const { form: formData, enhance, submitting, tainted } = form;
     const session = auth.useSession();
 
@@ -34,12 +79,7 @@
 </script>
 
 {#if $formData.tracks.length > 0}
-    <form
-        use:enhance
-        method="POST"
-        action={resolve('/(app)/release/[id]/tracks', { id: releaseId }) + '?/sort'}
-        class="py-5 px-2.5 w-full pt-0 md:pt-5"
-    >
+    <section class="py-5 px-2.5 w-full pt-0 md:pt-5">
         <div
             use:dndzone={{
                 dragDisabled: $submitting || $formData.tracks.length < 2,
@@ -121,7 +161,12 @@
             {/each}
         </div>
         {#if $tainted}
-            <div class="flex justify-center sm:justify-end py-5 pb-0">
+            <form
+                use:enhance
+                method="POST"
+                action={resolve('/(app)/release/[id]/tracks', { id: releaseId }) + '?/sort'}
+                class="flex justify-center sm:justify-end py-5 pb-0"
+            >
                 <Button
                     onclick={() => form.submit()}
                     disabled={$submitting || $formData.tracks.length === 0}
@@ -134,14 +179,14 @@
                         Save
                     {/if}
                 </Button>
-            </div>
+            </form>
         {/if}
         <div class="text-center pt-5">
             <p class="text-xs text-muted-foreground">
                 {$formData.tracks.length} track{$formData.tracks.length !== 1 ? 's' : ''} • Drag and drop to reorder
             </p>
         </div>
-    </form>
+    </section>
 {:else}
     <div class="flex justify-center w-full" style="content-visibility: auto;">
         <Empty class="bg-muted/50 m-5 py-10 gap-0 min-h-72 max-w-sm lg:max-w-none">

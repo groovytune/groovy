@@ -3,61 +3,23 @@
     import { CirclePlusIcon, EllipsisIcon, LoaderIcon, PencilIcon, PlayIcon, Trash2Icon } from '@lucide/svelte';
     import SortTracksForm from '$lib/components/shared/app/release/SortTracksForm.svelte';
     import UploadTracksForm from '$lib/components/shared/app/release/UploadTracksForm.svelte';
-    import { sortTracksSchema } from '$lib/schema/track.js';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
-    import { zod4Client } from 'sveltekit-superforms/adapters';
     import { Button } from '$lib/components/ui/button';
-    import { superForm } from 'sveltekit-superforms';
     import { auth } from '$lib/client/auth.js';
-    import { toast } from 'svelte-sonner';
     import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
+    import type { SuperForm } from 'sveltekit-superforms';
+    import type z from 'zod';
+    import type { sortTracksSchema } from '$lib/schema/track.js';
  
     let { data } = $props();
 
-    let tracks = $derived(data.release.tracks);
-
-    // svelte-ignore state_referenced_locally
-    const sortTracksForm = superForm(data.sortTracksForm, {
-        validators: zod4Client(sortTracksSchema),
-        dataType: 'json',
-        taintedMessage: true,
-        invalidateAll: false,
-        resetForm: false,
-        onError: event => {
-            console.error('Form submission error:', event.result);
-            toast.error(event.result.error.message);
-        },
-        onResult: event => {
-            const { type } = event.result;
-
-            if (type === 'failure') {
-                console.error('Sort form submission failed:', event.result);
-                toast.error(event.result.data?.message ?? 'Failed to update track order.');
-                return;
-            }
-
-            if (type != 'success') return;
-
-            const message = event.result.data?.form.message;
-            const newTracks = message.tracks as { id: string; position: number; }[];
-
-            toast.success(message.message ?? `Updated track order for ${newTracks.length} track${newTracks.length > 1 ? 's' : ''}`);
-
-            sortTracksForm.form.update(
-                f => {
-                    f.tracks = newTracks.sort((a, b) => a.position - b.position);
-                    return f;
-                },
-                { taint: false }
-            );
-        }
-    });
-
     const session = auth.useSession();
 
+    let sortForm = $state<SuperForm<z.infer<typeof sortTracksSchema>, unknown>|null>(null);
+    let tracks = $derived(data.release.tracks);
     let coverURL = $derived(
         data.release.cover
             ? Appwrite.storage.getFilePreview({
@@ -113,19 +75,16 @@
                 </Button>
                 <UploadTracksForm
                     releaseId={data.release.id}
+                    data={data.uploadTracksForm}
                     onupload={newTracks => {
                         tracks.push(...newTracks);
-                        sortTracksForm.form.update(
-                            f => {
-                                f.tracks = [
-                                    ...f.tracks,
-                                    ...newTracks.map(t => ({ id: t.id, position: t.position }))
-                                ].sort((a, b) => a.position - b.position);
-
-                                return f;
-                            },
-                            { taint: false }
-                        );
+                        sortForm?.form.update(f => {
+                            f.tracks = [
+                                ...f.tracks,
+                                ...newTracks.map(t => ({ id: t.id, position: t.position }))
+                            ].sort((a, b) => a.position - b.position);
+                            return f;
+                        });
                     }}
                 >
                     {#snippet children({ input, disabled, submitting })}
@@ -167,5 +126,5 @@
             </div>
         </header>
     </side>
-    <SortTracksForm {tracks} releaseId={data.release.id} form={sortTracksForm}/>
+    <SortTracksForm {tracks} bind:form={sortForm} releaseId={data.release.id} data={data.sortTracksForm}/>
 </div>
