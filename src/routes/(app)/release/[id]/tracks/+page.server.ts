@@ -3,7 +3,7 @@ import { prisma } from '$lib/server/prisma.js';
 import { Appwrite } from '$lib/server/appwrite.js';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { newTrackSchema, sortTracksSchema, trackFileSchema, uploadTracksSchema } from '$lib/schema/track.js';
+import { deleteTracksSchema, newTrackSchema, sortTracksSchema, trackFileSchema, uploadTracksSchema } from '$lib/schema/track.js';
 import type { Actions } from '../$types.js';
 import { fail } from 'sveltekit-superforms';
 import { extractFileMetadata, getPartialMetadata } from '$lib/helpers/metadata.js';
@@ -204,6 +204,46 @@ export const actions = {
             tracks: created,
             invalid
         }, { removeFiles: true })
+    },
+    delete: async ({ request, locals, params }) => {
+        const form = await superValidate(
+            request,
+            zod4(deleteTracksSchema)
+        );
+
+        if (!form.valid) {
+            return fail(400, { form, message: 'Invalid track IDs.' });
+        }
+
+        if (!locals.user) {
+            throw redirect(302, '/signin');
+        }
+
+        const release = await prisma.release.findUnique({
+            where: {
+                id: params.id,
+                userId: locals.user.id
+            },
+            select: {
+                id: true
+            }
+        });
+
+        if (!release) {
+            throw fail(404, { form, message: 'Release not found.' });
+        }
+
+        const tracks = await prisma.track.deleteMany({
+            where: {
+                id: { in: form.data.trackIds },
+                releaseId: release.id
+            }
+        });
+
+        return message(form, {
+            message: `Successfully deleted ${tracks.count} track${tracks.count > 1 ? 's' : ''}`,
+            trackIds: form.data.trackIds
+        });
     },
     sort: async ({ request, locals, params }) => {
         const form = await superValidate(

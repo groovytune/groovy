@@ -49,3 +49,7 @@ export const uploadTracksSchema = z.object({
         )
         .nullable()
 });
+
+export const deleteTracksSchema = z.object({
+    trackIds: z.string().array().min(1)
+});

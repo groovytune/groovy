@@ -15,6 +15,7 @@
         disabled = false,
         data,
         form = $bindable(null),
+        multiple = false,
         onupload,
         children
     }: {
@@ -23,6 +24,7 @@
         disabled?: boolean;
         data?: SuperValidated<z.infer<typeof uploadTracksSchema>, unknown>;
         form?: SuperForm<z.infer<typeof uploadTracksSchema>, unknown>|null;
+        multiple?: boolean;
         onupload?: (tracks: Track[]) => void;
         children?: Snippet<[{
             input: HTMLInputElement|null;
@@ -87,7 +89,7 @@
     class="hidden"
 >
     <input
-        multiple
+        {multiple}
         type="file"
         accept={supportedAudioMimeTypes.join(',')}
         bind:this={input}

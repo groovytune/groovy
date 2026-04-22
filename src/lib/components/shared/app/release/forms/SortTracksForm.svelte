@@ -1,6 +1,6 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { DownloadIcon, EllipsisIcon, ListMusicIcon, LoaderIcon, PencilIcon, SaveIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
+    import { DownloadIcon, EllipsisIcon, ListMusicIcon, LoaderIcon, PencilIcon, RotateCcwIcon, SaveIcon, SquareXIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
@@ -14,10 +14,12 @@
     import type z from 'zod';
     import { resolve } from '$app/paths';
     import type { Track } from '$lib/server/prisma/browser';
-    import { Appwrite } from '../../../../client/appwrite';
+    import { Appwrite } from '$lib/client/appwrite';
     import { zod4Client } from 'sveltekit-superforms/adapters';
-    import ResponsiveDialog from '../../ResponsiveDialog.svelte';
-    import { DialogState } from '../../../../helpers/classes/DialogState.svelte';
+    import ResponsiveDialog from '$lib/components/shared/ResponsiveDialog.svelte';
+    import DeleteTracksForm from './DeleteTracksForm.svelte';
+    import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
+    import { DateTime } from 'luxon';
 
     let {
         releaseId,
@@ -97,12 +99,9 @@
             {#each dndTracks as dndTrack (dndTrack.id)}
                 {@const track = tracks.find(t => t.id == dndTrack.id)}
                 {@const dialogState = new DialogState({ id: `delete-track-${dndTrack.id}` })}
-                <a
-                    onclick={() => track && toast(track.name)}
-                    oncontextmenu={e =>  e.preventDefault()}
+                <div
                     animate:flip={{ duration: 100 }}
-                    class="h-fit select-none"
-                    href="#/"
+                    class="h-fit select-none cursor-default!"
                 >
                     <Item class="p-2 hover:bg-secondary/50 rounded-md">
                         <ItemContent>
@@ -110,15 +109,19 @@
                                 class="line-clamp-2 w-full"
                                 style="word-wrap: break-word;"
                             >
-                                <span>
+                                <a
+                                    href="#/"
+                                    onclick={() => track && toast(track.name)}
+                                    oncontextmenu={e =>  e.preventDefault()}
+                                >
                                     {track?.name ?? 'Unavailable Track'}
                                     {#if track?.explicit}
                                         <ExplicitIcon class="size-4.5"/>
                                     {/if}
-                                </span>
+                                </a>
                             </ItemTitle>
                             <ItemDescription>
-                                {$session.data?.user.name || 'Unknown Artist'}
+                                {DateTime.fromSeconds(track?.duration || 0).toFormat('mm:ss')} • {$session.data?.user.name || 'Unknown Artist'}
                             </ItemDescription>
                         </ItemContent>
                         <ItemActions>
@@ -170,7 +173,7 @@
                     </Item>
                     <ResponsiveDialog {dialogState}>
                         {#snippet title()}
-                            Delete Track {track?.name ?? ''}
+                            Delete <span class="text-primary">{track?.name ?? ''}</span>?
                         {/snippet}
                         {#snippet content()}
                             <p>
@@ -178,18 +181,14 @@
                             </p>
                         {/snippet}
                         {#snippet footer()}
-                            <Button
-                                onclick={() => {
+                            <DeleteTracksForm
+                                {releaseId}
+                                trackIds={[dndTrack.id]}
+                                onerror={() => dialogState.isClosable = true}
+                                ondelete={() => {
+                                    dialogState.isClosable = true;
                                     dialogState.close();
-                                }}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="destructive"
-                                onclick={() => {
-                                    // TODO: Implement track deletion in the backend and replace this with a call to the API
-                                    dialogState.close();
+
                                     tracks = tracks.filter(t => t.id !== dndTrack.id);
                                     form?.form.update(f => {
                                         f.tracks = f.tracks.filter(t => t.id !== dndTrack.id);
@@ -197,20 +196,54 @@
                                     }, { taint: 'untaint-all' });
                                 }}
                             >
-                                Delete
-                            </Button>
+                                {#snippet children({ form: delForm, submitting, deleted })}
+                                    <Button
+                                        variant="secondary"
+                                        disabled={submitting || deleted}
+                                        onclick={() => {
+                                            dialogState.close();
+                                        }}
+                                    >
+                                        <SquareXIcon/>
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        variant="destructive"
+                                        disabled={submitting || deleted}
+                                        onclick={() => {
+                                            delForm.submit();
+                                            dialogState.isClosable = false;
+                                        }}
+                                    >
+                                        {#if submitting}
+                                            <LoaderIcon class="animate-spin"/>
+                                            Deleting...
+                                        {:else}
+                                            <Trash2Icon class="text-current"/>
+                                            Delete
+                                        {/if}
+                                    </Button>
+                                {/snippet}
+                            </DeleteTracksForm>
                         {/snippet}
                     </ResponsiveDialog>
-                </a>
+                </div>
             {/each}
         </div>
-        {#if $tainted}
+        {#if $tainted?.tracks}
             <form
                 use:enhance
                 method="POST"
                 action={resolve('/(app)/release/[id]/tracks', { id: releaseId }) + '?/sort'}
-                class="flex justify-center sm:justify-end py-5 pb-0"
+                class="flex justify-center py-5 pb-0 gap-2"
             >
+                <Button
+                    variant="outline"
+                    onclick={() => form.reset()}
+                >
+                    <RotateCcwIcon/>
+                    Reset
+                </Button>
                 <Button
                     onclick={() => form.submit()}
                     disabled={$submitting || $formData.tracks.length === 0}

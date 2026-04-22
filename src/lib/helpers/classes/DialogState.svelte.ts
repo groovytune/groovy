@@ -5,6 +5,7 @@ export class DialogState {
     public id?: string;
     public dialogURL?: string;
 
+    public isClosable = $state(true);
     public isOpen: boolean = $state(false);
     public isActive: boolean = $derived(
         !!this.id &&
@@ -16,6 +17,7 @@ export class DialogState {
         open: 'push',
         close: 'replace'
     };
+
 
     constructor(options?: DialogState.Options) {
         Object.assign(this, options);
@@ -42,6 +44,8 @@ export class DialogState {
     }
 
     public close(options?: Partial<Omit<DialogState.SetDialogsOptions, 'dialogs'>>) {
+        if (!this.isClosable) return;
+
         this.isOpen = false;
 
         if (this.id && this.isActive) {

@@ -1,8 +1,8 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import { CirclePlusIcon, EllipsisIcon, LoaderIcon, PencilIcon, PlayIcon, Trash2Icon } from '@lucide/svelte';
-    import SortTracksForm from '$lib/components/shared/app/release/SortTracksForm.svelte';
-    import UploadTracksForm from '$lib/components/shared/app/release/UploadTracksForm.svelte';
+    import SortTracksForm from '$lib/components/shared/app/release/forms/SortTracksForm.svelte';
+    import UploadTracksForm from '$lib/components/shared/app/release/forms/UploadTracksForm.svelte';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
@@ -18,8 +18,8 @@
 
     const session = auth.useSession();
 
-    let sortForm = $state<SuperForm<z.infer<typeof sortTracksSchema>, unknown>|null>(null);
     let tracks = $derived(data.release.tracks);
+    let sortForm = $state<SuperForm<z.infer<typeof sortTracksSchema>, unknown>|null>(null);
     let coverURL = $derived(
         data.release.cover
             ? Appwrite.storage.getFilePreview({
@@ -74,6 +74,7 @@
                     <PlayIcon/>
                 </Button>
                 <UploadTracksForm
+                    multiple
                     releaseId={data.release.id}
                     data={data.uploadTracksForm}
                     onupload={newTracks => {
@@ -84,7 +85,7 @@
                                 ...newTracks.map(t => ({ id: t.id, position: t.position }))
                             ].sort((a, b) => a.position - b.position);
                             return f;
-                        }, { taint: 'untaint-all' });
+                        }, { taint: !sortForm.isTainted() ? 'untaint-all' : undefined });
                     }}
                 >
                     {#snippet children({ input, disabled, submitting })}
