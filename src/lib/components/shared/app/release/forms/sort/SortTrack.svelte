@@ -1,7 +1,7 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import { DownloadIcon, EllipsisIcon, LoaderIcon, PencilIcon, SquareXIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
-    import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
+    import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import ResponsiveDialog from '$lib/components/shared/ResponsiveDialog.svelte';
@@ -13,6 +13,8 @@
     import { auth } from '$lib/client/auth';
     import { Appwrite } from '$lib/client/appwrite';
     import { resolve } from '$app/paths';
+    import { AspectRatio } from '$lib/components/ui/aspect-ratio';
+    import coverPlaceholder from '$lib/assets/cover.webp';
 
     let {
         track,
@@ -29,6 +31,15 @@
 </script>
 
 <Item class="p-2 hover:bg-secondary/50 rounded-md">
+    <ItemMedia variant="image">
+        <AspectRatio>
+            <img
+                alt="Track Cover"
+                src={track.cover ? Appwrite.storage.getFilePreview({ bucketId: 'image', fileId: track.cover }) : coverPlaceholder}
+                class="size-full object-cover rounded-md"
+            />
+        </AspectRatio>
+    </ItemMedia>
     <ItemContent>
         <ItemTitle
             class="line-clamp-2 w-full"
