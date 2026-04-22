@@ -11,6 +11,7 @@
         releaseId,
         trackIds = [],
         data,
+        // eslint-disable-next-line no-useless-assignment
         form = $bindable(null),
         children,
         onerror,
