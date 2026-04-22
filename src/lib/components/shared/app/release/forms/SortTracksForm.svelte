@@ -1,25 +1,18 @@
 <script lang="ts">
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { DownloadIcon, EllipsisIcon, ListMusicIcon, LoaderIcon, PencilIcon, RotateCcwIcon, SaveIcon, SquareXIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
+    import { ListMusicIcon, LoaderIcon, RotateCcwIcon, SaveIcon } from '@lucide/svelte';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
-    import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
-    import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { superForm, type SuperForm, type SuperValidated } from 'sveltekit-superforms';
     import { sortTracksSchema } from '$lib/schema/track';
     import { Button } from '$lib/components/ui/button';
     import { dndzone } from 'svelte-dnd-action';
-    import { auth } from '$lib/client/auth';
     import { flip } from 'svelte/animate';
     import { toast } from 'svelte-sonner';
     import type z from 'zod';
     import { resolve } from '$app/paths';
     import type { Track } from '$lib/server/prisma/browser';
-    import { Appwrite } from '$lib/client/appwrite';
     import { zod4Client } from 'sveltekit-superforms/adapters';
-    import ResponsiveDialog from '$lib/components/shared/ResponsiveDialog.svelte';
-    import DeleteTracksForm from './DeleteTracksForm.svelte';
-    import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
-    import { DateTime } from 'luxon';
+    import SortTrack from './sort/SortTrack.svelte';
+    import SortTrackShadow from './sort/SortTrackShadow.svelte';
 
     let {
         releaseId,
@@ -77,7 +70,6 @@
     });
 
     const { form: formData, enhance, submitting, tainted } = form;
-    const session = auth.useSession();
 
     let dndTracks = $derived($formData.tracks.toSorted((a, b) => a.position - b.position));
 </script>
@@ -98,135 +90,24 @@
         >
             {#each dndTracks as dndTrack (dndTrack.id)}
                 {@const track = tracks.find(t => t.id == dndTrack.id)}
-                {@const dialogState = new DialogState({ id: `delete-track-${dndTrack.id}` })}
                 <div
                     animate:flip={{ duration: 100 }}
-                    class="h-fit select-none cursor-default!"
+                    class="select-none cursor-default!"
                 >
-                    <Item class="p-2 hover:bg-secondary/50 rounded-md">
-                        <ItemContent>
-                            <ItemTitle
-                                class="line-clamp-2 w-full"
-                                style="word-wrap: break-word;"
-                            >
-                                <a
-                                    href="#/"
-                                    onclick={() => track && toast(track.name)}
-                                    oncontextmenu={e =>  e.preventDefault()}
-                                >
-                                    {track?.name ?? 'Unavailable Track'}
-                                    {#if track?.explicit}
-                                        <ExplicitIcon class="size-4.5"/>
-                                    {/if}
-                                </a>
-                            </ItemTitle>
-                            <ItemDescription>
-                                {DateTime.fromSeconds(track?.duration || 0).toFormat('mm:ss')} • {$session.data?.user.name || 'Unknown Artist'}
-                            </ItemDescription>
-                        </ItemContent>
-                        <ItemActions>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger>
-                                    {#snippet child({ props })}
-                                        <Button {...props} variant="ghost" size="icon">
-                                            <EllipsisIcon/>
-                                        </Button>
-                                    {/snippet}
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent class="mx-2 min-w-40">
-                                    {#if track}
-                                        <DropdownMenuItem>
-                                            {#snippet child({ props })}
-                                                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-                                                <a {...props} href={Appwrite.storage.getFileDownload({ bucketId: 'audio', fileId: track.file })} target="_blank" rel="noopener noreferrer">
-                                                    <DownloadIcon/>
-                                                    Download File
-                                                </a>
-                                            {/snippet}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuSeparator/>
-                                    {/if}
-                                    <DropdownMenuItem>
-                                        {#snippet child({ props })}
-                                            <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]', { id: releaseId, trackId: dndTrack.id })}>
-                                                <PencilIcon/>
-                                                Edit
-                                            </a>
-                                        {/snippet}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        {#snippet child({ props })}
-                                            <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]/lyrics', { id: releaseId, trackId: dndTrack.id })}>
-                                                <TextAlignStartIcon/>
-                                                Edit Lyrics
-                                            </a>
-                                        {/snippet}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator/>
-                                    <DropdownMenuItem class="text-destructive!" onclick={() => dialogState.open()}>
-                                        <Trash2Icon class="text-current"/>
-                                        Delete
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </ItemActions>
-                    </Item>
-                    <ResponsiveDialog {dialogState}>
-                        {#snippet title()}
-                            Delete <span class="text-primary">{track?.name ?? ''}</span>?
-                        {/snippet}
-                        {#snippet content()}
-                            <p>
-                                Are you sure you want to delete this track? This action cannot be undone.
-                            </p>
-                        {/snippet}
-                        {#snippet footer()}
-                            <DeleteTracksForm
-                                {releaseId}
-                                trackIds={[dndTrack.id]}
-                                onerror={() => dialogState.isClosable = true}
-                                ondelete={() => {
-                                    dialogState.isClosable = true;
-                                    dialogState.close();
-
-                                    tracks = tracks.filter(t => t.id !== dndTrack.id);
-                                    form?.form.update(f => {
-                                        f.tracks = f.tracks.filter(t => t.id !== dndTrack.id);
-                                        return f;
-                                    }, { taint: 'untaint-all' });
-                                }}
-                            >
-                                {#snippet children({ form: delForm, submitting, deleted })}
-                                    <Button
-                                        variant="secondary"
-                                        disabled={submitting || deleted}
-                                        onclick={() => {
-                                            dialogState.close();
-                                        }}
-                                    >
-                                        <SquareXIcon/>
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        variant="destructive"
-                                        disabled={submitting || deleted}
-                                        onclick={() => {
-                                            delForm.submit();
-                                            dialogState.isClosable = false;
-                                        }}
-                                    >
-                                        {#if submitting}
-                                            <LoaderIcon class="animate-spin"/>
-                                            Deleting...
-                                        {:else}
-                                            <Trash2Icon class="text-current"/>
-                                            Delete
-                                        {/if}
-                                    </Button>
-                                {/snippet}
-                            </DeleteTracksForm>
-                        {/snippet}
-                    </ResponsiveDialog>
+                    {#if track}
+                        <SortTrack
+                            {track}
+                            ondelete={() => {
+                                tracks = tracks.filter(t => t.id !== dndTrack.id);
+                                form?.form.update(f => {
+                                    f.tracks = f.tracks.filter(t => t.id !== dndTrack.id);
+                                    return f;
+                                }, { taint: 'untaint-all' });
+                            }}
+                        />
+                    {:else}
+                        <SortTrackShadow/>
+                    {/if}
                 </div>
             {/each}
         </div>
