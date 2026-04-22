@@ -16,7 +16,7 @@
 
     let {
         releaseId,
-        tracks,
+        tracks = $bindable([]),
         data,
         form = $bindable(null),
         onupdate

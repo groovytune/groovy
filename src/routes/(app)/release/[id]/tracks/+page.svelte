@@ -127,5 +127,5 @@
             </div>
         </header>
     </side>
-    <SortTracksForm {tracks} bind:form={sortForm} releaseId={data.release.id} data={data.sortTracksForm}/>
+    <SortTracksForm bind:tracks bind:form={sortForm} releaseId={data.release.id} data={data.sortTracksForm}/>
 </div>
