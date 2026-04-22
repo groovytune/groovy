@@ -55,7 +55,7 @@
             deleted = true;
 
             toast.success(message.message);
-            ondelete?.(event.result.data?.trackIds ?? []);
+            ondelete?.(message?.trackIds ?? []);
         }
     });
 
