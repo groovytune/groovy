@@ -15,6 +15,7 @@
     import { resolve } from '$app/paths';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import coverPlaceholder from '$lib/assets/cover.webp';
+    import { ImageGravity } from 'appwrite';
 
     let {
         track,
@@ -28,6 +29,17 @@
 
     // svelte-ignore state_referenced_locally
     let dialogState = new DialogState({ id: `delete-track-${track.id}` });
+    let coverURL = $derived(
+        track.cover
+            ? Appwrite.storage.getFilePreview({
+                bucketId: 'image',
+                fileId: track.cover,
+                height: 100,
+                width: 100,
+                gravity: ImageGravity.Center
+            })
+            : coverPlaceholder
+    );
 </script>
 
 <Item class="p-2 hover:bg-secondary/50 rounded-md">
@@ -35,7 +47,7 @@
         <AspectRatio>
             <img
                 alt="Track Cover"
-                src={track.cover ? Appwrite.storage.getFilePreview({ bucketId: 'image', fileId: track.cover }) : coverPlaceholder}
+                src={coverURL}
                 class="size-full object-cover rounded-md"
             />
         </AspectRatio>
