@@ -13,6 +13,7 @@
     import type { SuperForm } from 'sveltekit-superforms';
     import type z from 'zod';
     import type { sortTracksSchema } from '$lib/schema/track.js';
+    import { resolve } from '$app/paths';
  
     let { data } = $props();
 
@@ -114,8 +115,12 @@
                     </DropdownMenuTrigger>
                     <DropdownMenuContent class="mx-2">
                         <DropdownMenuItem>
-                            <PencilIcon/>
-                            Edit
+                            {#snippet child({ props })}
+                                <a {...props} href={resolve('/(app)/release/[id]/edit', { id: data.release.id } )}>
+                                    <PencilIcon/>
+                                    Edit
+                                </a>
+                            {/snippet}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem class="text-destructive!">
