@@ -22,8 +22,8 @@
         releaseId: string;
         input?: HTMLInputElement|null;
         disabled?: boolean;
-        data?: SuperValidated<z.infer<typeof uploadTracksSchema>, unknown>;
-        form?: SuperForm<z.infer<typeof uploadTracksSchema>, unknown>|null;
+        data?: SuperValidated<z.infer<typeof uploadTracksSchema>>;
+        form?: SuperForm<z.infer<typeof uploadTracksSchema>>|null;
         multiple?: boolean;
         onupload?: (tracks: Track[]) => void;
         children?: Snippet<[{

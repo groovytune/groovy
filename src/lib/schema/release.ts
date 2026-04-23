@@ -4,7 +4,7 @@ export const newReleaseSchema = z.object({
     type: z.literal(['ALBUM', 'SINGLE', 'EP']).default('SINGLE'),
     name: z.string().min(1).max(255).trim(),
     description: z.string().max(5000).trim().optional(),
-    privacy: z.enum(['PUBLIC', 'PRIVATE', 'UNLISTED']).default('PUBLIC'),
+    privacy: z.literal(['PUBLIC', 'PRIVATE', 'UNLISTED']).default('PUBLIC'),
     explicit: z.boolean().default(false),
     cover: z.instanceof(File)
         .refine(
@@ -24,3 +24,5 @@ export const newReleaseSchema = z.object({
         .max(5, { error: 'You can only select up to 5 genres' })
         .default([]),
 });
+
+export const editReleaseSchema = newReleaseSchema.clone();

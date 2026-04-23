@@ -7,7 +7,7 @@
     import { page } from '$app/state';
     import type { SocialProvider } from 'better-auth';
     import { toast } from 'svelte-sonner';
-    import { auth } from '../../../lib/client/auth';
+    import { auth } from '$lib/client/auth';
 
     let redirect = $derived(page.url.searchParams.get('redirect') ?? '/');
 

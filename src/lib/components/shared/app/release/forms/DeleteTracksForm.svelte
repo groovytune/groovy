@@ -19,9 +19,9 @@
     }: {
         releaseId: string;
         trackIds?: string[];
-        data?: SuperValidated<z.infer<typeof deleteTracksSchema>, unknown>;
-        form?: SuperForm<z.infer<typeof deleteTracksSchema>, unknown>|null;
-        children?: Snippet<[{ form: SuperForm<z.infer<typeof deleteTracksSchema>, unknown>; submitting: boolean; deleted: boolean; }]>;
+        data?: SuperValidated<z.infer<typeof deleteTracksSchema>>;
+        form?: SuperForm<z.infer<typeof deleteTracksSchema>>|null;
+        children?: Snippet<[{ form: SuperForm<z.infer<typeof deleteTracksSchema>>; submitting: boolean; deleted: boolean; }]>;
         onerror?: (message: string) => void;
         ondelete?: (trackIds: string[]) => void;
     } = $props();

@@ -23,8 +23,8 @@
     }: {
         releaseId: string;
         tracks: Track[];
-        data?: SuperValidated<z.infer<typeof sortTracksSchema>, unknown>;
-        form?: SuperForm<z.infer<typeof sortTracksSchema>, unknown>|null;
+        data?: SuperValidated<z.infer<typeof sortTracksSchema>>;
+        form?: SuperForm<z.infer<typeof sortTracksSchema>>|null;
         onupdate?: (tracks: { id: string; position: number; }[]) => void;
     } = $props();
 

@@ -1,23 +1,16 @@
 <script lang="ts">
-    import { fileProxy, superForm } from 'sveltekit-superforms';
+    import { superForm } from 'sveltekit-superforms';
     import { zod4Client } from 'sveltekit-superforms/adapters';
     import { newReleaseSchema } from '$lib/schema/release.js';
-    import { FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form/index.js';
-    import { Input } from '$lib/components/ui/input/index.js';
-    import { Textarea } from '$lib/components/ui/textarea/index.js';
     import { Button } from '$lib/components/ui/button/index.js';
-    import FileInput from '$lib/components/shared/FileInput.svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
     import { auth } from '$lib/client/auth.js';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
-    import { Switch } from '$lib/components/ui/switch';
-    import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
-    import { Disc3Icon, ListMusicIcon, MusicIcon, Icon, UsersIcon, LockIcon, EyeOffIcon, LoaderIcon } from '@lucide/svelte';
-    import { cn } from '$lib/helpers/utils';
-    import type { ClassValue } from 'tailwind-variants';
+    import { LoaderIcon } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
     import placeholderCover from '$lib/assets/cover.webp';
-    import GenreSearchInput from '../../../../lib/components/shared/app/release/GenreSearchInput.svelte';
+    import { resolve } from '$app/paths';
+    import ReleaseFormFields from '$lib/components/shared/app/release/forms/fields/ReleaseFormFields.svelte';
 
     let { data } = $props();
 
@@ -52,67 +45,10 @@
     const { form: formData, enhance, submitting, allErrors } = form;
 
     const session = auth.useSession();
-    const cover = fileProxy(form, 'cover', {
-        empty: 'undefined'
-    });
 
     let coverInput: HTMLInputElement|null = $state(null);
     let nameInput: HTMLInputElement|null = $state(null);
 </script>
-
-{#snippet ItemSelect({
-    icon,
-    title,
-    description,
-    active,
-    disabled,
-    onclick,
-    class: className,
-    ...props
-}: {
-    icon?: typeof Icon;
-    title: string;
-    description: string;
-    active?: boolean;
-    disabled?: boolean;
-    onclick?: () => void;
-    class?: ClassValue;
-    [key: string]: unknown;
-})}
-    <Item
-        {...props}
-        variant={disabled ? "muted" : "outline"}
-        class={cn(
-            active ? "border-primary" : "",
-            className,
-            disabled ? "cursor-not-allowed opacity-50" : ""
-        )}
-    >
-        {#snippet child({ props: itemProps })}
-            <a
-                {...itemProps}
-                {...props}
-                onclick={!disabled ? onclick : undefined}
-                href="#/"
-            >
-                {#if icon}
-                    {@const Icon = icon}
-                    <ItemMedia variant="icon" class={active ? "text-primary bg-primary/10 border-primary/50" : ""}>
-                        <Icon/>
-                    </ItemMedia>
-                {/if}
-                <ItemContent>
-                    <ItemTitle class={active ? "text-primary" : ""}>
-                        {title}
-                    </ItemTitle>
-                    <ItemDescription class="line-clamp-3" title={description}>
-                        {description}
-                    </ItemDescription>
-                </ItemContent>
-            </a>
-        {/snippet}
-    </Item>
-{/snippet}
 
 <div class="flex flex-col md:flex-row">
     <section class="w-full shrink-0 flex flex-col items-center md:max-w-sm">
@@ -153,176 +89,14 @@
             </p>
         </header>
     </section>
-    <form class="w-full md:max-w-[calc(100%-24rem)] p-5 flex flex-col gap-2" method="POST" enctype="multipart/form-data" use:enhance>
-        <FormField {form} name="name">
-            <FormControl>
-                {#snippet children({ props })}
-                    <FormLabel>Name</FormLabel>
-                    <Input
-                        {...props}
-                        bind:value={$formData.name}
-                        bind:ref={nameInput}
-                        disabled={$submitting}
-                        placeholder="Release Name"
-                    />
-                {/snippet}
-            </FormControl>
-            <FormFieldErrors/>
-        </FormField>
-        <FormField {form} name="description">
-            <FormControl>
-                {#snippet children({ props })}
-                    <FormLabel>Description</FormLabel>
-                    <Textarea
-                        {...props}
-                        bind:value={$formData.description}
-                        disabled={$submitting}
-                        placeholder="Release Description"
-                    />
-                {/snippet}
-            </FormControl>
-            <FormFieldErrors/>
-        </FormField>
-        <FormField {form} name="cover">
-            <FormControl>
-                {#snippet children({ props })}
-                    <FormLabel>Cover Image</FormLabel>
-                    <FileInput
-                        {...props}
-                        bind:files={$cover}
-                        bind:ref={coverInput}
-                        disabled={$submitting}
-                        accept="image/*"
-                    />
-                {/snippet}
-            </FormControl>
-            <FormFieldErrors/>
-        </FormField>
-        <FormField {form} name="explicit">
-            <FormControl>
-                {#snippet children({ props })}
-                    <Item variant="outline">
-                        {#snippet child({ props: itemProps })}
-                            <FormLabel {...itemProps}>
-                                <ItemMedia variant="icon">
-                                    <ExplicitIcon class="leading-3.5! mb-0"/>
-                                </ItemMedia>
-                                <ItemContent>
-                                    <ItemTitle>
-                                        Mark this release as explicit
-                                    </ItemTitle>
-                                    <ItemDescription class={$formData.explicit ? "line-clamp-none" : "line-clamp-3"}>
-                                        Explicit content may include strong language, sexual content, or violence. Marking your release as explicit helps ensure it is properly labeled and filtered on platforms that support content warnings.
-                                    </ItemDescription>
-                                </ItemContent>
-                                <ItemActions>
-                                    <Switch
-                                        {...props}
-                                        bind:checked={$formData.explicit}
-                                        disabled={$submitting}
-                                    />
-                                </ItemActions>
-                            </FormLabel>
-                        {/snippet}
-                    </Item>
-                {/snippet}
-            </FormControl>
-            <FormFieldErrors/>
-        </FormField>
-        <FormField {form} name="genres">
-            <FormControl>
-                {#snippet children({ props })}
-                    <FormLabel class="text-lg">Genres</FormLabel>
-                    <GenreSearchInput
-                        {...props}
-                        bind:value={$formData.genres}
-                        disabled={$submitting}
-                        placeholder="Search and add genres to your release"
-                    />
-                {/snippet}
-            </FormControl>
-            <FormFieldErrors/>
-        </FormField>
-        <FormField {form} name="type">
-            <FormControl>
-                {#snippet children({ props })}
-                    <FormLabel class="text-lg">Release Type</FormLabel>
-                    <div class="flex gap-2 flex-col lg:flex-row">
-                        {@render ItemSelect({
-                            icon: Disc3Icon,
-                            title: 'Album',
-                            description: 'A collection of tracks that are released together as a cohesive unit.',
-                            class: "cursor-pointer lg:w-1/3",
-                            props,
-                            disabled: $submitting,
-                            active: $formData.type === 'ALBUM',
-                            onclick: () => $formData.type = 'ALBUM'
-                        })}
-                        {@render ItemSelect({
-                            icon: MusicIcon,
-                            title: 'Single',
-                            description: 'A release that typically features one main track, often accompanied by additional tracks such as remixes or B-sides.',
-                            class: "cursor-pointer lg:w-1/3",
-                            props,
-                            disabled: $submitting,
-                            active: $formData.type === 'SINGLE',
-                            onclick: () => $formData.type = 'SINGLE'
-                        })}
-                        {@render ItemSelect({
-                            icon: ListMusicIcon,
-                            title: 'EP',
-                            description: 'A release that contains a few tracks, typically more than a single but fewer than an album.',
-                            class: "cursor-pointer lg:w-1/3",
-                            props,
-                            disabled: $submitting,
-                            active: $formData.type === 'EP',
-                            onclick: () => $formData.type = 'EP'
-                        })}
-                    </div>
-                {/snippet}
-            </FormControl>
-            <FormFieldErrors/>
-        </FormField>
-        <FormField {form} name="privacy">
-            <FormControl>
-                {#snippet children({ props })}
-                    <FormLabel class="text-lg">Privacy</FormLabel>
-                    <div class="flex gap-2 flex-col lg:flex-row">
-                        {@render ItemSelect({
-                            icon: UsersIcon,
-                            title: 'Public',
-                            description: 'Your release will be visible to everyone and can be shared on social media and other platforms.',
-                            class: "cursor-pointer lg:w-1/3",
-                            props,
-                            disabled: $submitting,
-                            active: $formData.privacy === 'PUBLIC',
-                            onclick: () => $formData.privacy = 'PUBLIC'
-                        })}
-                        {@render ItemSelect({
-                            icon: LockIcon,
-                            title: 'Private',
-                            description: 'Your release will only be visible to you. It will not be discoverable on the platform.',
-                            class: "cursor-pointer lg:w-1/3",
-                            props,
-                            disabled: $submitting,
-                            active: $formData.privacy === 'PRIVATE',
-                            onclick: () => $formData.privacy = 'PRIVATE'
-                        })}
-                        {@render ItemSelect({
-                            icon: EyeOffIcon,
-                            title: 'Unlisted',
-                            description: 'Your release will not be visible on your profile or in search results, but anyone with the direct link can view it.',
-                            class: "cursor-pointer lg:w-1/3",
-                            props,
-                            disabled: $submitting,
-                            active: $formData.privacy === 'UNLISTED',
-                            onclick: () => $formData.privacy = 'UNLISTED'
-                        })}
-                    </div>
-                {/snippet}
-            </FormControl>
-            <FormFieldErrors/>
-        </FormField>
+    <form
+        class="w-full md:max-w-[calc(100%-24rem)] p-5 flex flex-col gap-2"
+        action={resolve('/(app)/release/new')}
+        method="POST"
+        enctype="multipart/form-data"
+        use:enhance
+    >
+        <ReleaseFormFields {form} bind:coverInput bind:nameInput/>
         <div class="flex justify-end">
             <Button type="submit" disabled={$submitting || !!$allErrors.length}>
                 {#if $submitting}
