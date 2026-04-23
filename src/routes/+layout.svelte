@@ -7,13 +7,14 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import { page } from '$app/state';
 	import '$lib/styles/app.css';
-	import { ActiveNavigationPage } from '../lib/contexts/navigation.js';
-	import { TooltipProvider } from '../lib/components/ui/tooltip/index.js';
+	import { ActiveNavigationPageContext } from '$lib/contexts/navigation.js';
+	import { TooltipProvider } from '$lib/components/ui/tooltip/index.js';
+	import AudioPlayer from '$lib/components/shared/app/AudioPlayer.svelte';
 
 	let { children, data } = $props();
     let activeNavigationPage = $state({ id: '' });
 
-    ActiveNavigationPage.set(activeNavigationPage);
+    ActiveNavigationPageContext.set(activeNavigationPage);
 </script>
 
 <Toaster/>
@@ -22,4 +23,5 @@
 
 <TooltipProvider>
     {@render children()}
+    <AudioPlayer/>ActiveNavigationPageContext
 </TooltipProvider>
