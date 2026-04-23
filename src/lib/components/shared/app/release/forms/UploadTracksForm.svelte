@@ -60,18 +60,17 @@
             const message = event.result.data?.form.message;
 
             if (message.invalid?.length) {
-                const invalidFiles = message.invalid.map((i: { file: File }) => i.file.name).join(', ');
+                const invalidFiles = message.invalid.map((i: { file: string; reason: string }) => i.file).join(', ');
                 toast.error(`Some files were invalid: ${invalidFiles}`);
             }
 
-
             const newTracks = (message.tracks ?? []) as Track[];
-            const invalid = message.invalid as { file: File; reason: string }[];
+            const invalid = message.invalid as { file: string; reason: string }[];
 
             toast.success(message.message ?? `Uploaded ${newTracks.length} track${newTracks.length > 1 ? 's' : ''}.`);
 
             if (invalid?.length) {
-                const invalidFiles = invalid.map(i => i.file.name).join(', ');
+                const invalidFiles = invalid.map(i => i.file).join(', ');
                 toast.error(`Some files were invalid: ${invalidFiles}`);
             }
 

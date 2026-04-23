@@ -78,18 +78,18 @@ export const actions = {
         }
 
         const files: File[] = (form.data.files ?? []) as File[];
-        const invalid: { file: File; reason?: string; }[] = [];
+        const invalid: { file: string; reason?: string; }[] = [];
         const tracks: (z.infer<typeof newTrackSchema>|null)[] = await Promise.all(
             files
                 .map(async file => {
                     if (!trackFileSchema.safeParse(file).success) {
-                        invalid.push({ file, reason: 'Unsupported audio format' });
+                        invalid.push({ file: file.name, reason: 'Unsupported audio format' });
                         return null;
                     }
 
                     const metadata = await extractFileMetadata(file)
                         .catch(err => {
-                            invalid.push({ file, reason: String(err) });
+                            invalid.push({ file: file.name, reason: String(err) });
                             console.error(`Error extracting metadata from file ${file.name}:`, err);
                             return null;
                         });
@@ -125,7 +125,7 @@ export const actions = {
                     const data = newTrackSchema.safeParse(raw);
 
                     if (!data.success) {
-                        invalid.push({ file, reason: data.error.message });
+                        invalid.push({ file: file.name, reason: data.error.message });
                         console.error(`Metadata validation failed for file ${file.name}:`, data.error, raw);
                         return null;
                     }
