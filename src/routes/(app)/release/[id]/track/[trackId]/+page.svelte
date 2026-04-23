@@ -11,7 +11,7 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { Button } from '$lib/components/ui/button/index.js';
-    import { DownloadIcon, ListMusicIcon, LoaderIcon, PlayIcon, SquareXIcon, Trash2Icon } from '@lucide/svelte';
+    import { DownloadIcon, ListMusicIcon, LoaderIcon, MicVocalIcon, PlayIcon, SquareXIcon, Trash2Icon } from '@lucide/svelte';
     import { FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { Input } from '$lib/components/ui/input';
     import FileInput from '$lib/components/shared/FileInput.svelte';
@@ -113,16 +113,23 @@
             <p class="text-sm leading-tight text-muted-foreground">
                 {$session.data?.user.name || 'Unknown Artist'}
             </p>
-            <div class="flex gap-2 justify-center my-5 max-w-sm px-20">
+            <div class="flex gap-2 justify-center mt-5 max-w-sm px-20">
                 <Button variant="outline" size="icon">
                     <PlayIcon/>
                 </Button>
                 <Button
-                    href={resolve('/(app)/release/[id]/tracks', { id: data.track.releaseId })}
+                    href={resolve('/(app)/release/[id]/track/[trackId]/lyrics', { id: data.track.releaseId, trackId: data.track.id })}
                     variant="outline"
                 >
+                    <MicVocalIcon/>
+                    Edit Lyrics
+                </Button>
+                <Button
+                    href={resolve('/(app)/release/[id]/tracks', { id: data.track.releaseId })}
+                    variant="outline"
+                    size="icon"
+                >
                     <ListMusicIcon/>
-                    View release
                 </Button>
             </div>
         </header>

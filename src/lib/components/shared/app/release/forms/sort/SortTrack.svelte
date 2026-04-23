@@ -48,6 +48,76 @@
     oncontextmenu={e =>  e.preventDefault()}
     class="p-2 hover:bg-secondary/50 rounded-md"
 >
+    {#snippet child({ props })}
+        <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
+            <ItemContent>
+                <ItemTitle
+                    class="line-clamp-2 w-full"
+                    style="word-wrap: break-word;"
+                >
+                    <a
+                        href="#/"
+                        onclick={() => track && toast(track.name)}
+                        oncontextmenu={e =>  e.preventDefault()}
+                    >
+                        {track?.name ?? 'Unavailable Track'}
+                        {#if track?.explicit}
+                            <ExplicitIcon class="size-4.5"/>
+                        {/if}
+                    </a>
+                </ItemTitle>
+                <ItemDescription>
+                    {formatDuration(track?.duration || 0)} • {$session.data?.user.name || 'Unknown Artist'}
+                </ItemDescription>
+            </ItemContent>
+            <ItemActions>
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        {#snippet child({ props })}
+                            <Button {...props} variant="ghost" size="icon">
+                                <EllipsisIcon/>
+                            </Button>
+                        {/snippet}
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent class="mx-2 min-w-40">
+                        <DropdownMenuItem>
+                            {#snippet child({ props })}
+                                <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
+                                    <PencilIcon/>
+                                    Edit
+                                </a>
+                            {/snippet}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            {#snippet child({ props })}
+                                <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]/lyrics', { id: track.releaseId, trackId: track.id })}>
+                                    <TextAlignStartIcon/>
+                                    Edit Lyrics
+                                </a>
+                            {/snippet}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator/>
+                        {#if track}
+                            <DropdownMenuItem>
+                                {#snippet child({ props })}
+                                    <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+                                    <a {...props} href={Appwrite.storage.getFileDownload({ bucketId: 'audio', fileId: track.file })} target="_blank" rel="noopener noreferrer">
+                                        <DownloadIcon/>
+                                        Download File
+                                    </a>
+                                {/snippet}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator/>
+                        {/if}
+                        <DropdownMenuItem class="text-destructive!" onclick={() => dialogState.open()}>
+                            <Trash2Icon class="text-current"/>
+                            Delete
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </ItemActions>
+        </a>
+    {/snippet}
     {#if cover}
         <ItemMedia variant="image">
             <AspectRatio>
@@ -59,72 +129,6 @@
             </AspectRatio>
         </ItemMedia>
     {/if}
-    <ItemContent>
-        <ItemTitle
-            class="line-clamp-2 w-full"
-            style="word-wrap: break-word;"
-        >
-            <a
-                href="#/"
-                onclick={() => track && toast(track.name)}
-                oncontextmenu={e =>  e.preventDefault()}
-            >
-                {track?.name ?? 'Unavailable Track'}
-                {#if track?.explicit}
-                    <ExplicitIcon class="size-4.5"/>
-                {/if}
-            </a>
-        </ItemTitle>
-        <ItemDescription>
-            {formatDuration(track?.duration || 0)} • {$session.data?.user.name || 'Unknown Artist'}
-        </ItemDescription>
-    </ItemContent>
-    <ItemActions>
-        <DropdownMenu>
-            <DropdownMenuTrigger>
-                {#snippet child({ props })}
-                    <Button {...props} variant="ghost" size="icon">
-                        <EllipsisIcon/>
-                    </Button>
-                {/snippet}
-            </DropdownMenuTrigger>
-            <DropdownMenuContent class="mx-2 min-w-40">
-                <DropdownMenuItem>
-                    {#snippet child({ props })}
-                        <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
-                            <PencilIcon/>
-                            Edit
-                        </a>
-                    {/snippet}
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    {#snippet child({ props })}
-                        <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]/lyrics', { id: track.releaseId, trackId: track.id })}>
-                            <TextAlignStartIcon/>
-                            Edit Lyrics
-                        </a>
-                    {/snippet}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator/>
-                {#if track}
-                    <DropdownMenuItem>
-                        {#snippet child({ props })}
-                            <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-                            <a {...props} href={Appwrite.storage.getFileDownload({ bucketId: 'audio', fileId: track.file })} target="_blank" rel="noopener noreferrer">
-                                <DownloadIcon/>
-                                Download File
-                            </a>
-                        {/snippet}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator/>
-                {/if}
-                <DropdownMenuItem class="text-destructive!" onclick={() => dialogState.open()}>
-                    <Trash2Icon class="text-current"/>
-                    Delete
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    </ItemActions>
 </Item>
 <ResponsiveDialog {dialogState}>
     {#snippet title()}
