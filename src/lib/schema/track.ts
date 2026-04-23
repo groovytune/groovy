@@ -17,16 +17,24 @@ export const newTrackSchema = z.object({
     cover: z
         .instanceof(File)
         .refine(
-            file => file.type.startsWith('image/'),
-            { message: 'Cover must be an image file' }
+            file => file.type.startsWith('image/jpg') || file.type.startsWith('image/jpeg') || file.type.startsWith('image/png'),
+            { message: 'Cover must be a JPG or PNG file' }
         )
         .refine(
             file => file.size <= 10 * 1024 * 1024,
-            { message: 'Cover image size must be less than 10MB' }
+            { message: 'Cover must be less than 10MB' }
         )
-        .nullable(),
+        .optional(),
     file: trackFileSchema,
     explicit: z.boolean().default(false),
+    genres: z
+        .object({
+            id: z.string(),
+            name: z.string()
+        })
+        .array()
+        .max(5, { error: 'You can only select up to 5 genres' })
+        .default([]),
     duration: z.number().int().positive().nullable(),
     metadata: z.any().optional()
 });
@@ -49,6 +57,10 @@ export const uploadTracksSchema = z.object({
         )
         .nullable()
 });
+
+export const editTrackSchema = newTrackSchema
+    .omit({ file: true, metadata: true, duration: true })
+    .partial();
 
 export const deleteTracksSchema = z.object({
     trackIds: z.string().array().min(1)

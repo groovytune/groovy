@@ -25,4 +25,4 @@ export const newReleaseSchema = z.object({
         .default([]),
 });
 
-export const editReleaseSchema = newReleaseSchema.clone();
+export const editReleaseSchema = newReleaseSchema.partial();

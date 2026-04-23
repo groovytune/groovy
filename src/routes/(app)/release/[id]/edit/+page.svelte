@@ -11,7 +11,7 @@
     import placeholderCover from '$lib/assets/cover.webp';
     import { resolve } from '$app/paths';
     import ReleaseFormFields from '$lib/components/shared/app/release/forms/fields/ReleaseFormFields.svelte';
-    import { Appwrite } from '../../../../../lib/client/appwrite.js';
+    import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageGravity } from 'appwrite';
 
     let { data } = $props();
@@ -24,6 +24,8 @@
         autoFocusOnError: true,
         validationMethod: 'auto',
         taintedMessage: true,
+        invalidateAll: false,
+        resetForm: false,
         onError: event => {
             console.error('Form submission error:', event.result);
             toast.error(event.result.error.message);
@@ -40,7 +42,7 @@
             if (type != 'success') return;
 
             const message = event.result.data?.form.message;
-            toast.success(message ?? 'Release edited successfully!');
+            toast.success(message.message ?? 'Release edited successfully!');
         }
     });
 
@@ -87,7 +89,7 @@
                 style="word-wrap: break-word;"
                 onclick={() => nameInput?.focus()}
             >
-                {$formData.name || 'New Release'}
+                {$formData.name || 'Untitled Release'}
                 {#if $formData.explicit}
                     <ExplicitIcon/>
                 {/if}

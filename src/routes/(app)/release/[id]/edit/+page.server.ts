@@ -79,8 +79,7 @@ export const actions = {
                 explicit: form.data.explicit,
                 cover: cover?.$id,
                 genres: {
-                    connect: form.data.genres
-                        ?.map(genre => ({ id: genre.id }))
+                    set: form.data.genres?.map(g => ({ id: g.id }))
                 },
             }
         }).catch(async error => {
