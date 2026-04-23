@@ -48,19 +48,19 @@
 
     let coverInput: HTMLInputElement|null = $state(null);
     let nameInput: HTMLInputElement|null = $state(null);
+    let coverURL = $derived($formData.cover ? URL.createObjectURL($formData.cover) : placeholderCover);
 </script>
 
 <div class="flex flex-col md:flex-row">
     <section class="w-full shrink-0 flex flex-col items-center md:max-w-sm">
         <div class="p-5 w-full max-w-sm relative">
             {#key $formData.cover}
-                {@const url = $formData.cover ? URL.createObjectURL($formData.cover) : placeholderCover}
                 <AspectRatio
                     class="w-full rounded-md bg-muted cursor-pointer"
                     onclick={() => coverInput?.click()}
                 >
-                    <img src={url} alt="Release Cover" class="size-full object-cover rounded-md"/>
-                    <img src={url} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
+                    <img src={coverURL} alt="Release Cover" class="size-full object-cover rounded-md"/>
+                    <img src={coverURL} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
                 </AspectRatio>
             {/key}
         </div>

@@ -18,8 +18,6 @@
         type?: Exclude<HTMLInputTypeAttribute, "file">;
     } = $props();
 
-    let initialFocus = $state(false);
-
     const genresResource = resource(
         [() => query],
         async ([query]) => {
@@ -41,7 +39,6 @@
         {...props}
         {disabled}
         bind:value={query}
-        onfocus={() => initialFocus = true}
         onkeydown={(e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -58,7 +55,7 @@
     </InputGroupAddon>
 </InputGroup>
 
-{#if (genresResource.current?.length || value.length) && initialFocus}
+{#if genresResource.current?.length || value.length}
     <div class="flex flex-wrap gap-2 mt-2">
         {#each value as genre (genre.id)}
             <Button
