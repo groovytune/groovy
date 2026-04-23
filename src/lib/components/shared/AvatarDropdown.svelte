@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { MoonIcon, SunIcon } from '@lucide/svelte';
+    import { BoltIcon, MoonIcon, MusicIcon, SunIcon } from '@lucide/svelte';
     import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
     import { Button } from '../ui/button';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "../ui/dropdown-menu";
@@ -35,6 +35,15 @@
                 <p class="font-medium leading-tight truncate">{user.name}</p>
                 <p class="text-sm text-muted-foreground truncate">{user.email}</p>
             </div>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator/>
+        <DropdownMenuItem>
+            <MusicIcon/>
+            Releases
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+            <BoltIcon/>
+            Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator/>
         <DropdownMenuItem closeOnSelect={false} onclick={toggleMode}>
