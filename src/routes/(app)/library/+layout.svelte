@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { ActiveNavigationPage } from '$lib/contexts/navigation';
+    import { ActiveNavigationPageContext } from '$lib/contexts/navigation';
 
     let { children } = $props();
 
-    const activeNavigationPage = ActiveNavigationPage.get();
+    const activeNavigationPage = ActiveNavigationPageContext.get();
 
     activeNavigationPage.id = 'library';
 </script>

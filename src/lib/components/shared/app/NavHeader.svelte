@@ -3,13 +3,13 @@
     import { BoomBoxIcon, HouseIcon, LibraryIcon, PlusIcon, SearchIcon, StarIcon } from '@lucide/svelte';
     import { Button } from '$lib/components/ui/button';
     import { auth } from '$lib/client/auth';
-    import { ActiveNavigationPage } from '$lib/contexts/navigation';
-    import { cn } from '$lib/helpers/utils';
+    import { ActiveNavigationPageContext } from '$lib/contexts/navigation';
     import AvatarDropdown from '../AvatarDropdown.svelte';
     import NewReleaseDropdown from '../NewReleaseDropdown.svelte';
+    import { cn } from '$lib/helpers/utils';
 
     const session = auth.useSession();
-    const active = ActiveNavigationPage.get();
+    const active = ActiveNavigationPageContext.get();
 
     const mobileButtonActiveClass = "text-primary! [&_svg]:stroke-3 font-bold relative before:absolute before:top-full before:right-1/2 before:translate-x-1/2 before:w-1/4 before:h-1 before:bg-primary before:rounded-full";
 </script>
