@@ -13,6 +13,7 @@
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { Switch } from '$lib/components/ui/switch';
     import GenreSearchInput from '$lib/components/shared/app/release/GenreSearchInput.svelte';
+    import { categoryInfos } from '../../../../../../helpers/constants';
 
     let {
         form,
@@ -145,7 +146,7 @@
                                 Mark this release as explicit
                             </ItemTitle>
                             <ItemDescription class={$formData.explicit ? "line-clamp-none" : "line-clamp-3"}>
-                                Explicit content may include strong language, sexual content, or violence. Marking your release as explicit helps ensure it is properly labeled and filtered on platforms that support content warnings.
+                                {categoryInfos.explicit.description}
                             </ItemDescription>
                         </ItemContent>
                         <ItemActions>
@@ -184,7 +185,7 @@
                 {@render ItemSelect({
                     icon: Disc3Icon,
                     title: 'Album',
-                    description: 'A collection of tracks that are released together as a cohesive unit.',
+                    description: categoryInfos.album.description,
                     class: "cursor-pointer lg:w-1/3",
                     props,
                     disabled: $submitting || disabled,
@@ -194,7 +195,7 @@
                 {@render ItemSelect({
                     icon: MusicIcon,
                     title: 'Single',
-                    description: 'A release that typically features one main track, often accompanied by additional tracks such as remixes or B-sides.',
+                    description: categoryInfos.single.description,
                     class: "cursor-pointer lg:w-1/3",
                     props,
                     disabled: $submitting || disabled,
@@ -204,7 +205,7 @@
                 {@render ItemSelect({
                     icon: ListMusicIcon,
                     title: 'EP',
-                    description: 'A release that contains a few tracks, typically more than a single but fewer than an album.',
+                    description: categoryInfos.ep.description,
                     class: "cursor-pointer lg:w-1/3",
                     props,
                     disabled: $submitting || disabled,
@@ -224,7 +225,7 @@
                 {@render ItemSelect({
                     icon: UsersIcon,
                     title: 'Public',
-                    description: 'Your release will be visible to everyone and can be shared on social media and other platforms.',
+                    description: categoryInfos.public.description,
                     class: "cursor-pointer lg:w-1/3",
                     props,
                     disabled: $submitting || disabled,
@@ -234,7 +235,7 @@
                 {@render ItemSelect({
                     icon: LockIcon,
                     title: 'Private',
-                    description: 'Your release will only be visible to you. It will not be discoverable on the platform.',
+                    description: categoryInfos.private.description,
                     class: "cursor-pointer lg:w-1/3",
                     props,
                     disabled: $submitting || disabled,
@@ -244,7 +245,7 @@
                 {@render ItemSelect({
                     icon: EyeOffIcon,
                     title: 'Unlisted',
-                    description: 'Your release will not be visible on your profile or in search results, but anyone with the direct link can view it.',
+                    description: categoryInfos.unlisted.description,
                     class: "cursor-pointer lg:w-1/3",
                     props,
                     disabled: $submitting || disabled,

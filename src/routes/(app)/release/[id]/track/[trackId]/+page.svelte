@@ -11,7 +11,7 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { Button } from '$lib/components/ui/button/index.js';
-    import { DownloadIcon, LoaderIcon } from '@lucide/svelte';
+    import { DownloadIcon, ListMusicIcon, LoaderIcon, PlayIcon, SquareXIcon, Trash2Icon } from '@lucide/svelte';
     import { FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { Input } from '$lib/components/ui/input';
     import FileInput from '$lib/components/shared/FileInput.svelte';
@@ -20,6 +20,11 @@
     import { Switch } from '$lib/components/ui/switch/index.js';
     import { formatDuration, formatFileSize } from '../../../../../../lib/helpers/utils';
     import { Badge } from '../../../../../../lib/components/ui/badge';
+    import { categoryInfos } from '../../../../../../lib/helpers/constants';
+    import { DialogState } from '../../../../../../lib/helpers/classes/DialogState.svelte';
+    import ResponsiveDialog from '../../../../../../lib/components/shared/ResponsiveDialog.svelte';
+    import DeleteTracksForm from '../../../../../../lib/components/shared/app/release/forms/DeleteTracksForm.svelte';
+    import { goto } from '$app/navigation';
 
     let { data } = $props();
 
@@ -60,6 +65,9 @@
 
     let coverInput: HTMLInputElement|null = $state(null);
     let nameInput: HTMLInputElement|null = $state(null);
+
+    // svelte-ignore state_referenced_locally
+    let deleteDialogState = new DialogState({ id: `delete-track-${data.track.id}` });
 
     let coverURL = $derived(
         $formData.cover
@@ -105,6 +113,18 @@
             <p class="text-sm leading-tight text-muted-foreground">
                 {$session.data?.user.name || 'Unknown Artist'}
             </p>
+            <div class="flex gap-2 justify-center my-5 max-w-sm px-20">
+                <Button variant="outline" size="icon">
+                    <PlayIcon/>
+                </Button>
+                <Button
+                    href={resolve('/(app)/release/[id]/tracks', { id: data.track.releaseId })}
+                    variant="outline"
+                >
+                    <ListMusicIcon/>
+                    View release
+                </Button>
+            </div>
         </header>
     </section>
     <form
@@ -190,7 +210,7 @@
                                         Mark this release as explicit
                                     </ItemTitle>
                                     <ItemDescription class={$formData.explicit ? "line-clamp-none" : "line-clamp-3"}>
-                                        Explicit content may include strong language, sexual content, or violence. Marking your release as explicit helps ensure it is properly labeled and filtered on platforms that support content warnings.
+                                        {categoryInfos.explicit.description}
                                     </ItemDescription>
                                 </ItemContent>
                                 <ItemActions>
@@ -221,7 +241,11 @@
             </FormControl>
             <FormFieldErrors/>
         </FormField>
-        <div class="flex justify-end">
+        <div class="flex justify-between gap-2 mt-5">
+            <Button variant="outline" disabled={$submitting} onclick={() => deleteDialogState.open()}>
+                <Trash2Icon/>
+                Delete Track
+            </Button>
             <Button type="submit" disabled={$submitting || !!$allErrors.length}>
                 {#if $submitting}
                     <LoaderIcon class="animate-spin"/>
@@ -231,3 +255,52 @@
         </div>
     </form>
 </div>
+
+<ResponsiveDialog dialogState={deleteDialogState}>
+    {#snippet title()}
+        Delete <span class="text-primary">{data.track.name}</span>?
+    {/snippet}
+    {#snippet content({ type })}
+        <p class:px-4={type === 'drawer'}>
+            Are you sure you want to delete this track? This action cannot be undone.
+        </p>
+    {/snippet}
+    {#snippet footer()}
+        <DeleteTracksForm
+            releaseId={data.track.releaseId}
+            trackIds={[data.track.id]}
+            onerror={() => deleteDialogState.isClosable = true}
+            ondelete={() => {
+                deleteDialogState.close({ force: true });
+                goto(resolve('/(app)/release/[id]/tracks', { id: data.track.releaseId }));
+            }}
+        >
+            {#snippet children({ form: delForm, submitting, deleted })}
+                <Button
+                    variant="secondary"
+                    disabled={submitting || deleted}
+                    onclick={() => deleteDialogState.close({ force: true })}
+                >
+                    <SquareXIcon/>
+                    Cancel
+                </Button>
+                <Button
+                    variant="destructive"
+                    disabled={submitting || deleted}
+                    onclick={() => {
+                        delForm.submit();
+                        deleteDialogState.isClosable = false;
+                    }}
+                >
+                    {#if submitting}
+                        <LoaderIcon class="animate-spin"/>
+                        Deleting...
+                    {:else}
+                        <Trash2Icon class="text-current"/>
+                        Delete
+                    {/if}
+                </Button>
+            {/snippet}
+        </DeleteTracksForm>
+    {/snippet}
+</ResponsiveDialog>

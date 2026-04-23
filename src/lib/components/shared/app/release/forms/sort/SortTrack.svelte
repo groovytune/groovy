@@ -89,18 +89,6 @@
                 {/snippet}
             </DropdownMenuTrigger>
             <DropdownMenuContent class="mx-2 min-w-40">
-                {#if track}
-                    <DropdownMenuItem>
-                        {#snippet child({ props })}
-                            <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-                            <a {...props} href={Appwrite.storage.getFileDownload({ bucketId: 'audio', fileId: track.file })} target="_blank" rel="noopener noreferrer">
-                                <DownloadIcon/>
-                                Download File
-                            </a>
-                        {/snippet}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator/>
-                {/if}
                 <DropdownMenuItem>
                     {#snippet child({ props })}
                         <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
@@ -118,6 +106,18 @@
                     {/snippet}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator/>
+                {#if track}
+                    <DropdownMenuItem>
+                        {#snippet child({ props })}
+                            <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+                            <a {...props} href={Appwrite.storage.getFileDownload({ bucketId: 'audio', fileId: track.file })} target="_blank" rel="noopener noreferrer">
+                                <DownloadIcon/>
+                                Download File
+                            </a>
+                        {/snippet}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator/>
+                {/if}
                 <DropdownMenuItem class="text-destructive!" onclick={() => dialogState.open()}>
                     <Trash2Icon class="text-current"/>
                     Delete
