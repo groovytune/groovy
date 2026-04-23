@@ -43,8 +43,14 @@ export class DialogState {
         }
     }
 
-    public close(options?: Partial<Omit<DialogState.SetDialogsOptions, 'dialogs'>>) {
-        if (!this.isClosable) return;
+    public close(options?: Partial<Omit<DialogState.SetDialogsOptions, 'dialogs'>> & { force?: boolean }) {
+        if (!this.isClosable) {
+            if (!options?.force) {
+                return;
+            }
+
+            this.isClosable = true;
+        }
 
         this.isOpen = false;
 

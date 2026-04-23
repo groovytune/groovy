@@ -19,9 +19,11 @@
 
     let {
         track,
+        cover = false,
         ondelete
     }: {
         track: Track;
+        cover?: boolean;
         ondelete?: (trackId: string) => void;
     } = $props();
 
@@ -42,16 +44,21 @@
     );
 </script>
 
-<Item class="p-2 hover:bg-secondary/50 rounded-md">
-    <ItemMedia variant="image">
-        <AspectRatio>
-            <img
-                alt="Track Cover"
-                src={coverURL}
-                class="size-full object-cover rounded-md"
-            />
-        </AspectRatio>
-    </ItemMedia>
+<Item
+    oncontextmenu={e =>  e.preventDefault()}
+    class="p-2 hover:bg-secondary/50 rounded-md"
+>
+    {#if cover}
+        <ItemMedia variant="image">
+            <AspectRatio>
+                <img
+                    alt="Track Cover"
+                    src={coverURL}
+                    class="size-full object-cover rounded-md"
+                />
+            </AspectRatio>
+        </ItemMedia>
+    {/if}
     <ItemContent>
         <ItemTitle
             class="line-clamp-2 w-full"
@@ -123,8 +130,8 @@
     {#snippet title()}
         Delete <span class="text-primary">{track?.name ?? ''}</span>?
     {/snippet}
-    {#snippet content()}
-        <p>
+    {#snippet content({ type })}
+        <p class:px-4={type === 'drawer'}>
             Are you sure you want to delete this track? This action cannot be undone.
         </p>
     {/snippet}
@@ -134,9 +141,7 @@
             trackIds={[track.id]}
             onerror={() => dialogState.isClosable = true}
             ondelete={() => {
-                dialogState.isClosable = true;
-                dialogState.close();
-
+                dialogState.close({ force: true });
                 ondelete?.(track.id);
             }}
         >
@@ -144,9 +149,7 @@
                 <Button
                     variant="secondary"
                     disabled={submitting || deleted}
-                    onclick={() => {
-                        dialogState.close();
-                    }}
+                    onclick={() => dialogState.close({ force: true })}
                 >
                     <SquareXIcon/>
                     Cancel

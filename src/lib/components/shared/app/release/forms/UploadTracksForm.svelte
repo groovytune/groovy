@@ -48,7 +48,8 @@
             const { type } = event.result;
 
             if (type === 'failure') {
-                const errors: string|undefined = event.result.data?.form.errors?.files?.join('\n');
+                console.error('Upload form submission failed:', event.result);
+                const errors: string|undefined = event.result.data?.form.errors?.files?._errors?.join('\n');
 
                 toast.error(errors ?? event.result.data?.message ?? 'Failed to upload tracks.');
                 return;
