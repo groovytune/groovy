@@ -11,13 +11,15 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { Button } from '$lib/components/ui/button/index.js';
-    import { LoaderIcon } from '@lucide/svelte';
+    import { DownloadIcon, LoaderIcon } from '@lucide/svelte';
     import { FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { Input } from '$lib/components/ui/input';
     import FileInput from '$lib/components/shared/FileInput.svelte';
     import GenreSearchInput from '$lib/components/shared/app/release/GenreSearchInput.svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item/index.js';
     import { Switch } from '$lib/components/ui/switch/index.js';
+    import { formatDuration, formatFileSize } from '../../../../../../lib/helpers/utils';
+    import { Badge } from '../../../../../../lib/components/ui/badge';
 
     let { data } = $props();
 
@@ -112,6 +114,38 @@
         enctype="multipart/form-data"
         use:enhance
     >
+        {#await Appwrite.storage.getFile({ bucketId: 'audio', fileId: data.track.file }) then file}
+            <Item variant="outline" class="mb-4">
+                <ItemContent>
+                    <ItemTitle class="text-lg">{file.name}</ItemTitle>
+                    <ItemDescription>
+                        <Badge variant="outline" title="Duration">
+                            {formatDuration(data.track.duration || 0)}
+                        </Badge>
+                        <Badge variant="outline" title="File Size">
+                            {formatFileSize(file.sizeOriginal)}
+                        </Badge>
+                        <Badge variant="outline" title="MIME Type">
+                            {file.mimeType}
+                        </Badge>
+                    </ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                    <Button
+                        href={Appwrite.storage.getFileDownload({
+                            bucketId: 'audio',
+                            fileId: data.track.file
+                        })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        variant="outline"
+                        size="icon"
+                    >
+                        <DownloadIcon/>
+                    </Button>
+                </ItemActions>
+            </Item>
+        {/await}
         <FormField {form} name="name">
             <FormControl>
                 {#snippet children({ props })}

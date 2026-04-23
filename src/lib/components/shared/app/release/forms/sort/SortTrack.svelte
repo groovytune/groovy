@@ -7,7 +7,6 @@
     import ResponsiveDialog from '$lib/components/shared/ResponsiveDialog.svelte';
     import DeleteTracksForm from '../DeleteTracksForm.svelte';
     import type { Track } from '$lib/server/prisma/browser';
-    import { DateTime } from 'luxon';
     import { toast } from 'svelte-sonner';
     import { Button } from '$lib/components/ui/button';
     import { auth } from '$lib/client/auth';
@@ -16,6 +15,7 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { ImageGravity } from 'appwrite';
+    import { formatDuration } from '$lib/helpers/utils';
 
     let {
         track,
@@ -76,7 +76,7 @@
             </a>
         </ItemTitle>
         <ItemDescription>
-            {DateTime.fromSeconds(track?.duration || 0).toFormat('mm:ss')} • {$session.data?.user.name || 'Unknown Artist'}
+            {formatDuration(track?.duration || 0)} • {$session.data?.user.name || 'Unknown Artist'}
         </ItemDescription>
     </ItemContent>
     <ItemActions>
