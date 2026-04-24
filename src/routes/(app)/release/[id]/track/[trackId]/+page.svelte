@@ -25,6 +25,7 @@
     import ResponsiveDialog from '../../../../../../lib/components/shared/ResponsiveDialog.svelte';
     import DeleteTracksForm from '../../../../../../lib/components/shared/app/release/forms/DeleteTracksForm.svelte';
     import { goto } from '$app/navigation';
+    import { AudioPlayerContext } from '../../../../../../lib/contexts/player.js';
 
     let { data } = $props();
 
@@ -61,6 +62,7 @@
     const { form: formData, enhance, submitting, allErrors } = form;
 
     const session = auth.useSession();
+    const audioPlayer = AudioPlayerContext.get();
     const cover = fileProxy(form, 'cover', { empty: 'undefined' });
 
     let coverInput: HTMLInputElement|null = $state(null);
@@ -114,7 +116,14 @@
                 {$session.data?.user.name || 'Unknown Artist'}
             </p>
             <div class="flex gap-2 justify-center mt-5 max-w-sm px-20">
-                <Button variant="outline" size="icon">
+                <Button
+                    variant="outline"
+                    size="icon"
+                    onclick={() => {
+                        audioPlayer.add(data.track);
+                        audioPlayer.play();
+                    }}
+                >
                     <PlayIcon/>
                 </Button>
                 <Button

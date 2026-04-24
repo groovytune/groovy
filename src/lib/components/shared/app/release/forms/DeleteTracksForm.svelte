@@ -28,6 +28,7 @@
 
     // svelte-ignore state_referenced_locally
     form = superForm(data ?? { trackIds }, {
+        id: `delete-tracks-${releaseId}`,
         validators: zod4Client(deleteTracksSchema),
         validationMethod: 'onsubmit',
         invalidateAll: false,

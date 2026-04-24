@@ -9,12 +9,26 @@
 	import '$lib/styles/app.css';
 	import { ActiveNavigationPageContext } from '$lib/contexts/navigation.js';
 	import { TooltipProvider } from '$lib/components/ui/tooltip/index.js';
-	import AudioPlayer from '$lib/components/shared/app/AudioPlayer.svelte';
+	import { AudioPlayerContext } from '$lib/contexts/player.js';
+	import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
+	import MiniPlayer from '$lib/components/shared/app/player/MiniPlayer.svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	let { children, data } = $props();
     let activeNavigationPage = $state({ id: '' });
 
+    const audioPlayer = new AudioPlayer();
+
     ActiveNavigationPageContext.set(activeNavigationPage);
+    AudioPlayerContext.set(audioPlayer);
+
+    onMount(() => {
+        audioPlayer.init();
+    });
+
+    onDestroy(() => {
+        audioPlayer.destroy();
+    });
 </script>
 
 <Toaster/>
@@ -23,5 +37,5 @@
 
 <TooltipProvider>
     {@render children()}
-    <AudioPlayer/>ActiveNavigationPageContext
+    <MiniPlayer/>
 </TooltipProvider>

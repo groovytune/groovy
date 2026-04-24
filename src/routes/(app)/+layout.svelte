@@ -1,7 +1,6 @@
 <script lang="ts">
     import NavHeader from '$lib/components/shared/app/NavHeader.svelte';
 
-
     let { children } = $props();
 </script>
 

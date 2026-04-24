@@ -14,10 +14,12 @@
     import type z from 'zod';
     import type { sortTracksSchema } from '$lib/schema/track.js';
     import { resolve } from '$app/paths';
+    import { AudioPlayerContext } from '$lib/contexts/player.js';
  
     let { data } = $props();
 
     const session = auth.useSession();
+    const audioPlayer = AudioPlayerContext.get();
 
     let tracks = $derived(data.release.tracks);
     let sortForm = $state<SuperForm<z.infer<typeof sortTracksSchema>, unknown>|null>(null);
@@ -71,7 +73,17 @@
                 {data.release.description || ''}
             </p>
             <div class="flex gap-2 justify-center my-5 max-w-sm px-20">
-                <Button variant="outline" size="icon">
+                <Button
+                    onclick={() => {
+                        for (const track of tracks) {
+                            audioPlayer.add(track);
+                        }
+
+                        audioPlayer.play();
+                    }}
+                    variant="outline"
+                    size="icon"
+                >
                     <PlayIcon/>
                 </Button>
                 <UploadTracksForm
