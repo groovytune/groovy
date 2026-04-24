@@ -1,9 +1,9 @@
 import { error, json } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
-import type { Track } from '$lib/server/prisma/client.js';
+import type { Release, Track } from '$lib/server/prisma/client.js';
 import type { User } from 'better-auth';
 
-export type GETResponse = Track & {
+export type GETResponse = Release & {
     user: Pick<User, 'id'|'name'|'username'|'image'>;
     tracks: Pick<Track, 'id'|'name'|'explicit'|'position'>[];
 }

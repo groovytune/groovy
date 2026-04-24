@@ -6,13 +6,15 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
     import { auth } from '$lib/client/auth.js';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
-    import { LoaderIcon } from '@lucide/svelte';
+    import { ListMusicIcon, LoaderIcon, PlayIcon } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
     import placeholderCover from '$lib/assets/cover.webp';
     import { resolve } from '$app/paths';
     import ReleaseFormFields from '$lib/components/shared/app/release/forms/fields/ReleaseFormFields.svelte';
     import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageGravity } from 'appwrite';
+    import type { GETResponse } from '../../../api/release/[id]/tracks/+server.js';
+    import { AudioPlayerContext } from '$lib/contexts/player.js';
 
     let { data } = $props();
 
@@ -49,6 +51,7 @@
     const { form: formData, enhance, submitting, allErrors } = form;
 
     const session = auth.useSession();
+    const audioPlayer = AudioPlayerContext.get();
 
     let coverInput: HTMLInputElement|null = $state(null);
     let nameInput: HTMLInputElement|null = $state(null);
@@ -104,6 +107,27 @@
             >
                 {$formData.description || ''}
             </p>
+            <div class="flex gap-2 justify-center mt-5 max-w-sm px-20">
+                <Button
+                    variant="outline"
+                    size="icon"
+                    onclick={async () => {
+                        const tracks = await fetch(resolve('/(app)/api/release/[id]/tracks', { id: data.release.id })).then(res => res.json()) as GETResponse;
+
+                        await audioPlayer.replaceQueue(tracks);
+                        await audioPlayer.play();
+                    }}
+                >
+                    <PlayIcon/>
+                </Button>
+                <Button
+                    href={resolve('/(app)/release/[id]/edit/tracks', { id: data.release.id })}
+                    variant="outline"
+                >
+                    <ListMusicIcon/>
+                    Manage Tracks
+                </Button>
+            </div>
         </header>
     </section>
     <form
