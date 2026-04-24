@@ -10,14 +10,27 @@
     import { ImageGravity } from 'appwrite';
     import RangeSlider from 'svelte-range-slider-pips';
     import { fly } from 'svelte/transition';
+    import { resource } from 'runed';
+    import type { GETResponse } from '../../../../../routes/(app)/api/release/[id]/+server';
+    import { resolve } from '$app/paths';
 
     const audioPlayer = AudioPlayerContext.get();
 
+    const releaseInfo = resource(
+        () => audioPlayer.currentTrack?.releaseId,
+        async (releaseId): Promise<GETResponse|null> => {
+            if (!releaseId) return null;
+
+            const response = await fetch(resolve('/(app)/api/release/[id]', { id: releaseId }));
+            return response.json();
+        }
+    );
+
     let coverURL = $derived(
-        audioPlayer.currentTrack?.cover
+        audioPlayer.currentTrack?.cover || releaseInfo.current?.cover
             ? Appwrite.storage.getFilePreview({
                 bucketId: 'image',
-                fileId: audioPlayer.currentTrack.cover,
+                fileId: (audioPlayer.currentTrack?.cover || releaseInfo.current?.cover)!,
                 height: 100,
                 width: 100,
                 gravity: ImageGravity.Center
@@ -58,7 +71,9 @@
                         {audioPlayer.currentTrack.name}
                     </h3>
                     <p class="text-xs text-muted-foreground line-clamp-1">
-                        {audioPlayer.currentTrack.releaseId}
+                        <a href={resolve('/')}>
+                            {releaseInfo.current?.user.name}
+                        </a>
                     </p>
                 </div>
                 <div class="shrink-0 flex items-center gap-1 ml-auto">
