@@ -277,9 +277,6 @@
         .rangeHandle {
             @apply size-3! top-0.5!;
 
-            &::before {
-            }
-
             .rangeNub {
                 @apply bg-primary!;
             }

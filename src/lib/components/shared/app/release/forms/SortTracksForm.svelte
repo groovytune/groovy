@@ -115,7 +115,7 @@
             <form
                 use:enhance
                 method="POST"
-                action={resolve('/(app)/release/[id]/tracks', { id: releaseId }) + '?/sort'}
+                action={resolve('/(app)/release/[id]/edit/tracks', { id: releaseId }) + '?/sort'}
                 class="flex justify-center py-5 pb-0 gap-2"
             >
                 <Button

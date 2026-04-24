@@ -31,7 +31,7 @@ export async function load({ params, locals, url }) {
     });
 
     if (!track) {
-        throw redirect(302, resolve('/(app)/release/[id]/tracks', { id: params.id }));
+        throw redirect(302, resolve('/(app)/release/[id]/edit/tracks', { id: params.id }));
     }
 
     const form = await superValidate({

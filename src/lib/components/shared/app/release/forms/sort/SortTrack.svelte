@@ -50,7 +50,7 @@
     class="p-2 hover:bg-secondary/50 rounded-md"
 >
     {#snippet child({ props })}
-        <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
+        <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
             <ItemContent>
                 <ItemTitle
                     class="line-clamp-2 w-full"
@@ -81,7 +81,7 @@
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             {#snippet child({ props })}
-                                <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
+                                <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
                                     <PencilIcon/>
                                     Edit
                                 </a>
@@ -89,7 +89,7 @@
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             {#snippet child({ props })}
-                                <a {...props} href={resolve('/(app)/release/[id]/track/[trackId]/lyrics', { id: track.releaseId, trackId: track.id })}>
+                                <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
                                     <TextAlignStartIcon/>
                                     Edit Lyrics
                                 </a>
