@@ -17,7 +17,7 @@
     import ExplicitIcon from '../../ExplicitIcon.svelte';
 
     const audioPlayer = AudioPlayerContext.get();
-    const smallScreen = new MediaQuery('(width >= 48rem)', true);
+    const smallScreen = new MediaQuery('(width >= 40rem)', true);
 
     const releaseInfo = resource(
         () => audioPlayer.currentTrack?.releaseId,
@@ -61,7 +61,7 @@
     <div
         in:fly={{ y: 100 }}
         out:fly={{ y: 100 }}
-        class="fixed bottom-15 sm:bottom-0 left-0 sm:h-15 h-16 w-full sm:bg-background sm:border-t flex justify-center z-50 sm:p-0 px-2 pb-2"
+        class="fixed bottom-15 sm:bottom-0 left-0 sm:h-15 h-16 w-full sm:bg-background/90 sm:backdrop-blur-sm sm:border-t flex justify-center z-50 sm:p-0 px-2 pb-2"
     >
         <div class="container flex items-center gap-2 lg:gap-5 p-2 sm:px-5 sm:bg-transparent bg-background/90 rounded-lg backdrop-blur-sm sm:backdrop-blur-0 border sm:border-0 lg:max-w-6xl relative">
             <div class="md:hidden absolute bottom-0 left-0 w-full h-0.5 rounded-lg px-2">
