@@ -6,6 +6,7 @@ import { editReleaseSchema } from '$lib/schema/release';
 import { prisma } from '$lib/server/prisma';
 import { Appwrite } from '$lib/server/appwrite.js';
 import { resolve } from '$app/paths';
+import { definePageMetaTags } from 'svelte-meta-tags';
 
 export async function load({ locals, url, params }) {
     if (!locals.user) {
@@ -45,7 +46,22 @@ export async function load({ locals, url, params }) {
         { allowFiles: true }
     );
 
-    return { form, release };
+    const title = `Groovy | Edit Release • ${release.name}`;
+    const description = `Edit ${release.name} release details, including name, description, privacy settings, and cover image.`;
+
+    return {
+        form,
+        release,
+        ...definePageMetaTags({
+            title,
+            description,
+            openGraph: {
+                title,
+                description,
+                type: 'website',
+            }
+        })
+    };
 }
 
 export const actions = {

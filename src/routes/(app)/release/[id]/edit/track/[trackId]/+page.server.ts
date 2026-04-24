@@ -6,6 +6,7 @@ import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { editTrackSchema } from '$lib/schema/track.js';
 import { Appwrite } from '$lib/server/appwrite';
+import { definePageMetaTags } from 'svelte-meta-tags';
 
 export async function load({ params, locals, url }) {
     if (!locals.session) {
@@ -40,9 +41,21 @@ export async function load({ params, locals, url }) {
         genres: track.genres,
     }, zod4(editTrackSchema));
 
+    const title = `Groovy | Edit Track • ${track.name}`;
+    const description = `Edit the track ${track.name} in your release.`;
+
     return {
         track,
-        form
+        form,
+        ...definePageMetaTags({
+            title,
+            description,
+            openGraph: {
+                title,
+                description,
+                type: 'website',
+            }
+        })
     };
 }
 

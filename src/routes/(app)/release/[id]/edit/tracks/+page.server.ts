@@ -8,6 +8,7 @@ import type { Actions } from './$types.js';
 import { fail } from 'sveltekit-superforms';
 import { extractFileMetadata, getPartialMetadata } from '$lib/helpers/metadata.js';
 import type z from 'zod';
+import { definePageMetaTags } from 'svelte-meta-tags';
 
 export async function load({ params, locals }) {
     const { id } = params;
@@ -40,10 +41,22 @@ export async function load({ params, locals }) {
         zod4(uploadTracksSchema)
     );
 
+    const title = `Groovy | Manage Tracks • ${release.name}`;
+    const description = `Manage the tracks of your release ${release.name}.`;
+
     return {
         release,
         sortTracksForm,
-        uploadTracksForm
+        uploadTracksForm,
+        ...definePageMetaTags({
+            title,
+            description,
+            openGraph: {
+                title,
+                description,
+                type: 'website',
+            }
+        })
     };
 }
 

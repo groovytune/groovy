@@ -7,6 +7,7 @@ import { Appwrite } from '$lib/server/appwrite.js';
 import { prisma } from '$lib/server/prisma.js';
 import type z from 'zod';
 import { createAuthRedirect } from '$lib/helpers/utils';
+import { definePageMetaTags } from 'svelte-meta-tags';
 
 export async function load({ locals, url }) {
     if (!locals.user) {
@@ -20,7 +21,21 @@ export async function load({ locals, url }) {
         zod4(newReleaseSchema)
     );
 
-    return { form };
+    const title = 'Groovy | New Release';
+    const description = 'Create a new release to share your music with creators and listeners.';
+
+    return {
+        ...definePageMetaTags({
+            title,
+            description,
+            openGraph: {
+                title,
+                description,
+                type: 'website',
+            }
+        }),
+        form
+    };
 }
 
 export const actions = {
