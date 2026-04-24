@@ -69,7 +69,9 @@
                 <img src={coverURL} alt="Cover Art" class="size-10 shrink-0 rounded-md overflow-hidden">
                 <div class="flex flex-col leading-tight">
                     <h3 class="text-sm font-semibold line-clamp-1">
-                        {audioPlayer.currentTrack.name}
+                        <a href={resolve('/')}>
+                            {audioPlayer.currentTrack.name}
+                        </a>
                     </h3>
                     <p class="text-xs text-muted-foreground line-clamp-1">
                         {#if releaseInfo.current}
