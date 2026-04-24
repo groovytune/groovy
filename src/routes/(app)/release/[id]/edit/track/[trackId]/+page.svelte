@@ -119,9 +119,9 @@
                 <Button
                     variant="outline"
                     size="icon"
-                    onclick={() => {
-                        audioPlayer.add(data.track);
-                        audioPlayer.play();
+                    onclick={async () => {
+                        await audioPlayer.replaceCurrentTrack(data.track);
+                        await audioPlayer.play();
                     }}
                 >
                     <PlayIcon/>

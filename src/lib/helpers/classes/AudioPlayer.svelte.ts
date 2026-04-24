@@ -232,7 +232,7 @@ export class AudioPlayer {
 
         if (nextTrack) {
             await this.loadCurrentTrack(nextTrack);
-            await this.audio.play();
+            await this.play();
         }
 
         for (const track of addToHistory) {
@@ -253,7 +253,7 @@ export class AudioPlayer {
 
         if (previousTrack) {
             await this.loadCurrentTrack(previousTrack);
-            await this.audio.play();
+            await this.play();
         }
 
         for (const track of addToQueue) {

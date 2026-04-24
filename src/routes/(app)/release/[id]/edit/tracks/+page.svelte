@@ -74,7 +74,10 @@
             </p>
             <div class="flex gap-2 justify-center my-5 max-w-sm px-20">
                 <Button
-                    onclick={() => audioPlayer.replaceQueue(tracks)}
+                    onclick={async () => {
+                        await audioPlayer.replaceQueue(tracks);
+                        await audioPlayer.play();
+                    }}
                     variant="outline"
                     size="icon"
                 >

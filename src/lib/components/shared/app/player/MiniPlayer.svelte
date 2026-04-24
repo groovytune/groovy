@@ -14,6 +14,7 @@
     import { resolve } from '$app/paths';
     import { MediaQuery } from 'svelte/reactivity';
     import RangeSlider from 'svelte-range-slider-pips';
+    import ExplicitIcon from '../../ExplicitIcon.svelte';
 
     const audioPlayer = AudioPlayerContext.get();
     const smallScreen = new MediaQuery('(width >= 48rem)', true);
@@ -79,6 +80,9 @@
                     <h3 class="text-sm font-semibold line-clamp-1">
                         {#if audioPlayer.currentTrack}
                             {audioPlayer.currentTrack.name}
+                            {#if audioPlayer.currentTrack.explicit}
+                                <ExplicitIcon class="size-4.5"/>
+                            {/if}
                         {:else}
                             <span class="text-muted-foreground">Not Playing</span>
                         {/if}
