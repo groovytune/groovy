@@ -11,7 +11,6 @@
 	import { TooltipProvider } from '$lib/components/ui/tooltip/index.js';
 	import { AudioPlayerContext } from '$lib/contexts/player.js';
 	import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
-	import MiniPlayer from '$lib/components/shared/app/player/MiniPlayer.svelte';
 	import { onDestroy, onMount } from 'svelte';
 
 	let { children, data } = $props();
@@ -37,5 +36,4 @@
 
 <TooltipProvider>
     {@render children()}
-    <MiniPlayer/>
 </TooltipProvider>
