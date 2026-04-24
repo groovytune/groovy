@@ -35,6 +35,7 @@
 
     // svelte-ignore state_referenced_locally
     form = superForm(data ?? { files: null }, {
+        id: `upload-tracks-${releaseId}`,
         validators: zod4Client(uploadTracksSchema),
         validationMethod: 'onsubmit',
         invalidateAll: false,

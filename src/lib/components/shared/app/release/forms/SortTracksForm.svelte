@@ -30,6 +30,7 @@
 
     // svelte-ignore state_referenced_locally
     form = superForm(data ?? { tracks: [] }, {
+        id: `sort-tracks-${releaseId}`,
         validators: zod4Client(sortTracksSchema),
         dataType: 'json',
         taintedMessage: true,

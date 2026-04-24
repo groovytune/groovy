@@ -98,7 +98,7 @@ export const actions = {
                         return null;
                     }
 
-                    const cover: File|null = metadata.cover
+                    const cover: File|undefined = metadata.cover
                         ? new File(
                             [
                                 metadata.cover.data instanceof Uint8Array
@@ -111,15 +111,16 @@ export const actions = {
                             `cover.${metadata.cover.format.split('/')[1]?.toLowerCase() || 'jpg'}`,
                             { type: metadata.cover.format }
                         )
-                        : null;
+                        : undefined;
 
-                    const raw = {
+                    const raw: z.infer<typeof newTrackSchema> = {
                         name: metadata.common.title || file.name,
-                        cover,
+                        cover: cover,
                         file,
                         explicit: false,
                         duration: metadata.duration || null,
-                        metadata: getPartialMetadata(metadata)
+                        metadata: getPartialMetadata(metadata),
+                        genres: []
                     };
 
                     const data = newTrackSchema.safeParse(raw);
