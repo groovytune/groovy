@@ -1,5 +1,5 @@
 import z from 'zod';
-import { supportedAudioMimeTypes } from '../helpers/constants';
+import { supportedAudioMimeTypes } from '$lib/helpers/constants';
 
 export const trackFileSchema = z
     .instanceof(File)

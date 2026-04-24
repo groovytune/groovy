@@ -1,8 +1,8 @@
 <script lang="ts">
     import type { HTMLAttributes } from 'svelte/elements';
     import { cn } from '$lib/helpers/utils';
-    import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
-    import { categoryInfos } from '../../helpers/constants';
+    import { Tooltip, TooltipContent, TooltipTrigger } from '$lib/components/ui/tooltip';
+    import { categoryInfos } from '$lib/helpers/constants';
 
     let props: HTMLAttributes<SVGSVGElement> = $props();
 </script>

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Disc3Icon, ListMusicIcon, Music4Icon, PlusIcon } from '@lucide/svelte';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { Button } from '../ui/button';
+    import { Button } from '$lib/components/ui/button';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import type { Snippet } from 'svelte';

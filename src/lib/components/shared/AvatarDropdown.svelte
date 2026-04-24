@@ -1,8 +1,8 @@
 <script lang="ts">
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "$lib/components/ui/dropdown-menu";
     import { BoltIcon, MoonIcon, MusicIcon, SunIcon } from '@lucide/svelte';
-    import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-    import { Button } from '../ui/button';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "../ui/dropdown-menu";
+    import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
+    import { Button } from '$lib/components/ui/button';
     import { mode, toggleMode } from 'mode-watcher';
     import type { JustUser } from 'better-auth';
     import { goto } from '$app/navigation';

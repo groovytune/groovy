@@ -18,14 +18,14 @@
     import GenreSearchInput from '$lib/components/shared/app/release/GenreSearchInput.svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item/index.js';
     import { Switch } from '$lib/components/ui/switch/index.js';
-    import { formatDuration, formatFileSize } from '../../../../../../lib/helpers/utils';
-    import { Badge } from '../../../../../../lib/components/ui/badge';
-    import { categoryInfos } from '../../../../../../lib/helpers/constants';
-    import { DialogState } from '../../../../../../lib/helpers/classes/DialogState.svelte';
-    import ResponsiveDialog from '../../../../../../lib/components/shared/ResponsiveDialog.svelte';
-    import DeleteTracksForm from '../../../../../../lib/components/shared/app/release/forms/DeleteTracksForm.svelte';
+    import { formatDuration, formatFileSize } from '$lib/helpers/utils';
+    import { Badge } from '$lib/components/ui/badge';
+    import { categoryInfos } from '$lib/helpers/constants';
+    import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
+    import ResponsiveDialog from '$lib/components/shared/ResponsiveDialog.svelte';
+    import DeleteTracksForm from '$lib/components/shared/app/release/forms/DeleteTracksForm.svelte';
+    import { AudioPlayerContext } from '$lib/contexts/player.js';
     import { goto } from '$app/navigation';
-    import { AudioPlayerContext } from '../../../../../../lib/contexts/player.js';
 
     let { data } = $props();
 

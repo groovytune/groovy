@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { deepMerge, MetaTags } from 'svelte-meta-tags';
-	import { Toaster } from '../lib/components/ui/sonner';
+	import { Toaster } from '$lib/components/ui/sonner';
 	import '@fontsource-variable/google-sans-flex';
 	import '@fontsource-variable/google-sans-code';
 	import '@fontsource-variable/playfair-display';

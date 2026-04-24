@@ -4,7 +4,7 @@ import { fail, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { editReleaseSchema } from '$lib/schema/release';
 import { prisma } from '$lib/server/prisma';
-import { Appwrite } from '../../../../../lib/server/appwrite.js';
+import { Appwrite } from '$lib/server/appwrite.js';
 import { resolve } from '$app/paths';
 
 export async function load({ locals, url, params }) {

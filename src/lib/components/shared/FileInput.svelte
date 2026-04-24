@@ -1,8 +1,8 @@
 <script lang="ts">
     import type { HTMLInputAttributes } from 'svelte/elements';
-    import { cn, type WithElementRef } from '../../helpers/utils';
+    import { cn, type WithElementRef } from '$lib/helpers/utils';
     import type { Snippet } from 'svelte';
-    import Button from '../ui/button/button.svelte';
+    import Button from '$lib/components/ui/button/button.svelte';
     import { FileIcon, FilesIcon, UploadIcon } from '@lucide/svelte';
 
 	type Props = WithElementRef<Omit<HTMLInputAttributes, "type"> & { files?: FileList }> & { children?: Snippet<[data: { ref: HTMLElement|null; props: { onclick: () => void; } }]>; };

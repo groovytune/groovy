@@ -4,7 +4,7 @@ import { Appwrite } from '$lib/server/appwrite.js';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { deleteTracksSchema, newTrackSchema, sortTracksSchema, trackFileSchema, uploadTracksSchema } from '$lib/schema/track.js';
-import type { Actions } from '../$types.js';
+import type { Actions } from './$types.js';
 import { fail } from 'sveltekit-superforms';
 import { extractFileMetadata, getPartialMetadata } from '$lib/helpers/metadata.js';
 import type z from 'zod';

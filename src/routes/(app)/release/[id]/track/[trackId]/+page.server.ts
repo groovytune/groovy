@@ -5,7 +5,7 @@ import { resolve } from '$app/paths';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { editTrackSchema } from '$lib/schema/track.js';
-import { Appwrite } from '../../../../../../lib/server/appwrite';
+import { Appwrite } from '$lib/server/appwrite';
 
 export async function load({ params, locals, url }) {
     if (!locals.session) {

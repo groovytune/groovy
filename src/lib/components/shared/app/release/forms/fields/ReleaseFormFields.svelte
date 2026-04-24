@@ -13,7 +13,7 @@
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
     import { Switch } from '$lib/components/ui/switch';
     import GenreSearchInput from '$lib/components/shared/app/release/GenreSearchInput.svelte';
-    import { categoryInfos } from '../../../../../../helpers/constants';
+    import { categoryInfos } from '$lib/helpers/constants';
 
     let {
         form,
