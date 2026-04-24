@@ -23,7 +23,8 @@
 
             const response = await fetch(resolve('/(app)/api/release/[id]', { id: releaseId }));
             return response.json();
-        }
+        },
+        { debounce: 400 }
     );
 
     let coverURL = $derived(
@@ -71,9 +72,15 @@
                         {audioPlayer.currentTrack.name}
                     </h3>
                     <p class="text-xs text-muted-foreground line-clamp-1">
-                        <a href={resolve('/')}>
-                            {releaseInfo.current?.user.name}
-                        </a>
+                        {#if releaseInfo.current}
+                            <a href={resolve('/')}>
+                                {releaseInfo.current?.user.name}
+                            </a>
+                            •
+                            <a href={resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack.releaseId })}>
+                                {releaseInfo.current?.name}
+                            </a>
+                        {/if}
                     </p>
                 </div>
                 <div class="shrink-0 flex items-center gap-1 ml-auto">
