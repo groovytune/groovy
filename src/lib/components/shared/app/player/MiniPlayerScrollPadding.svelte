@@ -7,5 +7,5 @@
 </script>
 
 {#if audioPlayer.currentTrack || (!audioPlayer.currentTrack && smallScreen.current)}
-    <div class="bg-primary sm:h-15 h-16"></div>
+    <div class="sm:h-15 h-16"></div>
 {/if}
