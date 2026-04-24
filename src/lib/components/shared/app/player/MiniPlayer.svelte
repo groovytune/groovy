@@ -117,7 +117,7 @@
                     step={0.5}
                     range="min"
                     min={0}
-                    max={audioPlayer.duration}
+                    max={audioPlayer.duration || 0.1}
                     springValues={{ stiffness: 0.3, damping: 0.9 }}
                     disabled={!audioPlayer.currentTrack}
                     class="m-0! w-[calc(100%-4rem)]"

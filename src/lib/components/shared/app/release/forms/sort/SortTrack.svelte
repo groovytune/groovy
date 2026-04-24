@@ -1,6 +1,6 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { DownloadIcon, EllipsisIcon, LoaderIcon, PencilIcon, PlayIcon, SquareXIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
+    import { DownloadIcon, EllipsisIcon, LoaderIcon, PencilIcon, SquareXIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
@@ -15,7 +15,7 @@
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { ImageGravity } from 'appwrite';
     import { formatDuration } from '$lib/helpers/utils';
-    import { AudioPlayerContext } from '$lib/contexts/player';
+    import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
 
     let {
         track,
@@ -28,7 +28,6 @@
     } = $props();
 
     const session = auth.useSession();
-    const audioPlayer = AudioPlayerContext.get();
 
     // svelte-ignore state_referenced_locally
     let dialogState = new DialogState({ id: `delete-track-${track.id}` });
@@ -75,10 +74,6 @@
                         {/snippet}
                     </DropdownMenuTrigger>
                     <DropdownMenuContent class="mx-2 min-w-40">
-                        <DropdownMenuItem onclick={() => audioPlayer.play(track)}>
-                            <PlayIcon/>
-                            Play
-                        </DropdownMenuItem>
                         <DropdownMenuItem>
                             {#snippet child({ props })}
                                 <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
@@ -95,6 +90,8 @@
                                 </a>
                             {/snippet}
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator/>
+                        <PlayerDropdownItems {track}/>
                         <DropdownMenuSeparator/>
                         {#if track}
                             <DropdownMenuItem>

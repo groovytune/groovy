@@ -109,6 +109,15 @@ export class AudioPlayer {
         }
     }
 
+    public remove(track: Track|string|number, from: 'queue' | 'history' = 'queue'): void {
+        const list = from === 'queue' ? this.queue : this.history;
+        const index = typeof track === 'object' ? list.findIndex(t => t.id === track.id) : list.findIndex(t => t.id === track);
+
+        if (index !== -1) {
+            list.splice(index, 1);
+        }
+    }
+
     public async replaceQueue(tracks: Track[]): Promise<void> {
         this.clear();
         this.queue = tracks;
@@ -125,13 +134,14 @@ export class AudioPlayer {
         }
     }
 
-    public remove(track: Track|string|number, from: 'queue' | 'history' = 'queue'): void {
-        const list = from === 'queue' ? this.queue : this.history;
-        const index = typeof track === 'object' ? list.findIndex(t => t.id === track.id) : list.findIndex(t => t.id === track);
+    public async replaceCurrentTrack(track: Track, moveHistory: boolean = true): Promise<void> {
+        if (!this.audio) return;
 
-        if (index !== -1) {
-            list.splice(index, 1);
+        if (this.currentTrack && moveHistory) {
+            this.history.unshift(this.currentTrack);
         }
+
+        await this.loadCurrentTrack(track);
     }
 
     public async loadCurrentTrack(track: Track): Promise<void> {
@@ -141,9 +151,12 @@ export class AudioPlayer {
 
         const source = Appwrite.storage.getFileView({ bucketId: 'audio', fileId: track.file });
 
+        this.audio.pause();
         this.audio.src = source;
         this.audio.currentTime = 0;
         this.audio.load();
+
+        console.log('Loaded track:', source, this.audio);
     }
 
     public stop(): void {
@@ -169,10 +182,7 @@ export class AudioPlayer {
                 this.add(track);
             }
 
-            if (this.paused) {
-                await this.audio.play();
-            }
-
+            await this.audio.play();
             return;
         }
 
