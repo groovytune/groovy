@@ -8,13 +8,15 @@
     import { formatDuration } from '$lib/helpers/utils';
     import { Appwrite } from '$lib/client/appwrite';
     import { ImageGravity } from 'appwrite';
-    import RangeSlider from 'svelte-range-slider-pips';
     import { fly } from 'svelte/transition';
     import { resource } from 'runed';
     import type { GETResponse } from '../../../../../routes/(app)/api/release/[id]/+server';
     import { resolve } from '$app/paths';
+    import { MediaQuery } from 'svelte/reactivity';
+    import RangeSlider from 'svelte-range-slider-pips';
 
     const audioPlayer = AudioPlayerContext.get();
+    const smallScreen = new MediaQuery('(width >= 48rem)', true);
 
     const releaseInfo = resource(
         () => audioPlayer.currentTrack?.releaseId,
@@ -54,7 +56,7 @@
     }
 </script>
 
-{#if audioPlayer.currentTrack}
+{#if audioPlayer.currentTrack || (!audioPlayer.currentTrack && smallScreen.current)}
     <div
         in:fly={{ y: 100 }}
         out:fly={{ y: 100 }}
@@ -62,29 +64,31 @@
     >
         <div class="container flex items-center gap-2 lg:gap-5 p-2 sm:px-5 sm:bg-transparent bg-background/90 rounded-lg backdrop-blur-sm sm:backdrop-blur-0 border sm:border-0 lg:max-w-6xl relative">
             <div class="md:hidden absolute bottom-0 left-0 w-full h-0.5 rounded-lg px-2">
-                <div class="h-full bg-primary rounded-full" style="width: {audioPlayer.progress}%">
-                </div>
+                <span class="block h-full bg-primary rounded-full" style="width: {audioPlayer.progress}%"></span>
             </div>
             <section class="flex items-center gap-2 w-full md:max-w-sm">
                 <img src={coverURL} alt="Cover Art" class="size-10 shrink-0 rounded-md overflow-hidden">
-                <div class="flex flex-col leading-tight">
+                <a
+                    href={
+                        audioPlayer.currentTrack
+                            ? resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack.releaseId })
+                            : undefined
+                    }
+                    class="flex flex-col leading-tight"
+                >
                     <h3 class="text-sm font-semibold line-clamp-1">
-                        <a href={resolve('/')}>
+                        {#if audioPlayer.currentTrack}
                             {audioPlayer.currentTrack.name}
-                        </a>
+                        {:else}
+                            <span class="text-muted-foreground">Not Playing</span>
+                        {/if}
                     </h3>
                     <p class="text-xs text-muted-foreground line-clamp-1">
                         {#if releaseInfo.current}
-                            <a href={resolve('/')}>
-                                {releaseInfo.current?.user.name}
-                            </a>
-                            •
-                            <a href={resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack.releaseId })}>
-                                {releaseInfo.current?.name}
-                            </a>
+                            {releaseInfo.current?.user.name} • {releaseInfo.current?.name}
                         {/if}
                     </p>
-                </div>
+                </a>
                 <div class="shrink-0 flex items-center gap-1 ml-auto">
                     <Button variant="ghost" size="icon" disabled={!audioPlayer.previousable} onclick={() => audioPlayer.previous()}>
                         <RewindIcon fill="currentColor"/>
@@ -104,29 +108,31 @@
                 </div>
             </section>
             <div class="items-center justify-between w-full hidden md:flex gap-2 text-xs text-muted-foreground">
-                <span>{formatDuration(audioPlayer.currentTime || 0)}</span>
-                {#if audioPlayer.duration}
-                    <RangeSlider
-                        on:start={() => audioPlayer.pause()}
-                        on:stop={() => audioPlayer.play()}
-                        on:change={(e) => audioPlayer.seek(e.detail.value)}
-                        bind:value={audioPlayer.currentTime}
-                        step={0.5}
-                        range="min"
-                        min={0}
-                        max={audioPlayer.duration}
-                        springValues={{ stiffness: 0.3, damping: 0.9 }}
-                        disabled={!audioPlayer.currentTrack}
-                        class="m-0! w-[calc(100%-4rem)]"
-                    />
-                {/if}
-                <span>{formatDuration(audioPlayer.duration || 0)}</span>
+                <span class="w-6 text-start">{audioPlayer.currentTrack ? formatDuration(audioPlayer.currentTime || 0) : '--:--'}</span>
+                <RangeSlider
+                    on:start={() => audioPlayer.pause()}
+                    on:stop={() => audioPlayer.play()}
+                    on:change={(e) => audioPlayer.seek(e.detail.value)}
+                    bind:value={audioPlayer.currentTime}
+                    step={0.5}
+                    range="min"
+                    min={0}
+                    max={audioPlayer.duration}
+                    springValues={{ stiffness: 0.3, damping: 0.9 }}
+                    disabled={!audioPlayer.currentTrack}
+                    class="m-0! w-[calc(100%-4rem)]"
+                />
+                <span class="w-6 text-end">{audioPlayer.currentTrack ? formatDuration(audioPlayer.duration || 0) : '--:--'}</span>
             </div>
             <div class="hidden md:flex gap-2">
                 <Button variant="ghost" size="icon" class="ml-auto">
                     <ListMusicIcon/>
                 </Button>
-                <Button variant={audioPlayer.repeat != 'none' ? "secondary" : "ghost"} size="icon" onclick={toggleRepeat}>
+                <Button
+                    variant={audioPlayer.repeat != 'none' ? "default" : "ghost"}
+                    size="icon"
+                    onclick={toggleRepeat}
+                >
                     {#if audioPlayer.repeat == 'one'}
                         <Repeat1Icon/>
                     {:else}

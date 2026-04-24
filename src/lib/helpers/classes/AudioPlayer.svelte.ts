@@ -71,6 +71,10 @@ export class AudioPlayer {
                                 if (this.history.length) {
                                     this.previous(this.history.length - 1);
                                     return;
+                                } else if (this.currentTrack) {
+                                    this.seek(0);
+                                    this.audio?.play();
+                                    return;
                                 }
                                 break;
                         }
@@ -102,6 +106,22 @@ export class AudioPlayer {
             this.queue.unshift(track);
         } else {
             this.queue.push(track);
+        }
+    }
+
+    public async replaceQueue(tracks: Track[]): Promise<void> {
+        this.clear();
+        this.queue = tracks;
+
+        const nextTrack = this.queue.shift();
+
+        if (this.currentTrack) {
+            this.history.unshift(this.currentTrack);
+            this.currentTrack = nextTrack ?? null;
+        }
+
+        if (nextTrack) {
+            await this.loadCurrentTrack(nextTrack);
         }
     }
 

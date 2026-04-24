@@ -74,13 +74,7 @@
             </p>
             <div class="flex gap-2 justify-center my-5 max-w-sm px-20">
                 <Button
-                    onclick={() => {
-                        for (const track of tracks) {
-                            audioPlayer.add(track);
-                        }
-
-                        audioPlayer.play();
-                    }}
+                    onclick={() => audioPlayer.replaceQueue(tracks)}
                     variant="outline"
                     size="icon"
                 >
