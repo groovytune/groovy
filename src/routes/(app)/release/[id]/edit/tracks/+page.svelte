@@ -3,7 +3,7 @@
     import { CirclePlusIcon, EllipsisIcon, LoaderIcon, PencilIcon, PlayIcon, Trash2Icon } from '@lucide/svelte';
     import SortTracksForm from '$lib/components/shared/app/release/forms/SortTracksForm.svelte';
     import UploadTracksForm from '$lib/components/shared/app/release/forms/UploadTracksForm.svelte';
-    import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
+    import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
     import { auth } from '$lib/client/auth.js';

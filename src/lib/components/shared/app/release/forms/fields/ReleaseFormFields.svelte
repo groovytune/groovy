@@ -10,7 +10,7 @@
     import { Input } from '$lib/components/ui/input';
     import { Textarea } from '$lib/components/ui/textarea';
     import FileInput from '$lib/components/shared/FileInput.svelte';
-    import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
+    import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { Switch } from '$lib/components/ui/switch';
     import GenreSearchInput from '$lib/components/shared/app/release/GenreSearchInput.svelte';
     import { categoryInfos } from '$lib/helpers/constants';

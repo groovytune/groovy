@@ -9,7 +9,7 @@
     import { ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
-    import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
+    import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { Button } from '$lib/components/ui/button/index.js';
     import { DownloadIcon, ListMusicIcon, LoaderIcon, MicVocalIcon, PlayIcon, SquareXIcon, Trash2Icon } from '@lucide/svelte';
     import { FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';

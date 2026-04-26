@@ -3,7 +3,7 @@
     import { auth } from '$lib/client/auth';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
     import { Button } from '$lib/components/ui/button';
-    import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
+    import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
 
     let { data } = $props();

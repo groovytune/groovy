@@ -2,7 +2,11 @@
     import { Item, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
 
 </script>
-<Item class="p-2 hover:bg-secondary/50 rounded-md">
+
+<Item
+    class="p-2 hover:bg-secondary/50 rounded-md"
+    style="content-visibility: auto;"
+>
     <ItemContent>
         <ItemTitle>
             Track not found

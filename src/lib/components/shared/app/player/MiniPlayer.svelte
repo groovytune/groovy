@@ -14,7 +14,7 @@
     import { resolve } from '$app/paths';
     import { MediaQuery } from 'svelte/reactivity';
     import RangeSlider from 'svelte-range-slider-pips';
-    import ExplicitIcon from '../../ExplicitIcon.svelte';
+    import ExplicitIcon from '../../icons/ExplicitIcon.svelte';
 
     const audioPlayer = AudioPlayerContext.get();
     const smallScreen = new MediaQuery('(width >= 40rem)', true);

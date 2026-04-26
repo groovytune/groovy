@@ -3,7 +3,7 @@
     import { DownloadIcon, EllipsisIcon, LoaderIcon, PencilIcon, SquareXIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
-    import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
+    import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import ResponsiveDialog from '$lib/components/shared/ResponsiveDialog.svelte';
     import DeleteTracksForm from '../DeleteTracksForm.svelte';
     import type { Track } from '$lib/server/prisma/browser';
@@ -16,6 +16,8 @@
     import { ImageGravity } from 'appwrite';
     import { formatDuration } from '$lib/helpers/utils';
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
+    import { AudioPlayerContext } from '$lib/contexts/player';
+    import NowPlayingIcon from '$lib/components/shared/icons/NowPlayingIcon.svelte';
 
     let {
         track,
@@ -28,9 +30,11 @@
     } = $props();
 
     const session = auth.useSession();
+    const audioPlayer = AudioPlayerContext.get();
 
     // svelte-ignore state_referenced_locally
     let dialogState = new DialogState({ id: `delete-track-${track.id}` });
+    let isPlaying = $derived(audioPlayer.currentTrack?.id === track.id);
     let coverURL = $derived(
         track.cover
             ? Appwrite.storage.getFilePreview({
@@ -46,16 +50,23 @@
 
 <Item
     oncontextmenu={e =>  e.preventDefault()}
-    class="p-2 hover:bg-secondary/50 rounded-md"
+    class={[
+        "p-2 hover:bg-secondary/50 rounded-md",
+        isPlaying && "bg-accent/50"
+    ]}
+    style="content-visibility: auto;"
 >
     {#snippet child({ props })}
         <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
             <ItemContent>
                 <ItemTitle
-                    class="line-clamp-2 w-full"
+                    class={[
+                        "line-clamp-2 w-full",
+                        isPlaying && "text-primary font-semibold"
+                    ]}
                     style="word-wrap: break-word;"
                 >
-                    {track?.name ?? 'Unavailable Track'}
+                    {#if isPlaying}<NowPlayingIcon class="size-5"/>{/if}{track?.name ?? 'Unavailable Track'}
                     {#if track?.explicit}
                         <ExplicitIcon class="size-4.5"/>
                     {/if}

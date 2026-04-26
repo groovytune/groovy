@@ -5,7 +5,7 @@
     import { Button } from '$lib/components/ui/button/index.js';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
     import { auth } from '$lib/client/auth.js';
-    import ExplicitIcon from '$lib/components/shared/ExplicitIcon.svelte';
+    import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { LoaderIcon } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
     import placeholderCover from '$lib/assets/cover.webp';
