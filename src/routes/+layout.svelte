@@ -12,6 +12,7 @@
 	import { AudioPlayerContext } from '$lib/contexts/player.js';
 	import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
 	import { onDestroy, onMount } from 'svelte';
+	import PlayerMediaSession from '../lib/components/shared/app/player/PlayerMediaSession.svelte';
 
 	let { children, data } = $props();
     let activeNavigationPage = $state({ id: '' });
@@ -32,6 +33,7 @@
 
 <Toaster/>
 <ModeWatcher/>
+<PlayerMediaSession/>
 <MetaTags {...deepMerge(data.baseMetaTags, page.data.pageMetaTags)}/>
 
 <TooltipProvider>

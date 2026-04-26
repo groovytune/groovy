@@ -1,6 +1,8 @@
+import type { GETResponse } from '../../../routes/(app)/api/release/[id]/+server';
 import type { Track } from '$lib/server/prisma/browser';
-import { useEventListener } from 'runed';
+import { resource, useEventListener } from 'runed';
 import { Appwrite } from '$lib/client/appwrite';
+import { resolve } from '$app/paths';
 
 export class AudioPlayer {
     public audio: HTMLAudioElement|null = $state(null);
@@ -24,6 +26,17 @@ export class AudioPlayer {
         this.audio && this.currentTrack
             ? (this.currentTime / this.duration) * 100
             : 0
+    );
+
+    public releaseInfo = resource(
+        () => this.currentTrack?.releaseId,
+        async (releaseId): Promise<GETResponse|null> => {
+            if (!releaseId) return null;
+
+            const response = await fetch(resolve('/(app)/api/release/[id]', { id: releaseId }));
+            return response.json();
+        },
+        { debounce: 200 }
     );
 
     public async init(audio?: HTMLAudioElement): Promise<void> {

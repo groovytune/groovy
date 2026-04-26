@@ -9,8 +9,6 @@
     import { Appwrite } from '$lib/client/appwrite';
     import { ImageGravity } from 'appwrite';
     import { fly } from 'svelte/transition';
-    import { resource } from 'runed';
-    import type { GETResponse } from '../../../../../routes/(app)/api/release/[id]/+server';
     import { resolve } from '$app/paths';
     import { MediaQuery } from 'svelte/reactivity';
     import RangeSlider from 'svelte-range-slider-pips';
@@ -19,22 +17,11 @@
     const audioPlayer = AudioPlayerContext.get();
     const smallScreen = new MediaQuery('(width >= 40rem)', true);
 
-    const releaseInfo = resource(
-        () => audioPlayer.currentTrack?.releaseId,
-        async (releaseId): Promise<GETResponse|null> => {
-            if (!releaseId) return null;
-
-            const response = await fetch(resolve('/(app)/api/release/[id]', { id: releaseId }));
-            return response.json();
-        },
-        { debounce: 400 }
-    );
-
     let coverURL = $derived(
-        audioPlayer.currentTrack?.cover || releaseInfo.current?.cover
+        audioPlayer.currentTrack?.cover || audioPlayer.releaseInfo.current?.cover
             ? Appwrite.storage.getFilePreview({
                 bucketId: 'image',
-                fileId: (audioPlayer.currentTrack?.cover || releaseInfo.current?.cover)!,
+                fileId: (audioPlayer.currentTrack?.cover || audioPlayer.releaseInfo.current?.cover)!,
                 height: 100,
                 width: 100,
                 gravity: ImageGravity.Center
@@ -88,8 +75,8 @@
                         {/if}
                     </h3>
                     <p class="text-xs text-muted-foreground line-clamp-1">
-                        {#if releaseInfo.current}
-                            {releaseInfo.current?.user.name} • {releaseInfo.current?.name}
+                        {#if audioPlayer.releaseInfo.current}
+                            {audioPlayer.releaseInfo.current?.user.name} • {audioPlayer.releaseInfo.current?.name}
                         {/if}
                     </p>
                 </a>
