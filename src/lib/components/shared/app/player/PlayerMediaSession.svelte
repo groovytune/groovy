@@ -4,9 +4,10 @@
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { Appwrite } from '$lib/client/appwrite';
     import { ImageGravity } from 'appwrite';
+    import { beforeNavigate } from '$app/navigation';
 
     const audioPlayer = AudioPlayerContext.get();
-
+    
     $effect(() => {
         if (untrack(() => !('mediaSession' in navigator) && !audioPlayer.releaseInfo.loading)) return;
 
@@ -50,5 +51,12 @@
         navigator.mediaSession.setActionHandler('previoustrack', audioPlayer.previousable ? (() => audioPlayer.previous()) : null);
         navigator.mediaSession.setActionHandler('nexttrack', audioPlayer.skippable ? (() => audioPlayer.next()) : null);
         navigator.mediaSession.setActionHandler('stop', audioPlayer.status !== 'stopped' ? (() => audioPlayer.stop()) : null);
+    });
+
+    beforeNavigate(async navigate => {
+        if ((!audioPlayer.queue.length && !audioPlayer.currentTrack) || !navigate.willUnload) return;
+
+        const leave = confirm('Your queue will be cleared. Are you sure you want to leave?');
+        if (!leave) navigate.cancel();
     });
 </script>

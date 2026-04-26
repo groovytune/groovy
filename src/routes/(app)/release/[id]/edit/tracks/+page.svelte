@@ -149,5 +149,14 @@
         bind:form={sortForm}
         releaseId={data.release.id}
         data={data.sortTracksForm}
+        onupdate={positions => {
+            for (const position of positions) {
+                const track = tracks.find(t => t.id === position.id);
+
+                if (track) {
+                    track.position = position.position;
+                }
+            }
+        }}
     />
 </div>
