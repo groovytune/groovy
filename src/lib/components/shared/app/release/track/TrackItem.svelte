@@ -1,11 +1,9 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { DownloadIcon, EllipsisIcon, LoaderIcon, PencilIcon, SquareXIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
+    import { DownloadIcon, EllipsisIcon, PencilIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
-    import ResponsiveDialog from '$lib/components/shared/ResponsiveDialog.svelte';
-    import DeleteTracksForm from '../DeleteTracksForm.svelte';
     import type { Track } from '$lib/server/prisma/browser';
     import { Button } from '$lib/components/ui/button';
     import { auth } from '$lib/client/auth';
@@ -18,14 +16,17 @@
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
     import { AudioPlayerContext } from '$lib/contexts/player';
     import NowPlayingIcon from '$lib/components/shared/icons/NowPlayingIcon.svelte';
+    import DeleteTrackDialog from '../dialogs/DeleteTrackDialog.svelte';
 
     let {
         track,
         cover = false,
+        editable = false,
         ondelete
     }: {
         track: Track;
         cover?: boolean;
+        editable?: boolean;
         ondelete?: (trackId: string) => void;
     } = $props();
 
@@ -33,7 +34,8 @@
     const audioPlayer = AudioPlayerContext.get();
 
     // svelte-ignore state_referenced_locally
-    let dialogState = new DialogState({ id: `delete-track-${track.id}` });
+    const deleteDialogState: DialogState = new DialogState({ id: `delete-track-${track.id}` });;
+
     let isPlaying = $derived(audioPlayer.currentTrack?.id === track.id);
     let coverURL = $derived(
         track.cover
@@ -51,8 +53,8 @@
 <Item
     oncontextmenu={e =>  e.preventDefault()}
     class={[
-        "p-2 hover:bg-secondary/50 rounded-md",
-        isPlaying && "bg-accent/50"
+        "p-2 hover:bg-secondary/50 rounded-md w-full",
+        isPlaying && "bg-accent/30"
     ]}
     style="content-visibility: auto;"
 >
@@ -66,7 +68,7 @@
                     ]}
                     style="word-wrap: break-word;"
                 >
-                    {#if isPlaying}<NowPlayingIcon class="size-5"/>{/if}{track?.name ?? 'Unavailable Track'}
+                    {#if isPlaying}<NowPlayingIcon class="size-4"/>{/if}{track?.name ?? 'Unavailable Track'}
                     {#if track?.explicit}
                         <ExplicitIcon class="size-4.5"/>
                     {/if}
@@ -85,26 +87,28 @@
                         {/snippet}
                     </DropdownMenuTrigger>
                     <DropdownMenuContent class="mx-2 min-w-40">
-                        <DropdownMenuItem>
-                            {#snippet child({ props })}
-                                <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
-                                    <PencilIcon/>
-                                    Edit
-                                </a>
-                            {/snippet}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            {#snippet child({ props })}
-                                <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
-                                    <TextAlignStartIcon/>
-                                    Edit Lyrics
-                                </a>
-                            {/snippet}
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator/>
-                        <PlayerDropdownItems {track}/>
-                        <DropdownMenuSeparator/>
-                        {#if track}
+                        {#if editable}
+                            <DropdownMenuItem>
+                                {#snippet child({ props })}
+                                    <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
+                                        <PencilIcon/>
+                                        Edit
+                                    </a>
+                                {/snippet}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                {#snippet child({ props })}
+                                    <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
+                                        <TextAlignStartIcon/>
+                                        Edit Lyrics
+                                    </a>
+                                {/snippet}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator/>
+                        {/if}
+                        <PlayerDropdownItems tracks={[track]}/>
+                        {#if editable}
+                            <DropdownMenuSeparator/>
                             <DropdownMenuItem>
                                 {#snippet child({ props })}
                                     <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
@@ -115,11 +119,11 @@
                                 {/snippet}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator/>
+                            <DropdownMenuItem class="text-destructive!" onclick={() => deleteDialogState.open()}>
+                                <Trash2Icon class="text-current"/>
+                                Delete
+                            </DropdownMenuItem>
                         {/if}
-                        <DropdownMenuItem class="text-destructive!" onclick={() => dialogState.open()}>
-                            <Trash2Icon class="text-current"/>
-                            Delete
-                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </ItemActions>
@@ -136,52 +140,10 @@
             </AspectRatio>
         </ItemMedia>
     {/if}
+    <DeleteTrackDialog
+        releaseId={track.releaseId}
+        tracks={[track]}
+        ondelete={() => ondelete?.(track.id)}
+        dialogState={deleteDialogState}
+    />
 </Item>
-<ResponsiveDialog {dialogState}>
-    {#snippet title()}
-        Delete <span class="text-primary">{track?.name ?? ''}</span>?
-    {/snippet}
-    {#snippet content({ type })}
-        <p class:px-4={type === 'drawer'}>
-            Are you sure you want to delete this track? This action cannot be undone.
-        </p>
-    {/snippet}
-    {#snippet footer()}
-        <DeleteTracksForm
-            releaseId={track.releaseId}
-            trackIds={[track.id]}
-            onerror={() => dialogState.isClosable = true}
-            ondelete={() => {
-                dialogState.close({ force: true });
-                ondelete?.(track.id);
-            }}
-        >
-            {#snippet children({ form: delForm, submitting, deleted })}
-                <Button
-                    variant="secondary"
-                    disabled={submitting || deleted}
-                    onclick={() => dialogState.close({ force: true })}
-                >
-                    <SquareXIcon/>
-                    Cancel
-                </Button>
-                <Button
-                    variant="destructive"
-                    disabled={submitting || deleted}
-                    onclick={() => {
-                        delForm.submit();
-                        dialogState.isClosable = false;
-                    }}
-                >
-                    {#if submitting}
-                        <LoaderIcon class="animate-spin"/>
-                        Deleting...
-                    {:else}
-                        <Trash2Icon class="text-current"/>
-                        Delete
-                    {/if}
-                </Button>
-            {/snippet}
-        </DeleteTracksForm>
-    {/snippet}
-</ResponsiveDialog>

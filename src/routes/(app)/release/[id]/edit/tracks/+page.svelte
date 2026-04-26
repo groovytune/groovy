@@ -15,6 +15,7 @@
     import type { sortTracksSchema } from '$lib/schema/track.js';
     import { resolve } from '$app/paths';
     import { AudioPlayerContext } from '$lib/contexts/player.js';
+    import PlayerDropdownItems from '../../../../../../lib/components/shared/app/player/PlayerDropdownItems.svelte';
  
     let { data } = $props();
 
@@ -131,6 +132,8 @@
                                 </a>
                             {/snippet}
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator/>
+                        <PlayerDropdownItems tracks={tracks.toSorted((a, b) => a.position - b.position)}/>
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem class="text-destructive!">
                             <Trash2Icon class="text-current"/>

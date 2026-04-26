@@ -101,11 +101,13 @@ export class AudioPlayer {
         this.currentTrack = null;
     }
 
-    public add(track: Track, next: boolean = false): void {
+    public add(tracks: Track|Track[], next: boolean = false): void {
+        const trackList = Array.isArray(tracks) ? tracks : [tracks];
+
         if (next) {
-            this.queue.unshift(track);
+            this.queue.unshift(...trackList);
         } else {
-            this.queue.push(track);
+            this.queue.push(...trackList);
         }
     }
 

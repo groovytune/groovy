@@ -11,8 +11,7 @@
     import { resolve } from '$app/paths';
     import type { Track } from '$lib/server/prisma/browser';
     import { zod4Client } from 'sveltekit-superforms/adapters';
-    import SortTrack from './sort/SortTrack.svelte';
-    import SortTrackShadow from './sort/SortTrackShadow.svelte';
+    import TrackItem from '../track/TrackItem.svelte';
 
     let {
         releaseId,
@@ -72,7 +71,12 @@
 
     const { form: formData, enhance, submitting, tainted } = form;
 
-    let dndTracks = $derived($formData.tracks.toSorted((a, b) => a.position - b.position));
+    let dndTracks = $derived(
+        $formData.tracks
+            .toSorted((a, b) => a.position - b.position)
+            .map(t => tracks.find(tr => tr.id == t.id))
+            .filter((t): t is Track => !!t)
+    );
 </script>
 
 {#if $formData.tracks.length > 0}
@@ -86,29 +90,31 @@
                 dropTargetStyle: {},
             }}
             onconsider={e => dndTracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }))}
-            onfinalize={e => dndTracks = $formData.tracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }))}
+            onfinalize={e => {
+                dndTracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }));
+                $formData.tracks = dndTracks.map(t => ({ id: t.id, position: t.position }));
+            }}
             class="grid gap-2"
         >
-            {#each dndTracks as dndTrack (dndTrack.id)}
-                {@const track = tracks.find(t => t.id == dndTrack.id)}
+            {#each dndTracks as track, index (track.id)}
                 <div
                     animate:flip={{ duration: 100 }}
-                    class="select-none cursor-default!"
+                    class="select-none cursor-default! flex gap-2 items-center"
                 >
-                    {#if track}
-                        <SortTrack
-                            {track}
-                            ondelete={() => {
-                                tracks = tracks.filter(t => t.id !== dndTrack.id);
-                                form?.form.update(f => {
-                                    f.tracks = f.tracks.filter(t => t.id !== dndTrack.id);
-                                    return f;
-                                }, { taint: 'untaint-all' });
-                            }}
-                        />
-                    {:else}
-                        <SortTrackShadow/>
-                    {/if}
+                    <span class="text-muted-foreground text-sm font-medium hidden md:inline-block">
+                        {index + 1}
+                    </span>
+                    <TrackItem
+                        {track}
+                        editable={true}
+                        ondelete={() => {
+                            tracks = tracks.filter(t => t.id !== track.id);
+                            form?.form.update(f => {
+                                f.tracks = f.tracks.filter(t => t.id !== track.id);
+                                return f;
+                            }, { taint: 'untaint-all' });
+                        }}
+                    />
                 </div>
             {/each}
         </div>

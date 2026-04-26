@@ -5,10 +5,10 @@
     import { AudioPlayerContext } from '$lib/contexts/player';
 
     let {
-        track,
+        tracks,
         disabled = false
     }: {
-        track: Track;
+        tracks: Track[];
         disabled?: boolean;
     } = $props();
 
@@ -18,7 +18,7 @@
 <DropdownMenuItem
     disabled={disabled}
     onclick={async () => {
-        await audioPlayer.replaceCurrentTrack(track);
+        audioPlayer.replaceQueue(tracks);
         await audioPlayer.play();
     }}
 >
@@ -28,7 +28,8 @@
 <DropdownMenuItem
     disabled={disabled}
     onclick={async () => {
-        await audioPlayer.play(track);
+        audioPlayer.add(tracks);
+        await audioPlayer.play();
     }}
 >
     <ListPlusIcon/>
@@ -37,7 +38,7 @@
 <DropdownMenuItem
     disabled={disabled}
     onclick={async () => {
-        audioPlayer.add(track, true);
+        audioPlayer.add(tracks, true);
         await audioPlayer.play();
     }}
 >
