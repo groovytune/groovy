@@ -29,6 +29,9 @@ export class AudioPlayer {
     public async init(audio?: HTMLAudioElement): Promise<void> {
         this.audio = audio ?? new Audio();
 
+        this.audio.preload = 'metadata';
+        this.audio.crossOrigin = 'anonymous';
+
         useEventListener(() => this.audio, 'timeupdate', () => this.currentTime = this.audio!.currentTime);
         useEventListener(() => this.audio, ['pause', 'play'], () => this.paused = this.audio!.paused);
         useEventListener(() => this.audio, 'volumechange', () => this.volume = this.audio!.volume);
@@ -42,7 +45,7 @@ export class AudioPlayer {
 
         useEventListener(
             () => this.audio,
-            ['ended', 'abort', 'error'],
+            ['ended', 'abort', 'error', 'loaderror'],
             event => {
                 const hasError = event.type === 'error';
 
