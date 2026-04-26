@@ -75,7 +75,7 @@
             <div class="flex gap-2 justify-center my-5 max-w-sm px-20">
                 <Button
                     onclick={async () => {
-                        await audioPlayer.replaceQueue(tracks);
+                        await audioPlayer.replaceQueue(tracks.toSorted((a, b) => a.position - b.position));
                         await audioPlayer.play();
                     }}
                     variant="outline"

@@ -114,7 +114,7 @@
                     onclick={async () => {
                         const tracks = await fetch(resolve('/(app)/api/release/[id]/tracks', { id: data.release.id })).then(res => res.json()) as GETResponse;
 
-                        await audioPlayer.replaceQueue(tracks);
+                        await audioPlayer.replaceQueue(tracks.toSorted((a, b) => a.position - b.position));
                         await audioPlayer.play();
                     }}
                 >
