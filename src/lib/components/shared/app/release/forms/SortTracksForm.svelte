@@ -11,6 +11,7 @@
     import { resolve } from '$app/paths';
     import type { Track } from '$lib/server/prisma/browser';
     import { zod4Client } from 'sveltekit-superforms/adapters';
+    import TrackItemShadow from '../track/TrackItemShadow.svelte';
     import TrackItem from '../track/TrackItem.svelte';
 
     let {
@@ -71,12 +72,7 @@
 
     const { form: formData, enhance, submitting, tainted } = form;
 
-    let dndTracks = $derived(
-        $formData.tracks
-            .toSorted((a, b) => a.position - b.position)
-            .map(t => tracks.find(tr => tr.id == t.id))
-            .filter((t): t is Track => !!t)
-    );
+    let dndTracks = $derived($formData.tracks.toSorted((a, b) => a.position - b.position));
 </script>
 
 {#if $formData.tracks.length > 0}
@@ -88,33 +84,36 @@
                 flipDurationMs: 100,
                 delayTouchStart: 500,
                 dropTargetStyle: {},
+                useCursorForDetection: true
             }}
             onconsider={e => dndTracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }))}
-            onfinalize={e => {
-                dndTracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }));
-                $formData.tracks = dndTracks.map(t => ({ id: t.id, position: t.position }));
-            }}
+            onfinalize={e => dndTracks = $formData.tracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }))}
             class="grid gap-2"
         >
-            {#each dndTracks as track, index (track.id)}
+            {#each dndTracks as dndTrack, index (dndTrack.id)}
+                {@const track = tracks.find(t => t.id === dndTrack.id)}
                 <div
                     animate:flip={{ duration: 100 }}
-                    class="select-none cursor-default! flex gap-2 items-center"
+                    class="select-none cursor-default min-h-15 flex items-center gap-2"
                 >
-                    <span class="text-muted-foreground text-sm font-medium hidden md:inline-block">
+                    <span class="text-sm text-muted-foreground hidden md:block">
                         {index + 1}
                     </span>
-                    <TrackItem
-                        {track}
-                        editable={true}
-                        ondelete={() => {
-                            tracks = tracks.filter(t => t.id !== track.id);
-                            form?.form.update(f => {
-                                f.tracks = f.tracks.filter(t => t.id !== track.id);
-                                return f;
-                            }, { taint: 'untaint-all' });
-                        }}
-                    />
+                    {#if track}
+                        <TrackItem
+                            track={track}
+                            editable={true}
+                            ondelete={() => {
+                                tracks = tracks.filter(t => t.id !== dndTrack.id);
+                                form?.form.update(f => {
+                                    f.tracks = f.tracks.filter(t => t.id !== dndTrack.id);
+                                    return f;
+                                }, { taint: 'untaint-all' });
+                            }}
+                        />
+                    {:else}
+                        <TrackItemShadow/>
+                    {/if}
                 </div>
             {/each}
         </div>

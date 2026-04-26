@@ -15,8 +15,8 @@
     import { formatDuration } from '$lib/helpers/utils';
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
     import { AudioPlayerContext } from '$lib/contexts/player';
-    import NowPlayingIcon from '$lib/components/shared/icons/NowPlayingIcon.svelte';
     import DeleteTrackDialog from '../dialogs/DeleteTrackDialog.svelte';
+    import NowPlayingIcon from '$lib/components/shared/icons/NowPlayingIcon.svelte';
 
     let {
         track,
@@ -63,12 +63,12 @@
             <ItemContent>
                 <ItemTitle
                     class={[
-                        "line-clamp-2 w-full",
+                        "line-clamp-2 w-full align-middle",
                         isPlaying && "text-primary font-semibold"
                     ]}
                     style="word-wrap: break-word;"
                 >
-                    {#if isPlaying}<NowPlayingIcon class="size-4"/>{/if}{track?.name ?? 'Unavailable Track'}
+                    {#if isPlaying && !editable}<NowPlayingIcon class="size-4"/>{/if}{track?.name ?? 'Unavailable Track'}
                     {#if track?.explicit}<ExplicitIcon class="size-4"/>{/if}
                 </ItemTitle>
                 <ItemDescription>

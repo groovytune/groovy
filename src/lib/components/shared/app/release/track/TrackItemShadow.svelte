@@ -4,7 +4,7 @@
 </script>
 
 <Item
-    class="p-2 hover:bg-secondary/50 rounded-md"
+    class="p-2 rounded-md cursor-default w-full"
     style="content-visibility: auto;"
 >
     <ItemContent>
