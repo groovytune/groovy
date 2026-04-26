@@ -69,9 +69,7 @@
                     style="word-wrap: break-word;"
                 >
                     {#if isPlaying}<NowPlayingIcon class="size-4"/>{/if}{track?.name ?? 'Unavailable Track'}
-                    {#if track?.explicit}
-                        <ExplicitIcon class="size-4.5"/>
-                    {/if}
+                    {#if track?.explicit}<ExplicitIcon class="size-4"/>{/if}
                 </ItemTitle>
                 <ItemDescription>
                     {formatDuration(track?.duration || 0)} • {$session.data?.user.name || 'Unknown Artist'}
@@ -140,10 +138,10 @@
             </AspectRatio>
         </ItemMedia>
     {/if}
-    <DeleteTrackDialog
-        releaseId={track.releaseId}
-        tracks={[track]}
-        ondelete={() => ondelete?.(track.id)}
-        dialogState={deleteDialogState}
-    />
 </Item>
+<DeleteTrackDialog
+    releaseId={track.releaseId}
+    tracks={[track]}
+    ondelete={() => ondelete?.(track.id)}
+    dialogState={deleteDialogState}
+/>
