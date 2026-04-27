@@ -5,5 +5,5 @@
 </script>
 
 {#if audioPlayer.currentTrack}
-    <div class="sm:h-15 h-16 bg-primary"></div>
+    <div class="sm:h-15 h-16"></div>
 {/if}
