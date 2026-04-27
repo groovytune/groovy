@@ -262,7 +262,7 @@
                 <Trash2Icon/>
                 Delete Track
             </Button>
-            <Button type="submit" disabled={$submitting || !!$allErrors.length}>
+            <Button type="submit" disabled={$submitting} aria-busy={$submitting} aria-disabled={$submitting || !!$allErrors.length}>
                 {#if $submitting}
                     <LoaderIcon class="animate-spin"/>
                 {/if}

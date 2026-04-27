@@ -98,7 +98,7 @@
     >
         <ReleaseFormFields {form} bind:coverInput bind:nameInput/>
         <div class="flex justify-end">
-            <Button type="submit" disabled={$submitting || !!$allErrors.length}>
+            <Button type="submit" disabled={$submitting} aria-busy={$submitting} aria-disabled={$submitting || !!$allErrors.length}>
                 {#if $submitting}
                     <LoaderIcon class="animate-spin"/>
                 {/if}
