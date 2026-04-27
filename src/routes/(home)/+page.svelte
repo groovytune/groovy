@@ -7,7 +7,13 @@
     import { auth } from '$lib/client/auth.js';
     import AvatarDropdown from '$lib/components/shared/AvatarDropdown.svelte';
     import { onMount } from 'svelte';
-    import { cn } from '../../lib/helpers/utils';
+    import { cn } from '$lib/helpers/utils';
+    import { AspectRatio } from '../../lib/components/ui/aspect-ratio/index.js';
+    import { Appwrite } from '../../lib/client/appwrite.js';
+    import { ImageGravity } from 'appwrite';
+    import placeholderCover from '../../lib/assets/cover.webp';
+
+    let { data } = $props();
 
     const session = auth.useSession();
 
@@ -88,4 +94,43 @@
         </div>
     </section>
 </main>
-<div class="size-full"></div>
+<div class="size-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-5">
+    {#each data.releases as release (release.id)}
+        {@const coverURL = release.cover
+            ? Appwrite.storage.getFilePreview({
+                bucketId: 'image',
+                fileId: release.cover,
+                height: 300,
+                width: 300,
+                gravity: ImageGravity.Center
+            })
+            : placeholderCover
+        }
+        <a href={resolve('/(app)/release/[id]/edit/tracks', { id: release.id })} class="p-5 w-full max-w-sm relative">
+            <AspectRatio
+                class="w-full rounded-md bg-muted cursor-pointer blur-lg hover:blur-none transition-blur duration-300"
+            >
+                <img src={coverURL} alt="Release Cover" class="size-full object-cover rounded-md"/>
+                <img src={coverURL} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
+            </AspectRatio>
+            <header class="w-full max-w-sm text-center px-5">
+                <h1
+                    class="text-2xl leading-tight font-semibold line-clamp-3"
+                    style="word-wrap: break-word;"
+                >
+                    {release.name}
+                </h1>
+                <p class="text-sm leading-tight text-muted-foreground">
+                    {release.userId}
+                </p>
+                <p
+                    class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 hover:line-clamp-none mt-2"
+                    style="word-wrap: break-word;"
+                    title={release.description}
+                >
+                    {release.description}
+                </p>
+            </header>
+        </a>
+    {/each}
+</div>

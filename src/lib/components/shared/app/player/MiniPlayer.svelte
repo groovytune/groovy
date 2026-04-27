@@ -10,12 +10,10 @@
     import { ImageGravity } from 'appwrite';
     import { fly } from 'svelte/transition';
     import { resolve } from '$app/paths';
-    import { MediaQuery } from 'svelte/reactivity';
     import RangeSlider from 'svelte-range-slider-pips';
     import ExplicitIcon from '../../icons/ExplicitIcon.svelte';
 
     const audioPlayer = AudioPlayerContext.get();
-    const smallScreen = new MediaQuery('(width >= 40rem)', true);
 
     let coverURL = $derived(
         audioPlayer.currentTrack?.cover || audioPlayer.releaseInfo.current?.cover
@@ -44,7 +42,7 @@
     }
 </script>
 
-{#if audioPlayer.currentTrack || (!audioPlayer.currentTrack && smallScreen.current)}
+{#if audioPlayer.currentTrack}
     <div
         in:fly={{ y: 100 }}
         out:fly={{ y: 100 }}
