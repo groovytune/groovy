@@ -107,9 +107,7 @@
             : placeholderCover
         }
         <a href={resolve('/(app)/release/[id]/edit/tracks', { id: release.id })} class="p-5 w-full max-w-sm relative">
-            <AspectRatio
-                class="w-full rounded-md bg-muted cursor-pointer blur-lg hover:blur-none transition-blur duration-300"
-            >
+            <AspectRatio class="w-full rounded-md bg-muted cursor-pointer transition-blur duration-300">
                 <img src={coverURL} alt="Release Cover" class="size-full object-cover rounded-md"/>
                 <img src={coverURL} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
             </AspectRatio>

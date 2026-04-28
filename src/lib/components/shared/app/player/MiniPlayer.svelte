@@ -1,6 +1,6 @@
 <script lang="ts">
     import coverPlaceholder from '$lib/assets/cover.webp';
-    import { FastForwardIcon, ListMusicIcon, LoaderIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, RewindIcon, Volume1Icon, Volume2Icon, VolumeXIcon } from '@lucide/svelte';
+    import { ListMusicIcon, LoaderIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, SkipBackIcon, SkipForwardIcon, Volume1Icon, Volume2Icon, VolumeXIcon } from '@lucide/svelte';
     import { Button } from '$lib/components/ui/button';
     import { Popover, PopoverContent, PopoverTrigger } from '$lib/components/ui/popover';
     import { Slider } from '$lib/components/ui/slider';
@@ -80,7 +80,7 @@
                 </a>
                 <div class="shrink-0 flex items-center gap-1 ml-auto">
                     <Button variant="ghost" size="icon" disabled={!audioPlayer.previousable} onclick={() => audioPlayer.previous()}>
-                        <RewindIcon fill="currentColor"/>
+                        <SkipBackIcon fill="currentColor"/>
                     </Button>
                     <Button variant="default" size="icon" disabled={!audioPlayer.currentTrack} onclick={() => audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause()}>
                         {#if audioPlayer.status == 'buffering'}
@@ -92,7 +92,7 @@
                         {/if}
                     </Button>
                     <Button variant="ghost" size="icon" disabled={!audioPlayer.skippable} onclick={() => audioPlayer.next()}>
-                        <FastForwardIcon fill="currentColor"/>
+                        <SkipForwardIcon fill="currentColor"/>
                     </Button>
                 </div>
             </section>
