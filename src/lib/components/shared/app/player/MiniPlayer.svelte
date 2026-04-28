@@ -44,8 +44,8 @@
 
 {#if audioPlayer.currentTrack}
     <div
-        in:fly={{ y: 100 }}
-        out:fly={{ y: 100 }}
+        in:fly|global={{ y: 100 }}
+        out:fly|global={{ y: 100 }}
         class="fixed bottom-15 sm:bottom-0 left-0 sm:h-15 h-16 w-full flex justify-center z-50 sm:p-0 px-2 pb-2 sm:mb-2"
     >
         <div class="container flex items-center gap-2 lg:gap-5 p-2 bg-background/90 rounded-lg backdrop-blur-sm relative border">
