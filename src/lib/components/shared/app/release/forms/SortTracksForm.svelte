@@ -103,7 +103,6 @@
                         <TrackItem
                             track={track}
                             editable={true}
-                            cover
                             ondelete={() => {
                                 tracks = tracks.filter(t => t.id !== dndTrack.id);
                                 form?.form.update(f => {
