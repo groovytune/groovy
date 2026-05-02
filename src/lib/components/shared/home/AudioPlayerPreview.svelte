@@ -17,13 +17,13 @@
         />
     </ItemMedia>
     <ItemContent class="gap-0">
-        <ItemTitle class="text-sm">
+        <ItemTitle class="text-sm line-clamp-1">
             {audioPlayer.currentTrack?.name ?? 'No Track Playing'}
             {#if audioPlayer.currentTrack?.explicit}
-                <ExplicitIcon class="size-4.5"/>
+                <ExplicitIcon class="size-4 mb-0"/>
             {/if}
         </ItemTitle>
-        <ItemDescription class="text-xs">
+        <ItemDescription class="text-xs line-clamp-1">
             {#if audioPlayer.releaseInfo.current}
                 {audioPlayer.releaseInfo.current?.user.name} • {audioPlayer.releaseInfo.current?.name}
             {:else}
