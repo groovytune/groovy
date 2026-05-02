@@ -54,15 +54,13 @@
 <div class="flex flex-col md:flex-row">
     <section class="w-full shrink-0 flex flex-col items-center md:max-w-sm">
         <div class="p-5 w-full max-w-sm relative">
-            {#key $formData.cover}
-                <AspectRatio
-                    class="w-full rounded-md bg-muted cursor-pointer"
-                    onclick={() => coverInput?.click()}
-                >
-                    <img src={coverURL} alt="Release Cover" class="size-full object-cover rounded-md"/>
-                    <img src={coverURL} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
-                </AspectRatio>
-            {/key}
+            <AspectRatio
+                class="w-full rounded-md bg-muted cursor-pointer"
+                onclick={() => coverInput?.click()}
+            >
+                <img src={coverURL} alt="Release Cover" class="size-full object-cover rounded-md"/>
+                <img src={coverURL} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
+            </AspectRatio>
         </div>
         <header class="w-full max-w-sm text-center px-5">
             <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->

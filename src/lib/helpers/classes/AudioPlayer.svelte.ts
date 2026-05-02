@@ -46,8 +46,8 @@ export class AudioPlayer {
             ? Appwrite.storage.getFilePreview({
                 bucketId: 'image',
                 fileId: (this.currentTrack?.cover || this.releaseInfo.current?.cover)!,
-                height: 100,
-                width: 100,
+                height: 500,
+                width: 500,
                 gravity: ImageGravity.Center
             })
             : coverPlaceholder

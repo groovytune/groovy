@@ -58,6 +58,7 @@
 		"@prisma/extension-accelerate": "^3.0.1",
 		"appwrite": "^25.0.0",
 		"better-auth": "^1.6.9",
+		"fast-average-color": "^9.5.2",
 		"luxon": "^3.7.2",
 		"music-metadata": "^11.12.3",
 		"node-appwrite": "^24.0.0",

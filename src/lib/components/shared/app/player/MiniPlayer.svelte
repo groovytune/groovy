@@ -9,8 +9,10 @@
     import { resolve } from '$app/paths';
     import RangeSlider from 'svelte-range-slider-pips';
     import ExplicitIcon from '../../icons/ExplicitIcon.svelte';
+    import { MediaQuery } from 'svelte/reactivity';
 
     const audioPlayer = AudioPlayerContext.get();
+    const isMediumWidth = new MediaQuery('(width >= 48rem)');
 </script>
 
 {#if audioPlayer.currentTrack}
@@ -28,7 +30,9 @@
                 <a
                     href={
                         audioPlayer.currentTrack
-                            ? resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack.releaseId })
+                            ? isMediumWidth.current
+                                ? resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack.releaseId })
+                                : resolve('/(player)/player')
                             : undefined
                     }
                     class="flex flex-col leading-tight"

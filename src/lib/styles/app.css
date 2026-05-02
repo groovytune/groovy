@@ -285,6 +285,23 @@
         .rangeBar {
             @apply h-1! rounded-full! bg-primary!;
         }
+
+        &.mono {
+            .rangeHandle {
+                @apply size-3! top-0.5!;
+
+                .rangeNub {
+                    @apply bg-foreground!;
+                }
+            }
+
+            .rangeBar {
+                @apply h-1! rounded-full! bg-foreground!;
+            }
+
+
+            --handle-border: var(--color-foreground) !important;
+        }
     }
 }
 
