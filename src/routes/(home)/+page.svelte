@@ -12,12 +12,14 @@
     import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
-    import AudioWaveform from '../../lib/components/shared/home/AudioWaveform.svelte';
     import AudioPlayerPreview from '../../lib/components/shared/home/AudioPlayerPreview.svelte';
+    import AudioWaveform from '../../lib/components/shared/home/AudioWaveform.svelte';
+    import { AudioPlayerContext } from '../../lib/contexts/player.js';
 
     let { data } = $props();
 
     const session = auth.useSession();
+    const audioPlayer = AudioPlayerContext.get();
 
     let scrolled = $state(false);
 
@@ -94,13 +96,15 @@
                 Explore top songs
             </Button>
         </div>
-        <div class="w-full flex flex-col items-center gap-5 text-start">
-            <AudioWaveform length={30}/>
+        <div class="w-full flex flex-col items-center gap-5 text-start" class:invisible={!audioPlayer.currentTrack}>
             <AudioPlayerPreview/>
+            {#if audioPlayer.currentTrack}
+                <AudioWaveform class="absolute scale-200 -z-10 blur-xl"/>
+            {/if}
         </div>
     </section>
 </main>
-<div class="size-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-5">
+<div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-5">
     {#each data.releases as release (release.id)}
         {@const coverURL = release.cover
             ? Appwrite.storage.getFilePreview({

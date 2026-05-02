@@ -8,7 +8,7 @@
     const audioPlayer = AudioPlayerContext.get();
 </script>
 
-<Item variant="outline" class="w-full max-w-sm rounded-md border p-2" size="sm">
+<Item variant="muted" class="w-full max-w-sm rounded-md border p-2" size="sm">
     <ItemMedia variant="image" class="-mt-1">
         <img
             alt="Track Cover"
@@ -27,7 +27,7 @@
             {#if audioPlayer.releaseInfo.current}
                 {audioPlayer.releaseInfo.current?.user.name} • {audioPlayer.releaseInfo.current?.name}
             {:else}
-                Unknown Artist • Unknown Album
+                Unknown Artist
             {/if}
         </ItemDescription>
     </ItemContent>
