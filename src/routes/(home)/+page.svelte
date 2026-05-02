@@ -8,10 +8,10 @@
     import AvatarDropdown from '$lib/components/shared/AvatarDropdown.svelte';
     import { onMount } from 'svelte';
     import { cn } from '$lib/helpers/utils';
-    import { AspectRatio } from '../../lib/components/ui/aspect-ratio/index.js';
-    import { Appwrite } from '../../lib/client/appwrite.js';
+    import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
+    import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageGravity } from 'appwrite';
-    import placeholderCover from '../../lib/assets/cover.webp';
+    import placeholderCover from '$lib/assets/cover.webp';
 
     let { data } = $props();
 
