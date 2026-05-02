@@ -1,5 +1,5 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
-import type { userSchema, z } from 'better-auth';
+import type { Session, User, userSchema, z } from 'better-auth';
 import type { MetaTagsProps } from 'svelte-meta-tags';
 
 // for information about these interfaces
@@ -16,7 +16,9 @@ declare global {
         interface PageData {
             pageMetaTags?: MetaTagsProps;
         }
-        // interface PageState {}
+        interface PageState {
+            dialogs?: string[];
+        }
         // interface Platform {}
     }
 }

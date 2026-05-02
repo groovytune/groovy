@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
-import { Client, ID as AppwriteID, Storage, Tokens, type Models } from 'node-appwrite';
+import { Client, ID as AppwriteID, Storage, Tokens, type Models, type ImageFormat, type ImageGravity } from 'node-appwrite';
 
 export namespace Appwrite {
     export const ID = AppwriteID;
@@ -32,5 +32,28 @@ export namespace Appwrite {
                     : new Date(expire).toISOString()
                 : undefined
         });
+    }
+
+    export async function createImagePreviewURL(
+        options: {
+            bucketId: string;
+            fileId: string;
+            width?: number;
+            height?: number;
+            gravity?: ImageGravity;
+            quality?: number;
+            borderWidth?: number;
+            borderColor?: string;
+            borderRadius?: number;
+            opacity?: number;
+            rotation?: number;
+            background?: string;
+            output?: ImageFormat;
+            token?: string;
+        }
+    ): Promise<string> {
+        return await Appwrite.storage
+            .getFilePreview(options)
+            .then((url) => `data:image/webp;base64,${Buffer.from(url).toString('base64')}`)
     }
 }

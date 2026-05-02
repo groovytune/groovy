@@ -6,7 +6,7 @@
     import { goto } from '$app/navigation';
     import { DoorOpenIcon, LoaderIcon, SquareXIcon } from '@lucide/svelte';
     import { page } from '$app/state';
-    import { auth } from '../../../lib/client/auth';
+    import { auth } from '$lib/client/auth';
 
     let signingOut = $state(false);
     let redirect = $derived(page.url.searchParams.get('redirect'));
