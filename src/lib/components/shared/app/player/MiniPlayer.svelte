@@ -1,51 +1,22 @@
 <script lang="ts">
-    import coverPlaceholder from '$lib/assets/cover.webp';
     import { ListMusicIcon, LoaderIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, SkipBackIcon, SkipForwardIcon, Volume1Icon, Volume2Icon, VolumeXIcon } from '@lucide/svelte';
     import { Button } from '$lib/components/ui/button';
     import { Popover, PopoverContent, PopoverTrigger } from '$lib/components/ui/popover';
     import { Slider } from '$lib/components/ui/slider';
     import { AudioPlayerContext } from '$lib/contexts/player';
     import { formatDuration } from '$lib/helpers/utils';
-    import { Appwrite } from '$lib/client/appwrite';
-    import { ImageGravity } from 'appwrite';
     import { fly } from 'svelte/transition';
     import { resolve } from '$app/paths';
     import RangeSlider from 'svelte-range-slider-pips';
     import ExplicitIcon from '../../icons/ExplicitIcon.svelte';
 
     const audioPlayer = AudioPlayerContext.get();
-
-    let coverURL = $derived(
-        audioPlayer.currentTrack?.cover || audioPlayer.releaseInfo.current?.cover
-            ? Appwrite.storage.getFilePreview({
-                bucketId: 'image',
-                fileId: (audioPlayer.currentTrack?.cover || audioPlayer.releaseInfo.current?.cover)!,
-                height: 100,
-                width: 100,
-                gravity: ImageGravity.Center
-            })
-            : coverPlaceholder
-    );
-
-    function toggleRepeat() {
-        switch (audioPlayer.repeat) {
-            case 'none':
-                audioPlayer.repeat = 'all';
-                break;
-            case 'all':
-                audioPlayer.repeat = 'one';
-                break;
-            case 'one':
-                audioPlayer.repeat = 'none';
-                break;
-        }
-    }
 </script>
 
 {#if audioPlayer.currentTrack}
     <div
-        in:fly|global={{ y: 100 }}
-        out:fly|global={{ y: 100 }}
+        in:fly={{ y: 100 }}
+        out:fly={{ y: 100 }}
         class="fixed bottom-15 sm:bottom-0 left-0 sm:h-15 h-16 w-full flex justify-center z-50 sm:p-0 px-2 pb-2 sm:mb-2"
     >
         <div class="container flex items-center gap-2 lg:gap-5 p-2 bg-background/90 rounded-lg backdrop-blur-sm relative border">
@@ -53,7 +24,7 @@
                 <span class="block h-full bg-primary rounded-full" style="width: {audioPlayer.progress}%"></span>
             </div>
             <section class="flex items-center gap-2 w-full md:max-w-sm">
-                <img src={coverURL} alt="Cover Art" class="size-10 shrink-0 rounded-md overflow-hidden">
+                <img src={audioPlayer.coverURL} alt="Cover Art" class="size-10 shrink-0 rounded-md overflow-hidden">
                 <a
                     href={
                         audioPlayer.currentTrack
@@ -82,7 +53,7 @@
                     <Button variant="ghost" size="icon" disabled={!audioPlayer.previousable} onclick={() => audioPlayer.previous()}>
                         <SkipBackIcon fill="currentColor"/>
                     </Button>
-                    <Button variant="default" size="icon" disabled={!audioPlayer.currentTrack} onclick={() => audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause()}>
+                    <Button variant="default" size="icon" disabled={!audioPlayer.currentTrack} onclick={() => audioPlayer.togglePlay()}>
                         {#if audioPlayer.status == 'buffering'}
                             <LoaderIcon class="animate-spin"/>
                         {:else if audioPlayer.paused}
@@ -120,7 +91,7 @@
                 <Button
                     variant={audioPlayer.repeat != 'none' ? "default" : "ghost"}
                     size="icon"
-                    onclick={toggleRepeat}
+                    onclick={() => audioPlayer.toggleRepeat()}
                 >
                     {#if audioPlayer.repeat == 'one'}
                         <Repeat1Icon/>

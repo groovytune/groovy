@@ -94,7 +94,7 @@
                 {@const track = tracks.find(t => t.id === dndTrack.id)}
                 <div
                     animate:flip={{ duration: 100 }}
-                    class="select-none cursor-default min-h-15 flex items-center gap-2"
+                    class="select-none cursor-default min-h-14 flex items-center gap-2"
                 >
                     <span class="text-sm text-muted-foreground hidden md:block">
                         {index + 1}
@@ -103,6 +103,7 @@
                         <TrackItem
                             track={track}
                             editable={true}
+                            cover
                             ondelete={() => {
                                 tracks = tracks.filter(t => t.id !== dndTrack.id);
                                 form?.form.update(f => {

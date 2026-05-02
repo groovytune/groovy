@@ -12,6 +12,8 @@
     import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
+    import AudioWaveform from '../../lib/components/shared/home/AudioWaveform.svelte';
+    import AudioPlayerPreview from '../../lib/components/shared/home/AudioPlayerPreview.svelte';
 
     let { data } = $props();
 
@@ -91,6 +93,10 @@
             <Button variant="outline" size="lg">
                 Explore top songs
             </Button>
+        </div>
+        <div class="w-full flex flex-col items-center gap-5 text-start">
+            <AudioWaveform length={30}/>
+            <AudioPlayerPreview/>
         </div>
     </section>
 </main>

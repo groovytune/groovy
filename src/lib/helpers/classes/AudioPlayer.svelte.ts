@@ -3,6 +3,8 @@ import type { Track } from '$lib/server/prisma/browser';
 import { resource, useEventListener } from 'runed';
 import { Appwrite } from '$lib/client/appwrite';
 import { resolve } from '$app/paths';
+import { ImageGravity } from 'appwrite';
+import coverPlaceholder from '$lib/assets/cover.webp';
 
 export class AudioPlayer {
     public audio: HTMLAudioElement|null = $state(null);
@@ -37,6 +39,18 @@ export class AudioPlayer {
             return response.json();
         },
         { debounce: 200 }
+    );
+
+    public coverURL = $derived(
+        this.currentTrack?.cover || this.releaseInfo.current?.cover
+            ? Appwrite.storage.getFilePreview({
+                bucketId: 'image',
+                fileId: (this.currentTrack?.cover || this.releaseInfo.current?.cover)!,
+                height: 100,
+                width: 100,
+                gravity: ImageGravity.Center
+            })
+            : coverPlaceholder
     );
 
     public async init(audio?: HTMLAudioElement): Promise<void> {
@@ -222,6 +236,20 @@ export class AudioPlayer {
             await this.audio?.play();
         } else {
             this.audio?.pause();
+        }
+    }
+
+    public toggleRepeat(): void {
+        switch (this.repeat) {
+            case 'none':
+                this.repeat = 'all';
+                break;
+            case 'all':
+                this.repeat = 'one';
+                break;
+            case 'one':
+                this.repeat = 'none';
+                break;
         }
     }
 

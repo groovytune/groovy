@@ -9,7 +9,6 @@
     import { auth } from '$lib/client/auth';
     import { Appwrite } from '$lib/client/appwrite';
     import { resolve } from '$app/paths';
-    import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { ImageGravity } from 'appwrite';
     import { formatDuration } from '$lib/helpers/utils';
@@ -53,17 +52,26 @@
 <Item
     oncontextmenu={e =>  e.preventDefault()}
     class={[
-        "p-2 hover:bg-secondary/50 rounded-md w-full",
+        "p-2 hover:bg-secondary/50 rounded-md w-full gap-3",
         isPlaying && "bg-accent/30"
     ]}
     style="content-visibility: auto;"
 >
     {#snippet child({ props })}
         <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
-            <ItemContent>
+            {#if cover}
+                <ItemMedia variant="image" class="-mt-0.5">
+                    <img
+                        alt="Track Cover"
+                        src={coverURL}
+                        class="rounded-md"
+                    />
+                </ItemMedia>
+            {/if}
+            <ItemContent class="gap-0">
                 <ItemTitle
                     class={[
-                        "line-clamp-2 w-full align-middle",
+                        "line-clamp-1 w-full align-middle truncate",
                         isPlaying && "text-primary font-semibold"
                     ]}
                     style="word-wrap: break-word;"
@@ -71,7 +79,7 @@
                     {#if isPlaying && !editable}<NowPlayingIcon class="size-4"/>{/if}{track?.name ?? 'Unavailable Track'}
                     {#if track?.explicit}<ExplicitIcon class="size-4"/>{/if}
                 </ItemTitle>
-                <ItemDescription>
+                <ItemDescription class="line-clamp-1 truncate">
                     {formatDuration(track?.duration || 0)} • {$session.data?.user.name || 'Unknown Artist'}
                 </ItemDescription>
             </ItemContent>
@@ -127,17 +135,6 @@
             </ItemActions>
         </a>
     {/snippet}
-    {#if cover}
-        <ItemMedia variant="image">
-            <AspectRatio>
-                <img
-                    alt="Track Cover"
-                    src={coverURL}
-                    class="size-full object-cover rounded-md"
-                />
-            </AspectRatio>
-        </ItemMedia>
-    {/if}
 </Item>
 <DeleteTrackDialog
     releaseId={track.releaseId}
