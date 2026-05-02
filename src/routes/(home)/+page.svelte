@@ -56,7 +56,7 @@
                 {/if}
             </Button>
             {#if !$session.data?.user}
-                <Button>
+                <Button href={resolve('/(auth)/signin')}>
                     <UserRoundPlusIcon/>
                     Sign Up
                 </Button>
@@ -67,28 +67,28 @@
     </div>
 </header>
 
-<main class="flex justify-center size-full">
+<main class="flex justify-center items-center py-16 px-2 min-h-[600px] h-screen">
     <section class="container h-full flex flex-col gap-10 justify-center items-center text-center relative">
         <span class="h-1/2 w-full max-w-sm bg-primary/20 dark:bg-primary/10 absolute top-0 left-1/2 -translate-x-1/2 -z-10 rounded-full blur-3xl"></span>
         <div class="text-center">
-            <Badge variant="outline" class="text-sm border-primary/50 bg-background/10 dark:bg-primary/10 text-primary font-semibold p-1.5 px-3">
-                <span class="inline-block size-2 rounded-full bg-primary mr-1"></span>
-                Free Music Sharing Platform
+            <Badge variant="outline" class="text-xs border-primary/50 bg-background/10 dark:bg-primary/10 text-primary font-semibold tracking-wide uppercase p-1 px-2.5">
+                <span class="inline-block size-1.5 ring-3 ring-primary/30 rounded-full bg-primary mr-1"></span>
+                <span>Free Music Sharing Platform</span>
             </Badge>
         </div>
-        <h1 class="text-center text-7xl font-bold">
-            <span class="font-serif">Music that</span>
+        <h1 class="text-center text-7xl font-bold font-serif">
+            <span>Music that</span>
             <br>
-            <span class="text-primary italic">moves your soul</span>
+            <em class="text-primary italic">moves your soul.</em>
         </h1>
         <p class="text-muted-foreground max-w-sm">
             Publish, discover, and share music freely. Build your artist profile and reach listeners
         </p>
         <div class="flex justify-center gap-2">
-            <Button>
+            <Button href={resolve('/(app)/release/new')} size="lg">
                 Start sharing music
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" size="lg">
                 Explore top songs
             </Button>
         </div>

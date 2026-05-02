@@ -4,6 +4,10 @@
 	import '@fontsource-variable/google-sans-flex';
 	import '@fontsource-variable/google-sans-code';
 	import '@fontsource-variable/playfair-display';
+	import '@fontsource-variable/google-sans-flex/wght.css';
+	import '@fontsource-variable/google-sans-code/wght.css';
+	import '@fontsource-variable/playfair-display/wght.css';
+	import '@fontsource-variable/playfair-display/wght-italic.css';
 	import { ModeWatcher } from 'mode-watcher';
 	import { page } from '$app/state';
 	import '$lib/styles/app.css';
@@ -12,7 +16,7 @@
 	import { AudioPlayerContext } from '$lib/contexts/player.js';
 	import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
 	import { onDestroy, onMount } from 'svelte';
-	import PlayerMediaSession from '../lib/components/shared/app/player/PlayerMediaSession.svelte';
+	import PlayerMediaSession from '$lib/components/shared/app/player/PlayerMediaSession.svelte';
 
 	let { children, data } = $props();
     let activeNavigationPage = $state({ id: '' });
