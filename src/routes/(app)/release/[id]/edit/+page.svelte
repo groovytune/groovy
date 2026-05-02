@@ -6,7 +6,7 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
     import { auth } from '$lib/client/auth.js';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
-    import { ListMusicIcon, LoaderIcon, PlayIcon } from '@lucide/svelte';
+    import { ListMusicIcon, LoaderIcon, PlayIcon, Trash2Icon } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
     import placeholderCover from '$lib/assets/cover.webp';
     import { resolve } from '$app/paths';
@@ -15,6 +15,9 @@
     import { ImageGravity } from 'appwrite';
     import type { GETResponse } from '../../../api/release/[id]/tracks/+server.js';
     import { AudioPlayerContext } from '$lib/contexts/player.js';
+    import { DialogState } from '$lib/helpers/classes/DialogState.svelte.js';
+    import DeleteReleaseDialog from '$lib/components/shared/app/release/dialogs/DeleteReleaseDialog.svelte';
+    import { goto } from '$app/navigation';
 
     let { data } = $props();
 
@@ -52,6 +55,9 @@
 
     const session = auth.useSession();
     const audioPlayer = AudioPlayerContext.get();
+
+    // svelte-ignore state_referenced_locally
+    const deleteDialogState = new DialogState({ id: `delete-release-${data.release.id}` });
 
     let coverInput: HTMLInputElement|null = $state(null);
     let nameInput: HTMLInputElement|null = $state(null);
@@ -132,14 +138,24 @@
     </section>
     <form
         class="w-full md:max-w-[calc(100%-24rem)] p-5 flex flex-col gap-2"
-        action={resolve('/(app)/release/[id]/edit', { id: data.release.id })}
+        action={resolve('/(app)/release/[id]/edit', { id: data.release.id }) + '?/update'}
         method="POST"
         enctype="multipart/form-data"
         use:enhance
     >
         <ReleaseFormFields {form} bind:coverInput bind:nameInput/>
-        <div class="flex justify-end">
-            <Button type="submit" disabled={$submitting} aria-busy={$submitting} aria-disabled={$submitting || !!$allErrors.length}>
+        <div class="flex justify-between gap-2">
+            <Button variant="outline" disabled={$submitting} onclick={() => deleteDialogState.open()}>
+                <Trash2Icon/>
+                Delete Release
+            </Button>
+            <Button
+                type="submit"
+                onclick={() => form.submit()}
+                disabled={$submitting}
+                aria-busy={$submitting}
+                aria-disabled={$submitting || !!$allErrors.length}
+            >
                 {#if $submitting}
                     <LoaderIcon class="animate-spin"/>
                 {/if}
@@ -148,3 +164,13 @@
         </div>
     </form>
 </div>
+
+<DeleteReleaseDialog
+    releaseId={data.release.id}
+    name={data.release.name}
+    dialogState={deleteDialogState}
+    ondelete={() => {
+        deleteDialogState.close({ force: true });
+        goto(resolve('/(app)/library'));
+    }}
+/>

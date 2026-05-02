@@ -1,8 +1,8 @@
 import { error, redirect } from '@sveltejs/kit';
 import { createAuthRedirect } from '$lib/helpers/utils.js';
-import { fail, superValidate } from 'sveltekit-superforms';
+import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { editReleaseSchema } from '$lib/schema/release';
+import { deleteReleaseSchema, editReleaseSchema } from '$lib/schema/release';
 import { prisma } from '$lib/server/prisma';
 import { Appwrite } from '$lib/server/appwrite.js';
 import { resolve } from '$app/paths';
@@ -65,7 +65,7 @@ export async function load({ locals, url, params }) {
 }
 
 export const actions = {
-    default: async ({ request, locals, params }) => {
+    update: async ({ request, locals, params }) => {
         if (!locals.user) {
             return fail(401, { message: 'Unauthorized' });
         }
@@ -109,5 +109,36 @@ export const actions = {
         });
 
         return redirect(302, resolve(`/(app)/release/[id]/edit/tracks`, { id: release.id }));
+    },
+    delete: async ({ request, locals, params }) => {
+        if (!locals.user) {
+            return fail(401, { message: 'Unauthorized' });
+        }
+
+        const form = await superValidate(request, zod4(deleteReleaseSchema));
+
+        if (!form.valid) {
+            return fail(400, { form, message: 'Please correct the errors in the form' });
+        }
+
+        const release = await prisma.release.delete({
+            where: {
+                id: params.id,
+                userId: locals.user.id
+            },
+            include: {
+                _count: {
+                    select: {
+                        tracks: true
+                    }
+                }
+            }
+        });
+
+        return message(form, {
+            message: `Release "${release.name}" and its ${release._count.tracks} track(s) have been deleted successfully.`,
+            releaseId: release.id,
+            release,
+        });
     }
 };

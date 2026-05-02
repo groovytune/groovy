@@ -11,7 +11,7 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { Button } from '$lib/components/ui/button/index.js';
-    import { DownloadIcon, ListMusicIcon, LoaderIcon, MicVocalIcon, PlayIcon, SquareXIcon, Trash2Icon } from '@lucide/svelte';
+    import { DownloadIcon, ListMusicIcon, LoaderIcon, MicVocalIcon, PlayIcon, Trash2Icon } from '@lucide/svelte';
     import { FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { Input } from '$lib/components/ui/input';
     import FileInput from '$lib/components/shared/FileInput.svelte';
@@ -22,10 +22,9 @@
     import { Badge } from '$lib/components/ui/badge';
     import { categoryInfos } from '$lib/helpers/constants';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
-    import ResponsiveDialog from '$lib/components/shared/ResponsiveDialog.svelte';
-    import DeleteTracksForm from '$lib/components/shared/app/release/forms/DeleteTracksForm.svelte';
     import { AudioPlayerContext } from '$lib/contexts/player.js';
     import { goto } from '$app/navigation';
+    import DeleteTrackDialog from '$lib/components/shared/app/release/dialogs/DeleteTrackDialog.svelte';
 
     let { data } = $props();
 
@@ -69,7 +68,7 @@
     let nameInput: HTMLInputElement|null = $state(null);
 
     // svelte-ignore state_referenced_locally
-    let deleteDialogState = new DialogState({ id: `delete-track-${data.track.id}` });
+    const deleteDialogState = new DialogState({ id: `delete-track-${data.track.id}` });
 
     let coverURL = $derived(
         $formData.cover
@@ -272,51 +271,12 @@
     </form>
 </div>
 
-<ResponsiveDialog dialogState={deleteDialogState}>
-    {#snippet title()}
-        Delete <span class="text-primary">{data.track.name}</span>?
-    {/snippet}
-    {#snippet content({ type })}
-        <p class:px-4={type === 'drawer'}>
-            Are you sure you want to delete this track? This action cannot be undone.
-        </p>
-    {/snippet}
-    {#snippet footer()}
-        <DeleteTracksForm
-            releaseId={data.track.releaseId}
-            trackIds={[data.track.id]}
-            onerror={() => deleteDialogState.isClosable = true}
-            ondelete={() => {
-                deleteDialogState.close({ force: true });
-                goto(resolve('/(app)/release/[id]/edit/tracks', { id: data.track.releaseId }));
-            }}
-        >
-            {#snippet children({ form: delForm, submitting, deleted })}
-                <Button
-                    variant="secondary"
-                    disabled={submitting || deleted}
-                    onclick={() => deleteDialogState.close({ force: true })}
-                >
-                    <SquareXIcon/>
-                    Cancel
-                </Button>
-                <Button
-                    variant="destructive"
-                    disabled={submitting || deleted}
-                    onclick={() => {
-                        delForm.submit();
-                        deleteDialogState.isClosable = false;
-                    }}
-                >
-                    {#if submitting}
-                        <LoaderIcon class="animate-spin"/>
-                        Deleting...
-                    {:else}
-                        <Trash2Icon class="text-current"/>
-                        Delete
-                    {/if}
-                </Button>
-            {/snippet}
-        </DeleteTracksForm>
-    {/snippet}
-</ResponsiveDialog>
+<DeleteTrackDialog
+    releaseId={data.track.releaseId}
+    tracks={[data.track]}
+    dialogState={deleteDialogState}
+    ondelete={() => {
+        deleteDialogState.close({ force: true });
+        goto(resolve('/(app)/release/[id]/edit/tracks', { id: data.track.releaseId }));
+    }}
+/>

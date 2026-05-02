@@ -15,12 +15,18 @@
     import type { sortTracksSchema } from '$lib/schema/track.js';
     import { resolve } from '$app/paths';
     import { AudioPlayerContext } from '$lib/contexts/player.js';
-    import PlayerDropdownItems from '../../../../../../lib/components/shared/app/player/PlayerDropdownItems.svelte';
+    import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
+    import { DialogState } from '$lib/helpers/classes/DialogState.svelte.js';
+    import DeleteReleaseDialog from '$lib/components/shared/app/release/dialogs/DeleteReleaseDialog.svelte';
+    import { goto } from '$app/navigation';
  
     let { data } = $props();
 
     const session = auth.useSession();
     const audioPlayer = AudioPlayerContext.get();
+
+    // svelte-ignore state_referenced_locally
+    const deleteReleaseDialogState = new DialogState({ id: `delete-release-${data.release.id}` });
 
     let tracks = $derived(data.release.tracks);
     let sortForm = $state<SuperForm<z.infer<typeof sortTracksSchema>, unknown>|null>(null);
@@ -135,7 +141,7 @@
                         <DropdownMenuSeparator/>
                         <PlayerDropdownItems tracks={tracks.toSorted((a, b) => a.position - b.position)}/>
                         <DropdownMenuSeparator/>
-                        <DropdownMenuItem class="text-destructive!">
+                        <DropdownMenuItem class="text-destructive!" onclick={() => deleteReleaseDialogState.open()}>
                             <Trash2Icon class="text-current"/>
                             Delete
                         </DropdownMenuItem>
@@ -160,3 +166,13 @@
         }}
     />
 </div>
+
+<DeleteReleaseDialog
+    releaseId={data.release.id}
+    name={data.release.name}
+    dialogState={deleteReleaseDialogState}
+    ondelete={() => {
+        deleteReleaseDialogState.close({ force: true });
+        goto(resolve('/(app)/library'));
+    }}
+/>

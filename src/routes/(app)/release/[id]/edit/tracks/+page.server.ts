@@ -9,12 +9,13 @@ import { fail } from 'sveltekit-superforms';
 import { extractFileMetadata, getPartialMetadata } from '$lib/helpers/metadata.js';
 import type z from 'zod';
 import { definePageMetaTags } from 'svelte-meta-tags';
+import { createAuthRedirect } from '$lib/helpers/utils.js';
 
-export async function load({ params, locals }) {
+export async function load({ params, locals, url }) {
     const { id } = params;
 
     if (!locals.user) {
-        throw redirect(302, '/signin');
+        throw redirect(302, createAuthRedirect('signin', url));
     }
 
     const release = await prisma.release.findUnique({
@@ -61,7 +62,7 @@ export async function load({ params, locals }) {
 }
 
 export const actions = {
-    upload: async ({ request, locals, params }) => {
+    upload: async ({ request, locals, params, url }) => {
         const formData = await request.formData();
         const form = await superValidate(
             formData,
@@ -73,7 +74,7 @@ export const actions = {
         }
 
         if (!locals.user) {
-            throw redirect(302, '/signin');
+            throw redirect(302, createAuthRedirect('signin', url));
         }
 
         const release = await prisma.release.findUnique({
@@ -219,7 +220,7 @@ export const actions = {
             invalid
         }, { removeFiles: true })
     },
-    delete: async ({ request, locals, params }) => {
+    delete: async ({ request, locals, params, url }) => {
         const form = await superValidate(
             request,
             zod4(deleteTracksSchema)
@@ -230,7 +231,7 @@ export const actions = {
         }
 
         if (!locals.user) {
-            throw redirect(302, '/signin');
+            throw redirect(302, createAuthRedirect('signin', url));
         }
 
         const release = await prisma.release.findUnique({
@@ -254,12 +255,16 @@ export const actions = {
             }
         });
 
+        if (!tracks.count) {
+            return fail(404, { form, message: 'No tracks found to delete.' });
+        }
+
         return message(form, {
             message: `Successfully deleted ${tracks.count} track${tracks.count > 1 ? 's' : ''}`,
             trackIds: form.data.trackIds
         });
     },
-    sort: async ({ request, locals, params }) => {
+    sort: async ({ request, locals, params, url }) => {
         const form = await superValidate(
             request,
             zod4(sortTracksSchema)
@@ -270,7 +275,7 @@ export const actions = {
         }
 
         if (!locals.user) {
-            throw redirect(302, '/signin');
+            throw redirect(302, createAuthRedirect('signin', url));
         }
 
         const tracks = await prisma.$transaction(

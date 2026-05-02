@@ -26,3 +26,5 @@ export const newReleaseSchema = z.object({
 });
 
 export const editReleaseSchema = newReleaseSchema.partial();
+
+export const deleteReleaseSchema = z.object({});
