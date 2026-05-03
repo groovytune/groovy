@@ -11,6 +11,7 @@
     import ExplicitIcon from '../../../lib/components/shared/icons/ExplicitIcon.svelte';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
+    import { fade } from 'svelte/transition';
 
     const audioPlayer = AudioPlayerContext.get();
 
@@ -20,14 +21,12 @@
     $effect(() => {
         const fac = new FastAverageColor();
 
-        const color = disableBlurBackground
-            ? fac
-                .getColorAsync(audioPlayer.coverURL, {
-                    mode: 'speed',
-                    algorithm: 'simple'
-                })
-                .catch(() => null)
-            : Promise.resolve(null);
+        const color = fac
+            .getColorAsync(audioPlayer.coverURL, {
+                mode: 'speed',
+                algorithm: 'simple'
+            })
+            .catch(() => null);
 
         untrack(() => color.then(res => averageColor = res));
     });
@@ -189,10 +188,11 @@
 </main>
 
 <div class="fixed -z-10 top-0 left-0 size-full">
-    <div class="size-full absolute top-0 left-0 backdrop-blur-3xl backdrop-saturate-200 bg-black/50"></div>
+    <div class="size-full absolute top-0 left-0 backdrop-blur-3xl backdrop-saturate-200 bg-black/50 z-10"></div>
     {#if !disableBlurBackground}
-        <img src={audioPlayer.coverURL} alt="Release Cover" class="size-full object-cover"/>
-    {:else}
-        <div class="size-full" style={averageColor ? `background-color: ${averageColor.hex};` : undefined}></div>
+        {#key audioPlayer.coverURL}
+            <img transition:fade src={audioPlayer.coverURL} alt="Release Cover" class="absolute top-0 left-0 size-full object-cover"/>
+        {/key}
     {/if}
+    <div class="size-full" style={averageColor ? `background-color: ${averageColor.hex};` : undefined}></div>
 </div>
