@@ -20,6 +20,8 @@
     const audioPlayer = AudioPlayerContext.get();
     const session = auth.useSession();
 
+    let tracks = $derived(data.release.tracks.toSorted((a, b) => a.position - b.position));
+
     let coverURL = $derived(
         data.release.cover
             ? Appwrite.storage.getFilePreview({
@@ -32,7 +34,7 @@
             : coverPlaceholder
     );
 
-    let totalDuration = $derived(data.release.tracks.reduce((acc, track) => acc + (track.duration ?? 0), 0));
+    let totalDuration = $derived(tracks.reduce((acc, track) => acc + (track.duration ?? 0), 0));
 </script>
 
 <div class="flex flex-col md:flex-row">
@@ -74,11 +76,11 @@
                 <Button
                     class="w-full"
                     onclick={async () => {
-                        await audioPlayer.replaceQueue(data.release.tracks.toSorted((a, b) => a.position - b.position));
+                        await audioPlayer.replaceQueue(tracks);
                         await audioPlayer.play();
                     }}
                 >
-                    <PlayIcon fill="currentColor"/>
+                    <PlayIcon/>
                     Play
                 </Button>
                 <DropdownMenu>
@@ -89,8 +91,10 @@
                             </Button>
                         {/snippet}
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent class="mx-2">
+                    <DropdownMenuContent class="mx-2 min-w-40">
+                        <PlayerDropdownItems tracks={tracks.toSorted((a, b) => a.position - b.position)}/>
                         {#if $session.data?.user.id === data.release.userId}
+                            <DropdownMenuSeparator/>
                             <DropdownMenuItem>
                                 {#snippet child({ props })}
                                     <a {...props} href={resolve('/(app)/release/[id]/edit', { id: data.release.id })}>
@@ -107,9 +111,7 @@
                                     </a>
                                 {/snippet}
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator/>
                         {/if}
-                        <PlayerDropdownItems tracks={data.release.tracks.toSorted((a, b) => a.position - b.position)}/>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
@@ -118,7 +120,7 @@
     {#if data.release.tracks.length > 0}
         <section class="py-5 px-2.5 w-full pt-0 md:pt-5">
             <div class="grid gap-2">
-                {#each data.release.tracks as track, index (track.id)}
+                {#each tracks as track, index (track.id)}
                     <div class="select-none cursor-default min-h-14 flex items-center gap-2">
                         <span class="text-sm text-muted-foreground hidden md:block">
                             {index + 1}
@@ -126,13 +128,16 @@
                         <TrackItem
                             track={track}
                             editable={$session.data?.user.id === data.release.userId}
+                            ondelete={() => {
+                                data.release.tracks = tracks = tracks.filter(t => t.id !== track.id);
+                            }}
                         />
                     </div>
                 {/each}
             </div>
             <div class="text-center pt-5">
                 <p class="text-xs text-muted-foreground">
-                    {data.release.tracks.length} track{data.release.tracks.length !== 1 ? 's' : ''} • {totalDuration ? ms(totalDuration * 1000, { long: true }) : 'Unknown duration'}
+                    {tracks.length} track{tracks.length !== 1 ? 's' : ''} • {totalDuration ? ms(totalDuration * 1000, { long: true }) : 'Unknown duration'}
                 </p>
             </div>
         </section>
