@@ -33,7 +33,7 @@
 </script>
 
 <main
-    class="player-view flex flex-col size-full items-center justify-start relative gap-2 text-white! dark"
+    class="flex flex-col size-full items-center justify-start relative gap-2 text-white! dark select-none"
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
     <header class="max-w-lg w-full flex items-center justify-between pt-4 pb-0 px-6">
