@@ -4,10 +4,13 @@
     import { untrack } from 'svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
-    import { EllipsisIcon, HeartIcon, LoaderIcon, PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon } from '@lucide/svelte';
+    import { ChevronDown, EllipsisIcon, HeartIcon, LoaderIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '../../../lib/components/ui/item';
     import RangeSlider from 'svelte-range-slider-pips';
     import { cn, formatDuration } from '../../../lib/helpers/utils';
+    import ExplicitIcon from '../../../lib/components/shared/icons/ExplicitIcon.svelte';
+    import { goto } from '$app/navigation';
+    import { resolve } from '$app/paths';
 
     const audioPlayer = AudioPlayerContext.get();
 
@@ -31,18 +34,39 @@
 </script>
 
 <main
-    class={cn(
-        "flex size-full items-center-safe justify-center relative",
-        averageColor && disableBlurBackground
-            ? [
-                "bg-(--average-color)",
-                averageColor.isDark ? 'text-white dark' : 'text-black'
-            ]
-            : 'text-white dark'
-    )}
-    style={averageColor ? `--average-color: ${averageColor.hex};` : undefined}
+    class="flex flex-col size-full items-center justify-start relative gap-2 text-white! dark"
+    style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
-    <section class="max-w-lg w-full flex flex-col gap-8 p-4 sm:p-8">
+    <header class="max-w-lg w-full flex items-center justify-between pt-4 pb-0 px-2 sm:px-8">
+        <Button
+            variant="ghost"
+            size="icon-lg"
+            class="shadow-none"
+            onclick={
+                () => window.history.length
+                    ? window.history.back()
+                    : goto(resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack?.releaseId ?? '' }))
+            }
+        >
+            <ChevronDown class="size-8 stroke-1 mt-1"/>
+        </Button>
+        <div class="text-sm text-center leading-tight">
+            <span class="text-xs text-muted-foreground">NOW PLAYING FROM</span>
+            <p class="font-semibold">
+                <a
+                    href={
+                        audioPlayer.releaseInfo.current
+                            ? resolve('/(app)/release/[id]', { id: audioPlayer.releaseInfo.current.id })
+                            : '#/'
+                    }
+                >
+                    {audioPlayer.releaseInfo.current?.name || 'Unknown Track'}
+                </a>
+            </p>
+        </div>
+        <Button variant="ghost" size="icon-lg" class="invisible"/>
+    </header>
+    <section class="max-w-lg w-full flex flex-col gap-8 p-4 sm:px-8">
         <AspectRatio
             class="w-full rounded-md bg-muted"
         >
@@ -51,18 +75,24 @@
         </AspectRatio>
         <Item class="p-0">
             <ItemContent class="gap-0">
-                <ItemTitle class="text-lg sm:text-xl leading-tight font-semibold line-clamp-3" style="word-wrap: break-word;">
+                <ItemTitle
+                    class="text-lg sm:text-xl leading-tight font-semibold line-clamp-3"
+                    style="word-wrap: break-word;"
+                >
                     {audioPlayer.currentTrack?.name || 'Unknown Track'}
+                    {#if audioPlayer.currentTrack?.explicit}
+                        <ExplicitIcon class="size-5"/>
+                    {/if}
                 </ItemTitle>
-                <ItemDescription class="text-sm leading-tight text-muted-foreground">
+                <ItemDescription class="text-sm font-medium leading-tight text-muted-foreground">
                     {audioPlayer.releaseInfo.current?.user.name || 'Unknown Artist'}
                 </ItemDescription>
             </ItemContent>
             <ItemActions>
-                <Button variant="secondary" size="icon" class="bg-white/10!">
+                <Button variant="secondary" size="icon" class="bg-white/10! shadow-none">
                     <HeartIcon/>
                 </Button>
-                <Button variant="secondary" size="icon" class="bg-white/10!">
+                <Button variant="secondary" size="icon" class="bg-white/10! shadow-none">
                     <EllipsisIcon/>
                 </Button>
             </ItemActions>
@@ -81,34 +111,88 @@
                 disabled={!audioPlayer.currentTrack}
                 class="m-0! w-full mono"
             />
-            <div class="flex justify-between">
+            <div class="flex justify-between font-semibold">
                 <span class="w-6 text-start">{audioPlayer.currentTrack ? formatDuration(audioPlayer.currentTime || 0) : '--:--'}</span>
                 <span class="w-6 text-end">{audioPlayer.currentTrack ? formatDuration(audioPlayer.duration || 0) : '--:--'}</span>
             </div>
         </div>
-        <div class="text-center">
-            <Button variant="ghost" size="icon-lg" class="size-18 [&_svg]:size-6! bg-transparent!" disabled={!audioPlayer.previousable} onclick={() => audioPlayer.previous()}>
-                <SkipBackIcon fill="currentColor"/>
+        <div class="flex justify-around items-center">
+            <Button
+                variant="ghost"
+                size="icon-sm"
+                class="bg-transparent! shadow-none"
+                onclick={() => audioPlayer.toggleRepeat()}
+            >
+                <ShuffleIcon/>
             </Button>
-            <Button variant="secondary" size="icon-lg" class="size-18 [&_svg]:size-6! bg-white/20!" disabled={!audioPlayer.currentTrack} onclick={() => audioPlayer.togglePlay()}>
+            <Button
+                variant="ghost"
+                size="icon-lg"
+                class="size-18 bg-transparent! shadow-none"
+                disabled={!audioPlayer.previousable}
+                onclick={() => audioPlayer.previous()}
+            >
+                <SkipBackIcon fill="currentColor" class="size-6"/>
+            </Button>
+            <Button
+                variant="secondary"
+                size="icon-lg"
+                class="size-18 bg-white/20! shadow-none"
+                disabled={!audioPlayer.currentTrack}
+                onclick={() => audioPlayer.togglePlay()}
+            >
                 {#if audioPlayer.status == 'buffering'}
-                    <LoaderIcon class="animate-spin"/>
+                    <LoaderIcon class="animate-spin size-6"/>
                 {:else if audioPlayer.paused}
-                    <PlayIcon fill="currentColor"/>
+                    <PlayIcon fill="currentColor" class="size-6"/>
                 {:else}
-                    <PauseIcon fill="currentColor"/>
+                    <PauseIcon fill="currentColor" class="size-6"/>
                 {/if}
             </Button>
-            <Button variant="ghost" size="icon-lg" class="size-18 [&_svg]:size-6! bg-transparent!" disabled={!audioPlayer.skippable} onclick={() => audioPlayer.next()}>
-                <SkipForwardIcon fill="currentColor"/>
+            <Button
+                variant="ghost"
+                size="icon-lg"
+                class="size-18 bg-transparent! shadow-none"
+                disabled={!audioPlayer.skippable}
+                onclick={() => audioPlayer.next()}
+            >
+                <SkipForwardIcon class="size-6" fill="currentColor"/>
+            </Button>
+            <Button
+                variant="ghost"
+                size="icon-sm"
+                class={cn(
+                    "bg-transparent! shadow-none",
+                    audioPlayer.repeat != 'none' && 'bg-white/80! text-black!'
+                )}
+                onclick={() => audioPlayer.toggleRepeat()}
+            >
+                {#if audioPlayer.repeat == 'one'}
+                    <Repeat1Icon/>
+                {:else}
+                    <RepeatIcon/>
+                {/if}
             </Button>
         </div>
     </section>
+    <footer class="max-w-lg w-full flex items-center justify-center p-4 sm:px-8 gap-2">
+        <Button variant="outline" size="lg">
+            Lyrics
+        </Button>
+        <Button variant="outline" size="lg">
+            Queue
+        </Button>
+        <Button variant="outline" size="lg">
+            Connect
+        </Button>
+    </footer>
 </main>
 
-{#if !disableBlurBackground}
-    <div class="fixed -z-10 top-0 left-0 size-full">
-        <div class="size-full absolute top-0 left-0 backdrop-blur-3xl backdrop-saturate-200 bg-black/50"></div>
+<div class="fixed -z-10 top-0 left-0 size-full">
+    <div class="size-full absolute top-0 left-0 backdrop-blur-3xl backdrop-saturate-200 bg-black/50"></div>
+    {#if !disableBlurBackground}
         <img src={audioPlayer.coverURL} alt="Release Cover" class="size-full object-cover"/>
-    </div>
-{/if}
+    {:else}
+        <div class="size-full" style={averageColor ? `background-color: ${averageColor.hex};` : undefined}></div>
+    {/if}
+</div>
