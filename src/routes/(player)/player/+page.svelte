@@ -4,7 +4,7 @@
     import { untrack } from 'svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
-    import { ChevronDown, EllipsisIcon, HeartIcon, LoaderIcon, MicVocalIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon, XIcon } from '@lucide/svelte';
+    import { ChevronDown, DropletIcon, DropletOffIcon, EllipsisIcon, HeartIcon, ListMusicIcon, LoaderIcon, MessageSquareQuoteIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon, XIcon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
     import RangeSlider from 'svelte-range-slider-pips';
     import { cn, formatDuration } from '$lib/helpers/utils';
@@ -49,12 +49,12 @@
     class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none"
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
-    <div class="max-w-lg sm:max-w-sm md:max-w-md lg:max-w-lg w-full sm:h-fit h-full flex flex-col px-6 shrink-0">
+    <div class="max-w-lg sm:max-w-sm md:max-w-md lg:max-w-lg w-full sm:h-fit h-full flex flex-col justify-between px-6 shrink-0">
         <header class="flex h-fit items-center justify-between pt-4 pb-0">
             <Button
                 variant="ghost"
                 size="icon-lg"
-                class="shadow-none"
+                class="shadow-none sm:bg-white/10!"
                 onclick={onBack}
             >
                 {#if isLargeWindow.current}
@@ -77,8 +77,8 @@
                     </a>
                 </p>
             </div>
-            <Button variant="ghost" size="icon-lg" class="invisible sm:visible" onclick={() => disableLyrics = !disableLyrics}>
-                <MicVocalIcon class="size-6 stroke-1"/>
+            <Button variant="ghost" size="icon-lg" class="invisible shadow-none sm:visible bg-white/10!" onclick={() => disableLyrics = !disableLyrics}>
+                <MessageSquareQuoteIcon class="size-6"/>
             </Button>
         </header>
         <section class="flex flex-col gap-8 py-4">
@@ -190,15 +190,22 @@
                 </Button>
             </div>
         </section>
-        <footer class="flex sm:hidden items-center justify-center pt-4 gap-2">
-            <Button variant="outline" size="lg">
+        <footer class="flex sm:hidden items-center justify-evenly py-4 gap-2">
+            <Button variant="secondary" class="bg-white/10! shadow-none" onclick={() => disableLyrics = !disableLyrics}>
+                <MessageSquareQuoteIcon class=""/>
                 Lyrics
             </Button>
-            <Button variant="outline" size="lg">
-                Queue
+            <Button variant="secondary" class="bg-white/10! shadow-none" onclick={() => disableBlurBackground = !disableBlurBackground}>
+                {#if disableBlurBackground}
+                    <DropletIcon class=""/>
+                {:else}
+                    <DropletOffIcon class=""/>
+                {/if}
+                Backdrop
             </Button>
-            <Button variant="outline" size="lg" onclick={() => disableBlurBackground = !disableBlurBackground}>
-                {disableBlurBackground ? 'Enable' : 'Disable'} Blur
+            <Button variant="secondary" class="bg-white/10! shadow-none">
+                <ListMusicIcon class=""/>
+                Queue
             </Button>
         </footer>
     </div>
