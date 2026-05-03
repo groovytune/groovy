@@ -129,7 +129,7 @@
                     {release.name}
                 </h1>
                 <p class="text-sm leading-tight text-muted-foreground">
-                    {release.userId}
+                    {release.user.name}
                 </p>
                 <p
                     class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 hover:line-clamp-none mt-2"
