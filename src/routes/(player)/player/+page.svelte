@@ -182,13 +182,13 @@
             Queue
         </Button>
         <Button variant="outline" size="lg" onclick={() => disableBlurBackground = !disableBlurBackground}>
-            Blur Bg
+            {disableBlurBackground ? 'Enable' : 'Disable'} Blur
         </Button>
     </footer>
 </main>
 
 <div class="fixed -z-10 top-0 left-0 size-full">
-    <div class="size-full absolute top-0 left-0 backdrop-blur-3xl backdrop-saturate-200 bg-black/50 z-10"></div>
+    <div class:backdrop-blur-3xl={!disableBlurBackground} class:backdrop-saturate-200={!disableBlurBackground} class="size-full absolute top-0 left-0 bg-black/50 z-10"></div>
     {#if !disableBlurBackground}
         {#key audioPlayer.coverURL}
             <img transition:fade src={audioPlayer.coverURL} alt="Release Cover" class="absolute top-0 left-0 size-full object-cover"/>
