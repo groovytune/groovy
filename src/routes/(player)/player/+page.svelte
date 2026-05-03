@@ -36,7 +36,7 @@
     class="flex flex-col size-full items-center justify-start relative gap-2 text-white! dark"
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
-    <header class="max-w-lg w-full flex items-center justify-between pt-4 pb-0 px-2 sm:px-8">
+    <header class="max-w-lg w-full flex items-center justify-between pt-4 pb-0 px-8">
         <Button
             variant="ghost"
             size="icon-lg"
@@ -65,7 +65,7 @@
         </div>
         <Button variant="ghost" size="icon-lg" class="invisible"/>
     </header>
-    <section class="max-w-lg w-full flex flex-col gap-8 p-4 sm:px-8">
+    <section class="max-w-lg w-full flex flex-col gap-8 py-4 px-8">
         <AspectRatio
             class="w-full rounded-md bg-muted"
         >
