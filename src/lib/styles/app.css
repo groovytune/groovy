@@ -242,6 +242,18 @@
         @apply size-full;
     }
 
+    .now-cover {
+        view-transition-name: now-cover;
+    }
+
+    .now-title {
+        view-transition-name: now-title;
+    }
+
+    .now-artist {
+        view-transition-name: now-artist;
+    }
+
     .rangeSlider {
         @apply h-1! bg-muted-foreground/50!;
 

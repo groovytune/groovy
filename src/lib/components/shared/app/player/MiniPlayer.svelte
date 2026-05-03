@@ -26,7 +26,7 @@
                 <span class="block h-full bg-primary rounded-full" style="width: {audioPlayer.progress}%"></span>
             </div>
             <section class="flex items-center gap-2 w-full md:max-w-sm">
-                <img src={audioPlayer.coverURL} alt="Cover Art" class="size-10 shrink-0 rounded-md overflow-hidden">
+                <img src={audioPlayer.coverURL} alt="Cover Art" class="now-cover size-10 shrink-0 rounded-md overflow-hidden">
                 <a
                     href={
                         audioPlayer.currentTrack
@@ -37,7 +37,7 @@
                     }
                     class="flex flex-col leading-tight"
                 >
-                    <h3 class="text-sm font-semibold line-clamp-1">
+                    <h3 class="now-title text-sm font-semibold line-clamp-1">
                         {#if audioPlayer.currentTrack}
                             {audioPlayer.currentTrack.name}
                             {#if audioPlayer.currentTrack.explicit}
@@ -47,7 +47,7 @@
                             <span class="text-muted-foreground">Not Playing</span>
                         {/if}
                     </h3>
-                    <p class="text-xs text-muted-foreground line-clamp-1">
+                    <p class="now-artist text-xs text-muted-foreground line-clamp-1">
                         {#if audioPlayer.releaseInfo.current}
                             {audioPlayer.releaseInfo.current?.user.name} • {audioPlayer.releaseInfo.current?.name}
                         {/if}

@@ -5,10 +5,10 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
     import { ChevronDown, EllipsisIcon, HeartIcon, LoaderIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon } from '@lucide/svelte';
-    import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '../../../lib/components/ui/item';
+    import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
     import RangeSlider from 'svelte-range-slider-pips';
-    import { cn, formatDuration } from '../../../lib/helpers/utils';
-    import ExplicitIcon from '../../../lib/components/shared/icons/ExplicitIcon.svelte';
+    import { cn, formatDuration } from '$lib/helpers/utils';
+    import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { fade } from 'svelte/transition';
@@ -33,7 +33,7 @@
 </script>
 
 <main
-    class="flex flex-col size-full items-center justify-start relative gap-2 text-white! dark"
+    class="player-view flex flex-col size-full items-center justify-start relative gap-2 text-white! dark"
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
     <header class="max-w-lg w-full flex items-center justify-between pt-4 pb-0 px-6">
@@ -69,13 +69,13 @@
         <AspectRatio
             class="w-full rounded-md bg-muted"
         >
-            <img src={audioPlayer.coverURL} alt="Release Cover" class="size-full object-cover rounded-md"/>
+            <img src={audioPlayer.coverURL} alt="Release Cover" class="now-cover size-full object-cover rounded-md"/>
             <img src={audioPlayer.coverURL} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
         </AspectRatio>
         <Item class="p-0">
             <ItemContent class="gap-0">
                 <ItemTitle
-                    class="text-lg sm:text-xl leading-tight font-semibold line-clamp-3"
+                    class="now-title text-lg sm:text-xl leading-tight font-semibold line-clamp-3"
                     style="word-wrap: break-word;"
                 >
                     {audioPlayer.currentTrack?.name || 'Unknown Track'}
@@ -83,7 +83,7 @@
                         <ExplicitIcon class="size-5"/>
                     {/if}
                 </ItemTitle>
-                <ItemDescription class="text-sm font-medium leading-tight text-muted-foreground">
+                <ItemDescription class="now-artist text-sm font-medium leading-tight text-muted-foreground">
                     {audioPlayer.releaseInfo.current?.user.name || 'Unknown Artist'}
                 </ItemDescription>
             </ItemContent>

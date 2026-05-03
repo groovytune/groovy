@@ -17,6 +17,7 @@
 	import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
 	import { onDestroy, onMount } from 'svelte';
 	import PlayerMediaSession from '$lib/components/shared/app/player/PlayerMediaSession.svelte';
+	import { onNavigate } from '$app/navigation';
 
 	let { children, data } = $props();
     let activeNavigationPage = $state({ id: '' });
@@ -32,6 +33,18 @@
 
     onDestroy(() => {
         audioPlayer.destroy();
+    });
+
+
+    onNavigate(navigation => {
+        if (!document.startViewTransition) return;
+
+        return new Promise(resolve => document
+            .startViewTransition(async () => {
+                resolve();
+                await navigation.complete;
+            })
+        );
     });
 </script>
 
