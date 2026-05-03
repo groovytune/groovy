@@ -9,10 +9,8 @@
     import { resolve } from '$app/paths';
     import RangeSlider from 'svelte-range-slider-pips';
     import ExplicitIcon from '../../icons/ExplicitIcon.svelte';
-    import { MediaQuery } from 'svelte/reactivity';
 
     const audioPlayer = AudioPlayerContext.get();
-    const isMediumWidth = new MediaQuery('(width >= 48rem)');
 </script>
 
 {#if audioPlayer.currentTrack}
@@ -28,13 +26,7 @@
             <section class="flex items-center gap-2 w-full md:max-w-sm">
                 <img src={audioPlayer.coverURL} alt="Cover Art" class="now-cover size-10 shrink-0 rounded-md overflow-hidden">
                 <a
-                    href={
-                        audioPlayer.currentTrack
-                            ? isMediumWidth.current
-                                ? resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack.releaseId })
-                                : resolve('/(player)/player')
-                            : undefined
-                    }
+                    href={audioPlayer.currentTrack && resolve('/(player)/player')}
                     class="flex flex-col leading-tight"
                 >
                     <h3 class="now-title text-sm font-semibold line-clamp-1">
