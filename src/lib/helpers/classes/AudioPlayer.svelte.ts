@@ -150,9 +150,10 @@ export class AudioPlayer {
         }
     }
 
-    public async replaceQueue(tracks: Track[]): Promise<void> {
+    public async replaceQueue(tracks: Track[], history?: Track[]): Promise<void> {
         this.clear();
         this.queue = tracks;
+        this.history = history || [];
 
         const nextTrack = this.queue.shift();
 

@@ -139,6 +139,12 @@
                             track={track}
                             artist={data.release.user}
                             editable={$session.data?.user.id === data.release.userId}
+                            onclick={async () => {
+                                const newQueue = tracks.toSpliced(0, index);
+                                const newHistory = tracks.toSpliced(index).reverse();
+                                await audioPlayer.replaceQueue(newQueue, newHistory);
+                                await audioPlayer.play();
+                            }}
                             ondelete={() => {
                                 data.release.tracks = tracks = tracks.filter(t => t.id !== track.id);
                             }}
