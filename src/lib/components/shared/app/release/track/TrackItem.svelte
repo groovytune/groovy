@@ -4,9 +4,8 @@
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
-    import type { Track } from '$lib/server/prisma/browser';
+    import type { Track, User } from '$lib/server/prisma/browser';
     import { Button } from '$lib/components/ui/button';
-    import { auth } from '$lib/client/auth';
     import { Appwrite } from '$lib/client/appwrite';
     import { resolve } from '$app/paths';
     import coverPlaceholder from '$lib/assets/cover.webp';
@@ -20,17 +19,18 @@
         track,
         cover = false,
         editable = false,
+        artist,
         onclick,
         ondelete
     }: {
         track: Track;
         cover?: boolean;
         editable?: boolean;
+        artist?: Pick<User, 'id'|'name'>;
         onclick?: (event: MouseEvent & { currentTarget: EventTarget & HTMLDivElement; }) => void;
         ondelete?: (trackId: string) => void;
     } = $props();
 
-    const session = auth.useSession();
     const audioPlayer = AudioPlayerContext.get();
 
     // svelte-ignore state_referenced_locally
@@ -83,7 +83,7 @@
                     {#if track?.explicit}<ExplicitIcon class="size-4"/>{/if}
                 </ItemTitle>
                 <ItemDescription class="line-clamp-1 truncate">
-                    {formatDuration(track?.duration || 0)} • {$session.data?.user.name || 'Unknown Artist'}
+                    {formatDuration(track?.duration || 0)} • {artist?.name || 'Unknown Artist'}
                 </ItemDescription>
             </ItemContent>
             <ItemActions>

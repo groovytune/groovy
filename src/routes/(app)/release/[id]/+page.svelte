@@ -137,6 +137,7 @@
                         </span>
                         <TrackItem
                             track={track}
+                            artist={data.release.user}
                             editable={$session.data?.user.id === data.release.userId}
                             ondelete={() => {
                                 data.release.tracks = tracks = tracks.filter(t => t.id !== track.id);

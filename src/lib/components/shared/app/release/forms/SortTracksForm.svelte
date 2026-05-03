@@ -14,6 +14,7 @@
     import TrackItemShadow from '../track/TrackItemShadow.svelte';
     import TrackItem from '../track/TrackItem.svelte';
     import { goto } from '$app/navigation';
+    import { auth } from '../../../../../client/auth';
 
     let {
         releaseId,
@@ -28,6 +29,8 @@
         form?: SuperForm<z.infer<typeof sortTracksSchema>>|null;
         onupdate?: (tracks: { id: string; position: number; }[]) => void;
     } = $props();
+
+    const session = auth.useSession();
 
     // svelte-ignore state_referenced_locally
     form = superForm(data ?? { tracks: [] }, {
@@ -104,6 +107,7 @@
                         <TrackItem
                             track={track}
                             editable={true}
+                            artist={$session.data?.user}
                             onclick={e => {
                                 e.stopPropagation();
                                 goto(resolve('/(app)/release/[id]/edit/track/[trackId]', { id: releaseId, trackId: track.id }));
