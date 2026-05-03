@@ -13,6 +13,7 @@
     import { zod4Client } from 'sveltekit-superforms/adapters';
     import TrackItemShadow from '../track/TrackItemShadow.svelte';
     import TrackItem from '../track/TrackItem.svelte';
+    import { goto } from '$app/navigation';
 
     let {
         releaseId,
@@ -103,6 +104,10 @@
                         <TrackItem
                             track={track}
                             editable={true}
+                            onclick={e => {
+                                e.stopPropagation();
+                                goto(resolve('/(app)/release/[id]/edit/track/[trackId]', { id: releaseId, trackId: track.id }));
+                            }}
                             ondelete={() => {
                                 tracks = tracks.filter(t => t.id !== dndTrack.id);
                                 form?.form.update(f => {

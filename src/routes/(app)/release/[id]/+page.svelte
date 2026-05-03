@@ -7,16 +7,18 @@
     import { Button } from '$lib/components/ui/button/index.js';
     import { resolve } from '$app/paths';
     import { AudioPlayerContext } from '$lib/contexts/player.js';
-    import { EllipsisIcon, HeartIcon, ListMusicIcon, PlayIcon } from '@lucide/svelte';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '../../../../lib/components/ui/dropdown-menu/index.js';
+    import { EllipsisIcon, HeartIcon, ListMusicIcon, PencilIcon, PlayIcon } from '@lucide/svelte';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../../../../lib/components/ui/dropdown-menu/index.js';
     import PlayerDropdownItems from '../../../../lib/components/shared/app/player/PlayerDropdownItems.svelte';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../../lib/components/ui/empty/index.js';
     import ms from 'ms';
     import TrackItem from '../../../../lib/components/shared/app/release/track/TrackItem.svelte';
+    import { auth } from '../../../../lib/client/auth.js';
 
     let { data } = $props();
 
     const audioPlayer = AudioPlayerContext.get();
+    const session = auth.useSession();
 
     let coverURL = $derived(
         data.release.cover
@@ -70,13 +72,14 @@
                     <HeartIcon/>
                 </Button>
                 <Button
+                    class="w-full"
                     onclick={async () => {
                         await audioPlayer.replaceQueue(data.release.tracks.toSorted((a, b) => a.position - b.position));
                         await audioPlayer.play();
                     }}
                 >
-                    <PlayIcon/>
-                    Play Tracks
+                    <PlayIcon fill="currentColor"/>
+                    Play
                 </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger>
@@ -87,6 +90,25 @@
                         {/snippet}
                     </DropdownMenuTrigger>
                     <DropdownMenuContent class="mx-2">
+                        {#if $session.data?.user.id === data.release.userId}
+                            <DropdownMenuItem>
+                                {#snippet child({ props })}
+                                    <a {...props} href={resolve('/(app)/release/[id]/edit', { id: data.release.id })}>
+                                        <PencilIcon/>
+                                        Edit Release
+                                    </a>
+                                {/snippet}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                {#snippet child({ props })}
+                                    <a {...props} href={resolve('/(app)/release/[id]/edit/tracks', { id: data.release.id })}>
+                                        <ListMusicIcon/>
+                                        Manage Tracks
+                                    </a>
+                                {/snippet}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator/>
+                        {/if}
                         <PlayerDropdownItems tracks={data.release.tracks.toSorted((a, b) => a.position - b.position)}/>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -101,7 +123,10 @@
                         <span class="text-sm text-muted-foreground hidden md:block">
                             {index + 1}
                         </span>
-                        <TrackItem track={track}/>
+                        <TrackItem
+                            track={track}
+                            editable={$session.data?.user.id === data.release.userId}
+                        />
                     </div>
                 {/each}
             </div>

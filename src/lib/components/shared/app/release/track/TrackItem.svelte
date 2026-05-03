@@ -15,17 +15,18 @@
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
     import { AudioPlayerContext } from '$lib/contexts/player';
     import DeleteTrackDialog from '../dialogs/DeleteTrackDialog.svelte';
-    import NowPlayingIcon from '$lib/components/shared/icons/NowPlayingIcon.svelte';
 
     let {
         track,
         cover = false,
         editable = false,
+        onclick,
         ondelete
     }: {
         track: Track;
         cover?: boolean;
         editable?: boolean;
+        onclick?: (event: MouseEvent & { currentTarget: EventTarget & HTMLDivElement; }) => void;
         ondelete?: (trackId: string) => void;
     } = $props();
 
@@ -51,6 +52,7 @@
 
 <Item
     oncontextmenu={e =>  e.preventDefault()}
+    onclick={e => onclick?.(e)}
     class={[
         "p-2 hover:bg-secondary/50 rounded-md w-full gap-3",
         isPlaying && "bg-accent/30"
@@ -58,7 +60,8 @@
     style="content-visibility: auto;"
 >
     {#snippet child({ props })}
-        <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
+        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+        <a {...props}>
             {#if cover}
                 <ItemMedia variant="image" class="-mt-0.5">
                     <img
@@ -76,7 +79,7 @@
                     ]}
                     style="word-wrap: break-word;"
                 >
-                    {#if isPlaying && !editable}<NowPlayingIcon class="size-4"/>{/if}{track?.name ?? 'Unavailable Track'}
+                    {track?.name ?? 'Unavailable Track'}
                     {#if track?.explicit}<ExplicitIcon class="size-4"/>{/if}
                 </ItemTitle>
                 <ItemDescription class="line-clamp-1 truncate">
