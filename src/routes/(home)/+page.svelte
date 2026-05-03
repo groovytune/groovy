@@ -12,9 +12,9 @@
     import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
-    import AudioPlayerPreview from '../../lib/components/shared/home/AudioPlayerPreview.svelte';
-    import AudioWaveform from '../../lib/components/shared/home/AudioWaveform.svelte';
-    import { AudioPlayerContext } from '../../lib/contexts/player.js';
+    import AudioPlayerPreview from '$lib/components/shared/home/AudioPlayerPreview.svelte';
+    import AudioWaveform from '$lib/components/shared/home/AudioWaveform.svelte';
+    import { AudioPlayerContext } from '$lib/contexts/player.js';
 
     let { data } = $props();
 

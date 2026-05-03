@@ -7,13 +7,13 @@
     import { Button } from '$lib/components/ui/button/index.js';
     import { resolve } from '$app/paths';
     import { AudioPlayerContext } from '$lib/contexts/player.js';
-    import { EllipsisIcon, HeartIcon, ListMusicIcon, PencilIcon, PlayIcon } from '@lucide/svelte';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../../../../lib/components/ui/dropdown-menu/index.js';
-    import PlayerDropdownItems from '../../../../lib/components/shared/app/player/PlayerDropdownItems.svelte';
-    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../../lib/components/ui/empty/index.js';
+    import { Disc3Icon, EllipsisIcon, HeartIcon, ListMusicIcon, PencilIcon, PlayIcon } from '@lucide/svelte';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
+    import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
+    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import ms from 'ms';
-    import TrackItem from '../../../../lib/components/shared/app/release/track/TrackItem.svelte';
-    import { auth } from '../../../../lib/client/auth.js';
+    import TrackItem from '$lib/components/shared/app/release/track/TrackItem.svelte';
+    import { auth } from '$lib/client/auth.js';
 
     let { data } = $props();
 
@@ -112,6 +112,16 @@
                                 {/snippet}
                             </DropdownMenuItem>
                         {/if}
+                        <DropdownMenuSeparator/>
+                        <DropdownMenuItem>
+                            {#snippet child({ props })}
+                                <!-- TODO: Implement view artist functionality -->
+                                <a {...props}>
+                                    <Disc3Icon/>
+                                    View Artist
+                                </a>
+                            {/snippet}
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>

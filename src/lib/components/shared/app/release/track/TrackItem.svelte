@@ -1,6 +1,6 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { DownloadIcon, EllipsisIcon, PencilIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
+    import { Disc3Icon, DownloadIcon, EllipsisIcon, PencilIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
@@ -116,8 +116,8 @@
                             <DropdownMenuSeparator/>
                         {/if}
                         <PlayerDropdownItems tracks={[track]}/>
+                        <DropdownMenuSeparator/>
                         {#if editable}
-                            <DropdownMenuSeparator/>
                             <DropdownMenuItem>
                                 {#snippet child({ props })}
                                     <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
@@ -131,6 +131,16 @@
                             <DropdownMenuItem class="text-destructive!" onclick={() => deleteDialogState.open()}>
                                 <Trash2Icon class="text-current"/>
                                 Delete
+                            </DropdownMenuItem>
+                        {:else}
+                            <DropdownMenuItem>
+                                {#snippet child({ props })}
+                                    <!-- TODO: Implement view artist functionality -->
+                                    <a {...props}>
+                                        <Disc3Icon/>
+                                        View Artist
+                                    </a>
+                                {/snippet}
                             </DropdownMenuItem>
                         {/if}
                     </DropdownMenuContent>
