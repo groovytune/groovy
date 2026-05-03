@@ -194,6 +194,7 @@
         </footer>
     </div>
     <div class="max-w-xl size-full hidden lg:flex justify-center items-center">
+        <!-- TODO: Implement lyrics display -->
         <p class="text-5xl font-bold leading-snug">
             Lyrics dapat dito
             <br>
