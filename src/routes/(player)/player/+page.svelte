@@ -19,6 +19,7 @@
 
     let averageColor: FastAverageColorResult|null = $state(null);
     let disableBlurBackground = $state(false);
+    let disableLyrics = $state(false);
 
     $effect(() => {
         const fac = new FastAverageColor();
@@ -76,7 +77,7 @@
                     </a>
                 </p>
             </div>
-            <Button variant="ghost" size="icon-lg" class="invisible sm:visible">
+            <Button variant="ghost" size="icon-lg" class="invisible sm:visible" onclick={() => disableLyrics = !disableLyrics}>
                 <MicVocalIcon class="size-6 stroke-1"/>
             </Button>
         </header>
@@ -201,14 +202,16 @@
             </Button>
         </footer>
     </div>
-    <div class="max-w-xl size-full hidden sm:flex justify-center items-center-safe p-6">
-        <!-- TODO: Implement lyrics display -->
-        <p class="text-4xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-snug">
-            Lyrics dapat dito
-            <br>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vero adipisci amet est ex voluptatum eos dolor quos blanditiis sint voluptate distinctio velit at nihil non labore itaque, fugiat neque voluptatibus.
-        </p>
-    </div>
+    {#if !disableLyrics}
+        <div class="max-w-xl size-full hidden sm:flex justify-center items-center-safe p-6">
+            <!-- TODO: Implement lyrics display -->
+            <p class="text-4xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-snug">
+                Lyrics dapat dito
+                <br>
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vero adipisci amet est ex voluptatum eos dolor quos blanditiis sint voluptate distinctio velit at nihil non labore itaque, fugiat neque voluptatibus.
+            </p>
+        </div>
+    {/if}
 </main>
 
 <div class="fixed -z-10 top-0 left-0 size-full">
