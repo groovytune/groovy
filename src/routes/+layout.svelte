@@ -48,6 +48,12 @@
     });
 </script>
 
+<style>
+    :root {
+        view-transition-name: none;
+    }
+</style>
+
 <Toaster/>
 <ModeWatcher/>
 <PlayerMediaSession/>
