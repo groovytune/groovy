@@ -182,8 +182,8 @@
         <Button variant="outline" size="lg">
             Queue
         </Button>
-        <Button variant="outline" size="lg">
-            Connect
+        <Button variant="outline" size="lg" onclick={() => disableBlurBackground = !disableBlurBackground}>
+            Blur Bg
         </Button>
     </footer>
 </main>
