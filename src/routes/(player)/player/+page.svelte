@@ -4,7 +4,7 @@
     import { untrack } from 'svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
-    import { ChevronDown, EllipsisIcon, HeartIcon, LoaderIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon } from '@lucide/svelte';
+    import { ChevronDown, EllipsisIcon, HeartIcon, LoaderIcon, MicVocalIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon, XIcon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
     import RangeSlider from 'svelte-range-slider-pips';
     import { cn, formatDuration } from '$lib/helpers/utils';
@@ -12,8 +12,10 @@
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { fade } from 'svelte/transition';
+    import { MediaQuery } from 'svelte/reactivity';
 
     const audioPlayer = AudioPlayerContext.get();
+    const isLargeWindow = new MediaQuery('(width >= 64rem)');
 
     let averageColor: FastAverageColorResult|null = $state(null);
     let disableBlurBackground = $state(false);
@@ -43,18 +45,22 @@
 </script>
 
 <main
-    class="flex size-full items-center justify-evenly relative gap-2 text-white! dark select-none"
+    class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none"
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
     <div class="max-w-lg w-full lg:h-fit h-full flex flex-col px-6 shrink-0">
-        <header class="flex lg:hidden items-center justify-between pt-4 pb-0">
+        <header class="flex h-fit items-center justify-between pt-4 pb-0">
             <Button
                 variant="ghost"
                 size="icon-lg"
                 class="shadow-none"
                 onclick={onBack}
             >
-                <ChevronDown class="size-8 stroke-1 mt-1"/>
+                {#if isLargeWindow.current}
+                    <XIcon class="size-8 stroke-1"/>
+                {:else}
+                    <ChevronDown class="size-8 stroke-1 mt-1"/>
+                {/if}
             </Button>
             <div class="text-sm text-center leading-tight">
                 <span class="text-xs text-muted-foreground">NOW PLAYING FROM</span>
@@ -70,7 +76,9 @@
                     </a>
                 </p>
             </div>
-            <Button variant="ghost" size="icon-lg" class="invisible"/>
+            <Button variant="ghost" size="icon-lg" class="invisible lg:visible">
+                <MicVocalIcon class="size-6 stroke-1"/>
+            </Button>
         </header>
         <section class="flex flex-col gap-8 py-4">
             <AspectRatio
