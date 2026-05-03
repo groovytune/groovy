@@ -48,7 +48,7 @@
     class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none"
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
-    <div class="max-w-lg w-full lg:h-fit h-full flex flex-col px-6 shrink-0">
+    <div class="max-w-lg sm:max-w-sm md:max-w-md lg:max-w-lg w-full sm:h-fit h-full flex flex-col px-6 shrink-0">
         <header class="flex h-fit items-center justify-between pt-4 pb-0">
             <Button
                 variant="ghost"
@@ -76,7 +76,7 @@
                     </a>
                 </p>
             </div>
-            <Button variant="ghost" size="icon-lg" class="invisible lg:visible">
+            <Button variant="ghost" size="icon-lg" class="invisible sm:visible">
                 <MicVocalIcon class="size-6 stroke-1"/>
             </Button>
         </header>
@@ -189,7 +189,7 @@
                 </Button>
             </div>
         </section>
-        <footer class="flex lg:hidden items-center justify-center pt-4 gap-2">
+        <footer class="flex sm:hidden items-center justify-center pt-4 gap-2">
             <Button variant="outline" size="lg">
                 Lyrics
             </Button>
@@ -201,9 +201,9 @@
             </Button>
         </footer>
     </div>
-    <div class="max-w-xl size-full hidden lg:flex justify-center items-center">
+    <div class="max-w-xl size-full hidden sm:flex justify-center items-center-safe p-6">
         <!-- TODO: Implement lyrics display -->
-        <p class="text-5xl font-bold leading-snug">
+        <p class="text-4xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-snug">
             Lyrics dapat dito
             <br>
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vero adipisci amet est ex voluptatum eos dolor quos blanditiis sint voluptate distinctio velit at nihil non labore itaque, fugiat neque voluptatibus.
