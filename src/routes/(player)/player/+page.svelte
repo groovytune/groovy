@@ -4,7 +4,7 @@
     import { untrack } from 'svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
-    import { ChevronDown, DropletIcon, DropletOffIcon, EllipsisIcon, HeartIcon, ListMusicIcon, LoaderIcon, MessageSquareQuoteIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon, XIcon } from '@lucide/svelte';
+    import { ChevronDown, EllipsisIcon, HeartIcon, ListMusicIcon, LoaderIcon, MessageSquareQuoteIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon, XIcon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
     import RangeSlider from 'svelte-range-slider-pips';
     import { cn, formatDuration } from '$lib/helpers/utils';
@@ -20,7 +20,6 @@
     const isLargeWindow = new MediaQuery('(width >= 900px)');
 
     let averageColor: FastAverageColorResult|null = $state(null);
-    let disableBlurBackground = $state(false);
     let disableLyrics = $state(false);
 
     $effect(() => {
@@ -193,14 +192,6 @@
             <Button variant="secondary" class="bg-white/10! shadow-none" onclick={() => disableLyrics = !disableLyrics}>
                 <MessageSquareQuoteIcon class=""/>
                 Lyrics
-            </Button>
-            <Button variant="secondary" class="bg-white/10! shadow-none" onclick={() => disableBlurBackground = !disableBlurBackground}>
-                {#if disableBlurBackground}
-                    <DropletIcon class=""/>
-                {:else}
-                    <DropletOffIcon class=""/>
-                {/if}
-                Backdrop
             </Button>
             <Button variant="secondary" class="bg-white/10! shadow-none">
                 <ListMusicIcon class=""/>
