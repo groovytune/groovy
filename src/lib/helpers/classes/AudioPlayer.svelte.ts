@@ -3,7 +3,7 @@ import type { Track } from '$lib/server/prisma/browser';
 import { resource, useEventListener } from 'runed';
 import { Appwrite } from '$lib/client/appwrite';
 import { resolve } from '$app/paths';
-import { ImageGravity } from 'appwrite';
+import { ImageFormat, ImageGravity } from 'appwrite';
 import coverPlaceholder from '$lib/assets/cover.webp';
 
 export class AudioPlayer {
@@ -48,7 +48,8 @@ export class AudioPlayer {
                 fileId: (this.currentTrack?.cover || this.releaseInfo.current?.cover)!,
                 height: 500,
                 width: 500,
-                gravity: ImageGravity.Center
+                gravity: ImageGravity.Center,
+                output: ImageFormat.Jpeg
             })
             : coverPlaceholder
     );

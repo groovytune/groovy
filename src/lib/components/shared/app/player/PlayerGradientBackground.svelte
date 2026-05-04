@@ -6,11 +6,11 @@
     let {
         image,
         playing = true,
-        fps = 30,
-        flowSpeed = 2,
-        renderScale = 0.5,
+        fps = 60,
+        flowSpeed = 2.5,
+        renderScale = 1,
         staticMode = false,
-        lowFreqVolume = 1.0,
+        lowFreqVolume = 0,
         hasLyric = true,
         class: className
     }: {
