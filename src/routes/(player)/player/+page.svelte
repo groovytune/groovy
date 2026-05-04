@@ -13,9 +13,10 @@
     import { resolve } from '$app/paths';
     import { fade } from 'svelte/transition';
     import { MediaQuery } from 'svelte/reactivity';
+    import { ScrollArea } from '$lib/components/ui/scroll-area';
 
     const audioPlayer = AudioPlayerContext.get();
-    const isLargeWindow = new MediaQuery('(width >= 64rem)');
+    const isLargeWindow = new MediaQuery('(width >= 900px)');
 
     let averageColor: FastAverageColorResult|null = $state(null);
     let disableBlurBackground = $state(false);
@@ -49,19 +50,16 @@
     class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none"
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
-    <div class="max-w-lg sm:max-w-sm md:max-w-md lg:max-w-lg w-full sm:h-fit h-full flex flex-col justify-between px-6 shrink-0">
+    <div class="max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full min-[900px]:h-fit h-full flex flex-col justify-between px-6 shrink-0">
         <header class="flex h-fit items-center justify-between pt-4 pb-0">
             <Button
                 variant="ghost"
                 size="icon-lg"
-                class="shadow-none sm:bg-white/10!"
+                class="shadow-none min-[900px]:bg-white/10!"
                 onclick={onBack}
             >
-                {#if isLargeWindow.current}
-                    <XIcon class="size-8 stroke-1"/>
-                {:else}
-                    <ChevronDown class="size-8 stroke-1 mt-1"/>
-                {/if}
+                <XIcon class="size-8 stroke-1 hidden min-[900px]:inline"/>
+                <ChevronDown class="size-8 stroke-1 mt-1 min-[900px]:hidden"/>
             </Button>
             <div class="text-sm text-center leading-tight">
                 <span class="text-xs text-muted-foreground">NOW PLAYING FROM</span>
@@ -77,7 +75,7 @@
                     </a>
                 </p>
             </div>
-            <Button variant="ghost" size="icon-lg" class="invisible shadow-none sm:visible bg-white/10!" onclick={() => disableLyrics = !disableLyrics}>
+            <Button variant="ghost" size="icon-lg" class="invisible shadow-none min-[900px]:visible bg-white/10!" onclick={() => disableLyrics = !disableLyrics}>
                 <MessageSquareQuoteIcon class="size-6"/>
             </Button>
         </header>
@@ -190,7 +188,7 @@
                 </Button>
             </div>
         </section>
-        <footer class="flex sm:hidden items-center justify-evenly py-4 gap-2">
+        <footer class="flex min-[900px]:hidden items-center justify-evenly py-4 gap-2">
             <Button variant="secondary" class="bg-white/10! shadow-none" onclick={() => disableLyrics = !disableLyrics}>
                 <MessageSquareQuoteIcon class=""/>
                 Lyrics
@@ -210,13 +208,13 @@
         </footer>
     </div>
     {#if !disableLyrics}
-        <div class="max-w-xl size-full hidden sm:flex justify-center items-center-safe p-6">
+        <div class="max-w-3xl size-full hidden min-[900px]:flex justify-center items-center-safe p-6">
             <!-- TODO: Implement lyrics display -->
-            <p class="text-4xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-snug">
-                Lyrics dapat dito
-                <br>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vero adipisci amet est ex voluptatum eos dolor quos blanditiis sint voluptate distinctio velit at nihil non labore itaque, fugiat neque voluptatibus.
-            </p>
+            <ScrollArea class="size-full text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%">
+                {#each { length: 50 } as _, i (i)}
+                    <p>Lorem ipsum dolor sit amet.</p>
+                {/each}
+            </ScrollArea>
         </div>
     {/if}
 </main>
