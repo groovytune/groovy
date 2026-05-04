@@ -81,10 +81,9 @@
         </header>
         <section class="flex flex-col gap-8 py-4">
             <AspectRatio
-                class="w-full rounded-md bg-muted"
+                class="w-full rounded-md bg-muted shadow-md overflow-hidden"
             >
-                <img src={audioPlayer.coverURL} alt="Release Cover" class="now-cover size-full object-cover rounded-md"/>
-                <img src={audioPlayer.coverURL} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
+                <img src={audioPlayer.coverURL} alt="Release Cover" class="now-cover size-full object-cover"/>
             </AspectRatio>
             <Item class="p-0">
                 <ItemContent class="gap-0">
