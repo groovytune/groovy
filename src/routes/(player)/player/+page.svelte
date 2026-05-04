@@ -11,11 +11,12 @@
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
-    import { fade } from 'svelte/transition';
     import { MediaQuery } from 'svelte/reactivity';
     import { ScrollArea } from '$lib/components/ui/scroll-area';
+    import PlayerGradientBackground from '$lib/components/shared/app/player/PlayerGradientBackground.svelte';
 
     const audioPlayer = AudioPlayerContext.get();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const isLargeWindow = new MediaQuery('(width >= 900px)');
 
     let averageColor: FastAverageColorResult|null = $state(null);
@@ -62,7 +63,7 @@
                 <ChevronDown class="size-8 stroke-1 mt-1 min-[900px]:hidden"/>
             </Button>
             <div class="text-sm text-center leading-tight">
-                <span class="text-xs text-muted-foreground">NOW PLAYING FROM</span>
+                <span class="text-xs text-foreground/70">NOW PLAYING FROM</span>
                 <p class="font-semibold">
                     <a
                         href={
@@ -97,7 +98,7 @@
                             <ExplicitIcon class="size-5"/>
                         {/if}
                     </ItemTitle>
-                    <ItemDescription class="now-artist text-sm font-medium leading-tight text-muted-foreground">
+                    <ItemDescription class="now-artist text-sm font-medium leading-tight text-foreground/80">
                         {audioPlayer.releaseInfo.current?.user.name || 'Unknown Artist'}
                     </ItemDescription>
                 </ItemContent>
@@ -218,13 +219,4 @@
         </div>
     {/if}
 </main>
-
-<div class="fixed -z-10 top-0 left-0 size-full">
-    <div class:backdrop-blur-3xl={!disableBlurBackground} class:backdrop-saturate-200={!disableBlurBackground} class="size-full absolute top-0 left-0 bg-black/50 z-10"></div>
-    {#if !disableBlurBackground}
-        {#key audioPlayer.coverURL}
-            <img transition:fade src={audioPlayer.coverURL} alt="Release Cover" class="absolute top-0 left-0 size-full object-cover"/>
-        {/key}
-    {/if}
-    <div class="size-full" style={averageColor ? `background-color: ${averageColor.hex};` : undefined}></div>
-</div>
+<PlayerGradientBackground image={audioPlayer.coverURL} class="fixed -z-10 top-0 left-0"/>

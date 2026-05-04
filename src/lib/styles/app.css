@@ -299,6 +299,8 @@
         }
 
         &.mono {
+            @apply bg-foreground/20!;
+
             .rangeHandle {
                 @apply size-3! top-0.5!;
 

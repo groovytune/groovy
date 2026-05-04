@@ -53,6 +53,7 @@
 		"vite": "^8.0.10"
 	},
 	"dependencies": {
+		"@applemusic-like-lyrics/core": "^0.4.2",
 		"@fontsource-variable/google-sans-code": "^5.2.4",
 		"@fontsource-variable/google-sans-flex": "^5.2.3",
 		"@prisma/client": "^7.8.0",
