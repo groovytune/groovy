@@ -47,7 +47,7 @@
 </script>
 
 <main
-    class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none"
+    class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none bg-black/10"
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
     <div class="max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full min-[900px]:h-fit h-full flex flex-col justify-between px-6 shrink-0">
