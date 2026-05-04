@@ -47,7 +47,7 @@
 </script>
 
 <main
-    class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none bg-black/10"
+    class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none bg-black/15"
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
     <div class="max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full min-[900px]:h-fit h-full flex flex-col justify-between px-6 shrink-0">
@@ -81,7 +81,7 @@
         </header>
         <section class="flex flex-col gap-8 py-4">
             <AspectRatio
-                class="w-full rounded-md bg-muted shadow-md overflow-hidden"
+                class="w-full rounded-md bg-muted shadow-lg overflow-hidden"
             >
                 <img src={audioPlayer.coverURL} alt="Release Cover" class="now-cover size-full object-cover"/>
             </AspectRatio>
