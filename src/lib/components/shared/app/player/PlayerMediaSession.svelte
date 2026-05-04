@@ -3,7 +3,7 @@
     import { AudioPlayerContext } from '$lib/contexts/player';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { Appwrite } from '$lib/client/appwrite';
-    import { ImageGravity } from 'appwrite';
+    import { ImageFormat, ImageGravity } from 'appwrite';
     import { beforeNavigate } from '$app/navigation';
 
     const audioPlayer = AudioPlayerContext.get();
@@ -27,7 +27,8 @@
                             fileId: cover,
                             width: 512,
                             height: 512,
-                            gravity: ImageGravity.Center
+                            gravity: ImageGravity.Center,
+                            output: ImageFormat.Jpeg
                         })
                         : coverPlaceholder
                 }

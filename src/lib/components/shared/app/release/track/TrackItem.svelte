@@ -9,7 +9,7 @@
     import { Appwrite } from '$lib/client/appwrite';
     import { resolve } from '$app/paths';
     import coverPlaceholder from '$lib/assets/cover.webp';
-    import { ImageGravity } from 'appwrite';
+    import { ImageFormat, ImageGravity } from 'appwrite';
     import { formatDuration } from '$lib/helpers/utils';
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
     import { AudioPlayerContext } from '$lib/contexts/player';
@@ -44,7 +44,8 @@
                 fileId: track.cover,
                 height: 100,
                 width: 100,
-                gravity: ImageGravity.Center
+                gravity: ImageGravity.Center,
+                output: ImageFormat.Webp
             })
             : coverPlaceholder
     );

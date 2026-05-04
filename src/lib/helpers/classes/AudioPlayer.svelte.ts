@@ -46,8 +46,8 @@ export class AudioPlayer {
             ? Appwrite.storage.getFilePreview({
                 bucketId: 'image',
                 fileId: (this.currentTrack?.cover || this.releaseInfo.current?.cover)!,
-                height: 500,
-                width: 500,
+                height: 800,
+                width: 800,
                 gravity: ImageGravity.Center,
                 output: ImageFormat.Jpeg
             })

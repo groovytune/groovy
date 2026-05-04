@@ -6,7 +6,7 @@
     import { resolve } from '$app/paths';
     import { auth } from '$lib/client/auth.js';
     import { Appwrite } from '$lib/client/appwrite.js';
-    import { ImageGravity } from 'appwrite';
+    import { ImageFormat, ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
@@ -77,9 +77,10 @@
                 ? Appwrite.storage.getFilePreview({
                     bucketId: 'image',
                     fileId: data.track.cover,
-                    width: 500,
-                    height: 500,
-                    gravity: ImageGravity.Center
+                    width: 800,
+                    height: 800,
+                    gravity: ImageGravity.Center,
+                    output: ImageFormat.Webp
                 })
                 : placeholderCover
     );

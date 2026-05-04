@@ -10,7 +10,7 @@
     import { cn } from '$lib/helpers/utils';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
     import { Appwrite } from '$lib/client/appwrite.js';
-    import { ImageGravity } from 'appwrite';
+    import { ImageFormat, ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
     import AudioPlayerPreview from '$lib/components/shared/home/AudioPlayerPreview.svelte';
     import AudioWaveform from '$lib/components/shared/home/AudioWaveform.svelte';
@@ -110,9 +110,10 @@
             ? Appwrite.storage.getFilePreview({
                 bucketId: 'image',
                 fileId: release.cover,
-                height: 300,
-                width: 300,
-                gravity: ImageGravity.Center
+                height: 500,
+                width: 500,
+                gravity: ImageGravity.Center,
+                output: ImageFormat.Webp
             })
             : placeholderCover
         }

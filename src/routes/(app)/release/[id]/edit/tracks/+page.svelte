@@ -8,7 +8,7 @@
     import { Button } from '$lib/components/ui/button';
     import { auth } from '$lib/client/auth.js';
     import { Appwrite } from '$lib/client/appwrite.js';
-    import { ImageGravity } from 'appwrite';
+    import { ImageFormat, ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
     import type { SuperForm } from 'sveltekit-superforms';
     import type z from 'zod';
@@ -35,9 +35,10 @@
             ? Appwrite.storage.getFilePreview({
                 bucketId: 'image',
                 fileId: data.release.cover,
+                height: 800,
+                width: 800,
                 gravity: ImageGravity.Center,
-                height: 500,
-                width: 500,
+                output: ImageFormat.Webp
             })
             : placeholderCover
     );

@@ -12,7 +12,7 @@
     import { resolve } from '$app/paths';
     import ReleaseFormFields from '$lib/components/shared/app/release/forms/fields/ReleaseFormFields.svelte';
     import { Appwrite } from '$lib/client/appwrite.js';
-    import { ImageGravity } from 'appwrite';
+    import { ImageFormat, ImageGravity } from 'appwrite';
     import type { GETResponse } from '../../../api/release/[id]/tracks/+server.js';
     import { AudioPlayerContext } from '$lib/contexts/player.js';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte.js';
@@ -69,9 +69,10 @@
                 ? Appwrite.storage.getFilePreview({
                     bucketId: 'image',
                     fileId: data.release.cover,
-                    width: 500,
-                    height: 500,
-                    gravity: ImageGravity.Center
+                    width: 800,
+                    height: 800,
+                    gravity: ImageGravity.Center,
+                    output: ImageFormat.Webp
                 })
                 : placeholderCover
     );

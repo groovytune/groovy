@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ImageGravity } from 'appwrite';
+    import { ImageFormat, ImageGravity } from 'appwrite';
     import { Appwrite } from '$lib/client/appwrite.js';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
@@ -27,9 +27,10 @@
             ? Appwrite.storage.getFilePreview({
                 bucketId: 'image',
                 fileId: data.release.cover,
-                width: 500,
-                height: 500,
-                gravity: ImageGravity.Center
+                width: 800,
+                height: 800,
+                gravity: ImageGravity.Center,
+                output: ImageFormat.Webp
             })
             : coverPlaceholder
     );
