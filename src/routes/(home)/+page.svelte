@@ -15,7 +15,6 @@
     import AudioPlayerPreview from '$lib/components/shared/home/AudioPlayerPreview.svelte';
     import AudioWaveform from '$lib/components/shared/home/AudioWaveform.svelte';
     import { AudioPlayerContext } from '$lib/contexts/player.js';
-    import Marquee from '../../lib/components/shared/Marquee.svelte';
 
     let { data } = $props();
 
@@ -105,9 +104,6 @@
         </div>
     </section>
 </main>
-<Marquee class="bg-primary">
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni rem mollitia, dolore et laudantium unde fuga tempore tenetur iusto? Deleniti possimus beatae optio saepe obcaecati aspernatur qui corrupti praesentium sit.
-</Marquee>
 <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-5">
     {#each data.releases as release (release.id)}
         {@const coverURL = release.cover

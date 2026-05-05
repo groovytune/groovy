@@ -130,7 +130,7 @@
                 </Button>
             </div>
         </header>
-        <section class="flex flex-col gap-8 py-4">
+        <section class="flex flex-col gap-8 pt-4">
             <AspectRatio
                 class="w-full rounded-md shadow-lg overflow-hidden"
             >
