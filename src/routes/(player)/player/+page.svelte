@@ -24,6 +24,7 @@
     let averageColor: FastAverageColorResult|null = $state(null);
     let isLyricsEnabled = $state(false);
     let isFullscreen = $state(false);
+    let isMeshGradientEnabled = $state(true);
     let backing = false;
 
     $effect(() => {
@@ -103,12 +104,12 @@
                     </a>
                 </p>
             </div>
-            <div>
+            <div class="flex items-center gap-2">
                 <Button
                     variant="ghost"
                     size="icon-lg"
                     class={cn(
-                        "invisible shadow-none min-[900px]:visible bg-white/10!",
+                        "hidden shadow-none min-[900px]:flex bg-white/10!",
                         !isLyricsEnabled && 'bg-white/80! text-black!'
                     )}
                     onclick={() => isLyricsEnabled = !isLyricsEnabled}
@@ -186,7 +187,7 @@
                     variant="ghost"
                     size="icon-sm"
                     class="bg-transparent! shadow-none"
-                    onclick={() => audioPlayer.toggleRepeat()}
+                    onclick={() => isMeshGradientEnabled = !isMeshGradientEnabled}
                 >
                     <ShuffleIcon/>
                 </Button>
@@ -264,6 +265,12 @@
     {/if}
 </main>
 
-<div class="fixed -z-10 top-0 left-0 w-full h-full bg-(--average-color)" style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}>
-    <PlayerGradientBackground image={audioPlayer.previewCoverURL}/>
+<div
+    class="fixed -z-10 top-0 left-0 w-full h-full bg-(--average-color) transition-colors duration-300"
+    class:brightness-50={!isMeshGradientEnabled && averageColor?.isLight}
+    style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
+>
+    {#if isMeshGradientEnabled}
+        <PlayerGradientBackground image={audioPlayer.previewCoverURL}/>
+    {/if}
 </div>
