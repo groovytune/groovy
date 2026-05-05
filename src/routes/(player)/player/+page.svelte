@@ -18,7 +18,6 @@
     import { PressedKeys } from 'runed';
 
     const audioPlayer = AudioPlayerContext.get();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const isLargeWindow = new MediaQuery('(width >= 900px)');
     const keysPressed = new PressedKeys();
 
@@ -114,17 +113,6 @@
                 </p>
             </div>
             <div class="flex items-center gap-2">
-                <Button
-                    variant="ghost"
-                    size="icon-lg"
-                    class={cn(
-                        "hidden shadow-none min-[900px]:flex bg-white/10!",
-                        !isLyricsEnabled && 'bg-white/80! text-black!'
-                    )}
-                    onclick={() => isLyricsEnabled = !isLyricsEnabled}
-                >
-                    <MessageSquareQuoteIcon class="size-5"/>
-                </Button>
                 <Button
                     variant="ghost"
                     size="icon-lg"
@@ -250,13 +238,25 @@
                 </Button>
             </div>
         </section>
-        <footer class="flex min-[900px]:fixed bottom-0 right-0 items-center justify-evenly min-[900px]:px-4 py-4 gap-2">
-            <Button variant="secondary" size={isLargeWindow.current ? "icon-lg" : "default"} class="bg-white/10! shadow-none" onclick={() => isLyricsEnabled = !isLyricsEnabled}>
-                <MessageSquareQuoteIcon class="min-[900px]:size-6"/>
+        <footer class="flex min-[900px]:fixed z-10 bottom-0 right-0 items-center justify-evenly min-[900px]:px-4 py-4 gap-2">
+            <Button
+                variant="secondary"
+                size={isLargeWindow.current ? "icon-lg" : "default"}
+                class={cn(
+                    "bg-white/10! shadow-none",
+                    !isLyricsEnabled && 'bg-white/80! text-black!'
+                )}
+                onclick={() => isLyricsEnabled = !isLyricsEnabled}
+            >
+                <MessageSquareQuoteIcon class="min-[900px]:size-6 size-4"/>
                 <span class="min-[900px]:hidden">Lyrics</span>
             </Button>
-            <Button variant="secondary" size={isLargeWindow.current ? "icon-lg" : "default"} class="bg-white/10! shadow-none">
-                <ListMusicIcon class="min-[900px]:size-6"/>
+            <Button
+                variant="secondary"
+                size={isLargeWindow.current ? "icon-lg" : "default"}
+                class="bg-white/10! shadow-none"
+            >
+                <ListMusicIcon class="min-[900px]:size-6 size-4"/>
                 <span class="min-[900px]:hidden">Queue</span>
             </Button>
         </footer>
@@ -266,6 +266,7 @@
             <!-- TODO: Implement lyrics display -->
             <ScrollArea class="size-full text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%">
                 <div class="h-[40svh]"></div>
+                <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
                 {#each { length: 50 } as _, i (i)}
                     <p>Lorem ipsum dolor sit amet.</p>
                 {/each}
@@ -280,6 +281,6 @@
     style={`--average-color: ${averageColor?.hex ?? '#000000'};`}
 >
     {#if isMeshGradientEnabled}
-        <PlayerGradientBackground image={audioPlayer.previewCoverURL}/>
+        <PlayerGradientBackground image={audioPlayer.previewCoverURL} playing={!audioPlayer.paused}/>
     {/if}
 </div>
