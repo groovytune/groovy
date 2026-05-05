@@ -249,14 +249,14 @@
                 </Button>
             </div>
         </section>
-        <footer class="flex min-[900px]:hidden items-center justify-evenly py-4 gap-2">
-            <Button variant="secondary" class="bg-white/10! shadow-none" onclick={() => isLyricsEnabled = !isLyricsEnabled}>
-                <MessageSquareQuoteIcon class=""/>
-                Lyrics
+        <footer class="flex min-[900px]:fixed bottom-0 right-0 items-center justify-evenly min-[900px]:px-4 py-4 gap-2">
+            <Button variant="secondary" size={isLargeWindow.current ? "icon-lg" : "default"} class="bg-white/10! shadow-none" onclick={() => isLyricsEnabled = !isLyricsEnabled}>
+                <MessageSquareQuoteIcon class="min-[900px]:size-6"/>
+                <span class="min-[900px]:hidden">Lyrics</span>
             </Button>
-            <Button variant="secondary" class="bg-white/10! shadow-none">
-                <ListMusicIcon class=""/>
-                Queue
+            <Button variant="secondary" size={isLargeWindow.current ? "icon-lg" : "default"} class="bg-white/10! shadow-none">
+                <ListMusicIcon class="min-[900px]:size-6"/>
+                <span class="min-[900px]:hidden">Queue</span>
             </Button>
         </footer>
     </div>
