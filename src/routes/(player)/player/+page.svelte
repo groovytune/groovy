@@ -22,9 +22,11 @@
     const keysPressed = new PressedKeys();
 
     let averageColor: FastAverageColorResult|null = $state(null);
+
     let isLyricsEnabled = $state(false);
     let isFullscreen = $state(false);
     let isMeshGradientEnabled = $state(true);
+
     let backing = false;
 
     $effect(() => {
@@ -129,13 +131,17 @@
                 </Button>
             </div>
         </header>
-        <section class="flex flex-col gap-8 pt-4">
+        <section class="flex flex-col gap-0 pt-4">
             <AspectRatio
                 class="w-full rounded-md shadow-lg overflow-hidden"
             >
-                <img src={audioPlayer.coverURL} alt="Release Cover" class="now-cover size-full object-cover"/>
+                <img
+                    src={audioPlayer.coverURL}
+                    alt="Release Cover"
+                    class="now-cover size-full object-cover"
+                />
             </AspectRatio>
-            <Item class="p-0">
+            <Item class="py-6 px-0">
                 <ItemContent class="gap-0">
                     <ItemTitle class="now-title text-lg sm:text-xl leading-tight font-semibold line-clamp-3">
                         <!-- svelte-ignore a11y_distracting_elements -->
@@ -283,6 +289,9 @@
     style={`--average-color: ${averageColor?.hex ?? '#000000'};`}
 >
     {#if isMeshGradientEnabled}
-        <PlayerGradientBackground image={audioPlayer.previewCoverURL} playing={!audioPlayer.paused}/>
+        <PlayerGradientBackground
+            image={audioPlayer.previewCoverURL}
+            playing={!audioPlayer.paused}
+        />
     {/if}
 </div>

@@ -10,7 +10,7 @@
         flowSpeed = 2.5,
         renderScale = 1,
         staticMode = false,
-        lowFreqVolume = 0,
+        lowFreqVolume = 0.6,
         hasLyric = true,
         class: className
     }: {
@@ -33,7 +33,7 @@
 
         renderer = BackgroundRender.new(MeshGradientRenderer);
 
-        const element = renderer.getElement();  
+        const element = renderer.getElement();
         element.style.width = '100%';
         element.style.height = '100%';
 
@@ -64,14 +64,17 @@
         setImage(image);
     });
 
-    async function setImage(image: string|HTMLImageElement) {
+    async function setImage(image: string|HTMLImageElement, retry = true) {
         if (!renderer) return;
 
         await renderer
             .setAlbum(image)
             .catch(error => {
                 console.error('Failed to set album image:', error);
-                setImage(image);
+
+                if (retry) {
+                    return setImage(image, false);
+                }
             });
     }
 </script>
