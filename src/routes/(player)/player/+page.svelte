@@ -87,7 +87,7 @@
     class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none"
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
-    <div class="max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:pt-14 shrink-0">
+    <div class="max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:py-14 shrink-0">
         <header class="min-[900px]:fixed min-[900px]:px-5 z-10 top-0 left-0 flex w-full h-fit items-center justify-between pt-4 pb-0">
             <Button
                 variant="ghost"
