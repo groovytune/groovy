@@ -24,7 +24,7 @@
     let averageColor: FastAverageColorResult|null = $state(null);
     let isLyricsEnabled = $state(false);
     let isFullscreen = $state(false);
-    let isMeshGradientEnabled = $state(false);
+    let isMeshGradientEnabled = $state(true);
     let backing = false;
 
     $effect(() => {
