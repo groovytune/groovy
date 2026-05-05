@@ -24,7 +24,7 @@
                 <span class="block h-full bg-primary rounded-full" style="width: {audioPlayer.progress}%"></span>
             </div>
             <section class="flex items-center gap-2 w-full md:max-w-sm">
-                <img src={audioPlayer.coverURL} alt="Cover Art" class="now-cover size-10 shrink-0 rounded-md overflow-hidden">
+                <img src={audioPlayer.previewCoverURL} alt="Cover Art" class="now-cover size-10 shrink-0 rounded-md overflow-hidden">
                 <a
                     href={audioPlayer.currentTrack && resolve('/(player)/player')}
                     class="flex flex-col leading-tight"

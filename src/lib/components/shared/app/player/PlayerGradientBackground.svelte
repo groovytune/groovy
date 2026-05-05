@@ -54,14 +54,26 @@
             renderer.pause();
         }
 
-        renderer.setAlbum(image);
         renderer.setFPS(fps);
         renderer.setFlowSpeed(flowSpeed);
         renderer.setRenderScale(renderScale);
         renderer.setStaticMode(staticMode);
         renderer.setLowFreqVolume(lowFreqVolume);
         renderer.setHasLyric(hasLyric);
+
+        setImage(image);
     });
+
+    async function setImage(image: string|HTMLImageElement) {
+        if (!renderer) return;
+
+        await renderer
+            .setAlbum(image)
+            .catch(error => {
+                console.error('Failed to set album image:', error);
+                setImage(image);
+            });
+    }
 </script>
 
 <div class={cn("size-full", className)} bind:this={container}></div>

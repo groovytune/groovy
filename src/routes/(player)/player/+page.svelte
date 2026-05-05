@@ -4,7 +4,7 @@
     import { untrack } from 'svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
-    import { ChevronDown, EllipsisIcon, HeartIcon, ListMusicIcon, LoaderIcon, MessageSquareQuoteIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon, XIcon } from '@lucide/svelte';
+    import { ChevronDown, EllipsisIcon, HeartIcon, ListMusicIcon, LoaderIcon, Maximize2Icon, MessageSquareQuoteIcon, Minimize2Icon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon, XIcon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
     import RangeSlider from 'svelte-range-slider-pips';
     import { cn, formatDuration } from '$lib/helpers/utils';
@@ -14,13 +14,17 @@
     import { MediaQuery } from 'svelte/reactivity';
     import { ScrollArea } from '$lib/components/ui/scroll-area';
     import PlayerGradientBackground from '$lib/components/shared/app/player/PlayerGradientBackground.svelte';
+    import { PressedKeys } from 'runed';
 
     const audioPlayer = AudioPlayerContext.get();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const isLargeWindow = new MediaQuery('(width >= 900px)');
+    const keysPressed = new PressedKeys();
 
     let averageColor: FastAverageColorResult|null = $state(null);
-    let disableLyrics = $state(false);
+    let isLyricsEnabled = $state(false);
+    let isFullscreen = $state(false);
+    let backing = false;
 
     $effect(() => {
         const fac = new FastAverageColor();
@@ -35,7 +39,19 @@
         untrack(() => color.then(res => averageColor = res));
     });
 
+    keysPressed.onKeys(['Escape'], async () => {
+        if (document.fullscreenElement != null) {
+            await document.exitFullscreen();
+        } else {
+            onBack();
+        }
+    });
+
     function onBack() {
+        if (backing) return;
+
+        backing = true;
+
         if (window.history.length > 1) {
             window.history.back();
         } else if (audioPlayer.currentTrack) {
@@ -44,24 +60,36 @@
             goto(resolve('/(app)/home'));
         }
     }
+
+    async function toggleFullscreen() {
+        if (document.fullscreenElement != null) {
+            await document.exitFullscreen();
+        } else {
+            await document.documentElement.requestFullscreen({
+                navigationUI: 'hide'
+            });
+        }
+    }
 </script>
 
+<svelte:window onfullscreenchange={() => isFullscreen = document.fullscreenElement != null}/>
+
 <main
-    class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none bg-black/15"
+    class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none"
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
-    <div class="max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full min-[900px]:h-fit h-full flex flex-col justify-between px-6 shrink-0">
-        <header class="flex h-fit items-center justify-between pt-4 pb-0">
+    <div class="max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:pt-14 shrink-0">
+        <header class="min-[900px]:fixed min-[900px]:px-5 z-10 top-0 left-0 flex w-full h-fit items-center justify-between pt-4 pb-0">
             <Button
                 variant="ghost"
                 size="icon-lg"
                 class="shadow-none min-[900px]:bg-white/10!"
                 onclick={onBack}
             >
-                <XIcon class="size-8 stroke-1 hidden min-[900px]:inline"/>
+                <XIcon class="size-5 hidden min-[900px]:inline"/>
                 <ChevronDown class="size-8 stroke-1 mt-1 min-[900px]:hidden"/>
             </Button>
-            <div class="text-sm text-center leading-tight">
+            <div class="text-sm text-center leading-tight min-[900px]:hidden">
                 <span class="text-xs text-foreground/70">NOW PLAYING FROM</span>
                 <p class="font-semibold">
                     <a
@@ -75,13 +103,38 @@
                     </a>
                 </p>
             </div>
-            <Button variant="ghost" size="icon-lg" class="invisible shadow-none min-[900px]:visible bg-white/10!" onclick={() => disableLyrics = !disableLyrics}>
-                <MessageSquareQuoteIcon class="size-6"/>
-            </Button>
+            <div>
+                <Button
+                    variant="ghost"
+                    size="icon-lg"
+                    class={cn(
+                        "invisible shadow-none min-[900px]:visible bg-white/10!",
+                        !isLyricsEnabled && 'bg-white/80! text-black!'
+                    )}
+                    onclick={() => isLyricsEnabled = !isLyricsEnabled}
+                >
+                    <MessageSquareQuoteIcon class="size-5"/>
+                </Button>
+                <Button
+                    variant="ghost"
+                    size="icon-lg"
+                    class={cn(
+                        "invisible shadow-none min-[900px]:visible bg-white/10!",
+                        isFullscreen && 'bg-white/80! text-black!'
+                    )}
+                    onclick={toggleFullscreen}
+                >
+                    {#if isFullscreen}
+                        <Minimize2Icon class="size-5"/>
+                    {:else}
+                        <Maximize2Icon class="size-5"/>
+                    {/if}
+                </Button>
+            </div>
         </header>
         <section class="flex flex-col gap-8 py-4">
             <AspectRatio
-                class="w-full rounded-md bg-muted shadow-lg overflow-hidden"
+                class="w-full rounded-md shadow-lg overflow-hidden"
             >
                 <img src={audioPlayer.coverURL} alt="Release Cover" class="now-cover size-full object-cover"/>
             </AspectRatio>
@@ -123,7 +176,7 @@
                     disabled={!audioPlayer.currentTrack}
                     class="m-0! w-full mono"
                 />
-                <div class="flex justify-between font-semibold">
+                <div class="flex justify-between font-medium text-white/60">
                     <span class="w-6 text-start">{audioPlayer.currentTrack ? formatDuration(audioPlayer.currentTime || 0) : '--:--'}</span>
                     <span class="w-6 text-end">{audioPlayer.currentTrack ? formatDuration(audioPlayer.duration || 0) : '--:--'}</span>
                 </div>
@@ -188,7 +241,7 @@
             </div>
         </section>
         <footer class="flex min-[900px]:hidden items-center justify-evenly py-4 gap-2">
-            <Button variant="secondary" class="bg-white/10! shadow-none" onclick={() => disableLyrics = !disableLyrics}>
+            <Button variant="secondary" class="bg-white/10! shadow-none" onclick={() => isLyricsEnabled = !isLyricsEnabled}>
                 <MessageSquareQuoteIcon class=""/>
                 Lyrics
             </Button>
@@ -198,7 +251,7 @@
             </Button>
         </footer>
     </div>
-    {#if !disableLyrics}
+    {#if !isLyricsEnabled}
         <div class="max-w-3xl size-full hidden min-[900px]:flex justify-center items-center-safe p-6">
             <!-- TODO: Implement lyrics display -->
             <ScrollArea class="size-full text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%">
@@ -210,4 +263,7 @@
         </div>
     {/if}
 </main>
-<PlayerGradientBackground image={audioPlayer.coverURL} class="fixed -z-10 top-0 left-0"/>
+
+<div class="fixed -z-10 top-0 left-0 w-full h-full bg-(--average-color)" style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}>
+    <PlayerGradientBackground image={audioPlayer.previewCoverURL}/>
+</div>

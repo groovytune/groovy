@@ -54,6 +54,19 @@ export class AudioPlayer {
             : coverPlaceholder
     );
 
+    public previewCoverURL = $derived(
+        this.currentTrack?.cover || this.releaseInfo.current?.cover
+            ? Appwrite.storage.getFilePreview({
+                bucketId: 'image',
+                fileId: (this.currentTrack?.cover || this.releaseInfo.current?.cover)!,
+                height: 500,
+                width: 500,
+                gravity: ImageGravity.Center,
+                output: ImageFormat.Webp
+            })
+            : coverPlaceholder
+    );
+
     public async init(audio?: HTMLAudioElement): Promise<void> {
         this.audio = audio ?? new Audio();
 
