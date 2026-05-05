@@ -14,7 +14,7 @@
     import TrackItemShadow from '../track/TrackItemShadow.svelte';
     import TrackItem from '../track/TrackItem.svelte';
     import { goto } from '$app/navigation';
-    import { auth } from '../../../../../client/auth';
+    import { auth } from '$lib/client/auth';
 
     let {
         releaseId,
@@ -92,7 +92,7 @@
             }}
             onconsider={e => dndTracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }))}
             onfinalize={e => dndTracks = $formData.tracks = e.detail.items.map((item, index) => ({ ...item, position: index + 1 }))}
-            class="grid gap-2"
+            class="flex flex-col gap-2"
         >
             {#each dndTracks as dndTrack, index (dndTrack.id)}
                 {@const track = tracks.find(t => t.id === dndTrack.id)}

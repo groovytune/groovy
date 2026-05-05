@@ -55,7 +55,7 @@
     oncontextmenu={e =>  e.preventDefault()}
     onclick={e => onclick?.(e)}
     class={[
-        "p-2 hover:bg-secondary/50 rounded-md w-full gap-3",
+        "p-2 hover:bg-secondary/50 rounded-md w-full gap-3 flex-nowrap",
         isPlaying && "bg-accent/30"
     ]}
     style="content-visibility: auto;"
@@ -64,7 +64,7 @@
         <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
         <a {...props}>
             {#if cover}
-                <ItemMedia variant="image" class="-mt-0.5">
+                <ItemMedia variant="image">
                     <img
                         alt="Track Cover"
                         src={coverURL}
@@ -72,18 +72,17 @@
                     />
                 </ItemMedia>
             {/if}
-            <ItemContent class="gap-0">
+            <ItemContent class="gap-0 truncate leading-tight!">
                 <ItemTitle
                     class={[
-                        "line-clamp-1 w-full align-middle truncate",
+                        "line-clamp-1 text-balance",
                         isPlaying && "text-primary font-semibold"
                     ]}
-                    style="word-wrap: break-word;"
                 >
                     {track?.name ?? 'Unavailable Track'}
                     {#if track?.explicit}<ExplicitIcon class="size-4"/>{/if}
                 </ItemTitle>
-                <ItemDescription class="line-clamp-1 truncate">
+                <ItemDescription class="line-clamp-1 text-sm">
                     {formatDuration(track?.duration || 0)} • {artist?.name || 'Unknown Artist'}
                 </ItemDescription>
             </ItemContent>

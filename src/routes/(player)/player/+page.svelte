@@ -99,7 +99,7 @@
                 <ChevronDown class="size-8 stroke-1 mt-1 min-[900px]:hidden"/>
             </Button>
             <a
-                class="text-sm text-center leading-tight min-[900px]:hidden w-full truncate"
+                class="text-sm text-center leading-tight min-[900px]:hidden w-full"
                 href={
                     audioPlayer.releaseInfo.current
                         ? resolve('/(app)/release/[id]', { id: audioPlayer.releaseInfo.current.id })
@@ -107,7 +107,7 @@
                 }
             >
                 <span class="text-xs text-foreground/70">NOW PLAYING FROM</span>
-                <p class="font-semibold line-clamp-1 truncate">
+                <p class="font-semibold line-clamp-1 truncate text-balance">
                     {audioPlayer.releaseInfo.current?.name || 'Unknown Track'}
                 </p>
             </a>

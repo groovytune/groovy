@@ -130,7 +130,7 @@
     </section>
     {#if data.release.tracks.length > 0}
         <section class="py-5 px-2.5 w-full pt-0 md:pt-5">
-            <div class="grid gap-2">
+            <div class="flex flex-col gap-2">
                 {#each tracks as track, index (track.id)}
                     <div class="select-none cursor-default min-h-14 flex items-center gap-2">
                         <span class="text-sm text-muted-foreground hidden md:block">
