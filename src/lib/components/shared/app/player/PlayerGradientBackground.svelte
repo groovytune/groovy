@@ -6,7 +6,7 @@
     let {
         image,
         playing = true,
-        fps = 60,
+        fps = 30,
         flowSpeed = 2.5,
         renderScale = 1,
         staticMode = false,

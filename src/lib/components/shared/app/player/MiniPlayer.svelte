@@ -39,7 +39,7 @@
                             <span class="text-muted-foreground">Not Playing</span>
                         {/if}
                     </h3>
-                    <p class="now-artist text-xs text-muted-foreground line-clamp-1">
+                    <p class="now-artist text-xs text-muted-foreground line-clamp-1 w-full">
                         {#if audioPlayer.releaseInfo.current}
                             {audioPlayer.releaseInfo.current?.user.name} • {audioPlayer.releaseInfo.current?.name}
                         {/if}

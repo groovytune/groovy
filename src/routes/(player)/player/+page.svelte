@@ -100,7 +100,7 @@
             </Button>
             <div class="text-sm text-center leading-tight min-[900px]:hidden">
                 <span class="text-xs text-foreground/70">NOW PLAYING FROM</span>
-                <p class="font-semibold">
+                <p class="font-semibold line-clamp-1 truncate">
                     <a
                         href={
                             audioPlayer.releaseInfo.current
@@ -138,17 +138,20 @@
             </AspectRatio>
             <Item class="p-0">
                 <ItemContent class="gap-0">
-                    <ItemTitle
-                        class="now-title text-lg sm:text-xl leading-tight font-semibold line-clamp-3"
-                        style="word-wrap: break-word;"
-                    >
-                        {audioPlayer.currentTrack?.name || 'Unknown Track'}
-                        {#if audioPlayer.currentTrack?.explicit}
-                            <ExplicitIcon class="size-5"/>
-                        {/if}
+                    <ItemTitle class="now-title text-lg sm:text-xl leading-tight font-semibold line-clamp-3">
+                        <!-- svelte-ignore a11y_distracting_elements -->
+                        <marquee behavior="alternate" direction="vertical" scrollamount="1">
+                            {audioPlayer.currentTrack?.name || 'Unknown Track'}
+                            {#if audioPlayer.currentTrack?.explicit}
+                                <ExplicitIcon class="size-5"/>
+                            {/if}
+                        </marquee>
                     </ItemTitle>
                     <ItemDescription class="now-artist text-sm font-medium leading-tight text-foreground/80">
-                        {audioPlayer.releaseInfo.current?.user.name || 'Unknown Artist'}
+                        <!-- svelte-ignore a11y_distracting_elements -->
+                        <marquee behavior="alternate" direction="vertical" scrollamount="1" class="w-fit">
+                            {audioPlayer.releaseInfo.current?.user.name || 'Unknown Artist'}
+                        </marquee>
                     </ItemDescription>
                 </ItemContent>
                 <ItemActions>
