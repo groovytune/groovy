@@ -60,23 +60,8 @@
         renderer.setStaticMode(staticMode);
         renderer.setLowFreqVolume(lowFreqVolume);
         renderer.setHasLyric(hasLyric);
-
-        setImage(image);
+        renderer.setAlbum(image)
     });
-
-    async function setImage(image: string|HTMLImageElement, retry = true) {
-        if (!renderer) return;
-
-        await renderer
-            .setAlbum(image)
-            .catch(error => {
-                console.error('Failed to set album image:', error);
-
-                if (retry) {
-                    return setImage(image, false);
-                }
-            });
-    }
 </script>
 
 <div class={cn("size-full", className)} bind:this={container}></div>
