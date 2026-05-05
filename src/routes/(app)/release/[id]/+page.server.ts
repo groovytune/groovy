@@ -1,6 +1,9 @@
 import { error } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
 import type { Release, Track, User } from '$lib/server/prisma/client.js';
+import { definePageMetaTags } from 'svelte-meta-tags';
+import { Appwrite } from '../../../../lib/client/appwrite.js';
+import { ImageFormat, ImageGravity } from 'appwrite';
 
 export type ReleasePageData = Release & {
     user: Pick<User, 'id'|'name'|'username'|'image'>;
@@ -39,5 +42,36 @@ export async function load({ params, locals }) {
         throw error(404, 'Release not found');
     }
 
-    return { release };
+    return {
+        release,
+        ...definePageMetaTags({
+            title: `Groovy | ${release.name} by ${release.user.name}`,
+            description: release.description ?? undefined,
+            openGraph: {
+                title: `${release.name} by ${release.user.name}`,
+                description: release.description ?? undefined,
+                siteName: 'Groovy',
+                profile: {
+                    firstName: release.user.name,
+                    username: release.user.username ?? undefined
+                },
+                images: release.cover ? [
+                    {
+                        url: Appwrite.storage.getFilePreview({
+                            bucketId: 'image',
+                            fileId: release.cover,
+                            height: 600,
+                            width: 600,
+                            gravity: ImageGravity.Center,
+                            output: ImageFormat.Jpeg
+                        }),
+                        alt: `${release.name} cover image`,
+                        width: 600,
+                        height: 600,
+                        type: 'image/jpeg'
+                    }
+                ] : undefined
+            }
+        })
+    };
 }
