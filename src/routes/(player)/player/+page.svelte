@@ -14,6 +14,7 @@
     import { MediaQuery } from 'svelte/reactivity';
     import { ScrollArea } from '$lib/components/ui/scroll-area';
     import PlayerGradientBackground from '$lib/components/shared/app/player/PlayerGradientBackground.svelte';
+    import coverPlaceholder from '$lib/assets/cover.webp';
     import { PressedKeys } from 'runed';
 
     const audioPlayer = AudioPlayerContext.get();
@@ -30,14 +31,14 @@
     $effect(() => {
         const fac = new FastAverageColor();
 
-        const color = fac
-            .getColorAsync(audioPlayer.coverURL, {
+        const color = coverPlaceholder !== audioPlayer.coverURL
+            ? fac.getColorAsync(audioPlayer.coverURL, {
                 mode: 'speed',
                 algorithm: 'simple'
-            })
-            .catch(() => null);
+            }).catch(() => null)
+            : null;
 
-        untrack(() => color.then(res => averageColor = res));
+        untrack(() => color?.then(res => averageColor = res));
     });
 
     keysPressed.onKeys(['Escape'], async () => {
@@ -276,7 +277,7 @@
 <div
     class="fixed -z-10 top-0 left-0 w-full h-full bg-(--average-color) transition-colors duration-300"
     class:brightness-50={!isMeshGradientEnabled && averageColor?.isLight}
-    style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
+    style={`--average-color: ${averageColor?.hex ?? '#000000'};`}
 >
     {#if isMeshGradientEnabled}
         <PlayerGradientBackground image={audioPlayer.previewCoverURL}/>
