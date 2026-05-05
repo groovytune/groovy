@@ -172,7 +172,6 @@ export class AudioPlayer {
         const nextTrack = this.queue.shift();
 
         if (this.currentTrack) {
-            this.history.unshift(this.currentTrack);
             this.currentTrack = nextTrack ?? null;
         }
 
@@ -202,8 +201,6 @@ export class AudioPlayer {
         this.audio.src = source;
         this.audio.currentTime = 0;
         this.audio.load();
-
-        console.log('Loaded track:', source, this.audio);
     }
 
     public stop(): void {

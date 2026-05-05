@@ -7,7 +7,7 @@
     import { beforeNavigate } from '$app/navigation';
 
     const audioPlayer = AudioPlayerContext.get();
-    
+
     $effect(() => {
         if (untrack(() => !('mediaSession' in navigator) && !audioPlayer.releaseInfo.loading)) return;
 
@@ -34,8 +34,6 @@
                 }
             ]
         });
-
-        console.log('Media session metadata updated:', navigator.mediaSession.metadata);
     });
 
     $effect(() => {

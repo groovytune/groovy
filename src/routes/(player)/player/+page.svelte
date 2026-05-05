@@ -28,12 +28,17 @@
     let isMeshGradientEnabled = $state(true);
 
     let backing = false;
+    let coverAPIURL = $derived(
+        audioPlayer.currentTrack
+            ? resolve('/(app)/api/track/[id]/cover', { id: audioPlayer.currentTrack?.id ?? '' }) + '?size=300'
+            : coverPlaceholder
+    );
 
     $effect(() => {
         const fac = new FastAverageColor();
 
-        const color = coverPlaceholder !== audioPlayer.coverURL
-            ? fac.getColorAsync(audioPlayer.coverURL, {
+        const color = coverPlaceholder !== coverAPIURL
+            ? fac.getColorAsync(coverAPIURL, {
                 mode: 'speed',
                 algorithm: 'simple'
             }).catch(() => null)
@@ -290,7 +295,7 @@
 >
     {#if isMeshGradientEnabled}
         <PlayerGradientBackground
-            image={audioPlayer.previewCoverURL}
+            image={coverAPIURL}
             playing={!audioPlayer.paused}
         />
     {/if}
