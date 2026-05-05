@@ -24,7 +24,7 @@
     let averageColor: FastAverageColorResult|null = $state(null);
     let isLyricsEnabled = $state(false);
     let isFullscreen = $state(false);
-    let isMeshGradientEnabled = $state(true);
+    let isMeshGradientEnabled = $state(false);
     let backing = false;
 
     $effect(() => {
@@ -88,7 +88,7 @@
     style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
 >
     <div class="max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:py-14 shrink-0">
-        <header class="min-[900px]:fixed min-[900px]:px-5 z-10 top-0 left-0 flex w-full h-fit items-center justify-between pt-4 pb-0">
+        <header class="min-[900px]:fixed min-[900px]:px-5 z-10 top-0 left-0 flex w-full h-fit items-center justify-between gap-2 pt-4 pb-0">
             <Button
                 variant="ghost"
                 size="icon-lg"
@@ -98,20 +98,19 @@
                 <XIcon class="size-5 hidden min-[900px]:inline"/>
                 <ChevronDown class="size-8 stroke-1 mt-1 min-[900px]:hidden"/>
             </Button>
-            <div class="text-sm text-center leading-tight min-[900px]:hidden">
+            <a
+                class="text-sm text-center leading-tight min-[900px]:hidden w-full truncate"
+                href={
+                    audioPlayer.releaseInfo.current
+                        ? resolve('/(app)/release/[id]', { id: audioPlayer.releaseInfo.current.id })
+                        : '#/'
+                }
+            >
                 <span class="text-xs text-foreground/70">NOW PLAYING FROM</span>
                 <p class="font-semibold line-clamp-1 truncate">
-                    <a
-                        href={
-                            audioPlayer.releaseInfo.current
-                                ? resolve('/(app)/release/[id]', { id: audioPlayer.releaseInfo.current.id })
-                                : '#/'
-                        }
-                    >
-                        {audioPlayer.releaseInfo.current?.name || 'Unknown Track'}
-                    </a>
+                    {audioPlayer.releaseInfo.current?.name || 'Unknown Track'}
                 </p>
-            </div>
+            </a>
             <div class="flex items-center gap-2">
                 <Button
                     variant="ghost"
