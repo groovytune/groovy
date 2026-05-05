@@ -43,9 +43,10 @@
     keysPressed.onKeys(['Escape'], async () => {
         if (document.fullscreenElement != null) {
             await document.exitFullscreen();
-        } else {
-            onBack();
+            return;
         }
+
+        onBack();
     });
 
     function onBack() {
@@ -73,7 +74,14 @@
     }
 </script>
 
-<svelte:window onfullscreenchange={() => isFullscreen = document.fullscreenElement != null}/>
+<svelte:window
+    onfullscreenchange={() => isFullscreen = document.fullscreenElement != null}
+    onpopstate={async () => {
+        if (document.fullscreenElement != null) {
+            await document.exitFullscreen();
+        }
+    }}
+/>
 
 <main
     class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none"
