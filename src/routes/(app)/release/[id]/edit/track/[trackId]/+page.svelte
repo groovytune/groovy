@@ -22,9 +22,9 @@
     import { Badge } from '$lib/components/ui/badge';
     import { categoryInfos } from '$lib/helpers/constants';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
-    import { AudioPlayerContext } from '$lib/contexts/player.js';
     import { goto } from '$app/navigation';
     import DeleteTrackDialog from '$lib/components/shared/app/release/dialogs/DeleteTrackDialog.svelte';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
 
     let { data } = $props();
 
@@ -61,7 +61,7 @@
     const { form: formData, enhance, submitting, allErrors } = form;
 
     const session = auth.useSession();
-    const audioPlayer = AudioPlayerContext.get();
+    const audioPlayer = AudioPlayer.context.get();
     const cover = fileProxy(form, 'cover', { empty: 'undefined' });
 
     let coverInput: HTMLInputElement|null = $state(null);

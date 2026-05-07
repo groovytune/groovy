@@ -14,10 +14,10 @@
     import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageFormat, ImageGravity } from 'appwrite';
     import type { GETResponse } from '../../../api/release/[id]/tracks/+server.js';
-    import { AudioPlayerContext } from '$lib/contexts/player.js';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte.js';
     import DeleteReleaseDialog from '$lib/components/shared/app/release/dialogs/DeleteReleaseDialog.svelte';
     import { goto } from '$app/navigation';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
 
     let { data } = $props();
 
@@ -54,7 +54,7 @@
     const { form: formData, enhance, submitting, allErrors } = form;
 
     const session = auth.useSession();
-    const audioPlayer = AudioPlayerContext.get();
+    const audioPlayer = AudioPlayer.context.get();
 
     // svelte-ignore state_referenced_locally
     const deleteDialogState = new DialogState({ id: `delete-release-${data.release.id}` });

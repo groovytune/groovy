@@ -1,5 +1,6 @@
 import { error, json } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
+import type { PartialUser } from '$lib/helpers/utils';
 
 export async function GET({ params, locals }) {
     const release = await prisma.release.findUnique({
@@ -13,12 +14,22 @@ export async function GET({ params, locals }) {
                     ]
                 }
                 : { privacy: { not: 'PRIVATE' } }
+        },
+        select: {
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    image: true
+                }
+            }
         }
-    });
+    }) as Record<'user', PartialUser>|null;
 
     if (!release) {
         throw error(404, 'Release not found');
     }
 
-    return json(release);
+    return json(release.user);
 }

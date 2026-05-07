@@ -6,7 +6,6 @@
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { Button } from '$lib/components/ui/button/index.js';
     import { resolve } from '$app/paths';
-    import { AudioPlayerContext } from '$lib/contexts/player.js';
     import { Disc3Icon, EllipsisIcon, HeartIcon, ListMusicIcon, PencilIcon, PlayIcon } from '@lucide/svelte';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
@@ -14,10 +13,11 @@
     import ms from 'ms';
     import TrackItem from '$lib/components/shared/app/release/track/TrackItem.svelte';
     import { auth } from '$lib/client/auth.js';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
 
     let { data } = $props();
 
-    const audioPlayer = AudioPlayerContext.get();
+    const audioPlayer = AudioPlayer.context.get();
     const session = auth.useSession();
 
     let tracks = $derived(data.release.tracks.toSorted((a, b) => a.position - b.position));

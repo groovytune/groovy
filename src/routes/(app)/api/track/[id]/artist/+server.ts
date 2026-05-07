@@ -1,13 +1,6 @@
 import { prisma } from '$lib/server/prisma';
 import { error, json } from '@sveltejs/kit';
-import type { Release, Track } from '$lib/server/prisma/client.js';
-import type { PartialUser } from '../../../../../lib/helpers/utils.js';
-
-export type GETResponse = Track & {
-    release: Release & {
-        user: PartialUser;
-    }
-};
+import type { PartialUser } from '$lib/helpers/utils.js';
 
 export async function GET({ params, locals }) {
     const track = await prisma.track.findUnique({
@@ -24,9 +17,9 @@ export async function GET({ params, locals }) {
                     : { privacy: { not: 'PRIVATE' } }
             }
         },
-        include: {
+        select: {
             release: {
-                include: {
+                select: {
                     user: {
                         select: {
                             id: true,
@@ -38,11 +31,11 @@ export async function GET({ params, locals }) {
                 }
             }
         }
-    });
+    }) as Record<'release', Record<'user', PartialUser>>|null;
 
     if (!track) {
         throw error(404, 'Release not found');
     }
 
-    return json(track);
+    return json(track.release.user);
 }

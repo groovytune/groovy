@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { AudioPlayerContext } from '$lib/contexts/player';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
 
-    const audioPlayer = AudioPlayerContext.get();
+    const audioPlayer = AudioPlayer.context.get();
 </script>
 
 {#if audioPlayer.currentTrack}

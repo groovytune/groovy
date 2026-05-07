@@ -3,14 +3,14 @@
     import { Button } from '$lib/components/ui/button';
     import { Popover, PopoverContent, PopoverTrigger } from '$lib/components/ui/popover';
     import { Slider } from '$lib/components/ui/slider';
-    import { AudioPlayerContext } from '$lib/contexts/player';
     import { formatDuration } from '$lib/helpers/utils';
     import { fly } from 'svelte/transition';
     import { resolve } from '$app/paths';
     import RangeSlider from 'svelte-range-slider-pips';
     import ExplicitIcon from '../../icons/ExplicitIcon.svelte';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
 
-    const audioPlayer = AudioPlayerContext.get();
+    const audioPlayer = AudioPlayer.context.get();
 </script>
 
 {#if audioPlayer.currentTrack}
@@ -40,9 +40,7 @@
                         {/if}
                     </h3>
                     <p class="now-artist text-xs text-muted-foreground line-clamp-1 w-full">
-                        {#if audioPlayer.releaseInfo.current}
-                            {audioPlayer.releaseInfo.current?.user.name} • {audioPlayer.releaseInfo.current?.name}
-                        {/if}
+                        {audioPlayer.artistInfo.current?.name} • {audioPlayer.releaseInfo.current?.name}
                     </p>
                 </a>
                 <div class="shrink-0 flex items-center gap-1 ml-auto">

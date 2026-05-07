@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { AudioPlayerContext } from '$lib/contexts/player';
     import { FastAverageColor, type FastAverageColorResult } from 'fast-average-color';
     import { untrack } from 'svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
@@ -16,10 +15,15 @@
     import PlayerGradientBackground from '$lib/components/shared/app/player/PlayerGradientBackground.svelte';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { PressedKeys } from 'runed';
+    import { fade } from 'svelte/transition';
+    import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
+    import PlayerQueueDialog from '$lib/components/shared/app/player/PlayerQueueDialog.svelte';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
 
-    const audioPlayer = AudioPlayerContext.get();
+    const audioPlayer = AudioPlayer.context.get();
     const isLargeWindow = new MediaQuery('(width >= 900px)');
     const keysPressed = new PressedKeys();
+    const queueDialogState = new DialogState({ id: 'queue' });
 
     let averageColor: FastAverageColorResult|null = $state(null);
 
@@ -160,7 +164,7 @@
                     <ItemDescription class="now-artist text-sm font-medium leading-tight text-foreground/80">
                         <!-- svelte-ignore a11y_distracting_elements -->
                         <marquee behavior="alternate" direction="vertical" scrollamount="1" class="w-fit">
-                            {audioPlayer.releaseInfo.current?.user.name || 'Unknown Artist'}
+                            {audioPlayer.artistInfo.current?.name || 'Unknown Artist'}
                         </marquee>
                     </ItemDescription>
                 </ItemContent>
@@ -268,6 +272,7 @@
                 variant="secondary"
                 size={isLargeWindow.current ? "icon-lg" : "default"}
                 class="bg-white/10! shadow-none"
+                onclick={() => queueDialogState.open()}
             >
                 <ListMusicIcon class="min-[900px]:size-6 size-4"/>
                 <span class="min-[900px]:hidden">Queue</span>
@@ -289,14 +294,18 @@
 </main>
 
 <div
-    class="fixed -z-10 top-0 left-0 w-full h-full bg-(--average-color) transition-colors duration-300"
+    class="fixed -z-10 top-0 left-0 w-full h-full bg-(--average-color) transition-all duration-300"
     class:brightness-50={!isMeshGradientEnabled && averageColor?.isLight}
     style={`--average-color: ${averageColor?.hex ?? '#000000'};`}
 >
     {#if isMeshGradientEnabled}
-        <PlayerGradientBackground
-            image={coverAPIURL}
-            playing={!audioPlayer.paused}
-        />
+        <div out:fade class="size-full">
+            <PlayerGradientBackground
+                image={coverAPIURL}
+                playing={!audioPlayer.paused}
+            />
+        </div>
     {/if}
 </div>
+
+<PlayerQueueDialog dialogState={queueDialogState} activeTab="queue"/>

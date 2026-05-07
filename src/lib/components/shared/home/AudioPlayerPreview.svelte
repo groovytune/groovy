@@ -2,11 +2,11 @@
     import { LoaderIcon, PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon } from '@lucide/svelte';
     import { Button } from '$lib/components/ui/button/index.js';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item/index.js';
-    import { AudioPlayerContext } from '../../../contexts/player';
     import ExplicitIcon from '../icons/ExplicitIcon.svelte';
     import { resolve } from '$app/paths';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
 
-    const audioPlayer = AudioPlayerContext.get();
+    const audioPlayer = AudioPlayer.context.get();
 </script>
 
 <Item variant="muted" class="w-full max-w-sm rounded-md border p-2" size="sm">

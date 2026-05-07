@@ -4,7 +4,7 @@
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
-    import type { Track, User } from '$lib/server/prisma/browser';
+    import type { Track } from '$lib/server/prisma/browser';
     import { Button } from '$lib/components/ui/button';
     import { Appwrite } from '$lib/client/appwrite';
     import { resolve } from '$app/paths';
@@ -12,29 +12,34 @@
     import { ImageFormat, ImageGravity } from 'appwrite';
     import { formatDuration } from '$lib/helpers/utils';
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
-    import { AudioPlayerContext } from '$lib/contexts/player';
     import DeleteTrackDialog from '../dialogs/DeleteTrackDialog.svelte';
+    import { resource } from 'runed';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
+    import { ReleaseInfoCache } from '$lib/helpers/classes/ReleaseInfoCache.svelte';
 
     let {
         track,
         cover = false,
         editable = false,
-        artist,
         onclick,
         ondelete
     }: {
         track: Track;
         cover?: boolean;
         editable?: boolean;
-        artist?: Pick<User, 'id'|'name'>;
         onclick?: (event: MouseEvent & { currentTarget: EventTarget & HTMLDivElement; }) => void;
         ondelete?: (trackId: string) => void;
     } = $props();
 
-    const audioPlayer = AudioPlayerContext.get();
+    const audioPlayer = AudioPlayer.context.get();
+    const releaseInfoCache = ReleaseInfoCache.context.get();
 
     // svelte-ignore state_referenced_locally
-    const deleteDialogState: DialogState = new DialogState({ id: `delete-track-${track.id}` });;
+    const deleteDialogState: DialogState = new DialogState({ id: `delete-track-${track.id}` });
+    const artistInfo = resource(
+        () => track.releaseId,
+        async releaseId => releaseInfoCache.fetchReleaseArtistInfo({ releaseId }),
+    );
 
     let isPlaying = $derived(audioPlayer.currentTrack?.id === track.id);
     let coverURL = $derived(
@@ -83,7 +88,7 @@
                     {#if track?.explicit}<ExplicitIcon class="size-4"/>{/if}
                 </ItemTitle>
                 <ItemDescription class="line-clamp-1 text-sm">
-                    {formatDuration(track?.duration || 0)} • {artist?.name || 'Unknown Artist'}
+                    {formatDuration(track?.duration || 0)}{artistInfo.current?.name ? ` • ${artistInfo.current.name}` : ''}
                 </ItemDescription>
             </ItemContent>
             <ItemActions>

@@ -13,11 +13,11 @@
 	import '$lib/styles/app.css';
 	import { ActiveNavigationPageContext } from '$lib/contexts/navigation.js';
 	import { TooltipProvider } from '$lib/components/ui/tooltip/index.js';
-	import { AudioPlayerContext } from '$lib/contexts/player.js';
 	import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
 	import { onDestroy, onMount } from 'svelte';
 	import PlayerMediaSession from '$lib/components/shared/app/player/PlayerMediaSession.svelte';
 	import { onNavigate } from '$app/navigation';
+	import { ReleaseInfoCache } from '$lib/helpers/classes/ReleaseInfoCache.svelte.js';
 
 	let { children, data } = $props();
     let activeNavigationPage = $state({ id: '' });
@@ -25,7 +25,8 @@
     const audioPlayer = new AudioPlayer();
 
     ActiveNavigationPageContext.set(activeNavigationPage);
-    AudioPlayerContext.set(audioPlayer);
+    AudioPlayer.context.set(audioPlayer);
+    ReleaseInfoCache.context.set(audioPlayer.releaseCache);
 
     onMount(() => {
         audioPlayer.init();

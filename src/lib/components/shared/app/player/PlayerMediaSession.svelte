@@ -1,23 +1,24 @@
 <script lang="ts">
     import { untrack } from 'svelte';
-    import { AudioPlayerContext } from '$lib/contexts/player';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { Appwrite } from '$lib/client/appwrite';
     import { ImageFormat, ImageGravity } from 'appwrite';
     import { beforeNavigate } from '$app/navigation';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
 
-    const audioPlayer = AudioPlayerContext.get();
+    const audioPlayer = AudioPlayer.context.get();
 
     $effect(() => {
         if (untrack(() => !('mediaSession' in navigator) && !audioPlayer.releaseInfo.loading)) return;
 
         const currentTrack = audioPlayer.currentTrack;
         const releaseInfo = audioPlayer.releaseInfo.current;
+        const artistInfo = audioPlayer.artistInfo.current;
         const cover = currentTrack?.cover || releaseInfo?.cover;
 
         navigator.mediaSession.metadata = new MediaMetadata({
             title: currentTrack?.name,
-            artist: releaseInfo?.user.name,
+            artist: artistInfo?.name,
             album: releaseInfo?.name,
             artwork: [
                 {

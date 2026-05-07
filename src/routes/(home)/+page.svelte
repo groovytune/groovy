@@ -14,12 +14,12 @@
     import placeholderCover from '$lib/assets/cover.webp';
     import AudioPlayerPreview from '$lib/components/shared/home/AudioPlayerPreview.svelte';
     import AudioWaveform from '$lib/components/shared/home/AudioWaveform.svelte';
-    import { AudioPlayerContext } from '$lib/contexts/player.js';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
 
     let { data } = $props();
 
     const session = auth.useSession();
-    const audioPlayer = AudioPlayerContext.get();
+    const audioPlayer = AudioPlayer.context.get();
 
     let scrolled = $state(false);
 

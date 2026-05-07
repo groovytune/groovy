@@ -1,12 +1,13 @@
 import { error } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
-import type { Release, Track, User } from '$lib/server/prisma/client.js';
+import type { Release, Track } from '$lib/server/prisma/client.js';
 import { definePageMetaTags } from 'svelte-meta-tags';
-import { Appwrite } from '../../../../lib/client/appwrite.js';
+import { Appwrite } from '$lib/client/appwrite.js';
 import { ImageFormat, ImageGravity } from 'appwrite';
+import type { PartialUser } from '$lib/helpers/utils.js';
 
 export type ReleasePageData = Release & {
-    user: Pick<User, 'id'|'name'|'username'|'image'>;
+    user: PartialUser;
     tracks: Track[];
 };
 

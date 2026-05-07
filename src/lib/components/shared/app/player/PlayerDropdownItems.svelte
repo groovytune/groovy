@@ -2,7 +2,7 @@
     import { ListPlusIcon, ListStartIcon, PlayIcon } from '@lucide/svelte';
     import type { Track } from '$lib/server/prisma/browser';
     import { DropdownMenuItem } from '$lib/components/ui/dropdown-menu';
-    import { AudioPlayerContext } from '$lib/contexts/player';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
 
     let {
         tracks,
@@ -12,7 +12,7 @@
         disabled?: boolean;
     } = $props();
 
-    const audioPlayer = AudioPlayerContext.get();
+    const audioPlayer = AudioPlayer.context.get();
 </script>
 
 <DropdownMenuItem

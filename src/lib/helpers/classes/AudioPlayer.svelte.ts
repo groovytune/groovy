@@ -1,13 +1,13 @@
-import type { GETResponse } from '../../../routes/(app)/api/release/[id]/+server';
 import type { Track } from '$lib/server/prisma/browser';
-import { resource, useEventListener } from 'runed';
+import { Context, resource, useEventListener } from 'runed';
 import { Appwrite } from '$lib/client/appwrite';
-import { resolve } from '$app/paths';
 import { ImageFormat, ImageGravity } from 'appwrite';
 import coverPlaceholder from '$lib/assets/cover.webp';
+import { ReleaseInfoCache } from './ReleaseInfoCache.svelte';
 
 export class AudioPlayer {
     public audio: HTMLAudioElement|null = $state(null);
+    public releaseCache: ReleaseInfoCache = new ReleaseInfoCache();
 
     public queue: Track[] = $state([]);
     public history: Track[] = $state([]);
@@ -32,11 +32,20 @@ export class AudioPlayer {
 
     public releaseInfo = resource(
         () => this.currentTrack?.releaseId,
-        async (releaseId): Promise<GETResponse|null> => {
+        async releaseId => {
             if (!releaseId) return null;
 
-            const response = await fetch(resolve('/(app)/api/release/[id]', { id: releaseId }));
-            return response.json();
+            return this.releaseCache.fetchReleaseInfo({ releaseId });
+        },
+        { debounce: 200 }
+    );
+
+    public artistInfo = resource(
+        () => this.currentTrack?.releaseId,
+        async releaseId => {
+            if (!releaseId) return null;
+
+            return this.releaseCache.fetchReleaseArtistInfo({ releaseId });
         },
         { debounce: 200 }
     );
@@ -59,8 +68,8 @@ export class AudioPlayer {
             ? Appwrite.storage.getFilePreview({
                 bucketId: 'image',
                 fileId: (this.currentTrack?.cover || this.releaseInfo.current?.cover)!,
-                height: 500,
-                width: 500,
+                height: 300,
+                width: 300,
                 gravity: ImageGravity.Center,
                 output: ImageFormat.Webp
             })
@@ -135,6 +144,8 @@ export class AudioPlayer {
     }
 
     public destroy(): void {
+        this.releaseCache.clear();
+
         this.audio?.pause();
         this.audio?.removeAttribute('src');
         this.audio?.remove();
@@ -328,6 +339,8 @@ export class AudioPlayer {
 }
 
 export namespace AudioPlayer {
+    export const context = new Context<AudioPlayer>('audio-player');
+
     export type Status = 'playing'|'stopped'|'buffering'|'error';
     export type Repeat = 'none'|'one'|'all';
 
