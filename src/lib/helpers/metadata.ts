@@ -8,6 +8,7 @@ export type FileMetadata = Pick<IAudioMetadata, 'common'|'format'> & {
 };
 
 export interface PartialFileMetadata {
+    artist?: string[];
     year?: number;
     date?: string;
     originaldate?: string;
@@ -52,6 +53,11 @@ export async function extractFileMetadata(file: File): Promise<FileMetadata> {
 
 export function getPartialMetadata(metadata: Pick<IAudioMetadata, 'common'|'format'>): PartialFileMetadata {
     return {
+        artist: metadata.common.artists?.length
+            ? metadata.common.artists
+            : metadata.common.artist
+                ? [metadata.common.artist]
+                : undefined,
         year: metadata.common.year,
         date: metadata.common.date,
         originaldate: metadata.common.originaldate,

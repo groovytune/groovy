@@ -86,6 +86,7 @@ export class AudioPlayer {
         useEventListener(() => this.audio, ['pause', 'play'], () => this.paused = this.audio!.paused);
         useEventListener(() => this.audio, 'volumechange', () => this.volume = this.audio!.volume);
         useEventListener(() => this.audio, ['play', 'playing'], () => this.status = 'playing');
+        useEventListener(() => this.audio, ['waiting', 'loadstart'], () => this.status = 'buffering');
 
         useEventListener(
             () => this.audio,
