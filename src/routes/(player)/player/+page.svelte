@@ -23,7 +23,13 @@
     const audioPlayer = AudioPlayer.context.get();
     const isLargeWindow = new MediaQuery('(width >= 900px)');
     const keysPressed = new PressedKeys();
-    const queueDialogState = new DialogState({ id: 'queue' });
+    const queueDialogState = new DialogState({
+        id: 'player-queue',
+        mode: {
+            open: 'push',
+            close: 'back'
+        }
+    });
 
     let averageColor: FastAverageColorResult|null = $state(null);
 

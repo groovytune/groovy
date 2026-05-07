@@ -75,7 +75,7 @@ export class DialogState {
 }
 
 export namespace DialogState {
-    export type ActionMode = 'push'|'replace';
+    export type ActionMode = 'push'|'replace'|'back';
 
     export interface Options {
         id?: string;
@@ -122,6 +122,8 @@ export namespace DialogState {
             case 'replace':
                 // eslint-disable-next-line svelte/no-navigation-without-resolve
                 return replaceState(url ?? '', { ...page.state, dialogs });
+            case 'back':
+                return history.back();
         }
     }
 }
