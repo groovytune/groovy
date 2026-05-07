@@ -15,9 +15,11 @@
     import { PressedKeys } from 'runed';
     import { fade } from 'svelte/transition';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
-    import PlayerTitleItem from '../../../lib/components/shared/app/player/PlayerTitleItem.svelte';
+    import PlayerTitleItem from '$lib/components/shared/app/player/PlayerTitleItem.svelte';
+    import { PlayerLastNavigate } from '$lib/contexts/player';
 
     const audioPlayer = AudioPlayer.context.get();
+    const playerLastNavigate = PlayerLastNavigate.get();
     const isLargeWindow = new MediaQuery('(width >= 900px)');
     const keysPressed = new PressedKeys();
 
@@ -27,7 +29,6 @@
     let isFullscreen = $state(false);
     let isMeshGradientEnabled = $state(true);
 
-    let backing = false;
     let coverAPIURL = $derived(
         audioPlayer.currentTrack
             ? resolve('/(app)/api/track/[id]/cover', { id: audioPlayer.currentTrack?.id ?? '' }) + '?size=300'
@@ -53,16 +54,12 @@
             return;
         }
 
-        onBack();
+        exitPlayer();
     });
 
-    function onBack() {
-        if (backing) return;
-
-        backing = true;
-
-        if (window.history.length > 1) {
-            window.history.back();
+    function exitPlayer() {
+        if (playerLastNavigate.path) {
+            goto(playerLastNavigate.path);
         } else if (audioPlayer.currentTrack) {
             goto(resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack.releaseId }));
         } else {
@@ -90,17 +87,14 @@
     }}
 />
 
-<main
-    class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none"
-    style={(averageColor ? `--average-color: ${averageColor.hex};` : '')}
->
+<main class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none">
     <div class="max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:py-14 shrink-0">
         <header class="min-[900px]:fixed min-[900px]:px-5 z-10 top-0 left-0 flex w-full h-fit items-center justify-between gap-2 pt-4 pb-0">
             <Button
                 variant="ghost"
                 size="icon-lg"
                 class="shadow-none min-[900px]:bg-white/10!"
-                onclick={onBack}
+                onclick={exitPlayer}
             >
                 <XIcon class="size-5 hidden min-[900px]:inline"/>
                 <ChevronDown class="size-8 stroke-1 mt-1 min-[900px]:hidden"/>

@@ -18,15 +18,19 @@
 	import PlayerMediaSession from '$lib/components/shared/app/player/PlayerMediaSession.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { ReleaseInfoCache } from '$lib/helpers/classes/ReleaseInfoCache.svelte.js';
+	import { PlayerLastNavigate } from '../lib/contexts/player.js';
 
 	let { children, data } = $props();
+
     let activeNavigationPage = $state({ id: '' });
+    let playerLastNavigate: Record<string, string|null> = $state({ path: null });
 
     const audioPlayer = new AudioPlayer();
 
     ActiveNavigationPageContext.set(activeNavigationPage);
     AudioPlayer.context.set(audioPlayer);
     ReleaseInfoCache.context.set(audioPlayer.releaseCache);
+    PlayerLastNavigate.set(playerLastNavigate);
 
     onMount(() => {
         audioPlayer.init();
@@ -38,6 +42,15 @@
 
 
     onNavigate(navigation => {
+        if (!navigation.willUnload) {
+            const from = navigation.from?.url.toString();
+            const to = navigation.to?.url.toString();
+
+            if (from != to && navigation.to?.route.id == '/(player)/player') {
+                playerLastNavigate.path = from ?? null;
+            }
+        }
+
         if (!document.startViewTransition) return;
 
         return new Promise(resolve => document
