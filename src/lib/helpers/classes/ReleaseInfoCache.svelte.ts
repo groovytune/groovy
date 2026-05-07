@@ -13,7 +13,6 @@ export class ReleaseInfoCache {
             const cached = this.releases.get(options.releaseId);
 
             if (cached) {
-                console.log(`Returning cached release info for release ID ${options.releaseId}`);
                 return cached;
             }
         }
@@ -32,9 +31,6 @@ export class ReleaseInfoCache {
         });
 
         this.releases.set(options.releaseId, release);
-
-        console.log('Fetched release info for release ID', options.releaseId, release);
-
         return release;
     }
 
@@ -43,7 +39,6 @@ export class ReleaseInfoCache {
             const cached = this.artists.get(options.releaseId);
 
             if (cached) {
-                console.log(`Returning cached artist info for release ID ${options.releaseId}`);
                 return cached;
             }
         }
@@ -60,9 +55,6 @@ export class ReleaseInfoCache {
         });
 
         this.artists.set(options.releaseId, artist);
-
-        console.log('Fetched artist info for release ID', options.releaseId, artist);
-
         return artist;
     }
 

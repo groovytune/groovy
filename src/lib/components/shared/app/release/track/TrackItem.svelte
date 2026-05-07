@@ -1,6 +1,6 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { Disc3Icon, DownloadIcon, EllipsisIcon, PencilIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
+    import { Disc2Icon, DownloadIcon, EllipsisIcon, InfoIcon, PencilIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
@@ -21,12 +21,14 @@
         track,
         cover = false,
         editable = false,
+        playingIndicator = true,
         onclick,
         ondelete
     }: {
         track: Track;
         cover?: boolean;
         editable?: boolean;
+        playingIndicator?: boolean;
         onclick?: (event: MouseEvent & { currentTarget: EventTarget & HTMLDivElement; }) => void;
         ondelete?: (trackId: string) => void;
     } = $props();
@@ -41,7 +43,7 @@
         async releaseId => releaseInfoCache.fetchReleaseArtistInfo({ releaseId }),
     );
 
-    let isPlaying = $derived(audioPlayer.currentTrack?.id === track.id);
+    let isPlaying = $derived(audioPlayer.currentTrack?.id === track.id && playingIndicator);
     let coverURL = $derived(
         track.cover
             ? Appwrite.storage.getFilePreview({
@@ -142,8 +144,17 @@
                                 {#snippet child({ props })}
                                     <!-- TODO: Implement view artist functionality -->
                                     <a {...props}>
-                                        <Disc3Icon/>
+                                        <Disc2Icon/>
                                         View Artist
+                                    </a>
+                                {/snippet}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                {#snippet child({ props })}
+                                    <!-- TODO: Implement view artist functionality -->
+                                    <a {...props}>
+                                        <InfoIcon/>
+                                        View Credits
                                     </a>
                                 {/snippet}
                             </DropdownMenuItem>

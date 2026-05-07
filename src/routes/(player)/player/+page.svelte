@@ -3,11 +3,9 @@
     import { untrack } from 'svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
-    import { ChevronDown, EllipsisIcon, HeartIcon, ListMusicIcon, LoaderIcon, Maximize2Icon, MessageSquareQuoteIcon, Minimize2Icon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon, XIcon } from '@lucide/svelte';
-    import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '$lib/components/ui/item';
+    import { ChevronDown, ListMusicIcon, LoaderIcon, Maximize2Icon, MessageSquareQuoteIcon, Minimize2Icon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon, XIcon } from '@lucide/svelte';
     import RangeSlider from 'svelte-range-slider-pips';
     import { cn, formatDuration } from '$lib/helpers/utils';
-    import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { MediaQuery } from 'svelte/reactivity';
@@ -16,20 +14,12 @@
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { PressedKeys } from 'runed';
     import { fade } from 'svelte/transition';
-    import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
-    import PlayerQueueDialog from '$lib/components/shared/app/player/PlayerQueueDialog.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
+    import PlayerTitleItem from '../../../lib/components/shared/app/player/PlayerTitleItem.svelte';
 
     const audioPlayer = AudioPlayer.context.get();
     const isLargeWindow = new MediaQuery('(width >= 900px)');
     const keysPressed = new PressedKeys();
-    const queueDialogState = new DialogState({
-        id: 'player-queue',
-        mode: {
-            open: 'push',
-            close: 'back'
-        }
-    });
 
     let averageColor: FastAverageColorResult|null = $state(null);
 
@@ -156,33 +146,7 @@
                     class="now-cover size-full object-cover"
                 />
             </AspectRatio>
-            <Item class="py-6 px-0">
-                <ItemContent class="gap-0">
-                    <ItemTitle class="now-title text-lg sm:text-xl leading-tight font-semibold line-clamp-3">
-                        <!-- svelte-ignore a11y_distracting_elements -->
-                        <marquee behavior="alternate" direction="vertical" scrollamount="1">
-                            {audioPlayer.currentTrack?.name || 'Unknown Track'}
-                            {#if audioPlayer.currentTrack?.explicit}
-                                <ExplicitIcon class="size-5"/>
-                            {/if}
-                        </marquee>
-                    </ItemTitle>
-                    <ItemDescription class="now-artist text-sm font-medium leading-tight text-foreground/80">
-                        <!-- svelte-ignore a11y_distracting_elements -->
-                        <marquee behavior="alternate" direction="vertical" scrollamount="1" class="w-fit">
-                            {audioPlayer.artistInfo.current?.name || 'Unknown Artist'}
-                        </marquee>
-                    </ItemDescription>
-                </ItemContent>
-                <ItemActions>
-                    <Button variant="secondary" size="icon" class="bg-white/10! shadow-none">
-                        <HeartIcon/>
-                    </Button>
-                    <Button variant="secondary" size="icon" class="bg-white/10! shadow-none">
-                        <EllipsisIcon/>
-                    </Button>
-                </ItemActions>
-            </Item>
+            <PlayerTitleItem class="py-6 px-0"/>
             <div class="grid w-full gap-2 text-xs text-muted-foreground">
                 <RangeSlider
                     on:start={() => audioPlayer.pause()}
@@ -278,7 +242,6 @@
                 variant="secondary"
                 size={isLargeWindow.current ? "icon-lg" : "default"}
                 class="bg-white/10! shadow-none"
-                onclick={() => queueDialogState.open()}
             >
                 <ListMusicIcon class="min-[900px]:size-6 size-4"/>
                 <span class="min-[900px]:hidden">Queue</span>
@@ -313,5 +276,3 @@
         </div>
     {/if}
 </div>
-
-<PlayerQueueDialog dialogState={queueDialogState} activeTab="queue"/>

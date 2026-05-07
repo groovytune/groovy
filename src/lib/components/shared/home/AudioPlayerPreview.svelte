@@ -27,11 +27,7 @@
                     {/if}
                 </ItemTitle>
                 <ItemDescription class="now-artist text-xs line-clamp-1">
-                    {#if audioPlayer.releaseInfo.current}
-                        {audioPlayer.releaseInfo.current?.user.name} • {audioPlayer.releaseInfo.current?.name}
-                    {:else}
-                        Unknown Artist
-                    {/if}
+                    {audioPlayer.artistInfo.current?.name} • {audioPlayer.releaseInfo.current?.name}
                 </ItemDescription>
             </ItemContent>
             <ItemActions>
