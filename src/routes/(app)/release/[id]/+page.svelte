@@ -138,7 +138,6 @@
                         </span>
                         <TrackItem
                             track={track}
-                            artist={data.release.user}
                             editable={$session.data?.user.id === data.release.userId}
                             onclick={async () => {
                                 const newQueue = tracks.toSpliced(0, index);

@@ -59,6 +59,7 @@
 
     function exitPlayer() {
         if (playerLastNavigate.path) {
+            // eslint-disable-next-line svelte/no-navigation-without-resolve
             goto(playerLastNavigate.path);
         } else if (audioPlayer.currentTrack) {
             goto(resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack.releaseId }));
