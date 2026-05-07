@@ -58,6 +58,10 @@
     });
 
     function exitPlayer() {
+        if (document.fullscreenElement != null) {
+            document.exitFullscreen();
+        }
+
         if (playerLastNavigate.path) {
             // eslint-disable-next-line svelte/no-navigation-without-resolve
             goto(playerLastNavigate.path);
