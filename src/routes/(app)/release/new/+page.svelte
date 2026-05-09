@@ -11,8 +11,13 @@
     import placeholderCover from '$lib/assets/cover.webp';
     import { resolve } from '$app/paths';
     import ReleaseFormFields from '$lib/components/shared/app/release/forms/fields/ReleaseFormFields.svelte';
+    import { ActiveNavigationPageContext } from '$lib/contexts/navigation.js';
 
     let { data } = $props();
+
+    const activeNavigationPage = ActiveNavigationPageContext.get();
+
+    activeNavigationPage.id = 'create';
 
     // svelte-ignore state_referenced_locally
     const form = superForm(data.form, {

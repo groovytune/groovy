@@ -18,8 +18,13 @@
     import DeleteReleaseDialog from '$lib/components/shared/app/release/dialogs/DeleteReleaseDialog.svelte';
     import { goto } from '$app/navigation';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
+    import { ActiveNavigationPageContext } from '$lib/contexts/navigation.js';
 
     let { data } = $props();
+
+    const activeNavigationPage = ActiveNavigationPageContext.get();
+
+    activeNavigationPage.id = 'create';
 
     // svelte-ignore state_referenced_locally
     const form = superForm(data.form, {
