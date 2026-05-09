@@ -5,6 +5,7 @@
 
     let {
         image,
+        loaded = $bindable(false),
         playing = true,
         fps = 30,
         flowSpeed = 2.5,
@@ -12,9 +13,10 @@
         staticMode = false,
         lowFreqVolume = 0.6,
         hasLyric = true,
-        class: className
+        class: className,
     }: {
         image: string|HTMLImageElement;
+        loaded?: boolean;
         playing?: boolean;
         fps?: number;
         flowSpeed?: number;
@@ -60,7 +62,16 @@
         renderer.setStaticMode(staticMode);
         renderer.setLowFreqVolume(lowFreqVolume);
         renderer.setHasLyric(hasLyric);
-        renderer.setAlbum(image)
+    });
+
+    $effect(() => {
+        if (!renderer) return;
+
+        loaded = false;
+
+        renderer.
+            setAlbum(image)
+            .then(() => loaded = true)
     });
 </script>
 
