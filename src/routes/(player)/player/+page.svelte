@@ -12,7 +12,7 @@
     import PlayerTitleItem from '$lib/components/shared/app/player/PlayerTitleItem.svelte';
     import { PlayerLastNavigate } from '$lib/contexts/player';
     import PlayerProgressBar from '$lib/components/shared/app/player/PlayerProgressBar.svelte';
-    import PlayerControls from '../../../lib/components/shared/app/player/PlayerControls.svelte';
+    import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
 
     const audioPlayer = AudioPlayer.context.get();
     const playerLastNavigate = PlayerLastNavigate.get();

@@ -18,7 +18,7 @@
 	import PlayerMediaSession from '$lib/components/shared/app/player/PlayerMediaSession.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { ReleaseInfoCache } from '$lib/helpers/classes/ReleaseInfoCache.svelte.js';
-	import { PlayerLastNavigate } from '../lib/contexts/player.js';
+	import { PlayerLastNavigate } from '$lib/contexts/player.js';
 
 	let { children, data } = $props();
 

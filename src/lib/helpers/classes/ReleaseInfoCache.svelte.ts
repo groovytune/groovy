@@ -1,5 +1,5 @@
 import { SvelteMap } from 'svelte/reactivity';
-import type { Release } from '../../server/prisma/browser';
+import type { Release } from '$lib/server/prisma/browser';
 import { resolve } from '$app/paths';
 import { Context } from 'runed';
 import type { PartialUser } from '../utils';

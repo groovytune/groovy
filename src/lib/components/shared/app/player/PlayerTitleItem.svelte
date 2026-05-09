@@ -6,7 +6,7 @@
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import type { ClassValue } from 'clsx';
     import { cn } from '$lib/helpers/utils';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../../../ui/dropdown-menu';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
 
     let {
         cover = false,

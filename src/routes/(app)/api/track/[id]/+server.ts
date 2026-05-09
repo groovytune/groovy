@@ -1,7 +1,7 @@
 import { prisma } from '$lib/server/prisma';
 import { error, json } from '@sveltejs/kit';
 import type { Release, Track } from '$lib/server/prisma/client.js';
-import type { PartialUser } from '../../../../../lib/helpers/utils.js';
+import type { PartialUser } from '$lib/helpers/utils.js';
 
 export type GETResponse = Track & {
     release: Release & {
