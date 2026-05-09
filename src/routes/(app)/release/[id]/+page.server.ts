@@ -11,7 +11,7 @@ export type ReleasePageData = Release & {
     tracks: Track[];
 };
 
-export async function load({ params, locals }) {
+export async function load({ params, locals, url }) {
     const { id } = params;
 
     const release = await prisma.release.findUnique({
@@ -43,6 +43,17 @@ export async function load({ params, locals }) {
         throw error(404, 'Release not found');
     }
 
+    const coverImage = release.cover
+        ? Appwrite.storage.getFilePreview({
+            bucketId: 'image',
+            fileId: release.cover,
+            height: 600,
+            width: 600,
+            gravity: ImageGravity.Center,
+            output: ImageFormat.Jpeg
+        })
+        : undefined;
+
     return {
         release,
         ...definePageMetaTags({
@@ -51,27 +62,28 @@ export async function load({ params, locals }) {
             openGraph: {
                 title: `${release.name} by ${release.user.name}`,
                 description: release.description ?? undefined,
+                url: new URL(url.pathname, url.origin).href,
                 siteName: 'Groovy',
                 profile: {
                     firstName: release.user.name,
                     username: release.user.username ?? undefined
                 },
-                images: release.cover ? [
+                images: coverImage ? [
                     {
-                        url: Appwrite.storage.getFilePreview({
-                            bucketId: 'image',
-                            fileId: release.cover,
-                            height: 600,
-                            width: 600,
-                            gravity: ImageGravity.Center,
-                            output: ImageFormat.Jpeg
-                        }),
+                        url: coverImage,
                         alt: `${release.name} cover image`,
                         width: 600,
                         height: 600,
                         type: 'image/jpeg'
                     }
                 ] : undefined
+            },
+            twitter: {
+                cardType: 'summary_large_image',
+                title: `${release.name} by ${release.user.name}`,
+                description: release.description ?? undefined,
+                image: coverImage,
+                imageAlt: `${release.name} cover image`
             }
         })
     };
