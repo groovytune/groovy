@@ -140,7 +140,7 @@
                 size={isLargeWindow.current ? "icon-lg" : "default"}
                 class={cn(
                     "bg-white/10! shadow-none",
-                    !isLyricsEnabled && isLargeWindow.current && 'bg-white/80! text-black!'
+                    isLyricsEnabled && isLargeWindow.current && 'bg-white/80! text-black!'
                 )}
                 onclick={
                     () => !isLargeWindow.current
@@ -161,7 +161,7 @@
             </Button>
         </footer>
     </div>
-    {#if !isLyricsEnabled}
+    {#if isLyricsEnabled}
         <div class="max-w-3xl size-full hidden min-[900px]:flex justify-center items-center-safe p-6">
             <!-- TODO: Implement lyrics display -->
             <ScrollArea class="size-full text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%">
