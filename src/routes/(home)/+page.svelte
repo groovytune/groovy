@@ -13,7 +13,6 @@
     import { ImageFormat, ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
     import AudioPlayerPreview from '$lib/components/shared/home/AudioPlayerPreview.svelte';
-    import AudioWaveform from '$lib/components/shared/home/AudioWaveform.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
 
     let { data } = $props();
@@ -96,11 +95,8 @@
                 Explore top songs
             </Button>
         </div>
-        <div class="w-full flex flex-col items-center gap-5 text-start" class:invisible={!audioPlayer.currentTrack}>
-            <AudioPlayerPreview/>
-            {#if audioPlayer.currentTrack}
-                <AudioWaveform class="absolute scale-200 -z-10 blur-xl"/>
-            {/if}
+        <div class="w-full flex flex-col items-center gap-5 text-start " class:invisible={!audioPlayer.currentTrack}>
+            <AudioPlayerPreview class="shadow"/>
         </div>
     </section>
 </main>

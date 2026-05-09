@@ -7,14 +7,32 @@
     import AvatarDropdown from '../AvatarDropdown.svelte';
     import NewReleaseDropdown from '../NewReleaseDropdown.svelte';
     import { cn } from '$lib/helpers/utils';
+    import { onMount } from 'svelte';
 
     const session = auth.useSession();
     const active = ActiveNavigationPageContext.get();
 
     const mobileButtonActiveClass = "text-primary! [&_svg]:stroke-3 font-bold relative before:absolute before:top-full before:right-1/2 before:translate-x-1/2 before:w-1/4 before:h-1 before:bg-primary before:rounded-full";
+
+    let scrolling = $state(false);
+
+    function onScroll() {
+        scrolling = window.scrollY > 10;
+    }
+
+    onMount(() => {
+        onScroll();
+    });
 </script>
 
-<header class="sm:fixed top-0 left-0 right-0 z-50 sm:border-b sm:bg-background/80 sm:backdrop-blur-sm w-full h-16 flex justify-center">
+<svelte:window onscroll={onScroll}/>
+
+<header
+    class={cn(
+        "sm:fixed top-0 left-0 right-0 z-50 sm:border-b sm:bg-background/80 sm:backdrop-blur-sm w-full h-16 flex justify-center",
+        !scrolling && "sm:bg-transparent sm:border-transparent sm:backdrop-blur-none"
+    )}
+>
     <div class="container h-full flex items-center justify-between gap-6 px-5">
         <a href={resolve('/')} class="shrink-0 flex items-center gap-1 self-center font-bold font-fugaz sm:text-lg text-xl text-primary">
 			<BoomBoxIcon class="sm:size-6 size-7"/>
