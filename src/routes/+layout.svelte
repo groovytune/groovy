@@ -46,7 +46,7 @@
             const from = navigation.from?.url.toString();
             const to = navigation.to?.url.toString();
 
-            if (from != to && navigation.to?.route.id == '/(player)/player') {
+            if (from != to && navigation.to?.route.id?.startsWith('/(player)') && !navigation.from?.route.id?.startsWith('/(player)')) {
                 playerLastNavigate.path = from ?? null;
             }
         }

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { LoaderIcon, PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon } from '@lucide/svelte';
+    import { LoaderCircleIcon, PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon } from '@lucide/svelte';
     import { Button } from '$lib/components/ui/button/index.js';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item/index.js';
     import ExplicitIcon from '../icons/ExplicitIcon.svelte';
@@ -36,7 +36,7 @@
                 </Button>
                 <Button size="icon" disabled={!audioPlayer.currentTrack} onclick={() => audioPlayer.togglePlay()}>
                     {#if audioPlayer.status == 'buffering'}
-                        <LoaderIcon class="animate-spin"/>
+                        <LoaderCircleIcon class="animate-spin"/>
                     {:else if audioPlayer.paused}
                         <PlayIcon fill="currentColor"/>
                     {:else}

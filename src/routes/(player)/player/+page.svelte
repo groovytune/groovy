@@ -1,52 +1,26 @@
 <script lang="ts">
-    import { FastAverageColor, type FastAverageColorResult } from 'fast-average-color';
-    import { untrack } from 'svelte';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
-    import { ChevronDown, ListMusicIcon, LoaderIcon, Maximize2Icon, MessageSquareQuoteIcon, Minimize2Icon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon, XIcon } from '@lucide/svelte';
-    import RangeSlider from 'svelte-range-slider-pips';
+    import { ChevronDown, ListMusicIcon, Maximize2Icon, MessageSquareQuoteIcon, Minimize2Icon, XIcon } from '@lucide/svelte';
     import { cn, formatDuration } from '$lib/helpers/utils';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { MediaQuery } from 'svelte/reactivity';
     import { ScrollArea } from '$lib/components/ui/scroll-area';
-    import PlayerGradientBackground from '$lib/components/shared/app/player/PlayerGradientBackground.svelte';
-    import coverPlaceholder from '$lib/assets/cover.webp';
     import { PressedKeys } from 'runed';
-    import { fade } from 'svelte/transition';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import PlayerTitleItem from '$lib/components/shared/app/player/PlayerTitleItem.svelte';
     import { PlayerLastNavigate } from '$lib/contexts/player';
+    import PlayerProgressBar from '$lib/components/shared/app/player/PlayerProgressBar.svelte';
+    import PlayerControls from '../../../lib/components/shared/app/player/PlayerControls.svelte';
 
     const audioPlayer = AudioPlayer.context.get();
     const playerLastNavigate = PlayerLastNavigate.get();
     const isLargeWindow = new MediaQuery('(width >= 900px)');
     const keysPressed = new PressedKeys();
 
-    let averageColor: FastAverageColorResult|null = $state(null);
-
     let isLyricsEnabled = $state(false);
     let isFullscreen = $state(false);
-    let isMeshGradientEnabled = $state(true);
-
-    let coverAPIURL = $derived(
-        audioPlayer.currentTrack
-            ? resolve('/(app)/api/track/[id]/cover', { id: audioPlayer.currentTrack?.id ?? '' }) + '?size=300'
-            : coverPlaceholder
-    );
-
-    $effect(() => {
-        const fac = new FastAverageColor();
-
-        const color = coverPlaceholder !== coverAPIURL
-            ? fac.getColorAsync(coverAPIURL, {
-                mode: 'speed',
-                algorithm: 'simple'
-            }).catch(() => null)
-            : null;
-
-        untrack(() => color?.then(res => averageColor = res));
-    });
 
     keysPressed.onKeys(['Escape'], async () => {
         if (document.fullscreenElement != null) {
@@ -137,7 +111,10 @@
         </header>
         <section class="flex flex-col gap-0 pt-4">
             <AspectRatio
-                class="w-full rounded-md shadow-lg overflow-hidden"
+                class={cn(
+                    "w-full rounded-md shadow-lg overflow-hidden transition-transform ease-in-out duration-300",
+                    audioPlayer.paused && "scale-95"
+                )}
             >
                 <img
                     src={audioPlayer.coverURL}
@@ -147,81 +124,14 @@
             </AspectRatio>
             <PlayerTitleItem class="py-6 px-0"/>
             <div class="grid w-full gap-2 text-xs text-muted-foreground">
-                <RangeSlider
-                    on:start={() => audioPlayer.pause()}
-                    on:stop={() => audioPlayer.play()}
-                    on:change={(e) => audioPlayer.seek(e.detail.value)}
-                    bind:value={audioPlayer.currentTime}
-                    step={0.5}
-                    range="min"
-                    min={0}
-                    max={audioPlayer.duration || 0.1}
-                    springValues={{ stiffness: 0.3, damping: 0.9 }}
-                    disabled={!audioPlayer.currentTrack}
-                    class="m-0! w-full mono"
-                />
+                <PlayerProgressBar class="mono"/>
                 <div class="flex justify-between font-medium text-white/60">
                     <span class="w-6 text-start">{audioPlayer.currentTrack ? formatDuration(audioPlayer.currentTime || 0) : '--:--'}</span>
                     <span class="w-6 text-end">{audioPlayer.currentTrack ? formatDuration(audioPlayer.duration || 0) : '--:--'}</span>
                 </div>
             </div>
             <div class="flex justify-around items-center">
-                <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    class="bg-transparent! shadow-none"
-                    onclick={() => isMeshGradientEnabled = !isMeshGradientEnabled}
-                >
-                    <ShuffleIcon/>
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="icon-lg"
-                    class="size-18 bg-transparent! shadow-none"
-                    disabled={!audioPlayer.previousable}
-                    onclick={() => audioPlayer.previous()}
-                >
-                    <SkipBackIcon fill="currentColor" class="size-6"/>
-                </Button>
-                <Button
-                    variant="secondary"
-                    size="icon-lg"
-                    class="size-18 bg-white/20! shadow-none"
-                    disabled={!audioPlayer.currentTrack}
-                    onclick={() => audioPlayer.togglePlay()}
-                >
-                    {#if audioPlayer.status == 'buffering'}
-                        <LoaderIcon class="animate-spin size-6"/>
-                    {:else if audioPlayer.paused}
-                        <PlayIcon fill="currentColor" class="size-6"/>
-                    {:else}
-                        <PauseIcon fill="currentColor" class="size-6"/>
-                    {/if}
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="icon-lg"
-                    class="size-18 bg-transparent! shadow-none"
-                    disabled={!audioPlayer.skippable}
-                    onclick={() => audioPlayer.next()}
-                >
-                    <SkipForwardIcon class="size-6" fill="currentColor"/>
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    class={cn(
-                        "bg-transparent! shadow-none",
-                        audioPlayer.repeat != 'none' && 'bg-white/80! text-black!'
-                    )}
-                    onclick={() => audioPlayer.toggleRepeat()}
-                >
-                    {#if audioPlayer.repeat == 'one'}
-                        <Repeat1Icon/>
-                    {:else}
-                        <RepeatIcon/>
-                    {/if}
-                </Button>
+                <PlayerControls/>
             </div>
         </section>
         <footer class="flex min-[900px]:fixed z-10 bottom-0 right-0 items-center justify-evenly min-[900px]:px-4 py-4 gap-2">
@@ -230,9 +140,13 @@
                 size={isLargeWindow.current ? "icon-lg" : "default"}
                 class={cn(
                     "bg-white/10! shadow-none",
-                    !isLyricsEnabled && 'bg-white/80! text-black!'
+                    !isLyricsEnabled && isLargeWindow.current && 'bg-white/80! text-black!'
                 )}
-                onclick={() => isLyricsEnabled = !isLyricsEnabled}
+                onclick={
+                    () => !isLargeWindow.current
+                        ? goto(resolve('/(player)/lyrics'))
+                        : isLyricsEnabled = !isLyricsEnabled
+                }
             >
                 <MessageSquareQuoteIcon class="min-[900px]:size-6 size-4"/>
                 <span class="min-[900px]:hidden">Lyrics</span>
@@ -260,18 +174,3 @@
         </div>
     {/if}
 </main>
-
-<div
-    class="fixed -z-10 top-0 left-0 w-full h-full bg-(--average-color) transition-all duration-300"
-    class:brightness-50={!isMeshGradientEnabled && averageColor?.isLight}
-    style={`--average-color: ${averageColor?.hex ?? '#000000'};`}
->
-    {#if isMeshGradientEnabled}
-        <div out:fade class="size-full">
-            <PlayerGradientBackground
-                image={coverAPIURL}
-                playing={!audioPlayer.paused}
-            />
-        </div>
-    {/if}
-</div>

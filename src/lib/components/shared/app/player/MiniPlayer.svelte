@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { ListMusicIcon, LoaderIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, SkipBackIcon, SkipForwardIcon, Volume1Icon, Volume2Icon, VolumeXIcon } from '@lucide/svelte';
+    import { ListMusicIcon, LoaderCircleIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, SkipBackIcon, SkipForwardIcon, Volume1Icon, Volume2Icon, VolumeXIcon } from '@lucide/svelte';
     import { Button } from '$lib/components/ui/button';
     import { Popover, PopoverContent, PopoverTrigger } from '$lib/components/ui/popover';
     import { Slider } from '$lib/components/ui/slider';
     import { formatDuration } from '$lib/helpers/utils';
     import { fly } from 'svelte/transition';
     import { resolve } from '$app/paths';
-    import RangeSlider from 'svelte-range-slider-pips';
     import ExplicitIcon from '../../icons/ExplicitIcon.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
+    import PlayerProgressBar from './PlayerProgressBar.svelte';
 
     const audioPlayer = AudioPlayer.context.get();
 </script>
@@ -49,7 +49,7 @@
                     </Button>
                     <Button variant="default" size="icon" disabled={!audioPlayer.currentTrack} onclick={() => audioPlayer.togglePlay()}>
                         {#if audioPlayer.status == 'buffering'}
-                            <LoaderIcon class="animate-spin"/>
+                            <LoaderCircleIcon class="animate-spin"/>
                         {:else if audioPlayer.paused}
                             <PlayIcon fill="currentColor"/>
                         {:else}
@@ -63,19 +63,7 @@
             </section>
             <div class="items-center justify-between w-full hidden md:flex gap-2 text-xs text-muted-foreground">
                 <span class="w-6 text-start">{audioPlayer.currentTrack ? formatDuration(audioPlayer.currentTime || 0) : '--:--'}</span>
-                <RangeSlider
-                    on:start={() => audioPlayer.pause()}
-                    on:stop={() => audioPlayer.play()}
-                    on:change={(e) => audioPlayer.seek(e.detail.value)}
-                    bind:value={audioPlayer.currentTime}
-                    step={0.5}
-                    range="min"
-                    min={0}
-                    max={audioPlayer.duration || 0.1}
-                    springValues={{ stiffness: 0.3, damping: 0.9 }}
-                    disabled={!audioPlayer.currentTrack}
-                    class="m-0! w-[calc(100%-4rem)]"
-                />
+                <PlayerProgressBar class="w-[calc(100%-4rem)]"/>
                 <span class="w-6 text-end">{audioPlayer.currentTrack ? formatDuration(audioPlayer.duration || 0) : '--:--'}</span>
             </div>
             <div class="hidden md:flex gap-2">
