@@ -7,6 +7,7 @@
     import { DoorOpenIcon, LoaderIcon, SquareXIcon } from '@lucide/svelte';
     import { page } from '$app/state';
     import { auth } from '$lib/client/auth';
+    import { resolve } from '$app/paths';
 
     let signingOut = $state(false);
     let redirect = $derived(page.url.searchParams.get('redirect'));
@@ -61,8 +62,7 @@
                     variant="outline"
                     type="button"
                     disabled={signingOut}
-                    // eslint-disable-next-line svelte/no-navigation-without-resolve
-                    onclick={() => goto('/')}
+                    onclick={() => goto(resolve('/'))}
                 >
                     <SquareXIcon/>
                     Nevermind
