@@ -1,6 +1,6 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { Disc3Icon, DownloadIcon, EllipsisIcon, InfoIcon, PencilIcon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
+    import { Disc3Icon, DownloadIcon, EllipsisIcon, InfoIcon, PencilIcon, Share2Icon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
@@ -16,6 +16,7 @@
     import { resource } from 'runed';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import { ReleaseInfoCache } from '$lib/helpers/classes/ReleaseInfoCache.svelte';
+    import ShareButton from '../ShareButton.svelte';
 
     let {
         track,
@@ -57,6 +58,27 @@
             : coverPlaceholder
     );
 </script>
+
+{#snippet ShareDropdownItem()}
+    <DropdownMenuItem>
+        {#snippet child({ props })}
+            <ShareButton
+                data={{
+                    title: track.name,
+                    text: `${track.name} ${artistInfo.current?.name ? 'by ' + artistInfo.current.name : ''}`,
+                    url: new URL(resolve('/(app)/release/[id]', { id: track.releaseId }), location.origin).href
+                }}
+            >
+                {#snippet child({ onclick })}
+                    <a {...props} {onclick}>
+                        <Share2Icon/>
+                        Share
+                    </a>
+                {/snippet}
+            </ShareButton>
+        {/snippet}
+    </DropdownMenuItem>
+{/snippet}
 
 <Item
     oncontextmenu={e =>  e.preventDefault()}
@@ -134,6 +156,7 @@
                                     </a>
                                 {/snippet}
                             </DropdownMenuItem>
+                            {@render ShareDropdownItem()}
                             <DropdownMenuSeparator/>
                             <DropdownMenuItem class="text-destructive!" onclick={() => deleteDialogState.open()}>
                                 <Trash2Icon class="text-current"/>
@@ -158,6 +181,7 @@
                                     </a>
                                 {/snippet}
                             </DropdownMenuItem>
+                            {@render ShareDropdownItem()}
                         {/if}
                     </DropdownMenuContent>
                 </DropdownMenu>
