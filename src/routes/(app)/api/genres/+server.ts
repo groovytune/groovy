@@ -1,30 +1,41 @@
 import { json } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma';
+import z from 'zod';
+import { orderFilterSchema } from '$lib/schema/filter.js';
+import { tsQueryParser } from '$lib/helpers/constants';
 
 export async function GET({ url }) {
-    const after = url.searchParams.get('after');
-    const before = url.searchParams.get('before');
-    const search = url.searchParams.get('search');
+    const search = z.string().transform(val => tsQueryParser.parseAndStringify(val)).safeParse(url.searchParams.get('search'));
+    const take = z.coerce.number().positive().max(100).optional().safeParse(url.searchParams.get('take'));
+    const order = orderFilterSchema.optional().safeParse(url.searchParams.get('order'));
+    const after = z.cuid2().optional().safeParse(url.searchParams.get('after'));
 
-    const afterTimestamp = after && !isNaN(parseInt(after)) ? parseInt(after) : null;
-    const beforeTimestamp = before && !isNaN(parseInt(before)) ? parseInt(before) : null;
+    console.log(search.data);
 
     const genres = await prisma.genre.findMany({
         where: {
-            createdAt: {
-                gt: afterTimestamp ? new Date(afterTimestamp) : undefined,
-                lt: beforeTimestamp ? new Date(beforeTimestamp) : undefined
-            },
-            name: search ? {
-                contains: search,
-                mode: 'insensitive'
-            } : undefined
+            name: search.data
+                ? {
+                    search: search.data
+                }
+                : undefined
         },
         select: {
             id: true,
             name: true
         },
-        take: 20,
+        take: take.data || 20,
+        skip: after.data ? 1 : undefined,
+        cursor: after.data ? { id: after.data } : undefined,
+        orderBy: search.data
+            ? {
+                _relevance: {
+                    fields: ["name"],
+                    search: search.data,
+                    sort: order.data ?? 'asc',
+                }
+            }
+            : { name: order.data ?? 'asc' }
     });
 
     return json(genres);

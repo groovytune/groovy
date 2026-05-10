@@ -1,4 +1,7 @@
 import { getSupportedMimeTypes } from 'music-metadata';
+import tsquery from 'pg-tsquery';
+
+export const tsQueryParser = new tsquery.Tsquery();
 
 export const supportedAudioMimeTypes = getSupportedMimeTypes();
 

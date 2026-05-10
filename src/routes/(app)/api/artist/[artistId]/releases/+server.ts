@@ -1,24 +1,33 @@
 import { json } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
+import { newReleaseSchema } from '../../../../../../lib/schema/release.js';
+import { orderFilterSchema } from '../../../../../../lib/schema/filter.js';
+import z from 'zod';
 
 export async function GET({ params, url }) {
     const {  artistId } = params;
 
-    const take = Number(url.searchParams.get('take'));
-    const after = url.searchParams.get('after');
-    const order = url.searchParams.get('order') === 'asc' ? 'asc' : 'desc';
+    const take = z.coerce.number().positive().max(100).default(20).safeParse(url.searchParams.get('take'));
+    const after = z.cuid2().optional().safeParse(url.searchParams.get('after'));
+    const order = orderFilterSchema.optional().safeParse(url.searchParams.get('order'));
+    const type = newReleaseSchema.shape.type.safeParse(url.searchParams.get('type'));
 
     const releases = await prisma.release.findMany({
         where: {
             userId: artistId,
-            privacy: 'PUBLIC'
+            privacy: 'PUBLIC',
+            type: type.success
+                ? type.data
+                : undefined
         },
-        take: (isNaN(take) || take <= 0 || take > 100)
-            ? 20
-            : take,
-        skip: after ? 1 : 0,
-        cursor: after ? { id: after } : undefined,
-        orderBy: { id: order }
+        take: take.data || 20,
+        skip: after.data ? 1 : 0,
+        cursor: after.data
+            ? { id: after.data }
+            : undefined,
+        orderBy: {
+            id: order.data ?? 'desc'
+        }
     });
 
     return json(releases);
