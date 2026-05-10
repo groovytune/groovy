@@ -90,14 +90,14 @@
             <HouseIcon class="size-5"/>
         </Button>
         <Button
-            href={resolve('/(app)/search')}
+            href={resolve('/(app)/discover')}
             variant="ghost"
             class={cn(
                 "flex-col h-13 text-xs gap-0 w-1/5 shrink px-0! hover:bg-transparent",
-                active?.id === 'search' && mobileButtonActiveClass
+                active?.id === 'discover' && mobileButtonActiveClass
             )}
         >
-            <SearchIcon class="size-5"/>
+            <StarIcon class="size-5"/>
         </Button>
         <Button
             href={resolve('/(app)/release/new')}
@@ -110,14 +110,14 @@
             <PlusIcon class="size-5 bg-primary text-primary-foreground rounded-sm w-9 h-6 py-1 stroke-3!"/>
         </Button>
         <Button
-            href={resolve('/(app)/discover')}
+            href={resolve('/(app)/search')}
             variant="ghost"
             class={cn(
                 "flex-col h-13 text-xs gap-0 w-1/5 shrink px-0! hover:bg-transparent",
-                active?.id === 'discover' && mobileButtonActiveClass
+                active?.id === 'search' && mobileButtonActiveClass
             )}
         >
-            <StarIcon class="size-5"/>
+            <SearchIcon class="size-5"/>
         </Button>
         <Button
             href={resolve('/(app)/library')}
