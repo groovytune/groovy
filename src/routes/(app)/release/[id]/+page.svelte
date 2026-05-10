@@ -6,7 +6,7 @@
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { Button } from '$lib/components/ui/button/index.js';
     import { resolve } from '$app/paths';
-    import { Disc3Icon, EllipsisIcon, HeartIcon, ListMusicIcon, PencilIcon, PlayIcon } from '@lucide/svelte';
+    import { Disc3Icon, EllipsisIcon, HeartIcon, ListMusicIcon, PencilIcon, PlayIcon, Share2Icon } from '@lucide/svelte';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
@@ -14,6 +14,7 @@
     import TrackItem from '$lib/components/shared/app/release/track/TrackItem.svelte';
     import { auth } from '$lib/client/auth.js';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
+    import ShareButton from '../../../../lib/components/shared/app/release/ShareButton.svelte';
 
     let { data } = $props();
 
@@ -121,6 +122,24 @@
                                     <Disc3Icon/>
                                     View Artist
                                 </a>
+                            {/snippet}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            {#snippet child({ props })}
+                                <ShareButton
+                                    data={{
+                                        title: data.release.name,
+                                        text: `${data.release.name} by ${data.release.user.name} on Groovy`,
+                                        url: new URL(resolve('/(app)/release/[id]', { id: data.release.id }), location.origin).href
+                                    }}
+                                >
+                                    {#snippet child({ onclick })}
+                                        <a {...props} onclick={onclick}>
+                                            <Share2Icon/>
+                                            Share
+                                        </a>
+                                    {/snippet}
+                                </ShareButton>
                             {/snippet}
                         </DropdownMenuItem>
                     </DropdownMenuContent>

@@ -24,7 +24,13 @@ export async function load({ params, locals, url }) {
             userId: locals.user.id,
         },
         include: {
-            tracks: true
+            tracks: true,
+            user: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            }
         }
     });
 

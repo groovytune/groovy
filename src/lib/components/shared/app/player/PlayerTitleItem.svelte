@@ -7,6 +7,8 @@
     import type { ClassValue } from 'clsx';
     import { cn } from '$lib/helpers/utils';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
+    import ShareButton from '../release/ShareButton.svelte';
+    import { resolve } from '$app/paths';
 
     let {
         cover = false,
@@ -52,54 +54,66 @@
             </marquee>
         </ItemDescription>
     </ItemContent>
-    <ItemActions>
-        <Button variant="secondary" size="icon" class="bg-white/10! shadow-none">
-            <HeartIcon/>
-        </Button>
-        <DropdownMenu>
-            <DropdownMenuTrigger>
-                {#snippet child({ props })}
-                    <Button {...props} variant="secondary" size="icon" class="bg-white/10! shadow-none">
-                        <EllipsisIcon/>
-                    </Button>
-                {/snippet}
-            </DropdownMenuTrigger>
-            <DropdownMenuContent class="mx-2 min-w-40">
-                <!-- TODO: Implement these functionalities -->
-                <DropdownMenuItem>
+    {#if audioPlayer.currentTrack != null}
+        <ItemActions>
+            <Button variant="secondary" size="icon" class="bg-white/10! shadow-none">
+                <HeartIcon/>
+            </Button>
+            <DropdownMenu>
+                <DropdownMenuTrigger>
                     {#snippet child({ props })}
-                        <a {...props}>
-                            <ListMusicIcon/>
-                            View Release
-                        </a>
+                        <Button {...props} variant="secondary" size="icon" class="bg-white/10! shadow-none">
+                            <EllipsisIcon/>
+                        </Button>
                     {/snippet}
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    {#snippet child({ props })}
-                        <a {...props}>
-                            <Disc3Icon/>
-                            View Artist
-                        </a>
-                    {/snippet}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator/>
-                <DropdownMenuItem>
-                    {#snippet child({ props })}
-                        <a {...props}>
-                            <InfoIcon/>
-                            Credits
-                        </a>
-                    {/snippet}
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    {#snippet child({ props })}
-                        <a {...props}>
-                            <Share2Icon/>
-                            Share
-                        </a>
-                    {/snippet}
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    </ItemActions>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent class="mx-2 min-w-40">
+                    <!-- TODO: Implement these functionalities -->
+                    <DropdownMenuItem>
+                        {#snippet child({ props })}
+                            <a {...props} href={resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack!.releaseId })}>
+                                <ListMusicIcon/>
+                                View Release
+                            </a>
+                        {/snippet}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        {#snippet child({ props })}
+                            <a {...props}>
+                                <Disc3Icon/>
+                                View Artist
+                            </a>
+                        {/snippet}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator/>
+                    <DropdownMenuItem>
+                        {#snippet child({ props })}
+                            <a {...props}>
+                                <InfoIcon/>
+                                Credits
+                            </a>
+                        {/snippet}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        {#snippet child({ props })}
+                            <ShareButton
+                                data={{
+                                    title: audioPlayer.currentTrack?.name,
+                                    text: `${audioPlayer.currentTrack?.name} by ${audioPlayer.artistInfo.current?.name}`,
+                                    url: new URL(resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack!.releaseId }), location.origin).href
+                                }}
+                            >
+                                {#snippet child({ onclick })}
+                                    <a {...props} onclick={onclick}>
+                                        <Share2Icon/>
+                                        Share
+                                    </a>
+                                {/snippet}
+                            </ShareButton>
+                        {/snippet}
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </ItemActions>
+    {/if}
 </Item>
