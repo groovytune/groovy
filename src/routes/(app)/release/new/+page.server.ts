@@ -80,6 +80,6 @@ export const actions = {
             throw error;
         });
 
-        return redirect(302, resolve(`/(app)/release/[id]/edit/tracks`, { id: release.id }));
+        return redirect(302, resolve(`/(app)/release/[releaseId]/edit/tracks`, { releaseId: release.id }));
     }
 };

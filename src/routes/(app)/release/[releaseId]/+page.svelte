@@ -71,7 +71,7 @@
                 <Button
                     variant="outline"
                     size="icon"
-                    href={resolve('/(app)/release/[id]/edit/tracks', { id: data.release.id })}
+                    href={resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId: data.release.id })}
                 >
                     <HeartIcon/>
                 </Button>
@@ -99,7 +99,7 @@
                             <DropdownMenuSeparator/>
                             <DropdownMenuItem>
                                 {#snippet child({ props })}
-                                    <a {...props} href={resolve('/(app)/release/[id]/edit', { id: data.release.id })}>
+                                    <a {...props} href={resolve('/(app)/release/[releaseId]/edit', { releaseId: data.release.id })}>
                                         <PencilIcon/>
                                         Edit Release
                                     </a>
@@ -107,7 +107,7 @@
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 {#snippet child({ props })}
-                                    <a {...props} href={resolve('/(app)/release/[id]/edit/tracks', { id: data.release.id })}>
+                                    <a {...props} href={resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId: data.release.id })}>
                                         <ListMusicIcon/>
                                         Manage Tracks
                                     </a>
@@ -117,8 +117,17 @@
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem>
                             {#snippet child({ props })}
-                                <!-- TODO: Implement view artist functionality -->
-                                <a {...props}>
+                                <a
+                                    {...props}
+                                    href={resolve(
+                                        '/(app)/artist/[userResolvable]',
+                                        {
+                                            userResolvable: data.release.user.username
+                                                ? `@${data.release.user.username}`
+                                                : data.release.user.id
+                                        }
+                                    )}
+                                >
                                     <Disc3Icon/>
                                     View Artist
                                 </a>
@@ -130,7 +139,7 @@
                                     data={{
                                         title: data.release.name,
                                         text: `${data.release.name} by ${data.release.user.name} on Groovy`,
-                                        url: new URL(resolve('/(app)/release/[id]', { id: data.release.id }), location.origin).href
+                                        url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: data.release.id }), location.origin).href
                                     }}
                                 >
                                     {#snippet child({ onclick })}

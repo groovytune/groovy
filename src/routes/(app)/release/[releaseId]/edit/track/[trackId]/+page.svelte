@@ -127,14 +127,14 @@
                     <PlayIcon/>
                 </Button>
                 <Button
-                    href={resolve('/(app)/release/[id]/edit/track/[trackId]/lyrics', { id: data.track.releaseId, trackId: data.track.id })}
+                    href={resolve('/(app)/release/[releaseId]/edit/track/[trackId]/lyrics', { releaseId: data.track.releaseId, trackId: data.track.id })}
                     variant="outline"
                 >
                     <MicVocalIcon/>
                     Edit Lyrics
                 </Button>
                 <Button
-                    href={resolve('/(app)/release/[id]/edit/tracks', { id: data.track.releaseId })}
+                    href={resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId: data.track.releaseId })}
                     variant="outline"
                     size="icon"
                 >
@@ -145,7 +145,7 @@
     </section>
     <form
         class="w-full md:max-w-[calc(100%-24rem)] p-5 flex flex-col gap-2"
-        action={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: data.track.releaseId, trackId: data.track.id }) + '?/edit'}
+        action={resolve('/(app)/release/[releaseId]/edit/track/[trackId]', { releaseId: data.track.releaseId, trackId: data.track.id }) + '?/edit'}
         method="POST"
         enctype="multipart/form-data"
         use:enhance
@@ -278,6 +278,6 @@
     dialogState={deleteDialogState}
     ondelete={() => {
         deleteDialogState.close({ force: true });
-        goto(resolve('/(app)/release/[id]/edit/tracks', { id: data.track.releaseId }));
+        goto(resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId: data.track.releaseId }));
     }}
 />

@@ -134,7 +134,7 @@
                     <DropdownMenuContent class="mx-2">
                         <DropdownMenuItem>
                             {#snippet child({ props })}
-                                <a {...props} href={resolve('/(app)/release/[id]/edit', { id: data.release.id } )}>
+                                <a {...props} href={resolve('/(app)/release/[releaseId]/edit', { releaseId: data.release.id } )}>
                                     <PencilIcon/>
                                     Edit
                                 </a>
@@ -149,7 +149,7 @@
                                     data={{
                                         title: data.release.name,
                                         text: `${data.release.name} by ${data.release.user.name} on Groovy`,
-                                        url: new URL(resolve('/(app)/release/[id]', { id: data.release.id }), location.origin).href
+                                        url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: data.release.id }), location.origin).href
                                     }}
                                 >
                                     {#snippet child({ onclick })}

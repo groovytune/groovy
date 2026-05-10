@@ -28,8 +28,8 @@ export class ReleaseInfoCache {
         const req = options.fetch || fetch;
 
         const release: Promise<Release> = req(resolve(
-            '/(app)/api/release/[id]',
-            { id: options?.releaseId }
+            '/(app)/api/release/[releaseId]',
+            { releaseId: options?.releaseId }
         )).then(res => {
             if (!res.ok) {
                 throw new Error(`Failed to fetch release info: ${res.status} ${res.statusText}`);
@@ -62,8 +62,8 @@ export class ReleaseInfoCache {
         }
 
         const artist: Promise<PartialUser> = (options.fetch || fetch)(resolve(
-            '/(app)/api/release/[id]/artist',
-            { id: options.releaseId }
+            '/(app)/api/release/[releaseId]/artist',
+            { releaseId: options.releaseId }
         )).then(res => {
             if (!res.ok) {
                 throw new Error(`Failed to fetch artist info: ${res.status} ${res.statusText}`);

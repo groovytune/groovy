@@ -17,7 +17,7 @@ export async function load({ params, locals, url }) {
         where: {
             id: params.trackId,
             release: {
-                id: params.id,
+                id: params.releaseId,
                 userId: locals.session.user.id
             }
         },
@@ -32,7 +32,7 @@ export async function load({ params, locals, url }) {
     });
 
     if (!track) {
-        throw redirect(302, resolve('/(app)/release/[id]/edit/tracks', { id: params.id }));
+        throw redirect(302, resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId: params.releaseId }));
     }
 
     const form = await superValidate({
@@ -81,7 +81,7 @@ export const actions = {
             where: {
                 id: params.trackId,
                 release: {
-                    id: params.id,
+                    id: params.releaseId,
                     userId: locals.user.id
                 }
             },

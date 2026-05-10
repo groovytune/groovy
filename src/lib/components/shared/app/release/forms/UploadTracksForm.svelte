@@ -84,7 +84,7 @@
 
 <form
     use:enhance
-    action={resolve('/(app)/release/[id]/edit/tracks', { id: releaseId }) + '?/upload'}
+    action={resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId }) + '?/upload'}
     method="POST"
     enctype="multipart/form-data"
     class="hidden"

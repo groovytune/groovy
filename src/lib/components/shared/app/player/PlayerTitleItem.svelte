@@ -71,20 +71,32 @@
                     <!-- TODO: Implement these functionalities -->
                     <DropdownMenuItem>
                         {#snippet child({ props })}
-                            <a {...props} href={resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack!.releaseId })}>
+                            <a {...props} href={resolve('/(app)/release/[releaseId]', { releaseId: audioPlayer.currentTrack!.releaseId })}>
                                 <ListMusicIcon/>
                                 View Release
                             </a>
                         {/snippet}
                     </DropdownMenuItem>
+                    {#if audioPlayer.artistInfo.current}
                     <DropdownMenuItem>
                         {#snippet child({ props })}
-                            <a {...props}>
+                            <a
+                                {...props}
+                                href={resolve(
+                                    '/(app)/artist/[userResolvable]',
+                                    {
+                                        userResolvable: audioPlayer.artistInfo.current?.username
+                                            ? `@${audioPlayer.artistInfo.current.username}`
+                                            : audioPlayer.artistInfo.current!.id 
+                                    }
+                                )}
+                            >
                                 <Disc3Icon/>
                                 View Artist
                             </a>
                         {/snippet}
                     </DropdownMenuItem>
+                    {/if}
                     <DropdownMenuSeparator/>
                     <DropdownMenuItem>
                         {#snippet child({ props })}
@@ -100,7 +112,7 @@
                                 data={{
                                     title: audioPlayer.currentTrack?.name,
                                     text: `${audioPlayer.currentTrack?.name} by ${audioPlayer.artistInfo.current?.name}`,
-                                    url: new URL(resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack!.releaseId }), location.origin).href
+                                    url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: audioPlayer.currentTrack!.releaseId }), location.origin).href
                                 }}
                             >
                                 {#snippet child({ onclick })}

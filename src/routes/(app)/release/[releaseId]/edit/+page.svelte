@@ -13,7 +13,7 @@
     import ReleaseFormFields from '$lib/components/shared/app/release/forms/fields/ReleaseFormFields.svelte';
     import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageFormat, ImageGravity } from 'appwrite';
-    import type { GETResponse } from '../../../api/release/[id]/tracks/+server.js';
+    import type { GETResponse } from '../../../api/release/[releaseId]/tracks/+server.js';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte.js';
     import DeleteReleaseDialog from '$lib/components/shared/app/release/dialogs/DeleteReleaseDialog.svelte';
     import { goto } from '$app/navigation';
@@ -124,7 +124,7 @@
                     variant="outline"
                     size="icon"
                     onclick={async () => {
-                        const tracks = await fetch(resolve('/(app)/api/release/[id]/tracks', { id: data.release.id })).then(res => res.json()) as GETResponse;
+                        const tracks = await fetch(resolve('/(app)/api/release/[releaseId]/tracks', { releaseId: data.release.id })).then(res => res.json()) as GETResponse;
 
                         await audioPlayer.replaceQueue(tracks.toSorted((a, b) => a.position - b.position));
                         await audioPlayer.play();
@@ -133,7 +133,7 @@
                     <PlayIcon/>
                 </Button>
                 <Button
-                    href={resolve('/(app)/release/[id]/edit/tracks', { id: data.release.id })}
+                    href={resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId: data.release.id })}
                     variant="outline"
                 >
                     <ListMusicIcon/>
@@ -144,7 +144,7 @@
     </section>
     <form
         class="w-full md:max-w-[calc(100%-24rem)] p-5 flex flex-col gap-2"
-        action={resolve('/(app)/release/[id]/edit', { id: data.release.id }) + '?/update'}
+        action={resolve('/(app)/release/[releaseId]/edit', { releaseId: data.release.id }) + '?/update'}
         method="POST"
         enctype="multipart/form-data"
         use:enhance

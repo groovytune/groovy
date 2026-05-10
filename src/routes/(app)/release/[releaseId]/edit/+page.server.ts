@@ -15,7 +15,7 @@ export async function load({ locals, url, params }) {
 
     const release = await prisma.release.findUnique({
         where: {
-            id: params.id,
+            id: params.releaseId,
             userId: locals.user.id
         },
         include: {
@@ -84,7 +84,7 @@ export const actions = {
 
         const release = await prisma.release.update({
             where: {
-                id: params.id,
+                id: params.releaseId,
                 userId: locals.user.id
             },
             data: {
@@ -108,7 +108,7 @@ export const actions = {
             throw error;
         });
 
-        return redirect(302, resolve(`/(app)/release/[id]/edit/tracks`, { id: release.id }));
+        return redirect(302, resolve(`/(app)/release/[releaseId]/edit/tracks`, { releaseId: release.id }));
     },
     delete: async ({ request, locals, params }) => {
         if (!locals.user) {
@@ -123,7 +123,7 @@ export const actions = {
 
         const release = await prisma.release.delete({
             where: {
-                id: params.id,
+                id: params.releaseId,
                 userId: locals.user.id
             },
             include: {

@@ -106,7 +106,7 @@
                             editable={true}
                             onclick={e => {
                                 e.stopPropagation();
-                                goto(resolve('/(app)/release/[id]/edit/track/[trackId]', { id: releaseId, trackId: track.id }));
+                                goto(resolve('/(app)/release/[releaseId]/edit/track/[trackId]', { releaseId, trackId: track.id }));
                             }}
                             ondelete={() => {
                                 tracks = tracks.filter(t => t.id !== dndTrack.id);
@@ -126,7 +126,7 @@
             <form
                 use:enhance
                 method="POST"
-                action={resolve('/(app)/release/[id]/edit/tracks', { id: releaseId }) + '?/sort'}
+                action={resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId }) + '?/sort'}
                 class="flex justify-center py-5 pb-0 gap-2"
             >
                 <Button

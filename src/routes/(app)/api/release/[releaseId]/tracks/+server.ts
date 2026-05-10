@@ -8,7 +8,7 @@ export async function GET({ params, locals }) {
     const tracks = await prisma.track.findMany({
         where: {
             release: {
-                id: params.id,
+                id: params.releaseId,
                 AND: locals.user?.id
                     ? {
                         OR: [

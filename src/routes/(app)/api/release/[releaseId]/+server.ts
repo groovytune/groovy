@@ -4,7 +4,7 @@ import { prisma } from '$lib/server/prisma.js';
 export async function GET({ params, locals }) {
     const release = await prisma.release.findUnique({
         where: {
-            id: params.id,
+            id: params.releaseId,
             AND: locals.user?.id
                 ? {
                     OR: [

@@ -12,7 +12,7 @@ import { definePageMetaTags } from 'svelte-meta-tags';
 import { createAuthRedirect } from '$lib/helpers/utils.js';
 
 export async function load({ params, locals, url }) {
-    const { id } = params;
+    const { releaseId } = params;
 
     if (!locals.user) {
         throw redirect(302, createAuthRedirect('signin', url));
@@ -20,7 +20,7 @@ export async function load({ params, locals, url }) {
 
     const release = await prisma.release.findUnique({
         where: {
-            id,
+            id: releaseId,
             userId: locals.user.id,
         },
         include: {
@@ -85,7 +85,7 @@ export const actions = {
 
         const release = await prisma.release.findUnique({
             where: {
-                id: params.id,
+                id: params.releaseId,
                 userId: locals.user.id
             },
             select: {
@@ -242,7 +242,7 @@ export const actions = {
 
         const release = await prisma.release.findUnique({
             where: {
-                id: params.id,
+                id: params.releaseId,
                 userId: locals.user.id
             },
             select: {
@@ -289,7 +289,7 @@ export const actions = {
                 .map(track => prisma.track.update({
                     where: {
                         release: {
-                            id: params.id,
+                            id: params.releaseId,
                             userId: locals.user!.id
                         },
                         id: track.id

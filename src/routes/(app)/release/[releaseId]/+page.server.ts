@@ -12,11 +12,11 @@ export type ReleasePageData = Release & {
 };
 
 export async function load({ params, locals, url }) {
-    const { id } = params;
+    const { releaseId } = params;
 
     const release = await prisma.release.findUnique({
         where: {
-            id,
+            id: releaseId,
             AND: locals.user
                 ? {
                     OR: [

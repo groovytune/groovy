@@ -40,7 +40,7 @@
             // eslint-disable-next-line svelte/no-navigation-without-resolve
             goto(playerLastNavigate.path);
         } else if (audioPlayer.currentTrack) {
-            goto(resolve('/(app)/release/[id]', { id: audioPlayer.currentTrack.releaseId }));
+            goto(resolve('/(app)/release/[releaseId]', { releaseId: audioPlayer.currentTrack.releaseId }));
         } else {
             goto(resolve('/(app)/home'));
         }
@@ -82,7 +82,7 @@
                 class="text-sm text-center leading-tight min-[900px]:hidden w-full"
                 href={
                     audioPlayer.releaseInfo.current
-                        ? resolve('/(app)/release/[id]', { id: audioPlayer.releaseInfo.current.id })
+                        ? resolve('/(app)/release/[releaseId]', { releaseId: audioPlayer.releaseInfo.current.id })
                         : '#/'
                 }
             >

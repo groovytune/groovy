@@ -6,7 +6,7 @@ import { ImageFormat, ImageGravity } from 'node-appwrite';
 export async function GET({ params, locals, url, fetch }) {
     const release = await prisma.release.findUnique({
         where: {
-            id: params.id,
+            id: params.releaseId,
             AND: locals.user?.id
                 ? {
                     OR: [

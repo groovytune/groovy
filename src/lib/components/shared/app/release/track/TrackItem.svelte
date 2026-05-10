@@ -66,7 +66,7 @@
                 data={{
                     title: track.name,
                     text: `${track.name} ${artistInfo.current?.name ? 'by ' + artistInfo.current.name : ''} on Groovy`,
-                    url: new URL(resolve('/(app)/release/[id]', { id: track.releaseId }), location.origin).href
+                    url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: track.releaseId }), location.origin).href
                 }}
             >
                 {#snippet child({ onclick })}
@@ -128,7 +128,7 @@
                         {#if editable}
                             <DropdownMenuItem>
                                 {#snippet child({ props })}
-                                    <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
+                                    <a {...props} href={resolve('/(app)/release/[releaseId]/edit/track/[trackId]', { releaseId: track.releaseId, trackId: track.id })}>
                                         <PencilIcon/>
                                         Edit
                                     </a>
@@ -136,7 +136,7 @@
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 {#snippet child({ props })}
-                                    <a {...props} href={resolve('/(app)/release/[id]/edit/track/[trackId]', { id: track.releaseId, trackId: track.id })}>
+                                    <a {...props} href={resolve('/(app)/release/[releaseId]/edit/track/[trackId]', { releaseId: track.releaseId, trackId: track.id })}>
                                         <TextAlignStartIcon/>
                                         Edit Lyrics
                                     </a>
@@ -163,15 +163,26 @@
                                 Delete
                             </DropdownMenuItem>
                         {:else}
-                            <DropdownMenuItem>
-                                {#snippet child({ props })}
-                                    <!-- TODO: Implement view artist functionality -->
-                                    <a {...props}>
-                                        <Disc3Icon/>
-                                        View Artist
-                                    </a>
-                                {/snippet}
-                            </DropdownMenuItem>
+                            {#if artistInfo.current}
+                                <DropdownMenuItem>
+                                    {#snippet child({ props })}
+                                        <a
+                                            {...props}
+                                            href={resolve(
+                                                '/(app)/artist/[userResolvable]',
+                                                {
+                                                    userResolvable: artistInfo.current?.username
+                                                        ? `@${artistInfo.current.username}`
+                                                        : artistInfo.current!.id
+                                                }
+                                            )}
+                                        >
+                                            <Disc3Icon/>
+                                            View Artist
+                                        </a>
+                                    {/snippet}
+                                </DropdownMenuItem>
+                            {/if}
                             <DropdownMenuItem>
                                 {#snippet child({ props })}
                                     <!-- TODO: Implement view credits functionality -->

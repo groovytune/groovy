@@ -66,7 +66,7 @@
 
 <form
     class="hidden"
-    action={resolve('/(app)/release/[id]/edit', { id: releaseId }) + '?/delete'}
+    action={resolve('/(app)/release/[releaseId]/edit', { releaseId }) + '?/delete'}
     method="POST"
     use:enhance
 ></form>
