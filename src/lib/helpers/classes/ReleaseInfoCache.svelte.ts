@@ -8,6 +8,8 @@ export class ReleaseInfoCache {
     public releases: SvelteMap<string, Release> = new SvelteMap();
     public artists: SvelteMap<string, PartialUser> = new SvelteMap();
 
+    public pending: (ReleaseInfoCache.PendingRelease|ReleaseInfoCache.PendingArtist)[] = $state([]);
+
     public async fetchReleaseInfo(options: ReleaseInfoCache.FetchOptions): Promise<Release|null> {
         if (this.releases.has(options.releaseId) && !options.force) {
             const cached = this.releases.get(options.releaseId);
@@ -17,9 +19,15 @@ export class ReleaseInfoCache {
             }
         }
 
+        const pending = this.pending.find(p => p.id === options.releaseId && p.type === 'release');
+
+        if (pending?.type === 'release') {
+            return pending.promise;
+        }
+
         const req = options.fetch || fetch;
 
-        const release: Release = await req(resolve(
+        const release: Promise<Release> = req(resolve(
             '/(app)/api/release/[id]',
             { id: options?.releaseId }
         )).then(res => {
@@ -28,9 +36,13 @@ export class ReleaseInfoCache {
             }
 
             return res.json();
+        }).finally(() => {
+            this.pending = this.pending.filter(p => !(p.id === options.releaseId && p.type === 'release'));
         });
 
-        this.releases.set(options.releaseId, release);
+        this.pending.push({ id: options.releaseId, type: 'release', promise: release });
+        this.releases.set(options.releaseId, await release);
+
         return release;
     }
 
@@ -43,7 +55,13 @@ export class ReleaseInfoCache {
             }
         }
 
-        const artist: PartialUser = await (options.fetch || fetch)(resolve(
+        const pending = this.pending.find(p => p.id === options.releaseId && p.type === 'artist');
+
+        if (pending?.type === 'artist') {
+            return pending.promise;
+        }
+
+        const artist: Promise<PartialUser> = (options.fetch || fetch)(resolve(
             '/(app)/api/release/[id]/artist',
             { id: options.releaseId }
         )).then(res => {
@@ -52,9 +70,13 @@ export class ReleaseInfoCache {
             }
 
             return res.json();
+        }).finally(() => {
+            this.pending = this.pending.filter(p => !(p.id === options.releaseId && p.type === 'artist'));
         });
 
-        this.artists.set(options.releaseId, artist);
+        this.pending.push({ id: options.releaseId, type: 'artist', promise: artist });
+        this.artists.set(options.releaseId, await artist);
+
         return artist;
     }
 
@@ -66,6 +88,9 @@ export class ReleaseInfoCache {
 
 export namespace ReleaseInfoCache {
     export const context = new Context<ReleaseInfoCache>('release-info-cache');
+
+    export interface PendingRelease { id: string; type: 'release'; promise: Promise<Release|null> }
+    export interface PendingArtist { id: string; type: 'artist'; promise: Promise<PartialUser|null> }
 
     export interface FetchOptions {
         releaseId: string;
