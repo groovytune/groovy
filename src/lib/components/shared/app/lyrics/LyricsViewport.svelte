@@ -13,6 +13,7 @@
         viewportRef = $bindable(null),
         class: className,
         viewportClass,
+        containerClass,
         hidePassedLines = true,
         scrollBlock = 'center',
         scrollBehavior = 'smooth'
@@ -24,6 +25,7 @@
         viewportRef?: HTMLElement|null;
         class?: ClassValue;
         viewportClass?: ClassValue;
+        containerClass?: ClassValue;
         hidePassedLines?: boolean;
         scrollBlock?: 'start'|'center'|'end'|'nearest';
         scrollBehavior?: ScrollBehavior;
@@ -56,8 +58,6 @@
         console.log('scrolling');
         revertUserScrolling();
     });
-
-    $inspect(lyrics);
 </script>
 
 <ScrollArea
@@ -66,7 +66,7 @@
     class={cn("size-full leading-relaxed", className)}
     viewportClasses={cn("scroll-pt-20", viewportClass)}
 >
-    <div class="h-fit w-full flex flex-col gap-4 pt-20 pb-[100svh] px-5">
+    <div class={cn("h-fit w-full flex flex-col gap-4 pt-20 pb-[100svh] px-5", containerClass)}>
         {#if typeof lyrics === 'string'}
             {#each lyrics.split('\n') as line, index (index)}
                 <p class="block">
@@ -97,7 +97,7 @@
                         {@const isWordActive = currentTime >= wordStartTime && currentTime <= wordEndTime}
                         <span
                             class={cn(
-                                "inline-block opacity-50 transition-all duration-300 ease-in-out",
+                                "inline-block whitespace-pre-wrap opacity-50 transition-all duration-300 ease-in-out",
                                 isLineActive && currentTime >= wordEndTime && "opacity-100",
                                 isWordActive && "opacity-100"
                             )}
