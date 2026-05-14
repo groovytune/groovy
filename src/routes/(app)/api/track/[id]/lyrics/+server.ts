@@ -2,10 +2,10 @@ import { prisma } from '$lib/server/prisma';
 import { error, json } from '@sveltejs/kit';
 
 export async function GET({ params, locals }) {
-    const lyrics = await prisma.lyrics.findFirst({
+    const lyrics = await prisma.lyrics.findUnique({
         where: {
+            trackId: params.id,
             track: {
-                id: params.id,
                 release: {
                     AND: locals.user?.id
                         ? {
