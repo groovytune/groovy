@@ -9,5 +9,8 @@ export default defineConfig({
     ],
     ssr: {
         external: ['sharp']
+    },
+    optimizeDeps: {
+        exclude: ['sharp']
     }
 });
