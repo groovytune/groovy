@@ -7,6 +7,9 @@ export default defineConfig({
         tailwindcss(),
         sveltekit()
     ],
+    ssr: {
+        external: ['sharp']
+    },
     build: {
         rolldownOptions: {
             external: ['sharp']
