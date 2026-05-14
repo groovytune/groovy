@@ -69,10 +69,16 @@
 
         loaded = false;
 
-        renderer.
-            setAlbum(image)
-            .then(() => loaded = true)
+        renderer
+            .setAlbum(image)
+            .then(() => loaded = hasCover())
     });
+
+    function hasCover() {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mesh = (renderer as any)?.renderer as { isNoCover?: boolean; };
+        return mesh && 'isNoCover' in mesh && !mesh.isNoCover;
+    }
 </script>
 
 <div class={cn("size-full", className)} bind:this={container}></div>
