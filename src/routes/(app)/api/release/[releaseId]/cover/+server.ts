@@ -31,7 +31,7 @@ export async function GET({ params, locals, url, fetch }) {
             height: size ? parseInt(size) : undefined,
             gravity: ImageGravity.Center,
             output: ImageFormat.Webp
-        })
+        }).catch(() => Appwrite.storage.getFileView({ bucketId: 'image', fileId: release.cover! }))
         : await fetch(coverPlaceholder).then(res => res.arrayBuffer());
 
     return new Response(cover, {
