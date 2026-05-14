@@ -42,9 +42,9 @@
     });
 </script>
 <main class="flex size-full justify-center relative gap-2 text-white! dark select-none">
-    <div class="h-full w-full max-w-xl flex flex-col p-6 relative">
+    <div class="h-full w-full max-w-xl flex flex-col py-6 relative">
         <PlayerTitleItem
-            class="p-0 shrink-0"
+            class="px-6 py-0 shrink-0"
             titleClassName="text-sm! mt-2"
             artistClassName="text-xs! font-medium"
             cover={true}
@@ -59,7 +59,7 @@
             scrollBlock="start"
             class={cn(
                 "transition-[mask] duration-500 ease-in-out",
-                "h-[calc(100%-2.6rem)] text-4xl font-bold leading-snug mask-t-from-90% mask-t-to-100% mask-b-from-80% mask-b-to-100%",
+                "h-[calc(100%-2.6rem)] text-3xl font-bold leading-snug mask-t-from-90% mask-t-to-100% mask-b-from-80% mask-b-to-100%",
                 (scrolling || audioPlayer.paused) && "mask-b-from-60% mask-b-to-80%"
             )}
         />

@@ -1,8 +1,8 @@
 <script lang="ts">
     import type { LyricLine } from '@applemusic-like-lyrics/core';
-    import { ScrollArea } from '../../../ui/scroll-area';
+    import { ScrollArea } from '$lib/components/ui/scroll-area';
     import type { ClassValue } from 'clsx';
-    import { cn } from '../../../../helpers/utils';
+    import { cn } from '$lib/helpers/utils';
     import { useDebounce, useEventListener } from 'runed';
 
     let {
@@ -74,19 +74,30 @@
                 </p>
             {/each}
         {:else}
-            {#each lyrics as line, index (index + '-' + line.startTime + '-' + line.endTime)}
+            {#each lyrics as line, lineIndex (lineIndex + '-' + line.startTime + '-' + line.endTime)}
                 {@const lineStartTime = line.startTime / 1000}
                 {@const lineEndTime = line.endTime / 1000}
                 {@const isLineActive = currentTime >= lineStartTime && currentTime <= lineEndTime}
                 {@const isLinePassed = currentTime > lineEndTime}
                 {@const isLineFuture = currentTime < lineStartTime}
+                {@const distanceFromCurrent = Math.round(Math.min(Math.abs(currentTime - lineStartTime), Math.abs(currentTime - lineEndTime)))}
                 <a
                     href="#/"
                     onclick={() => setCurrentTime?.(lineStartTime)}
+                    style="content-visibility: auto;"
+                    data-distance-from-current={distanceFromCurrent}
                     class={cn(
-                        "block transition-all duration-500 ease-in-out text-balance",
-                        isLineActive && "active-lrc scale-[1.01]",
-                        (isLinePassed || isLineFuture) && !isUserScrolling && "blur-[2px]",
+                        "block scale-[0.98] transition-all duration-1000 ease-in-out text-balance",
+                        isLineActive && "active-lrc scale-100",
+                        (isLinePassed || isLineFuture) && (
+                            distanceFromCurrent <= 10
+                                ? "opacity-50 blur-[1px]"
+                                : distanceFromCurrent < 20
+                                    ? "opacity-40 blur-[2px]"
+                                    : distanceFromCurrent < 30
+                                        ? "opacity-30 blur-[3px]"
+                                        : "opacity-25 blur-xs"
+                        ),
                         hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none",
                         line.isDuet && "text-end"
                     )}
@@ -97,7 +108,7 @@
                         {@const isWordActive = currentTime >= wordStartTime && currentTime <= wordEndTime}
                         <span
                             class={cn(
-                                "inline-block whitespace-pre-wrap opacity-50 transition-all duration-300 ease-in-out",
+                                "inline-block whitespace-pre-wrap opacity-50 transition-all duration-500 ease-in-out",
                                 isLineActive && currentTime >= wordEndTime && "opacity-100",
                                 isWordActive && "opacity-100"
                             )}
