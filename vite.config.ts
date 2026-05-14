@@ -10,6 +10,9 @@ export default defineConfig({
     build: {
         rolldownOptions: {
             external: ['sharp']
+        },
+        rollupOptions: {
+            external: ['sharp']
         }
     }
 });
