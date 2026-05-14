@@ -6,5 +6,10 @@ export default defineConfig({
     plugins: [
         tailwindcss(),
         sveltekit()
-    ]
+    ],
+    build: {
+        rolldownOptions: {
+            external: ['sharp']
+        }
+    }
 });
