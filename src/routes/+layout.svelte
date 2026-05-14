@@ -67,8 +67,8 @@
         view-transition-name: none;
     }
 
-    html,
-    body {
+    :global(html),
+    :global(body) {
         overscroll-behavior: none;
     }
 </style>
