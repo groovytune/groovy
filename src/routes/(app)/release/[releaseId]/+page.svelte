@@ -14,7 +14,7 @@
     import TrackItem from '$lib/components/shared/app/release/track/TrackItem.svelte';
     import { auth } from '$lib/client/auth.js';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
-    import ShareButton from '../../../../lib/components/shared/app/release/ShareButton.svelte';
+    import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
 
     let { data } = $props();
 

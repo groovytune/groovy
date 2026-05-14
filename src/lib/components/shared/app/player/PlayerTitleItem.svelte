@@ -41,16 +41,47 @@
         <ItemTitle class={cn("now-title text-lg sm:text-xl leading-tight font-semibold line-clamp-3", titleClassName)}>
             <!-- svelte-ignore a11y_distracting_elements -->
             <marquee behavior="alternate" direction="vertical" scrollamount="1">
-                {audioPlayer.currentTrack?.name || 'Unknown Track'}
-                {#if audioPlayer.currentTrack?.explicit}
-                    <ExplicitIcon class="size-5"/>
-                {/if}
+                <a
+                    data-sveltekit-preload-code="eager"
+                    href={
+                        audioPlayer.currentTrack
+                            ? resolve(
+                                '/(app)/release/[releaseId]/track/[trackId]',
+                                {
+                                    releaseId: audioPlayer.currentTrack.releaseId,
+                                    trackId: audioPlayer.currentTrack.id
+                                }
+                            )
+                            : '#/'
+                    }
+                >
+                    {audioPlayer.currentTrack?.name || 'Unknown Track'}
+                    {#if audioPlayer.currentTrack?.explicit}
+                        <ExplicitIcon class="size-5"/>
+                    {/if}
+                </a>
             </marquee>
         </ItemTitle>
         <ItemDescription class={cn("now-artist text-sm font-medium leading-tight text-foreground/80", artistClassName)}>
             <!-- svelte-ignore a11y_distracting_elements -->
             <marquee behavior="alternate" direction="vertical" scrollamount="1" class="w-fit">
-                {audioPlayer.artistInfo.current?.name || 'Unknown Artist'}{addReleaseName && audioPlayer.releaseInfo.current ? ` • ${audioPlayer.releaseInfo.current.name}` : ''}
+                <a
+                    data-sveltekit-preload-code="eager"
+                    href={
+                        audioPlayer.artistInfo.current
+                            ? resolve(
+                                '/(app)/artist/[userResolvable]',
+                                {
+                                    userResolvable: audioPlayer.artistInfo.current.username
+                                        ? `@${audioPlayer.artistInfo.current.username}`
+                                        : audioPlayer.artistInfo.current.id
+                                }
+                            )
+                            : '#/'
+                    }
+                >
+                    {audioPlayer.artistInfo.current?.name || 'Unknown Artist'}{addReleaseName && audioPlayer.releaseInfo.current ? ` • ${audioPlayer.releaseInfo.current.name}` : ''}
+                </a>
             </marquee>
         </ItemDescription>
     </ItemContent>
