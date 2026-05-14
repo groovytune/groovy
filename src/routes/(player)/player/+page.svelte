@@ -6,18 +6,27 @@
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { MediaQuery } from 'svelte/reactivity';
-    import { ScrollArea } from '$lib/components/ui/scroll-area';
-    import { PressedKeys } from 'runed';
+    import { PressedKeys, resource } from 'runed';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import PlayerTitleItem from '$lib/components/shared/app/player/PlayerTitleItem.svelte';
     import { PlayerLastNavigate } from '$lib/contexts/player';
     import PlayerProgressBar from '$lib/components/shared/app/player/PlayerProgressBar.svelte';
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
+    import LyricsViewport from '$lib/components/shared/app/lyrics/LyricsViewport.svelte';
+    import { parseLrc } from '@applemusic-like-lyrics/lyric';
 
     const audioPlayer = AudioPlayer.context.get();
     const playerLastNavigate = PlayerLastNavigate.get();
     const isLargeWindow = new MediaQuery('(width >= 900px)');
     const keysPressed = new PressedKeys();
+
+    const lyrics = resource(
+        () => audioPlayer.currentTrack?.id,
+        async () => {
+            const lyrics = await fetch('/lyrics/all-too-well-taylors-version.lrc').then(res => res.text());
+            return parseLrc(lyrics);
+        }
+    );
 
     let isLyricsEnabled = $state(false);
     let isFullscreen = $state(false);
@@ -163,14 +172,13 @@
     </div>
     {#if isLyricsEnabled}
         <div class="max-w-3xl size-full hidden min-[900px]:flex justify-center items-center-safe p-6">
-            <!-- TODO: Implement lyrics display -->
-            <ScrollArea class="size-full text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%">
-                <div class="h-[40svh]"></div>
-                <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
-                {#each { length: 50 } as _, i (i)}
-                    <p>Lorem ipsum dolor sit amet.</p>
-                {/each}
-            </ScrollArea>
+            <LyricsViewport
+                currentTime={audioPlayer.currentTime}
+                isPlaying={!audioPlayer.paused}
+                lyrics={lyrics.current ?? []}
+                setCurrentTime={(time) => audioPlayer.seek(time)}
+                class="text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%"
+            />
         </div>
     {/if}
 </main>

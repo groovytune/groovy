@@ -2,18 +2,27 @@
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import PlayerTitleItem from '$lib/components/shared/app/player/PlayerTitleItem.svelte';
-    import { ScrollArea } from '$lib/components/ui/scroll-area';
     import PlayerProgressBar from '$lib/components/shared/app/player/PlayerProgressBar.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import { cn, formatDuration } from '$lib/helpers/utils';
     import { fade } from 'svelte/transition';
-    import { useDebounce, useEventListener } from 'runed';
+    import { resource, useDebounce, useEventListener } from 'runed';
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
+    import LyricsViewport from '$lib/components/shared/app/lyrics/LyricsViewport.svelte';
+    import { parseLrc } from '@applemusic-like-lyrics/lyric';
 
     const audioPlayer = AudioPlayer.context.get();
 
     let scrolling = $state(false);
-    let scrollContainer: HTMLDivElement|null = $state(null);
+    let scrollContainer: HTMLElement|null = $state(null);
+
+    const lyrics = resource(
+        () => audioPlayer.currentTrack?.id,
+        async () => {
+            const lyrics = await fetch('/lyrics/all-too-well-taylors-version.lrc').then(res => res.text());
+            return parseLrc(lyrics);
+        }
+    );
 
     const setNotScrolling = useDebounce(() => {
         scrolling = false;
@@ -42,20 +51,18 @@
             addReleaseName={true}
             oncoverclick={() => goto(resolve('/(player)/player'))}
         />
-        <ScrollArea
+        <LyricsViewport
             bind:ref={scrollContainer}
-            type="hover"
+            currentTime={audioPlayer.currentTime}
+            isPlaying={!audioPlayer.paused}
+            lyrics={lyrics.current ?? []}
+            setCurrentTime={(time) => audioPlayer.seek(time)}
             class={cn(
                 "transition-[mask] duration-500 ease-in-out",
                 "h-[calc(100%-2.6rem)] text-4xl font-bold leading-snug mask-t-from-90% mask-t-to-100% mask-b-from-80% mask-b-to-100%",
                 (scrolling || audioPlayer.paused) && "mask-b-from-60% mask-b-to-80%"
             )}
-        >
-            <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
-            {#each { length: 50 } as _, i (i)}
-                <p>Lorem ipsum dolor sit amet.</p>
-            {/each}
-        </ScrollArea>
+        />
         {#if scrolling || audioPlayer.paused}
             <section transition:fade={{ duration: 500 }} class="absolute bottom-5 left-0 w-full p-6">
                 <div class="grid w-full gap-2 text-xs text-muted-foreground">
