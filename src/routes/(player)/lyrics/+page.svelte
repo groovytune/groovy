@@ -9,7 +9,7 @@
     import { resource, useDebounce, useEventListener } from 'runed';
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
     import LyricsViewport from '$lib/components/shared/app/lyrics/LyricsViewport.svelte';
-    import { parseLrc } from '@applemusic-like-lyrics/lyric';
+    import { parseTTML } from '@applemusic-like-lyrics/lyric';
 
     const audioPlayer = AudioPlayer.context.get();
 
@@ -19,8 +19,8 @@
     const lyrics = resource(
         () => audioPlayer.currentTrack?.id,
         async () => {
-            const lyrics = await fetch('/lyrics/all-too-well-taylors-version.lrc').then(res => res.text());
-            return parseLrc(lyrics);
+            const lyrics = await fetch('https://raw.githubusercontent.com/amll-dev/amll-ttml-db/0c650121601977080dd41976970030070f160511/qq-lyrics/331220367.ttml').then(res => res.text());
+            return parseTTML(lyrics).lines;
         }
     );
 
@@ -32,7 +32,7 @@
         scrolling = true;
     });
 
-    useEventListener(() => scrollContainer, 'touchmove', () => {
+    useEventListener(() => scrollContainer, ['touchmove', 'wheel'], () => {
         scrolling = true;
         setNotScrolling();
     });

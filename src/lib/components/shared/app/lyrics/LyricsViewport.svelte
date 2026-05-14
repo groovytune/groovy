@@ -10,22 +10,25 @@
         lyrics,
         setCurrentTime,
         ref = $bindable(null),
+        viewportRef = $bindable(null),
         class: className,
+        viewportClass,
         hidePassedLines = true,
-        scrollBlock: scrollAlign = 'center',
+        scrollBlock = 'center',
         scrollBehavior = 'smooth'
     }: {
         currentTime: number;
         lyrics: LyricLine[]|string;
         setCurrentTime?: (time: number) => void;
         ref?: HTMLElement|null;
+        viewportRef?: HTMLElement|null;
         class?: ClassValue;
+        viewportClass?: ClassValue;
         hidePassedLines?: boolean;
         scrollBlock?: 'start'|'center'|'end'|'nearest';
         scrollBehavior?: ScrollBehavior;
     } = $props();
 
-    let container: HTMLElement|null = $state(null);
     let isUserScrolling = $state(false);
 
     const revertUserScrolling = useDebounce(() => {
@@ -44,19 +47,26 @@
 
         activeLine.scrollIntoView({
             behavior: scrollBehavior,
-            block: scrollAlign
+            block: scrollBlock,
         });
     });
 
-    useEventListener(() => container, 'wheel', () => {
+    useEventListener(() => viewportRef, ['wheel', 'touchmove'], () => {
         isUserScrolling = true;
         console.log('scrolling');
         revertUserScrolling();
     });
+
+    $inspect(lyrics);
 </script>
 
-<ScrollArea bind:ref class={cn("size-full leading-relaxed", className)}>
-    <div bind:this={container} class="h-fit w-full flex flex-col gap-4 pt-20 pb-[100%] px-5">
+<ScrollArea
+    bind:viewportRef
+    bind:ref
+    class={cn("size-full leading-relaxed", className)}
+    viewportClasses={cn("scroll-pt-20", viewportClass)}
+>
+    <div class="h-fit w-full flex flex-col gap-4 pt-20 pb-[100svh] px-5">
         {#if typeof lyrics === 'string'}
             {#each lyrics.split('\n') as line, index (index)}
                 <p class="block">
@@ -65,24 +75,33 @@
             {/each}
         {:else}
             {#each lyrics as line, index (index + '-' + line.startTime + '-' + line.endTime)}
-                {@const startTime = line.startTime / 1000}
-                {@const endTime = line.endTime / 1000}
-                {@const isActive = currentTime >= startTime && currentTime <= endTime}
-                {@const hasPassed = currentTime > endTime}
-                {@const isFuture = currentTime < startTime}
+                {@const lineStartTime = line.startTime / 1000}
+                {@const lineEndTime = line.endTime / 1000}
+                {@const isLineActive = currentTime >= lineStartTime && currentTime <= lineEndTime}
+                {@const isLinePassed = currentTime > lineEndTime}
+                {@const isLineFuture = currentTime < lineStartTime}
                 <a
                     href="#/"
-                    onclick={() => setCurrentTime?.(startTime)}
+                    onclick={() => setCurrentTime?.(lineStartTime)}
                     class={cn(
-                        "block opacity-50 transition-all duration-500 ease-in-out text-balance",
-                        isActive && "active-lrc opacity-100 scale-[1.02]",
-                        (hasPassed || isFuture) && !isUserScrolling && "blur-[2px]",
-                        hidePassedLines && hasPassed && !isUserScrolling && "opacity-0 pointer-events-none",
+                        "block transition-all duration-500 ease-in-out text-balance",
+                        isLineActive && "active-lrc scale-[1.01]",
+                        (isLinePassed || isLineFuture) && !isUserScrolling && "blur-[2px]",
+                        hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none",
                         line.isDuet && "text-end"
                     )}
                 >
                     {#each line.words as word, wordIndex (wordIndex + '-' + word.startTime + '-' + word.endTime)}
-                        <span class="inline-block">
+                        {@const wordStartTime = word.startTime / 1000}
+                        {@const wordEndTime = word.endTime / 1000}
+                        {@const isWordActive = currentTime >= wordStartTime && currentTime <= wordEndTime}
+                        <span
+                            class={cn(
+                                "inline-block opacity-50 transition-all duration-300 ease-in-out",
+                                isLineActive && currentTime >= wordEndTime && "opacity-100",
+                                isWordActive && "opacity-100"
+                            )}
+                        >
                             {word.word}
                         </span>
                     {/each}
