@@ -56,7 +56,7 @@
         }
     });
 
-    const { form: formData, enhance, submitting, allErrors } = form;
+    const { form: formData, enhance, submitting, allErrors, capture, restore } = form;
 
     const session = auth.useSession();
     const audioPlayer = AudioPlayer.context.get();
@@ -81,6 +81,8 @@
                 })
                 : placeholderCover
     );
+
+    export const snapshot = { capture, restore };
 </script>
 
 <div class="flex flex-col md:flex-row">

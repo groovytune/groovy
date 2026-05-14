@@ -47,13 +47,15 @@
         }
     });
 
-    const { form: formData, enhance, submitting, allErrors } = form;
+    const { form: formData, enhance, submitting, allErrors, capture, restore } = form;
 
     const session = auth.useSession();
 
     let coverInput: HTMLInputElement|null = $state(null);
     let nameInput: HTMLInputElement|null = $state(null);
     let coverURL = $derived($formData.cover ? URL.createObjectURL($formData.cover) : placeholderCover);
+
+    export const snapshot = { capture, restore };
 </script>
 
 <div class="flex flex-col md:flex-row">
