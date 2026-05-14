@@ -66,6 +66,11 @@
     :root {
         view-transition-name: none;
     }
+
+    html,
+    body {
+        overscroll-behavior: none;
+    }
 </style>
 
 <Toaster/>

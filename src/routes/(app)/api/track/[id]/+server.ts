@@ -41,7 +41,7 @@ export async function GET({ params, locals }) {
     });
 
     if (!track) {
-        throw error(404, 'Release not found');
+        throw error(404, 'Track not found');
     }
 
     return json(track);

@@ -1,10 +1,11 @@
-import type { Track } from '$lib/server/prisma/browser';
+import type { Lyrics, Track } from '$lib/server/prisma/browser';
 import { Context, resource, useEventListener } from 'runed';
 import { Appwrite } from '$lib/client/appwrite';
 import { ImageFormat, ImageGravity } from 'appwrite';
 import coverPlaceholder from '$lib/assets/cover.webp';
 import { ReleaseInfoCache } from './ReleaseInfoCache.svelte';
 import { Image } from '$lib/client/image';
+import { resolve } from '$app/paths';
 
 export class AudioPlayer {
     public audio: HTMLAudioElement|null = $state(null);
@@ -47,6 +48,23 @@ export class AudioPlayer {
             if (!releaseId) return null;
 
             return this.releaseCache.fetchReleaseArtistInfo({ releaseId });
+        },
+        { debounce: 200 }
+    );
+
+    public lyrics = resource(
+        () => this.currentTrack?.id,
+        async trackId => {
+            if (!trackId) return null;
+
+            const lyrics = await fetch(resolve('/(app)/api/track/[id]/lyrics', { id: trackId }))
+                .then(res => {
+                    if (!res.ok) throw new Error('Failed to fetch lyrics');
+                    return res.json() as Promise<Lyrics>;
+                })
+                .catch(() => null);
+
+            return lyrics;
         },
         { debounce: 200 }
     );
