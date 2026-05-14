@@ -99,16 +99,16 @@ export class AudioPlayer {
         this.audio.preload = 'metadata';
         this.audio.crossOrigin = 'anonymous';
 
-        useEventListener(() => this.audio, 'timeupdate', () => this.currentTime = this.audio!.currentTime);
-        useEventListener(() => this.audio, ['pause', 'play'], () => this.paused = this.audio!.paused);
-        useEventListener(() => this.audio, 'volumechange', () => this.volume = this.audio!.volume);
+        useEventListener(() => this.audio, ['timeupdate', 'seeked', 'seeking'], event => this.currentTime = event.currentTarget.currentTime);
+        useEventListener(() => this.audio, ['pause', 'play'], event => this.paused = event.currentTarget.paused);
+        useEventListener(() => this.audio, 'volumechange', event => this.volume = event.currentTarget.volume);
         useEventListener(() => this.audio, ['play', 'playing'], () => this.status = 'playing');
         useEventListener(() => this.audio, ['waiting', 'loadstart'], () => this.status = 'buffering');
 
         useEventListener(
             () => this.audio,
             'durationchange',
-            () => this.duration = AudioPlayer.getRealDuration(this.audio!, this.currentTrack)
+            event => this.duration = AudioPlayer.getRealDuration(event.currentTarget, this.currentTrack)
         );
 
         useEventListener(
