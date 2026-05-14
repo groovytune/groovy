@@ -31,9 +31,9 @@
     let renderer: BackgroundRender<MeshGradientRenderer>|null = $state(null);
 
     onMount(async () => {
-        const { BackgroundRender, PixiRenderer } = await import('@applemusic-like-lyrics/core');
+        const { BackgroundRender, MeshGradientRenderer } = await import('@applemusic-like-lyrics/core');
 
-        renderer = BackgroundRender.new(PixiRenderer);
+        renderer = BackgroundRender.new(MeshGradientRenderer);
 
         const element = renderer.getElement();
         element.style.width = '100%';

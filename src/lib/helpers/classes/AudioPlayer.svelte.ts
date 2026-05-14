@@ -279,7 +279,7 @@ export class AudioPlayer {
     public async seek(time: number): Promise<void> {
         if (!this.audio || !this.currentTrack) return;
 
-        this.audio.currentTime = time;
+        this.audio.fastSeek(time);
     }
 
     public async setVolume(volume: number): Promise<void> {

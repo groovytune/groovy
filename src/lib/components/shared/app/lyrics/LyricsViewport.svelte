@@ -15,6 +15,7 @@
         viewportClass,
         containerClass,
         hidePassedLines = true,
+        enableBlur = true,
         scrollBlock = 'center',
         scrollBehavior = 'smooth'
     }: {
@@ -27,6 +28,7 @@
         viewportClass?: ClassValue;
         containerClass?: ClassValue;
         hidePassedLines?: boolean;
+        enableBlur?: boolean;
         scrollBlock?: 'start'|'center'|'end'|'nearest';
         scrollBehavior?: ScrollBehavior;
     } = $props();
@@ -38,26 +40,74 @@
     }, 1000);
 
     $effect(() => {
-        if (!ref) return;
+        if (!viewportRef) return;
 
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         currentTime;
-
-        const activeLines = document.getElementsByClassName('active-lrc');
-        const activeLine = activeLines.item(0) as HTMLAnchorElement|null;
-        if (!activeLine) return;
-
-        activeLine.scrollIntoView({
-            behavior: scrollBehavior,
-            block: scrollBlock,
-        });
+        scrollToCurrentLine();
     });
 
     useEventListener(() => viewportRef, ['wheel', 'touchmove'], () => {
         isUserScrolling = true;
-        console.log('scrolling');
         revertUserScrolling();
     });
+
+    function scrollToCurrentLine() {
+        const activeLines = document.getElementsByClassName('active-lrc');
+        const activeLine = activeLines.item(0) as HTMLAnchorElement|null;
+        if (!activeLine) return;
+
+        let top: number = 0;
+
+        switch (scrollBlock) {
+            case 'start':
+                top = activeLine.offsetTop - 50;
+                break;
+            case 'center':
+                top = activeLine.offsetTop - (viewportRef!.clientHeight / 2) + (activeLine.clientHeight / 2);
+                break;
+            case 'end':
+                top = activeLine.offsetTop + activeLine.clientHeight - viewportRef!.clientHeight;
+                break;
+            case 'nearest': {
+                const lineTop = activeLine.offsetTop;
+                const lineBottom = lineTop + activeLine.clientHeight;
+                const viewTop = viewportRef!.scrollTop;
+                const viewBottom = viewTop + viewportRef!.clientHeight;
+
+                if (lineTop < viewTop) {
+                    top = lineTop;
+                } else if (lineBottom > viewBottom) {
+                    top = lineBottom - viewportRef!.clientHeight;
+                } else {
+                    top = viewportRef!.scrollTop;
+                }
+            }
+        }
+
+        viewportRef?.scrollTo({
+            top,
+            behavior: scrollBehavior,
+        });
+    }
+
+    function getOpacityBlur(distanceFromCurrent: number): string {
+        if (!enableBlur) return "opacity-50";
+
+        return distanceFromCurrent <= 10
+            ? "opacity-50 blur-[2px]"
+            : distanceFromCurrent < 20
+                ? "opacity-40 blur-[3px]"
+                : distanceFromCurrent < 30
+                    ? "opacity-30 blur-xs"
+                    : "opacity-25 blur-[5px]"
+    }
+
+    function calculateLineTimeDistance(line: LyricLine): number {
+        const lineStartTime = line.startTime / 1000;
+        const lineEndTime = line.endTime / 1000;
+        return Math.round(Math.min(Math.abs(currentTime - lineStartTime), Math.abs(currentTime - lineEndTime)));
+    }
 </script>
 
 <ScrollArea
@@ -66,7 +116,7 @@
     class={cn("size-full leading-relaxed", className)}
     viewportClasses={cn("scroll-pt-20", viewportClass)}
 >
-    <div class={cn("h-fit w-full flex flex-col gap-4 pt-20 pb-[100svh] px-5", containerClass)}>
+    <div class={cn("h-fit w-full flex flex-col gap-8 pt-20 pb-[100svh] px-5", containerClass)}>
         {#if typeof lyrics === 'string'}
             {#each lyrics.split('\n') as line, index (index)}
                 <p class="block">
@@ -80,35 +130,32 @@
                 {@const isLineActive = currentTime >= lineStartTime && currentTime <= lineEndTime}
                 {@const isLinePassed = currentTime > lineEndTime}
                 {@const isLineFuture = currentTime < lineStartTime}
-                {@const distanceFromCurrent = Math.round(Math.min(Math.abs(currentTime - lineStartTime), Math.abs(currentTime - lineEndTime)))}
+                {@const distanceFromCurrent = calculateLineTimeDistance(line)}
                 <a
                     href="#/"
-                    onclick={() => setCurrentTime?.(lineStartTime)}
-                    style="content-visibility: auto;"
+                    data-start-time={lineStartTime}
+                    data-end-time={lineEndTime}
+                    data-is-active={isLineActive}
                     data-distance-from-current={distanceFromCurrent}
+                    onclick={() => setCurrentTime?.(lineStartTime)}
+                    style="content-visibility: auto; will-change: transform;"
                     class={cn(
-                        "block scale-[0.98] transition-all duration-1000 ease-in-out text-balance",
-                        isLineActive && "active-lrc scale-100",
-                        (isLinePassed || isLineFuture) && (
-                            distanceFromCurrent <= 10
-                                ? "opacity-50 blur-[1px]"
-                                : distanceFromCurrent < 20
-                                    ? "opacity-40 blur-[2px]"
-                                    : distanceFromCurrent < 30
-                                        ? "opacity-30 blur-[3px]"
-                                        : "opacity-25 blur-xs"
-                        ),
+                        "block transition-all duration-500 ease-in-out text-balance",
+                        isLineActive && "active-lrc",
+                        (isLinePassed || isLineFuture) && getOpacityBlur(distanceFromCurrent),
                         hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none",
                         line.isDuet && "text-end"
                     )}
+                    class:text-sm={line.isBG}
                 >
                     {#each line.words as word, wordIndex (wordIndex + '-' + word.startTime + '-' + word.endTime)}
                         {@const wordStartTime = word.startTime / 1000}
                         {@const wordEndTime = word.endTime / 1000}
                         {@const isWordActive = currentTime >= wordStartTime && currentTime <= wordEndTime}
                         <span
+                            style="will-change: transform; white-space-collapse: preserve-spaces;"
                             class={cn(
-                                "inline-block whitespace-pre-wrap opacity-50 transition-all duration-500 ease-in-out",
+                                "inline-block opacity-50 transition-all duration-500 ease-in-out",
                                 isLineActive && currentTime >= wordEndTime && "opacity-100",
                                 isWordActive && "opacity-100"
                             )}

@@ -32,15 +32,16 @@
         scrolling = true;
     });
 
-    useEventListener(() => scrollContainer, ['touchmove', 'wheel'], () => {
+    useEventListener(() => scrollContainer, ['touchmove', 'wheel', 'mouseover'], () => {
         scrolling = true;
         setNotScrolling();
     });
 
-    useEventListener(() => scrollContainer, 'touchend', () => {
+    useEventListener(() => scrollContainer, ['touchend', 'mouseout'], () => {
         setNotScrolling();
     });
 </script>
+
 <main class="flex size-full justify-center relative gap-2 text-white! dark select-none">
     <div class="h-full w-full max-w-xl flex flex-col py-6 relative">
         <PlayerTitleItem
