@@ -1,20 +1,16 @@
-import sharp from 'sharp';
+import type sharp from 'sharp';
 import type z from 'zod';
 import type { imageTransformOptionsSchema } from '../../schema/image';
 
 export class ImageTransform {
-    public sharp: sharp.Sharp;
-
-    public constructor(public data: ArrayBuffer) {
-        this.sharp = sharp(data);
-    }
+    public constructor(public sharp: sharp.Sharp) {}
 
     public async resize(options: Partial<Record<'width'|'height', number> & { gravity?: ImageTransform.Gravity }>) {
         this.sharp.resize({
             height: options.height,
             width: options.width,
-            fit: options.gravity === 'center' ? sharp.fit.cover : sharp.fit.contain,
-            position: options.gravity === 'center' ? sharp.strategy.entropy : undefined
+            fit: options.gravity === 'center' ? "cover" : "contain",
+            position: options.gravity === 'center' ? "entropy" : undefined
         });
 
         return this;
@@ -45,11 +41,18 @@ export class ImageTransform {
 }
 
 export namespace ImageTransform {
+    export const sharp: { instance: typeof import('sharp')|null } = { instance: null };
+
     export type Gravity = 'center'|'top-left'|'top'|'top-right'|'left'|'right'|'bottom-left'|'bottom'|'bottom-right';
     export type OutputFormat = 'jpg'|'jpeg'|'png'|'webp'|'avif'|'gif';
 
+    export async function getSharp(): Promise<typeof import('sharp')> {
+        return sharp.instance ??= (await import('sharp')).default;
+    }
+
     export async function transform(data: ArrayBuffer, options?: z.infer<typeof imageTransformOptionsSchema>): Promise<ArrayBuffer> {
-        const transformer = new ImageTransform(data);
+        const sharpInstance = await getSharp();
+        const transformer = new ImageTransform(sharpInstance(data));
 
         if (options?.width || options?.height) {
             await transformer.resize({
