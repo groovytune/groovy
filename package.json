@@ -37,6 +37,7 @@
 		"mode-watcher": "^1.1.0",
 		"prisma": "^7.8.0",
 		"runed": "^0.37.1",
+		"sharp": "^0.34.5",
 		"svelte": "^5.55.5",
 		"svelte-check": "^4.4.7",
 		"svelte-dnd-action": "^0.9.69",

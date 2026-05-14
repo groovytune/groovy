@@ -28,7 +28,7 @@
         }
     );
 
-    let isLyricsEnabled = $state(false);
+    let isLyricsEnabled = $derived(!!lyrics.current?.length);
     let isFullscreen = $state(false);
 
     keysPressed.onKeys(['Escape'], async () => {

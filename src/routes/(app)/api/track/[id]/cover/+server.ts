@@ -1,8 +1,9 @@
 import { prisma } from '$lib/server/prisma';
 import coverPlaceholder from '$lib/assets/cover.webp';
-import { Appwrite } from '$lib/server/appwrite';
 import { ImageFormat, ImageGravity } from 'node-appwrite';
 import type { Track } from '$lib/server/prisma/client.js';
+import { Image } from '../../../../../../lib/client/image.js';
+import { redirect } from '@sveltejs/kit';
 
 export async function GET({ params, locals, url, fetch }) {
     const track = await prisma.track.findUnique({
@@ -33,18 +34,17 @@ export async function GET({ params, locals, url, fetch }) {
 
     const size = url.searchParams.get('size');
 
-    const cover = track?.cover ?? track?.release.cover
-        ? await Appwrite.storage.getFilePreview({
-            bucketId: 'image',
+    if (track.cover || track.release.cover) {
+        redirect(307, Image.getPreviewPath({
             fileId: (track.cover ?? track.release.cover)!,
             width: size ? parseInt(size) : undefined,
             height: size ? parseInt(size) : undefined,
             gravity: ImageGravity.Center,
             output: ImageFormat.Webp
-        }).catch(() => Appwrite.storage.getFileView({ bucketId: 'image', fileId: (track.cover ?? track.release.cover)! }))
-        : await fetch(coverPlaceholder).then(res => res.arrayBuffer());
+        }));
+    }
 
-    return new Response(cover, {
+    return new Response(await fetch(coverPlaceholder).then(res => res.arrayBuffer()), {
         headers: {
             'Content-Type': 'image/webp'
         }
