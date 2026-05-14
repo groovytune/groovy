@@ -174,9 +174,9 @@
         <div class="max-w-3xl size-full hidden min-[900px]:flex justify-center items-center-safe p-6">
             <LyricsViewport
                 currentTime={audioPlayer.currentTime}
-                isPlaying={!audioPlayer.paused}
                 lyrics={lyrics.current ?? []}
                 setCurrentTime={(time) => audioPlayer.seek(time)}
+                scrollBlock="center"
                 class="text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%"
             />
         </div>

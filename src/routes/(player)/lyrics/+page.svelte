@@ -54,9 +54,9 @@
         <LyricsViewport
             bind:ref={scrollContainer}
             currentTime={audioPlayer.currentTime}
-            isPlaying={!audioPlayer.paused}
             lyrics={lyrics.current ?? []}
             setCurrentTime={(time) => audioPlayer.seek(time)}
+            scrollBlock="start"
             class={cn(
                 "transition-[mask] duration-500 ease-in-out",
                 "h-[calc(100%-2.6rem)] text-4xl font-bold leading-snug mask-t-from-90% mask-t-to-100% mask-b-from-80% mask-b-to-100%",

@@ -3,10 +3,10 @@
     import { ScrollArea } from '../../../ui/scroll-area';
     import type { ClassValue } from 'clsx';
     import { cn } from '../../../../helpers/utils';
+    import { useDebounce, useEventListener } from 'runed';
 
     let {
         currentTime,
-        isPlaying,
         lyrics,
         setCurrentTime,
         ref = $bindable(null),
@@ -16,15 +16,21 @@
         scrollBehavior = 'smooth'
     }: {
         currentTime: number;
-        isPlaying: boolean;
         lyrics: LyricLine[]|string;
         setCurrentTime?: (time: number) => void;
         ref?: HTMLElement|null;
         class?: ClassValue;
         hidePassedLines?: boolean;
         scrollBlock?: 'start'|'center'|'end'|'nearest';
-        scrollBehavior?: 'auto'|'smooth';
+        scrollBehavior?: ScrollBehavior;
     } = $props();
+
+    let container: HTMLElement|null = $state(null);
+    let isUserScrolling = $state(false);
+
+    const revertUserScrolling = useDebounce(() => {
+        isUserScrolling = false;
+    }, 1000);
 
     $effect(() => {
         if (!ref) return;
@@ -38,14 +44,19 @@
 
         activeLine.scrollIntoView({
             behavior: scrollBehavior,
-            block: scrollAlign,
-            inline: 'nearest'
+            block: scrollAlign
         });
+    });
+
+    useEventListener(() => container, 'wheel', () => {
+        isUserScrolling = true;
+        console.log('scrolling');
+        revertUserScrolling();
     });
 </script>
 
 <ScrollArea bind:ref class={cn("size-full leading-relaxed", className)}>
-    <div class="h-fit w-full flex flex-col gap-4 py-20 px-5">
+    <div bind:this={container} class="h-fit w-full flex flex-col gap-4 pt-20 pb-[100%] px-5">
         {#if typeof lyrics === 'string'}
             {#each lyrics.split('\n') as line, index (index)}
                 <p class="block">
@@ -65,8 +76,8 @@
                     class={cn(
                         "block opacity-50 transition-all duration-500 ease-in-out text-balance",
                         isActive && "active-lrc opacity-100 scale-[1.02]",
-                        (hasPassed || isFuture) && "blur-[2px]",
-                        hidePassedLines && hasPassed && "opacity-0 pointer-events-none",
+                        (hasPassed || isFuture) && !isUserScrolling && "blur-[2px]",
+                        hidePassedLines && hasPassed && !isUserScrolling && "opacity-0 pointer-events-none",
                         line.isDuet && "text-end"
                     )}
                 >
