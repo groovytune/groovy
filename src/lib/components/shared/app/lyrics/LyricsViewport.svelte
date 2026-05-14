@@ -140,7 +140,7 @@
                     onclick={() => setCurrentTime?.(lineStartTime)}
                     style="content-visibility: auto; will-change: transform;"
                     class={cn(
-                        "block transition-all duration-150 ease-in-out text-balance",
+                        "block transition-all duration-500 ease-in-out text-balance",
                         isLineActive && "active-lrc",
                         (isLinePassed || isLineFuture) && !isUserScrolling && getOpacityBlur(distanceFromCurrent),
                         hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none",
@@ -155,7 +155,7 @@
                         <span
                             style="will-change: transform; white-space-collapse: preserve-spaces;"
                             class={cn(
-                                "inline-block opacity-50 transition-all duration-150 ease-in-out",
+                                "inline-block opacity-50 transition-all duration-500 ease-in-out",
                                 isLineActive && currentTime >= wordEndTime && "opacity-100",
                                 isWordActive && "opacity-100"
                             )}
