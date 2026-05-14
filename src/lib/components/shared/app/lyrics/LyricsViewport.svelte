@@ -11,6 +11,7 @@
         setCurrentTime,
         ref = $bindable(null),
         viewportRef = $bindable(null),
+        isUserScrolling = $bindable(false),
         class: className,
         viewportClass,
         containerClass,
@@ -24,6 +25,7 @@
         setCurrentTime?: (time: number) => void;
         ref?: HTMLElement|null;
         viewportRef?: HTMLElement|null;
+        isUserScrolling?: boolean;
         class?: ClassValue;
         viewportClass?: ClassValue;
         containerClass?: ClassValue;
@@ -33,11 +35,9 @@
         scrollBehavior?: ScrollBehavior;
     } = $props();
 
-    let isUserScrolling = $state(false);
-
     const revertUserScrolling = useDebounce(() => {
         isUserScrolling = false;
-    }, 1000);
+    }, 5000);
 
     $effect(() => {
         if (!viewportRef) return;
@@ -55,7 +55,7 @@
     function scrollToCurrentLine() {
         const activeLines = document.getElementsByClassName('active-lrc');
         const activeLine = activeLines.item(0) as HTMLAnchorElement|null;
-        if (!activeLine) return;
+        if (isUserScrolling || !activeLine) return;
 
         let top: number = 0;
 
@@ -108,6 +108,8 @@
         const lineEndTime = line.endTime / 1000;
         return Math.round(Math.min(Math.abs(currentTime - lineStartTime), Math.abs(currentTime - lineEndTime)));
     }
+
+    $inspect(isUserScrolling, 'isUserScrolling');
 </script>
 
 <ScrollArea
@@ -124,7 +126,7 @@
                 </p>
             {/each}
         {:else}
-            {#each lyrics as line, lineIndex (lineIndex + '-' + line.startTime + '-' + line.endTime)}
+            {#each lyrics as line, lineIndex (lineIndex)}
                 {@const lineStartTime = line.startTime / 1000}
                 {@const lineEndTime = line.endTime / 1000}
                 {@const isLineActive = currentTime >= lineStartTime && currentTime <= lineEndTime}
@@ -142,13 +144,13 @@
                     class={cn(
                         "block transition-all duration-500 ease-in-out text-balance",
                         isLineActive && "active-lrc",
-                        (isLinePassed || isLineFuture) && getOpacityBlur(distanceFromCurrent),
+                        (isLinePassed || isLineFuture) && !isUserScrolling && getOpacityBlur(distanceFromCurrent),
                         hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none",
                         line.isDuet && "text-end"
                     )}
                     class:text-sm={line.isBG}
                 >
-                    {#each line.words as word, wordIndex (wordIndex + '-' + word.startTime + '-' + word.endTime)}
+                    {#each line.words as word, wordIndex (wordIndex)}
                         {@const wordStartTime = word.startTime / 1000}
                         {@const wordEndTime = word.endTime / 1000}
                         {@const isWordActive = currentTime >= wordStartTime && currentTime <= wordEndTime}
