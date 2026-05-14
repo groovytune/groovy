@@ -25,7 +25,8 @@ export async function load({ params, locals, url }) {
                 include: {
                     user: true
                 }
-            }
+            },
+            lyrics: true
         }
     });
 

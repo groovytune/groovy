@@ -54,3 +54,7 @@ export function parseLyrics(lyrics: Lyrics): LyricLine[]|string {
         case 'TXT': return lyrics.content;
     }
 }
+
+export function stringifyLyrics(lyrics: LyricLine[]): string {
+    return lyrics.map(line => line.words.map(word => word.word).join('')).join('\n');
+}

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { Disc3Icon, DownloadIcon, EllipsisIcon, InfoIcon, PencilIcon, Share2Icon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
+    import { Disc3Icon, DownloadIcon, EllipsisIcon, InfoIcon, MusicIcon, PencilIcon, Share2Icon, TextAlignStartIcon, Trash2Icon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
@@ -163,6 +163,23 @@
                                 Delete
                             </DropdownMenuItem>
                         {:else}
+                            <DropdownMenuItem>
+                                {#snippet child({ props })}
+                                    <a
+                                        {...props}
+                                        href={resolve(
+                                            '/(app)/release/[releaseId]/track/[trackId]',
+                                            {
+                                                releaseId: track.releaseId,
+                                                trackId: track.id
+                                            }
+                                        )}
+                                    >
+                                        <MusicIcon/>
+                                        View Track
+                                    </a>
+                                {/snippet}
+                            </DropdownMenuItem>
                             {#if artistInfo.current}
                                 <DropdownMenuItem>
                                     {#snippet child({ props })}

@@ -157,8 +157,8 @@
         </div>
     </section>
 {:else}
-    <div class="flex justify-center w-full" style="content-visibility: auto;">
-        <Empty class="bg-muted/50 m-5 py-10 gap-0 min-h-72 max-w-sm lg:max-w-none">
+    <div class="flex justify-center w-full">
+        <Empty class="m-5 py-10 gap-0">
             <EmptyHeader>
                 <EmptyMedia variant="icon">
                     <ListMusicIcon/>
