@@ -9,11 +9,11 @@
     import { onMount } from 'svelte';
     import { cn } from '$lib/helpers/utils';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
-    import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageFormat, ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
     import AudioPlayerPreview from '$lib/components/shared/home/AudioPlayerPreview.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
+    import { Image } from '$lib/client/image.js';
 
     let { data } = $props();
 
@@ -103,8 +103,7 @@
 <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-5">
     {#each data.releases as release (release.id)}
         {@const coverURL = release.cover
-            ? Appwrite.storage.getFilePreview({
-                bucketId: 'image',
+            ? Image.getPreviewPath({
                 fileId: release.cover,
                 height: 500,
                 width: 500,

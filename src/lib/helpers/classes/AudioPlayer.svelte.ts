@@ -4,6 +4,7 @@ import { Appwrite } from '$lib/client/appwrite';
 import { ImageFormat, ImageGravity } from 'appwrite';
 import coverPlaceholder from '$lib/assets/cover.webp';
 import { ReleaseInfoCache } from './ReleaseInfoCache.svelte';
+import { Image } from '$lib/client/image';
 
 export class AudioPlayer {
     public audio: HTMLAudioElement|null = $state(null);
@@ -52,8 +53,7 @@ export class AudioPlayer {
 
     public coverURL = $derived(
         this.currentTrack?.cover || this.releaseInfo.current?.cover
-            ? Appwrite.storage.getFilePreview({
-                bucketId: 'image',
+            ? Image.getPreviewPath({
                 fileId: (this.currentTrack?.cover || this.releaseInfo.current?.cover)!,
                 height: 800,
                 width: 800,
@@ -65,8 +65,7 @@ export class AudioPlayer {
 
     public previewCoverURL = $derived(
         this.currentTrack?.cover || this.releaseInfo.current?.cover
-            ? Appwrite.storage.getFilePreview({
-                bucketId: 'image',
+            ? Image.getPreviewPath({
                 fileId: (this.currentTrack?.cover || this.releaseInfo.current?.cover)!,
                 height: 300,
                 width: 300,

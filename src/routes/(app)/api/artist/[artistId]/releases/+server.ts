@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
-import { newReleaseSchema } from '../../../../../../lib/schema/release.js';
-import { orderFilterSchema } from '../../../../../../lib/schema/filter.js';
+import { newReleaseSchema } from '$lib/schema/release.js';
+import { orderFilterSchema } from '$lib/schema/filter.js';
 import z from 'zod';
 
 export async function GET({ params, url }) {

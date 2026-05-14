@@ -1,14 +1,13 @@
 <script lang="ts">
     import { ImageFormat, ImageGravity } from 'appwrite';
-    import { Appwrite } from '$lib/client/appwrite.js';
     import coverPlaceholder from '$lib/assets/cover.webp';
+    import { Image } from '$lib/client/image.js';
 
     let { data } = $props();
 
     let coverURL = $derived(
         data.track.cover || data.track.release.cover
-            ? Appwrite.storage.getFilePreview({
-                bucketId: 'image',
+            ? Image.getPreviewPath({
                 fileId: data.track.cover || data.track.release.cover!,
                 width: 800,
                 height: 800,

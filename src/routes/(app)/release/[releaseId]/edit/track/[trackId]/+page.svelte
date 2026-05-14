@@ -25,6 +25,7 @@
     import { goto } from '$app/navigation';
     import DeleteTrackDialog from '$lib/components/shared/app/release/dialogs/DeleteTrackDialog.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
+    import { Image } from '$lib/client/image.js';
 
     let { data } = $props();
 
@@ -74,8 +75,7 @@
         $formData.cover
             ? URL.createObjectURL($formData.cover)
             : data.track.cover
-                ? Appwrite.storage.getFilePreview({
-                    bucketId: 'image',
+                ? Image.getPreviewPath({
                     fileId: data.track.cover,
                     width: 800,
                     height: 800,

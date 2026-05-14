@@ -17,6 +17,7 @@
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import { ReleaseInfoCache } from '$lib/helpers/classes/ReleaseInfoCache.svelte';
     import ShareButton from '../ShareButton.svelte';
+    import { Image } from '$lib/client/image';
 
     let {
         track,
@@ -47,8 +48,7 @@
     let isPlaying = $derived(audioPlayer.currentTrack?.id === track.id && playingIndicator);
     let coverURL = $derived(
         track.cover
-            ? Appwrite.storage.getFilePreview({
-                bucketId: 'image',
+            ? Image.getPreviewPath({
                 fileId: track.cover,
                 height: 100,
                 width: 100,

@@ -2,7 +2,7 @@ import { prisma } from '$lib/server/prisma';
 import coverPlaceholder from '$lib/assets/cover.webp';
 import { ImageFormat, ImageGravity } from 'node-appwrite';
 import { redirect } from '@sveltejs/kit';
-import { Image } from '../../../../../../lib/client/image.js';
+import { Image } from '$lib/client/image.js';
 
 export async function GET({ params, locals, url, fetch }) {
     const release = await prisma.release.findUnique({

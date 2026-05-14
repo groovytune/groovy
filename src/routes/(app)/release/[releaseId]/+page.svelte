@@ -1,6 +1,5 @@
 <script lang="ts">
     import { ImageFormat, ImageGravity } from 'appwrite';
-    import { Appwrite } from '$lib/client/appwrite.js';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
@@ -15,6 +14,7 @@
     import { auth } from '$lib/client/auth.js';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
+    import { Image } from '$lib/client/image.js';
 
     let { data } = $props();
 
@@ -25,8 +25,7 @@
 
     let coverURL = $derived(
         data.release.cover
-            ? Appwrite.storage.getFilePreview({
-                bucketId: 'image',
+            ? Image.getPreviewPath({
                 fileId: data.release.cover,
                 width: 800,
                 height: 800,

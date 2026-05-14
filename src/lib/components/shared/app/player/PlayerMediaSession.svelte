@@ -1,10 +1,10 @@
 <script lang="ts">
     import { untrack } from 'svelte';
     import coverPlaceholder from '$lib/assets/cover.webp';
-    import { Appwrite } from '$lib/client/appwrite';
     import { ImageFormat, ImageGravity } from 'appwrite';
     import { beforeNavigate } from '$app/navigation';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
+    import { Image } from '$lib/client/image';
 
     const audioPlayer = AudioPlayer.context.get();
 
@@ -23,8 +23,7 @@
             artwork: [
                 {
                     src: cover
-                        ? Appwrite.storage.getFilePreview({
-                            bucketId: 'image',
+                        ? Image.getPreviewPath({
                             fileId: cover,
                             width: 512,
                             height: 512,

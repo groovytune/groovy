@@ -7,7 +7,6 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
     import { auth } from '$lib/client/auth.js';
-    import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageFormat, ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
     import type { SuperForm } from 'sveltekit-superforms';
@@ -20,6 +19,7 @@
     import { goto } from '$app/navigation';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
+    import { Image } from '$lib/client/image.js';
  
     let { data } = $props();
 
@@ -33,8 +33,7 @@
     let sortForm = $state<SuperForm<z.infer<typeof sortTracksSchema>, unknown>|null>(null);
     let coverURL = $derived(
         data.release.cover
-            ? Appwrite.storage.getFilePreview({
-                bucketId: 'image',
+            ? Image.getPreviewPath({
                 fileId: data.release.cover,
                 height: 800,
                 width: 800,

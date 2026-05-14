@@ -11,7 +11,6 @@
     import placeholderCover from '$lib/assets/cover.webp';
     import { resolve } from '$app/paths';
     import ReleaseFormFields from '$lib/components/shared/app/release/forms/fields/ReleaseFormFields.svelte';
-    import { Appwrite } from '$lib/client/appwrite.js';
     import { ImageFormat, ImageGravity } from 'appwrite';
     import type { GETResponse } from '../../../api/release/[releaseId]/tracks/+server.js';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte.js';
@@ -19,6 +18,7 @@
     import { goto } from '$app/navigation';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import { ActiveNavigationPageContext } from '$lib/contexts/navigation.js';
+    import { Image } from '$lib/client/image.js';
 
     let { data } = $props();
 
@@ -71,8 +71,7 @@
         $formData.cover
             ? URL.createObjectURL($formData.cover)
             : data.release.cover
-                ? Appwrite.storage.getFilePreview({
-                    bucketId: 'image',
+                ? Image.getPreviewPath({
                     fileId: data.release.cover,
                     width: 800,
                     height: 800,
