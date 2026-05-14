@@ -4,25 +4,16 @@
     import PlayerTitleItem from '$lib/components/shared/app/player/PlayerTitleItem.svelte';
     import PlayerProgressBar from '$lib/components/shared/app/player/PlayerProgressBar.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
-    import { cn, formatDuration } from '$lib/helpers/utils';
+    import { cn, formatDuration, parseLyrics } from '$lib/helpers/utils';
     import { fade } from 'svelte/transition';
-    import { resource, useDebounce, useEventListener } from 'runed';
+    import { useDebounce, useEventListener } from 'runed';
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
     import LyricsViewport from '$lib/components/shared/app/lyrics/LyricsViewport.svelte';
-    import { parseTTML } from '@applemusic-like-lyrics/lyric';
 
     const audioPlayer = AudioPlayer.context.get();
 
     let scrolling = $state(false);
     let scrollContainer: HTMLElement|null = $state(null);
-
-    const lyrics = resource(
-        () => audioPlayer.currentTrack?.id,
-        async () => {
-            const lyrics = await fetch('https://raw.githubusercontent.com/amll-dev/amll-ttml-db/0c650121601977080dd41976970030070f160511/qq-lyrics/331220367.ttml').then(res => res.text());
-            return parseTTML(lyrics).lines;
-        }
-    );
 
     const setNotScrolling = useDebounce(() => {
         scrolling = false;
@@ -55,7 +46,7 @@
         <LyricsViewport
             bind:ref={scrollContainer}
             currentTime={audioPlayer.currentTime}
-            lyrics={lyrics.current ?? []}
+            lyrics={audioPlayer.lyrics.current ? parseLyrics(audioPlayer.lyrics.current) : []}
             setCurrentTime={(time) => audioPlayer.seek(time)}
             scrollBlock="start"
             class={cn(

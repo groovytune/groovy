@@ -2,7 +2,7 @@ import { prisma } from '$lib/server/prisma';
 import { error, json } from '@sveltejs/kit';
 
 export async function GET({ params, locals }) {
-    const track = await prisma.lyrics.findFirst({
+    const lyrics = await prisma.lyrics.findFirst({
         where: {
             track: {
                 id: params.id,
@@ -20,9 +20,9 @@ export async function GET({ params, locals }) {
         }
     });
 
-    if (!track) {
+    if (!lyrics) {
         throw error(404, 'Track not found');
     }
 
-    return json(track);
+    return json(lyrics);
 }

@@ -108,8 +108,6 @@
         const lineEndTime = line.endTime / 1000;
         return Math.round(Math.min(Math.abs(currentTime - lineStartTime), Math.abs(currentTime - lineEndTime)));
     }
-
-    $inspect(isUserScrolling, 'isUserScrolling');
 </script>
 
 <ScrollArea

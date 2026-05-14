@@ -2,33 +2,24 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
     import { ChevronDown, ListMusicIcon, Maximize2Icon, MessageSquareQuoteIcon, Minimize2Icon, XIcon } from '@lucide/svelte';
-    import { cn, formatDuration } from '$lib/helpers/utils';
+    import { cn, formatDuration, parseLyrics } from '$lib/helpers/utils';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { MediaQuery } from 'svelte/reactivity';
-    import { PressedKeys, resource } from 'runed';
+    import { PressedKeys } from 'runed';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import PlayerTitleItem from '$lib/components/shared/app/player/PlayerTitleItem.svelte';
     import { PlayerLastNavigate } from '$lib/contexts/player';
     import PlayerProgressBar from '$lib/components/shared/app/player/PlayerProgressBar.svelte';
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
     import LyricsViewport from '$lib/components/shared/app/lyrics/LyricsViewport.svelte';
-    import { parseTTML } from '@applemusic-like-lyrics/lyric';
 
     const audioPlayer = AudioPlayer.context.get();
     const playerLastNavigate = PlayerLastNavigate.get();
     const isLargeWindow = new MediaQuery('(width >= 900px)');
     const keysPressed = new PressedKeys();
 
-    const lyrics = resource(
-        () => audioPlayer.currentTrack?.id,
-        async () => {
-            const lyrics = await fetch('https://raw.githubusercontent.com/amll-dev/amll-ttml-db/0c650121601977080dd41976970030070f160511/qq-lyrics/331220367.ttml').then(res => res.text());
-            return parseTTML(lyrics).lines;
-        }
-    );
-
-    let isLyricsEnabled = $derived(!!lyrics.current?.length);
+    let isLyricsEnabled = $derived(!!audioPlayer.lyrics.current);
     let isFullscreen = $state(false);
 
     keysPressed.onKeys(['Escape'], async () => {
@@ -149,6 +140,7 @@
                 size={isLargeWindow.current ? "icon-lg" : "default"}
                 class={cn(
                     "bg-white/10! shadow-none",
+                    !audioPlayer.lyrics.current && "hidden",
                     isLyricsEnabled && isLargeWindow.current && 'bg-white/80! text-black!'
                 )}
                 onclick={
@@ -174,7 +166,7 @@
         <div class="max-w-3xl size-full hidden min-[900px]:flex justify-center items-center-safe p-6">
             <LyricsViewport
                 currentTime={audioPlayer.currentTime}
-                lyrics={lyrics.current ?? []}
+                lyrics={audioPlayer.lyrics.current ? parseLyrics(audioPlayer.lyrics.current) : []}
                 setCurrentTime={(time) => audioPlayer.seek(time)}
                 scrollBlock="center"
                 class="text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%"
