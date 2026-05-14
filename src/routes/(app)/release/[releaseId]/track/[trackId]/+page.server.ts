@@ -1,11 +1,19 @@
 import { redirect } from '@sveltejs/kit';
-import { createAuthRedirect } from '$lib/helpers/utils';
+import { createAuthRedirect, type PartialUser } from '$lib/helpers/utils';
 import { prisma } from '$lib/server/prisma';
 import { resolve } from '$app/paths';
 import { definePageMetaTags } from 'svelte-meta-tags';
 import { Appwrite } from '$lib/client/appwrite';
 import { ImageGravity } from 'appwrite';
 import { ImageFormat } from 'appwrite';
+import type { Lyrics, Release, Track } from '$lib/server/prisma/browser.js';
+
+export type TrackPageData = Track & {
+    release: Release & {
+        user: PartialUser;
+    };
+    lyrics: Lyrics|null;
+};
 
 export async function load({ params, locals, url }) {
     if (!locals.session) {
@@ -17,18 +25,32 @@ export async function load({ params, locals, url }) {
             id: params.trackId,
             release: {
                 id: params.releaseId,
-                userId: locals.session.user.id
+                AND: locals.user
+                    ? {
+                        OR: [
+                            { userId: locals.user.id },
+                            { privacy: { not: 'PRIVATE' } }
+                        ]
+                    }
+                    : { privacy: { not: 'PRIVATE' } }
             }
         },
         include: {
             release: {
                 include: {
-                    user: true
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            username: true,
+                            image: true
+                        }
+                    }
                 }
             },
             lyrics: true
         }
-    });
+    }) as TrackPageData|null;
 
     if (!track) {
         throw redirect(302, resolve('/(app)/release/[releaseId]', { releaseId: params.releaseId }));
