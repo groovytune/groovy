@@ -4,17 +4,29 @@
     import { resolve } from '$app/paths';
     import PlayerGradientBackground from '$lib/components/shared/app/player/PlayerGradientBackground.svelte';
     import { fade } from 'svelte/transition';
+    import { onDestroy, onMount } from 'svelte';
 
     let { children } = $props();
 
     const audioPlayer = AudioPlayer.context.get();
 
+    let wakelock: WakeLockSentinel|null = $state(null);
     let backgroundLoaded = $state(false);
     let coverAPIURL = $derived(
         audioPlayer.currentTrack
             ? resolve('/(app)/api/track/[id]/cover', { id: audioPlayer.currentTrack?.id ?? '' }) + '?size=300'
             : coverPlaceholder
     );
+
+    onMount(async () => {
+        if (!('wakeLock' in navigator) || !navigator.wakeLock) return;
+
+        wakelock = await navigator.wakeLock.request('screen');
+    });
+
+    onDestroy(() => {
+        wakelock?.release();
+    });
 </script>
 
 {@render children?.()}
