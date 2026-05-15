@@ -1,5 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
+import commonjs from 'vite-plugin-commonjs';
 import { defineConfig } from 'vite';
 
 const externalModules = [
@@ -13,6 +14,9 @@ const externalModules = [
 export default defineConfig({
     plugins: [
         tailwindcss(),
+        commonjs({
+            filter: id => externalModules.some(module => id.includes(module))
+        }),
         sveltekit()
     ],
     optimizeDeps: {
