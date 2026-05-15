@@ -9,29 +9,30 @@ export class ImageTransform {
         this.sharp.resize({
             height: options.height,
             width: options.width,
-            fit: options.gravity === 'center' ? "cover" : "contain",
-            position: options.gravity === 'center' ? "entropy" : undefined
+            position: options.gravity?.replace(/-/g, '_')
         });
 
         return this;
     }
 
     public async opacity(value: number) {
-        this.sharp.ensureAlpha(value);
+        this.sharp.ensureAlpha(Math.max(0, Math.min(1, value)));
         return this;
     }
 
     public async toBuffer(options?: { quality?: number; output?: ImageTransform.OutputFormat; }) {
+        const quality = Math.max(1, Math.min(100, options?.quality ?? 80));
+
         switch (options?.output) {
             case 'jpeg':
             case 'jpg':
-                return await this.sharp.jpeg({ quality: options.quality }).toBuffer();
+                return await this.sharp.jpeg({ quality }).toBuffer();
             case 'png':
-                return await this.sharp.png({ quality: options.quality }).toBuffer();
+                return await this.sharp.png({ quality }).toBuffer();
             case 'webp':
-                return await this.sharp.webp({ quality: options.quality }).toBuffer();
+                return await this.sharp.webp({ quality }).toBuffer();
             case 'avif':
-                return await this.sharp.avif({ quality: options.quality }).toBuffer();
+                return await this.sharp.avif({ quality }).toBuffer();
             case 'gif':
                 return await this.sharp.gif().toBuffer();
             default:

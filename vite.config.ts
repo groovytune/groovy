@@ -15,5 +15,13 @@ export default defineConfig({
     ],
     optimizeDeps: {
         exclude: externalModules
+    },
+    build: {
+        rolldownOptions: {
+            external: externalModules,
+        },
+        rollupOptions: {
+            external: externalModules,
+        }
     }
 });
