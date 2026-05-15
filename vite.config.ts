@@ -2,15 +2,26 @@ import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
+const externalModules = [
+    'sharp',
+    '@img/sharp-linuxmusl-x64',
+    '@img/sharp-wasm32'
+];
+
 export default defineConfig({
     plugins: [
         tailwindcss(),
         sveltekit()
     ],
     ssr: {
-        external: ['sharp']
+        external: externalModules
     },
     optimizeDeps: {
-        exclude: ['sharp']
+        exclude: externalModules
+    },
+    build: {
+        rolldownOptions: {
+            external: externalModules
+        }
     }
 });
