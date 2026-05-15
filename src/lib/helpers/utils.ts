@@ -58,3 +58,7 @@ export function parseLyrics(lyrics: Lyrics): LyricLine[]|string {
 export function stringifyLyrics(lyrics: LyricLine[]): string {
     return lyrics.map(line => line.words.map(word => word.word).join('')).join('\n');
 }
+
+export function roundToTwoDecimals(num: number): number {
+    return Math.round(num * 100) / 100;
+}
