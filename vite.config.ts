@@ -1,3 +1,4 @@
+import commonjs from '@rollup/plugin-commonjs';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
@@ -8,9 +9,18 @@ const externalModules = [
     '@img/sharp-wasm32'
 ];
 
+const nativeBindings = [
+    'sharp-linuxmusl-x64',
+    'sharp-wasm32'
+];
+
 export default defineConfig({
     plugins: [
         tailwindcss(),
+        commonjs({
+            dynamicRequireTargets: nativeBindings.map(b => `**/node_modules/${b}/**`),
+            ignoreDynamicRequires: false
+        }),
         sveltekit()
     ],
     optimizeDeps: {
