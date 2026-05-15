@@ -1,5 +1,5 @@
 import type { Lyrics, Track } from '$lib/server/prisma/browser';
-import { Context, resource, useEventListener } from 'runed';
+import { Context, resource, useEventListener, useThrottle } from 'runed';
 import { Appwrite } from '$lib/client/appwrite';
 import { ImageFormat, ImageGravity } from 'appwrite';
 import coverPlaceholder from '$lib/assets/cover.webp';
@@ -99,10 +99,14 @@ export class AudioPlayer {
         this.audio.preload = 'auto';
         this.audio.crossOrigin = 'anonymous';
 
+        const updateCurrentTime = useThrottle((time: number) => {
+            this.currentTime = time;
+        }, () => 200);
+
         useEventListener(
             () => this.audio,
             ['timeupdate', 'seeked', 'seeking'],
-            event => this.currentTime = event.currentTarget.currentTime,
+            event => updateCurrentTime(event.currentTarget.currentTime),
             { passive: true }
         );
 

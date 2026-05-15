@@ -85,10 +85,10 @@
             }
         }
 
-        viewportRef?.scrollTo({
+        requestAnimationFrame(() => viewportRef!.scrollTo({
             top,
             behavior: scrollBehavior,
-        });
+        }));
     }
 
     function getOpacityBlur(distanceFromCurrent: number): string {
@@ -125,8 +125,8 @@
             {/each}
         {:else}
             {#each lyrics as line, lineIndex (lineIndex)}
-                {@const lineStartTime = line.startTime / 1000}
-                {@const lineEndTime = line.endTime / 1000}
+                {@const lineStartTime = Number((line.startTime / 1000).toFixed(2))}
+                {@const lineEndTime = Number((line.endTime / 1000).toFixed(2))}
                 {@const isLineActive = currentTime >= lineStartTime && currentTime <= lineEndTime}
                 {@const isLinePassed = currentTime > lineEndTime}
                 {@const isLineFuture = currentTime < lineStartTime}
@@ -149,8 +149,8 @@
                     class:text-sm={line.isBG}
                 >
                     {#each line.words as word, wordIndex (wordIndex)}
-                        {@const wordStartTime = word.startTime / 1000}
-                        {@const wordEndTime = word.endTime / 1000}
+                        {@const wordStartTime = Number((word.startTime / 1000).toFixed(2))}
+                        {@const wordEndTime = Number((word.endTime / 1000).toFixed(2))}
                         {@const isWordActive = currentTime >= wordStartTime && currentTime <= wordEndTime}
                         <span
                             style="will-change: transform; white-space-collapse: preserve-spaces;"
