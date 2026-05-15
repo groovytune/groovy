@@ -96,14 +96,50 @@ export class AudioPlayer {
     public async init(audio?: HTMLAudioElement): Promise<void> {
         this.audio = audio ?? new Audio();
 
-        this.audio.preload = 'metadata';
+        this.audio.preload = 'auto';
         this.audio.crossOrigin = 'anonymous';
 
-        useEventListener(() => this.audio, ['timeupdate', 'seeked', 'seeking'], event => this.currentTime = event.currentTarget.currentTime);
-        useEventListener(() => this.audio, ['pause', 'play'], event => this.paused = event.currentTarget.paused);
-        useEventListener(() => this.audio, 'volumechange', event => this.volume = event.currentTarget.volume);
-        useEventListener(() => this.audio, ['play', 'playing'], () => this.status = 'playing');
-        useEventListener(() => this.audio, ['waiting', 'loadstart'], () => this.status = 'buffering');
+        useEventListener(
+            () => this.audio,
+            ['timeupdate', 'seeked', 'seeking'],
+            event => this.currentTime = event.currentTarget.currentTime,
+            { passive: true }
+        );
+
+        useEventListener(
+            () => this.audio,
+            ['pause', 'play'],
+            event => this.paused = event.currentTarget.paused,
+            { passive: true }
+        );
+
+        useEventListener(
+            () => this.audio,
+            'volumechange',
+            event => this.volume = event.currentTarget.volume,
+            { passive: true }
+        );
+
+        useEventListener(
+            () => this.audio,
+            ['play', 'playing'],
+            () => this.status = 'playing',
+            { passive: true }
+        );
+
+        useEventListener(
+            () => this.audio,
+            ['waiting', 'loadstart'],
+            () => this.status = 'buffering',
+            { passive: true }
+        );
+
+        useEventListener(
+            () => this.audio,
+            'durationchange',
+            event => this.duration = AudioPlayer.getRealDuration(event.currentTarget, this.currentTrack),
+            { passive: true }
+        );
 
         useEventListener(
             () => this.audio,
