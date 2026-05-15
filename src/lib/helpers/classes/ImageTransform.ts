@@ -1,4 +1,4 @@
-import type sharp from 'sharp';
+import sharp from 'sharp';
 import type z from 'zod';
 import type { imageTransformOptionsSchema } from '../../schema/image';
 
@@ -41,18 +41,11 @@ export class ImageTransform {
 }
 
 export namespace ImageTransform {
-    export const sharp: { instance: typeof import('sharp')|null } = { instance: null };
-
     export type Gravity = 'center'|'top-left'|'top'|'top-right'|'left'|'right'|'bottom-left'|'bottom'|'bottom-right';
     export type OutputFormat = 'jpg'|'jpeg'|'png'|'webp'|'avif'|'gif';
 
-    export async function getSharp(): Promise<typeof import('sharp')> {
-        return sharp.instance ??= (await import('sharp')).default;
-    }
-
     export async function transform(data: ArrayBuffer, options?: z.infer<typeof imageTransformOptionsSchema>): Promise<ArrayBuffer> {
-        const sharpInstance = await getSharp();
-        const transformer = new ImageTransform(sharpInstance(data));
+        const transformer = new ImageTransform(sharp(data));
 
         if (options?.width || options?.height) {
             await transformer.resize({

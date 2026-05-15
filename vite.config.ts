@@ -13,15 +13,7 @@ export default defineConfig({
         tailwindcss(),
         sveltekit()
     ],
-    ssr: {
-        external: externalModules
-    },
     optimizeDeps: {
         exclude: externalModules
-    },
-    build: {
-        rolldownOptions: {
-            external: externalModules
-        }
     }
 });
