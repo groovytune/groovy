@@ -138,7 +138,7 @@
                     data-is-active={isLineActive}
                     data-distance-from-current={distanceFromCurrent}
                     onclick={() => setCurrentTime?.(lineStartTime)}
-                    style="content-visibility: auto; will-change: transform;"
+                    style="content-visibility: auto; will-change: transform; white-space-collapse: preserve;"
                     class={cn(
                         "block transition-all duration-500 ease-in-out text-balance",
                         isLineActive && "active-lrc",
@@ -153,7 +153,7 @@
                         {@const wordEndTime = word.endTime / 1000}
                         {@const isWordActive = currentTime >= wordStartTime && currentTime <= wordEndTime}
                         <span
-                            style="will-change: transform; white-space-collapse: preserve-spaces;"
+                            style="will-change: transform;"
                             class={cn(
                                 "inline-block opacity-50 transition-all duration-500 ease-in-out",
                                 isLineActive && currentTime >= wordEndTime && "opacity-100",
