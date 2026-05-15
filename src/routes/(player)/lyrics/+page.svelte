@@ -46,7 +46,7 @@
         <LyricsViewport
             bind:ref={scrollContainer}
             currentTime={audioPlayer.currentTime}
-            lyrics={audioPlayer.lyrics.current ? parseLyrics(audioPlayer.lyrics.current) : []}
+            lyrics={audioPlayer.lyrics.current && !audioPlayer.lyrics.loading ? parseLyrics(audioPlayer.lyrics.current) : []}
             setCurrentTime={(time) => audioPlayer.seek(time)}
             scrollBlock="start"
             class={cn(

@@ -162,7 +162,7 @@
             </Button>
         </footer>
     </div>
-    {#if isLyricsEnabled}
+    {#if isLyricsEnabled && !audioPlayer.lyrics.loading && audioPlayer.lyrics.current}
         <div class="max-w-3xl size-full hidden min-[900px]:flex justify-center items-center-safe p-6">
             <LyricsViewport
                 currentTime={audioPlayer.currentTime}
