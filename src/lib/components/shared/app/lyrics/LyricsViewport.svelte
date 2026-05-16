@@ -4,6 +4,7 @@
     import type { ClassValue } from 'clsx';
     import { cn } from '$lib/helpers/utils';
     import { useDebounce, useEventListener } from 'runed';
+    import { getActiveLines } from '../../../../helpers/lyrics';
 
     let {
         currentTime,
@@ -34,6 +35,8 @@
         scrollBlock?: 'start'|'center'|'end'|'nearest';
         scrollBehavior?: ScrollBehavior;
     } = $props();
+
+    const activeLines = $derived(lyrics && typeof lyrics !== 'string' ? getActiveLines(lyrics, currentTime) : null);
 
     const revertUserScrolling = useDebounce(() => {
         isUserScrolling = false;
@@ -93,7 +96,6 @@
 
     function getOpacityBlur(distanceFromCurrent: number): string {
         if (!enableBlur) return "opacity-50";
-
         return distanceFromCurrent <= 10
             ? "opacity-50 blur-[2px]"
             : distanceFromCurrent < 20
@@ -116,7 +118,7 @@
     class={cn("size-full leading-relaxed", className)}
     viewportClasses={cn("scroll-pt-20", viewportClass)}
 >
-    <div class={cn("h-fit w-full flex flex-col gap-8 pt-20 pb-[100svh] px-5", containerClass)}>
+    <div class={cn("h-fit w-full flex flex-col pt-20 pb-[100svh] px-5", containerClass)}>
         {#if typeof lyrics === 'string'}
             {#each lyrics.split('\n') as line, index (index)}
                 <p class="block">
@@ -127,36 +129,31 @@
             {#each lyrics as line, lineIndex (lineIndex)}
                 {@const lineStartTime = line.startTime / 1000}
                 {@const lineEndTime = line.endTime / 1000}
-                {@const isLineActive = currentTime >= lineStartTime && currentTime <= lineEndTime}
                 {@const isLinePassed = currentTime > lineEndTime}
                 {@const isLineFuture = currentTime < lineStartTime}
+                {@const activeWords = activeLines?.get(lineIndex)}
                 {@const distanceFromCurrent = calculateLineTimeDistance(line)}
                 <a
                     href="#/"
-                    data-start-time={lineStartTime}
-                    data-end-time={lineEndTime}
-                    data-is-active={isLineActive}
-                    data-distance-from-current={distanceFromCurrent}
                     onclick={() => setCurrentTime?.(lineStartTime)}
-                    style="content-visibility: auto; will-change: transform; white-space-collapse: preserve;"
+                    style="content-visibility: auto; will-change: auto; white-space-collapse: preserve;"
                     class={cn(
-                        "block transition-all duration-500 ease-in-out text-balance",
-                        isLineActive && "active-lrc",
+                        "block transition-all duration-500 ease-in-out text-balance mt-8",
+                        lineIndex === 0 && "mt-0",
+                        activeWords && "active-lrc",
                         (isLinePassed || isLineFuture) && !isUserScrolling && getOpacityBlur(distanceFromCurrent),
                         hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none",
-                        line.isDuet && "text-end"
+                        line.isDuet && "text-end",
+                        line.isBG && "text-[0.6em] mt-2 mb-2 font-semibold"
                     )}
                     class:text-sm={line.isBG}
                 >
                     {#each line.words as word, wordIndex (wordIndex)}
-                        {@const wordStartTime = word.startTime / 1000}
-                        {@const wordEndTime = word.endTime / 1000}
-                        {@const isWordActive = currentTime >= wordStartTime && currentTime <= wordEndTime}
+                        {@const isWordActive = activeWords && activeWords.includes(wordIndex)}
                         <span
-                            style="will-change: transform;"
+                            style="will-change: auto;"
                             class={cn(
                                 "inline-block opacity-50 transition-all duration-500 ease-in-out",
-                                isLineActive && currentTime >= wordEndTime && "opacity-100",
                                 isWordActive && "opacity-100"
                             )}
                         >

@@ -4,11 +4,12 @@
     import PlayerTitleItem from '$lib/components/shared/app/player/PlayerTitleItem.svelte';
     import PlayerProgressBar from '$lib/components/shared/app/player/PlayerProgressBar.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
-    import { cn, formatDuration, parseLyrics } from '$lib/helpers/utils';
+    import { cn, formatDuration } from '$lib/helpers/utils';
     import { fade } from 'svelte/transition';
     import { useDebounce, useEventListener } from 'runed';
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
     import LyricsViewport from '$lib/components/shared/app/lyrics/LyricsViewport.svelte';
+    import { parseLyrics } from '$lib/helpers/lyrics';
 
     const audioPlayer = AudioPlayer.context.get();
 

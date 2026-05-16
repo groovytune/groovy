@@ -2,9 +2,7 @@ import { resolve } from '$app/paths';
 import { clsx, type ClassValue } from "clsx";
 import { DateTime } from 'luxon';
 import { twMerge } from "tailwind-merge";
-import type { Lyrics, User } from '../server/prisma/browser';
-import type { LyricLine } from '@applemusic-like-lyrics/core';
-import { parseLrc, parseLyl, parseLys, parseTTML, parseYrc } from '@applemusic-like-lyrics/lyric';
+import type { User } from '../server/prisma/browser';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -42,21 +40,6 @@ export function formatFileSize(bytes: number, decimals = 2) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
-
-export function parseLyrics(lyrics: Lyrics): LyricLine[]|string {
-    switch (lyrics.format) {
-        case 'LRC': return parseLrc(lyrics.content);
-        case 'TTML': return parseTTML(lyrics.content).lines;
-        case 'LYL': return parseLyl(lyrics.content);
-        case 'LYS': return parseLys(lyrics.content);
-        case 'YRC': return parseYrc(lyrics.content);
-        case 'TXT': return lyrics.content;
-    }
-}
-
-export function stringifyLyrics(lyrics: LyricLine[]): string {
-    return lyrics.map(line => line.words.map(word => word.word).join('')).join('\n');
 }
 
 export function roundToTwoDecimals(num: number): number {

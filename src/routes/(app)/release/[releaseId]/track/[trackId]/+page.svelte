@@ -15,7 +15,7 @@
     import Card from '$lib/components/ui/card/card.svelte';
     import { CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
     import CardContent from '$lib/components/ui/card/card-content.svelte';
-    import { parseLyrics } from '$lib/helpers/utils.js';
+    import { parseLyrics } from '$lib/helpers/lyrics.js';
     import type { LyricLine } from '@applemusic-like-lyrics/core';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
 

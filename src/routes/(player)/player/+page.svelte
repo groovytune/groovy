@@ -2,7 +2,7 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
     import { ChevronDown, ListMusicIcon, Maximize2Icon, MessageSquareQuoteIcon, Minimize2Icon, XIcon } from '@lucide/svelte';
-    import { cn, formatDuration, parseLyrics } from '$lib/helpers/utils';
+    import { cn, formatDuration } from '$lib/helpers/utils';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { MediaQuery } from 'svelte/reactivity';
@@ -13,6 +13,7 @@
     import PlayerProgressBar from '$lib/components/shared/app/player/PlayerProgressBar.svelte';
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
     import LyricsViewport from '$lib/components/shared/app/lyrics/LyricsViewport.svelte';
+    import { parseLyrics } from '$lib/helpers/lyrics';
 
     const audioPlayer = AudioPlayer.context.get();
     const playerLastNavigate = PlayerLastNavigate.get();
