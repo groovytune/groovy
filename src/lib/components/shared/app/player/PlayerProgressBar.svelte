@@ -9,13 +9,18 @@
     } & Record<string, unknown> = $props();
 
     const audioPlayer = AudioPlayer.context.get();
+
+    let snapshot: number = $derived(audioPlayer.currentTime);
 </script>
 
 <RangeSlider
     on:start={() => audioPlayer.pause()}
-    on:stop={() => audioPlayer.play()}
-    on:change={(e) => audioPlayer.seek(e.detail.value)}
-    bind:value={audioPlayer.currentTime}
+    on:stop={e => {
+        audioPlayer.play();
+        audioPlayer.seek(e.detail.value);
+        snapshot = e.detail.value;
+    }}
+    value={snapshot}
     step={0.5}
     range="min"
     min={0}
