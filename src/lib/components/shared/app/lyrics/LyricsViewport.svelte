@@ -144,7 +144,8 @@
                         (isLinePassed || isLineFuture) && !isUserScrolling && getOpacityBlur(distanceFromCurrent),
                         hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none",
                         line.isDuet && "text-end",
-                        line.isBG && "text-[0.6em] mt-2 mb-2 font-semibold"
+                        line.isBG && "text-[0.6em] mt-2 mb-2 font-semibold",
+                        line.isBG && isLineFuture && "opacity-0"
                     )}
                 >
                     {#each line.words as word, wordIndex (wordIndex)}
