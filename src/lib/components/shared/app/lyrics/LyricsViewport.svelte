@@ -136,7 +136,7 @@
                 <a
                     href="#/"
                     onclick={() => setCurrentTime?.(lineStartTime)}
-                    style="content-visibility: auto; will-change: auto; white-space-collapse: preserve;"
+                    style="content-visibility: auto; will-change: auto;"
                     class={cn(
                         "block transition-all duration-500 ease-in-out text-balance mt-8",
                         lineIndex === 0 && "mt-0",
@@ -146,14 +146,13 @@
                         line.isDuet && "text-end",
                         line.isBG && "text-[0.6em] mt-2 mb-2 font-semibold"
                     )}
-                    class:text-sm={line.isBG}
                 >
                     {#each line.words as word, wordIndex (wordIndex)}
                         {@const isWordActive = activeWords && activeWords.includes(wordIndex)}
                         <span
                             style="will-change: auto;"
                             class={cn(
-                                "inline-block opacity-50 transition-all duration-500 ease-in-out",
+                                "opacity-50 transition-all duration-500 ease-in-out",
                                 isWordActive && "opacity-100"
                             )}
                         >
