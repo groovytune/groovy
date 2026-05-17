@@ -95,14 +95,24 @@
     }
 
     function getOpacityBlur(distanceFromCurrent: number): string {
-        if (!enableBlur) return "opacity-50";
-        return distanceFromCurrent <= 10
-            ? "opacity-50 blur-[2px]"
-            : distanceFromCurrent < 20
-                ? "opacity-40 blur-[3px]"
-                : distanceFromCurrent < 30
-                    ? "opacity-30 blur-xs"
-                    : "opacity-25 blur-[5px]"
+        let opacity: number;
+        let blur: number;
+
+        if (distanceFromCurrent <= 10) {
+            opacity = 50;
+            blur = 2;
+        } else if (distanceFromCurrent < 20) {
+            opacity = 40;
+            blur = 3;
+        } else if (distanceFromCurrent < 30) {
+            opacity = 30;
+            blur = 5;
+        } else {
+            opacity = 20;
+            blur = 5;
+        }
+
+        return `opacity-${opacity} blur-[${enableBlur ? blur : 0}px]`;
     }
 
     function calculateLineTimeDistance(line: LyricLine): number {
@@ -145,7 +155,7 @@
                         hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none blur-none",
                         line.isDuet && "text-end",
                         line.isBG && "text-[0.6em] mt-2 mb-2 font-semibold",
-                        line.isBG && isLineFuture && "opacity-0 blur-none h-0 mt-0 mb-0"
+                        line.isBG && isLineFuture && "opacity-0 blur-none"
                     )}
                     onclick={e => {
                         e.preventDefault();
