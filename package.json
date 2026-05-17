@@ -19,7 +19,6 @@
 		"@icons-pack/svelte-simple-icons": "^7.2.0",
 		"@internationalized/date": "^3.12.1",
 		"@lucide/svelte": "^1.14.0",
-		"@paralleldrive/cuid2": "^3.3.0",
 		"@stylistic/eslint-plugin": "^5.10.0",
 		"@sveltejs/adapter-node": "^5.5.4",
 		"@sveltejs/kit": "^2.59.0",
@@ -70,6 +69,7 @@
 		"pg-tsquery": "^8.4.2",
 		"sharp": "^0.34.5",
 		"svelte-range-slider-pips": "^4.1.1",
+		"ulid": "^3.0.2",
 		"zod": "^4.4.2"
 	}
 }

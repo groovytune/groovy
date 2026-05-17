@@ -10,7 +10,11 @@
 <Button
     variant="ghost"
     size="icon-sm"
-    class="bg-transparent! shadow-none"
+    class={cn(
+        "bg-transparent! shadow-none",
+        audioPlayer.shuffled && 'bg-white/80! text-black!'
+    )}
+    onclick={() => audioPlayer.shuffled ? audioPlayer.unshuffle() : audioPlayer.shuffle()}
 >
     <ShuffleIcon/>
 </Button>

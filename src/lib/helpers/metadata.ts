@@ -35,6 +35,7 @@ export interface PartialFileMetadata {
         |'label',
         string[]
     >>;
+    [key: string]: unknown;
 }
 
 export type ParseAudioMetadataWorkerMessage = { type: 'success'; data: FileMetadata; }|{ type: 'error'; error: unknown; };

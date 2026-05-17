@@ -1,4 +1,4 @@
-import type { Lyrics, Track } from '$lib/server/prisma/browser';
+import type { Lyrics, Track as RawTrack } from '$lib/server/prisma/browser';
 import { Context, resource, useEventListener } from 'runed';
 import { Appwrite } from '$lib/client/appwrite';
 import { ImageFormat, ImageGravity } from 'appwrite';
@@ -6,16 +6,19 @@ import coverPlaceholder from '$lib/assets/cover.webp';
 import { ReleaseInfoCache } from './ReleaseInfoCache.svelte';
 import { Image } from '$lib/client/image';
 import { resolve } from '$app/paths';
+import { QueueTrack } from './QueueTrack';
 
 export class AudioPlayer {
     public audio: HTMLAudioElement|null = $state(null);
     public releaseCache: ReleaseInfoCache = new ReleaseInfoCache();
 
-    public queue: Track[] = $state([]);
-    public history: Track[] = $state([]);
-    public currentTrack: Track|null = $state(null);
+    public queue: QueueTrack[] = $state([]);
+    public history: QueueTrack[] = $state([]);
+    public current: QueueTrack|null = $state(null);
+    public currentTrack: AudioPlayer.Track|null = $derived(this.current?.track ?? null);
 
     public repeat: AudioPlayer.Repeat = $state('none');
+    public shuffled: boolean = $state(false);
 
     public status: AudioPlayer.Status = $state('stopped');
     public paused: boolean = $state(true);
@@ -211,8 +214,9 @@ export class AudioPlayer {
         this.currentTrack = null;
     }
 
-    public add(tracks: Track|Track[], next: boolean = false): void {
-        const trackList = Array.isArray(tracks) ? tracks : [tracks];
+    public add(tracks: AudioPlayer.Track|AudioPlayer.Track[], next: boolean = false): void {
+        const trackList: QueueTrack[] = (Array.isArray(tracks) ? tracks : [tracks])
+            .map(track => new QueueTrack(track));
 
         if (next) {
             this.queue.unshift(...trackList);
@@ -221,7 +225,7 @@ export class AudioPlayer {
         }
     }
 
-    public remove(track: Track|string|number, from: 'queue' | 'history' = 'queue'): void {
+    public remove(track: AudioPlayer.Track|string|number, from: 'queue' | 'history' = 'queue'): void {
         const list = from === 'queue' ? this.queue : this.history;
         const index = typeof track === 'object' ? list.findIndex(t => t.id === track.id) : list.findIndex(t => t.id === track);
 
@@ -230,38 +234,36 @@ export class AudioPlayer {
         }
     }
 
-    public async replaceQueue(tracks: Track[], history?: Track[]): Promise<void> {
+    public async replaceQueue(tracks: RawTrack[], history?: RawTrack[]): Promise<void> {
         this.clear();
-        this.queue = tracks;
-        this.history = history || [];
+        this.queue = tracks.map(track => new QueueTrack(track));
+        this.history = (history || []).map(track => new QueueTrack(track));
 
         const nextTrack = this.queue.shift();
 
-        if (this.currentTrack) {
-            this.currentTrack = nextTrack ?? null;
-        }
-
-        if (nextTrack) {
-            await this.loadCurrentTrack(nextTrack);
-        }
+        if (this.current) this.current = nextTrack ?? null;
+        if (nextTrack) await this.loadCurrentTrack(nextTrack);
     }
 
-    public async replaceCurrentTrack(track: Track, moveHistory: boolean = true): Promise<void> {
+    public async replaceCurrentTrack(track: RawTrack, moveHistory: boolean = true): Promise<void> {
         if (!this.audio) return;
 
-        if (this.currentTrack && moveHistory) {
-            this.history.unshift(this.currentTrack);
+        if (this.current && moveHistory) {
+            this.history.unshift(this.current);
         }
 
         await this.loadCurrentTrack(track);
     }
 
-    public async loadCurrentTrack(track: Track): Promise<void> {
+    public async loadCurrentTrack(track: AudioPlayer.Track|QueueTrack): Promise<void> {
         if (!this.audio) return;
 
-        this.currentTrack = track;
+        this.current = track instanceof QueueTrack ? track : new QueueTrack(track);
 
-        const source = Appwrite.storage.getFileView({ bucketId: 'audio', fileId: track.file });
+        const source = Appwrite.storage.getFileView({
+            bucketId: 'audio',
+            fileId: this.current.track.file
+        });
 
         this.audio.pause();
         this.audio.src = source;
@@ -272,9 +274,9 @@ export class AudioPlayer {
     public stop(): void {
         if (!this.audio) return;
 
-        if (this.currentTrack) {
-            this.history.unshift(this.currentTrack);
-            this.currentTrack = null;
+        if (this.current) {
+            this.history.unshift(this.current);
+            this.current = null;
         }
 
         this.audio.pause();
@@ -284,23 +286,36 @@ export class AudioPlayer {
         this.status = 'stopped';
     }
 
-    public async play(track?: Track): Promise<void> {
+    public async play(track?: RawTrack): Promise<void> {
         if (!this.audio) return;
 
         if (this.currentTrack) {
             if (track) {
-                this.add(track);
+                this.add([track]);
             }
 
             await this.audio.play();
             return;
         }
 
-        track ??= this.queue.shift();
+        track ??= this.queue.shift() as RawTrack|undefined;
         if (!track) return;
 
         await this.loadCurrentTrack(track);
         await this.audio.play();
+    }
+
+    public async shuffle(): Promise<void> {
+        this.queue = this.queue
+            .map((track, index) => track.regenerateId(Date.now() + index))
+            .sort(() => Math.random() - 0.5);
+
+        this.shuffled = true;
+    }
+
+    public async unshuffle(): Promise<void> {
+        this.queue = this.queue.sort((a, b) => a.id.localeCompare(b.id));
+        this.shuffled = false;
     }
 
     public async pause(): Promise<void> {
@@ -349,9 +364,9 @@ export class AudioPlayer {
         const addToHistory = this.queue.splice(0, index);
         const nextTrack = this.queue.shift();
 
-        if (this.currentTrack) {
-            this.history.unshift(this.currentTrack);
-            this.currentTrack = nextTrack ?? null;
+        if (this.current) {
+            this.history.unshift(this.current);
+            this.current = nextTrack ?? null;
         }
 
         if (nextTrack) {
@@ -370,9 +385,9 @@ export class AudioPlayer {
         const addToQueue = this.history.splice(0, index);
         const previousTrack = this.history.shift();
 
-        if (this.currentTrack) {
-            this.queue.unshift(this.currentTrack);
-            this.currentTrack = previousTrack ?? null;
+        if (this.current) {
+            this.queue.unshift(this.current);
+            this.current = previousTrack ?? null;
         }
 
         if (previousTrack) {
@@ -398,6 +413,7 @@ export namespace AudioPlayer {
 
     export type Status = 'playing'|'stopped'|'buffering'|'error';
     export type Repeat = 'none'|'one'|'all';
+    export type Track = RawTrack;
 
     export function getRealDuration(audio: HTMLAudioElement, track?: Track|null): number {
         if (audio && Number.isFinite(audio.duration)) {
