@@ -7,7 +7,6 @@ import { ReleaseInfoCache } from './ReleaseInfoCache.svelte';
 import { Image } from '$lib/client/image';
 import { resolve } from '$app/paths';
 import { QueueTrack } from './QueueTrack';
-import { shuffleArray } from '../utils';
 
 export class AudioPlayer {
     public audio: HTMLAudioElement|null = $state(null);
@@ -308,9 +307,8 @@ export class AudioPlayer {
 
     public async shuffle(): Promise<void> {
         this.queue = this.queue
-            .map((track, index) => track.regenerateId(Date.now() + index));
-
-        this.queue = shuffleArray(this.queue);
+            .map((track, index) => track.regenerateId(Date.now() + index))
+            .sort(() => Math.random() - 0.5);
 
         this.shuffled = true;
     }
