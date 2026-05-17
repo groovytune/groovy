@@ -101,14 +101,14 @@
         if (distanceFromCurrent <= 10) {
             opacity = 50;
             blur = 2;
-        } else if (distanceFromCurrent < 20) {
+        } else if (distanceFromCurrent <= 20) {
             opacity = 40;
             blur = 3;
-        } else if (distanceFromCurrent < 30) {
+        } else if (distanceFromCurrent <= 30) {
             opacity = 30;
             blur = 5;
         } else {
-            opacity = 20;
+            opacity = 25;
             blur = 5;
         }
 
@@ -146,6 +146,8 @@
                 {@const distanceFromCurrent = calculateLineTimeDistance(line)}
                 <a
                     href="#/"
+                    data-line-index={lineIndex}
+                    data-distance-from-current={distanceFromCurrent}
                     style="content-visibility: auto; will-change: auto; interpolate-size: allow-keywords;"
                     class={cn(
                         "block transition-all duration-500 ease-in-out text-balance mt-8 h-fit",
@@ -155,7 +157,7 @@
                         hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none blur-none",
                         line.isDuet && "text-end",
                         line.isBG && "text-[0.6em] mt-2 mb-2 font-semibold",
-                        line.isBG && isLineFuture && "opacity-0 blur-none"
+                        line.isBG && isLineFuture && "opacity-10"
                     )}
                     onclick={e => {
                         e.preventDefault();

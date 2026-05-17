@@ -157,6 +157,11 @@
                 variant="secondary"
                 size={isLargeWindow.current ? "icon-lg" : "default"}
                 class="bg-white/10! shadow-none"
+                onclick={
+                    () => !isLargeWindow.current
+                        ? goto(resolve('/(player)/queue'))
+                        : undefined
+                }
             >
                 <ListMusicIcon class="min-[900px]:size-6 size-4"/>
                 <span class="min-[900px]:hidden">Queue</span>
