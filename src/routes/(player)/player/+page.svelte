@@ -177,7 +177,6 @@
                 scrollBlock="center"
                 class="text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%"
                 containerClass="pt-[50svh]"
-                enableBlur={false}
             />
         </div>
     {/if}

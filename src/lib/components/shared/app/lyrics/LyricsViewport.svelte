@@ -98,27 +98,29 @@
         let opacity: number;
         let blur: number;
 
-        if (distanceFromCurrent <= 10) {
-            opacity = 50;
+        if (distanceFromCurrent <= 2) {
+            opacity = 25;
             blur = 2;
-        } else if (distanceFromCurrent <= 20) {
-            opacity = 40;
+        } else if (distanceFromCurrent <= 5) {
+            opacity = 30;
             blur = 3;
-        } else if (distanceFromCurrent <= 30) {
+        } else if (distanceFromCurrent <= 20) {
             opacity = 30;
             blur = 5;
         } else {
-            opacity = 25;
+            opacity = 10;
             blur = 5;
         }
 
-        return `opacity-${opacity} blur-[${enableBlur ? blur : 0}px]`;
+        return `opacity: ${opacity}%; filter: blur(${enableBlur ? blur : 0}px);`;
     }
 
-    function calculateLineTimeDistance(line: LyricLine): number {
-        const lineStartTime = line.startTime / 1000;
-        const lineEndTime = line.endTime / 1000;
-        return Math.round(Math.min(Math.abs(currentTime - lineStartTime), Math.abs(currentTime - lineEndTime)));
+    function calculateLineIndexDistance(index: number): number {
+        const activeIndices = activeLines?.keys().toArray();
+        if (!activeIndices?.length) return 0;
+
+        const distances = activeIndices.map(activeIndex => Math.abs(activeIndex - index));
+        return Math.min(...distances);
     }
 </script>
 
@@ -143,21 +145,20 @@
                 {@const isLinePassed = currentTime > lineEndTime}
                 {@const isLineFuture = currentTime < lineStartTime}
                 {@const isLineActive = activeWords !== undefined}
-                {@const distanceFromCurrent = calculateLineTimeDistance(line)}
+                {@const distanceFromCurrent = calculateLineIndexDistance(lineIndex)}
                 <a
                     href="#/"
                     data-line-index={lineIndex}
                     data-distance-from-current={distanceFromCurrent}
-                    style="content-visibility: auto; will-change: auto; interpolate-size: allow-keywords;"
+                    style="content-visibility: auto; will-change: auto; interpolate-size: allow-keywords; {(isLinePassed || isLineFuture) && !isUserScrolling ? getOpacityBlur(distanceFromCurrent) : ''}"
                     class={cn(
                         "block transition-all duration-500 ease-in-out text-balance mt-8 h-fit",
                         lineIndex === 0 && "mt-0",
                         isLineActive && "active-lrc",
-                        (isLinePassed || isLineFuture) && !isUserScrolling && getOpacityBlur(distanceFromCurrent),
-                        hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none blur-none",
+                        hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0! pointer-events-none blur-none",
                         line.isDuet && "text-end",
                         line.isBG && "text-[0.6em] mt-2 mb-2 font-semibold",
-                        line.isBG && isLineFuture && "opacity-10"
+                        line.isBG && isLineFuture && "opacity-10!"
                     )}
                     onclick={e => {
                         e.preventDefault();
