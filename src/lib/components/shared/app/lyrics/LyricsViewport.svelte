@@ -129,27 +129,31 @@
             {#each lyrics as line, lineIndex (lineIndex)}
                 {@const lineStartTime = line.startTime / 1000}
                 {@const lineEndTime = line.endTime / 1000}
+                {@const activeWords = activeLines?.get(lineIndex)}
                 {@const isLinePassed = currentTime > lineEndTime}
                 {@const isLineFuture = currentTime < lineStartTime}
-                {@const activeWords = activeLines?.get(lineIndex)}
+                {@const isLineActive = activeWords !== undefined}
                 {@const distanceFromCurrent = calculateLineTimeDistance(line)}
                 <a
                     href="#/"
-                    onclick={() => setCurrentTime?.(lineStartTime)}
-                    style="content-visibility: auto; will-change: auto;"
+                    style="content-visibility: auto; will-change: auto; interpolate-size: allow-keywords;"
                     class={cn(
-                        "block transition-all duration-500 ease-in-out text-balance mt-8",
+                        "block transition-all duration-500 ease-in-out text-balance mt-8 h-fit",
                         lineIndex === 0 && "mt-0",
-                        activeWords && "active-lrc",
+                        isLineActive && "active-lrc",
                         (isLinePassed || isLineFuture) && !isUserScrolling && getOpacityBlur(distanceFromCurrent),
-                        hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none",
+                        hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0 pointer-events-none blur-none",
                         line.isDuet && "text-end",
                         line.isBG && "text-[0.6em] mt-2 mb-2 font-semibold",
-                        line.isBG && isLineFuture && "opacity-0"
+                        line.isBG && isLineFuture && "opacity-0 blur-none h-0 mt-0 mb-0"
                     )}
+                    onclick={e => {
+                        e.preventDefault();
+                        setCurrentTime?.(lineStartTime);
+                    }}
                 >
                     {#each line.words as word, wordIndex (wordIndex)}
-                        {@const isWordActive = activeWords && activeWords.includes(wordIndex)}
+                        {@const isWordActive = isLineActive && activeWords.includes(wordIndex)}
                         <span
                             style="will-change: auto;"
                             class={cn(

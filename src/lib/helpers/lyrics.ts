@@ -17,8 +17,12 @@ export function stringifyLyrics(lyrics: LyricLine[]): string {
     return lyrics.map(line => line.words.map(word => word.word).join('')).join('\n');
 }
 
-export function getActiveLines(lyrics: LyricLine[], currentTime: number): Map<number, number[]> {
+export function getActiveLines(lyrics: LyricLine[], currentTime: number, delay: number = 0): Map<number, number[]> {
     const activeLines = new Map<number, number[]>();
+
+    if (delay) {
+        currentTime += delay;
+    }
 
     for (let i = 0; i < lyrics.length; i++) {
         const line = lyrics[i];
