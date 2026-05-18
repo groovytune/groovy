@@ -17,29 +17,26 @@ export function stringifyLyrics(lyrics: LyricLine[]): string {
     return lyrics.map(line => line.words.map(word => word.word).join('')).join('\n');
 }
 
-export function getActiveLines(lyrics: LyricLine[], currentTime: number, delay: number = 0): Map<number, number[]> {
+export function getActiveLines(lyrics: LyricLine[], currentTime: number): Map<number, number[]> {
     const activeLines = new Map<number, number[]>();
-
-    if (delay) {
-        currentTime += delay;
-    }
+    const currentTimeMs = Math.round(currentTime * 1000);
 
     for (let i = 0; i < lyrics.length; i++) {
         const line = lyrics[i];
 
-        const lineStartTime = line.startTime / 1000;
-        const lineEndTime = line.endTime / 1000;
+        const lineStartTime = line.startTime;
+        const lineEndTime = line.endTime;
 
-        if (currentTime < lineStartTime || currentTime > lineEndTime) continue;
+        if (currentTimeMs < lineStartTime || currentTimeMs > lineEndTime) continue;
 
         const activeWords: number[] = [];
 
         for (let j = 0; j < line.words.length; j++) {
             const word = line.words[j];
 
-            const wordStartTime = word.startTime / 1000;
+            const wordStartTime = word.startTime;
 
-            if (currentTime >= wordStartTime) {
+            if (currentTimeMs >= wordStartTime) {
                 activeWords.push(j);
             }
         }
