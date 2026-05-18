@@ -9,8 +9,11 @@
     import ExplicitIcon from '../../icons/ExplicitIcon.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import PlayerProgressBar from './PlayerProgressBar.svelte';
+    import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
+    import PlayerQueueDialog from './dialogs/PlayerQueueDialog.svelte';
 
     const audioPlayer = AudioPlayer.context.get();
+    const queueDialogState = new DialogState({ id: 'player-queue' });
 </script>
 
 {#if audioPlayer.currentTrack}
@@ -67,7 +70,12 @@
                 <span class="w-6 text-end">{audioPlayer.currentTrack ? formatDuration(audioPlayer.duration || 0) : '--:--'}</span>
             </div>
             <div class="hidden md:flex gap-2">
-                <Button variant="ghost" size="icon" class="ml-auto">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    class="ml-auto"
+                    onclick={() => queueDialogState.open()}
+                >
                     <ListMusicIcon/>
                 </Button>
                 <Button
@@ -114,3 +122,5 @@
         </div>
     </div>
 {/if}
+
+<PlayerQueueDialog  dialogState={queueDialogState}/>
