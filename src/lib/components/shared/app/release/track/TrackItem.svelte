@@ -111,7 +111,7 @@
                     {track?.name ?? 'Unavailable Track'}
                     {#if track?.explicit}<ExplicitIcon class="size-4"/>{/if}
                 </ItemTitle>
-                <ItemDescription class="line-clamp-1 text-sm">
+                <ItemDescription class="line-clamp-1 text-sm text-foreground/60 font-medium">
                     {formatDuration(track?.duration || 0)}{artistInfo.current?.name ? ` • ${artistInfo.current.name}` : ''}
                 </ItemDescription>
             </ItemContent>

@@ -3,19 +3,21 @@ import type { AudioPlayer } from './AudioPlayer.svelte';
 
 export class QueueTrack {
     public id: string;
+    public sortId: string;
     public track: AudioPlayer.Track;
 
     get addedAt(): number {
         return decodeTime(this.id);
     }
 
-    constructor(track: AudioPlayer.Track, id?: string|number) {
+    constructor(track: AudioPlayer.Track, sortId?: string|number) {
         this.track = track;
-        this.id = typeof id === 'string' ? id : ulid(id);
+        this.id = ulid();
+        this.sortId = typeof sortId === 'string' ? sortId : ulid(sortId);
     }
 
-    public regenerateId(seed?: number): this {
-        this.id = ulid(seed);
+    public regenerateSortId(seed?: number): this {
+        this.sortId = ulid(seed);
         return this;
     }
 }

@@ -44,19 +44,39 @@
             addReleaseName={true}
             oncoverclick={() => goto(resolve('/(player)/player'))}
         />
-        <LyricsViewport
-            bind:ref={scrollContainer}
-            currentTime={audioPlayer.currentTime}
-            lyrics={audioPlayer.lyrics.current && !audioPlayer.lyrics.loading ? parseLyrics(audioPlayer.lyrics.current) : []}
-            setCurrentTime={(time) => audioPlayer.seek(time)}
-            scrollBlock="start"
-            class={cn(
-                "transition-[mask] duration-500 ease-in-out",
-                "h-[calc(100%-2.6rem)] text-3xl font-bold leading-snug mask-t-from-90% mask-t-to-100% mask-b-from-80% mask-b-to-100%",
-                (scrolling || audioPlayer.paused) && "mask-b-from-60% mask-b-to-80%"
-            )}
-        />
-        {#if scrolling || audioPlayer.paused}
+        {#if audioPlayer.lyrics.loading}
+            <div
+                bind:this={scrollContainer}
+                class="h-full flex items-center justify-center"
+            >
+                <p class="text-xl text-center text-white/50">
+                    Loading lyrics...
+                </p>
+            </div>
+        {:else if !audioPlayer.lyrics.current}
+            <div
+                bind:this={scrollContainer}
+                class="h-full flex items-center justify-center"
+            >
+                <p class="text-xl text-center text-white/50">
+                    No lyrics found for this track.
+                </p>
+            </div>
+        {:else}
+            <LyricsViewport
+                bind:ref={scrollContainer}
+                currentTime={audioPlayer.currentTime}
+                lyrics={audioPlayer.lyrics.current && !audioPlayer.lyrics.loading ? parseLyrics(audioPlayer.lyrics.current) : []}
+                setCurrentTime={(time) => audioPlayer.seek(time)}
+                scrollBlock="start"
+                class={cn(
+                    "transition-[mask] duration-500 ease-in-out",
+                    "h-[calc(100%-2.6rem)] text-3xl font-bold leading-snug mask-t-from-90% mask-t-to-100% mask-b-from-80% mask-b-to-100%",
+                    (scrolling || audioPlayer.paused) && "mask-b-from-60% mask-b-to-80%"
+                )}
+            />
+        {/if}
+        {#if scrolling || audioPlayer.paused || audioPlayer.lyrics.loading || !audioPlayer.lyrics.current}
             <section transition:fade={{ duration: 500 }} class="absolute bottom-5 left-0 w-full p-6">
                 <div class="grid w-full gap-2 text-xs text-muted-foreground">
                     <PlayerProgressBar class="mono"/>

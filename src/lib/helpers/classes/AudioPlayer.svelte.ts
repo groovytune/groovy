@@ -307,14 +307,14 @@ export class AudioPlayer {
 
     public async shuffle(): Promise<void> {
         this.queue = this.queue
-            .map((track, index) => track.regenerateId(Date.now() + index))
+            .map((track, index) => track.regenerateSortId(Date.now() + index))
             .sort(() => Math.random() - 0.5);
 
         this.shuffled = true;
     }
 
     public async unshuffle(): Promise<void> {
-        this.queue = this.queue.sort((a, b) => a.id.localeCompare(b.id));
+        this.queue = this.queue.sort((a, b) => a.sortId.localeCompare(b.sortId));
         this.shuffled = false;
     }
 

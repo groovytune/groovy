@@ -20,7 +20,7 @@
     const isLargeWindow = new MediaQuery('(width >= 900px)');
     const keysPressed = new PressedKeys();
 
-    let isLyricsEnabled = $derived(!!audioPlayer.lyrics.current);
+    let isLyricsEnabled = $derived(true);
     let isFullscreen = $state(false);
 
     keysPressed.onKeys(['Escape'], async () => {
@@ -141,7 +141,6 @@
                 size={isLargeWindow.current ? "icon-lg" : "default"}
                 class={cn(
                     "bg-white/10! shadow-none",
-                    !audioPlayer.lyrics.current && "hidden",
                     isLyricsEnabled && isLargeWindow.current && 'bg-white/80! text-black!'
                 )}
                 onclick={
@@ -168,16 +167,26 @@
             </Button>
         </footer>
     </div>
-    {#if isLyricsEnabled && !audioPlayer.lyrics.loading && audioPlayer.lyrics.current}
+    {#if isLyricsEnabled}
         <div class="max-w-3xl size-full hidden min-[900px]:flex justify-center items-center-safe p-6">
-            <LyricsViewport
-                currentTime={audioPlayer.currentTime}
-                lyrics={audioPlayer.lyrics.current ? parseLyrics(audioPlayer.lyrics.current) : []}
-                setCurrentTime={(time) => audioPlayer.seek(time)}
-                scrollBlock="center"
-                class="text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%"
-                containerClass="pt-[50svh]"
-            />
+            {#if audioPlayer.lyrics.loading}
+                <p class="text-2xl text-center text-white/50">
+                    Loading lyrics...
+                </p>
+            {:else if !audioPlayer.lyrics.current}
+                <p class="text-2xl text-center text-white/50">
+                    No lyrics found for this track.
+                </p>
+            {:else}
+                <LyricsViewport
+                    currentTime={audioPlayer.currentTime}
+                    lyrics={audioPlayer.lyrics.current ? parseLyrics(audioPlayer.lyrics.current) : []}
+                    setCurrentTime={(time) => audioPlayer.seek(time)}
+                    scrollBlock="center"
+                    class="text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%"
+                    containerClass="pt-[50svh]"
+                />
+            {/if}
         </div>
     {/if}
 </main>

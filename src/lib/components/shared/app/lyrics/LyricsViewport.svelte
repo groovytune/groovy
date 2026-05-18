@@ -4,7 +4,7 @@
     import type { ClassValue } from 'clsx';
     import { cn } from '$lib/helpers/utils';
     import { useDebounce, useEventListener } from 'runed';
-    import { getActiveLines } from '../../../../helpers/lyrics';
+    import { getActiveLines } from '$lib/helpers/lyrics';
 
     let {
         currentTime,
@@ -37,10 +37,7 @@
     } = $props();
 
     const activeLines = $derived(lyrics && typeof lyrics !== 'string' ? getActiveLines(lyrics, currentTime) : null);
-
-    const revertUserScrolling = useDebounce(() => {
-        isUserScrolling = false;
-    }, 5000);
+    const revertUserScrolling = useDebounce(() => isUserScrolling = false, 5000);
 
     $effect(() => {
         if (!viewportRef) return;
@@ -162,7 +159,7 @@
                     )}
                     onclick={e => {
                         e.preventDefault();
-                        setCurrentTime?.(lineStartTime);
+                        setCurrentTime?.(parseFloat(lineStartTime.toFixed(3)));
                     }}
                 >
                     {#each line.words as word, wordIndex (wordIndex)}
