@@ -14,6 +14,7 @@
     import { auth } from '../../../../../../../../lib/client/auth.js';
     import LyricsUpload from '../../../../../../../../lib/components/shared/app/lyrics/editor/LyricsUpload.svelte';
     import { SvelteMap } from 'svelte/reactivity';
+    import type { Snapshot } from './$types.js';
 
     let { data } = $props();
 
@@ -35,11 +36,14 @@
     let duration: number = $state(0);
 
     let content: string = $state('');
-    let timeData: Map<number, number> = new SvelteMap();
 
+    const timeData: Map<number, number> = new SvelteMap();
     const history = new StateHistory(
-        () => timeData,
-        newTimeData => timeData = newTimeData
+        () => timeData.entries(),
+        newTimeData => {
+            timeData.clear();
+            newTimeData.forEach(([index, time]) => timeData.set(index, time));
+        }
     );
 
     useEventListener(() => audio, 'play', () => audioPlayer.pause());
@@ -68,11 +72,16 @@
                 timeData.set(index, line.startTime / 1000);
             }
         });
+        history.clear();
     }
 
-    export const snapshot = {
-        capture: () => ({ timeData: timeData }),
-        restore: snapshot => timeData = snapshot.timeData
+    export const snapshot: Snapshot<{ timeData: [number, number][]; }> = {
+        capture: () => ({ timeData: timeData.entries().toArray() }),
+        restore: snapshot => {
+            timeData.clear();
+            snapshot.timeData.forEach(([index, time]) => timeData.set(index, time));
+            history.clear();
+        }
     };
 </script>
 
@@ -156,7 +165,7 @@
                             value => audio.currentTime = value
                         }
                         bind:lyrics={content}
-                        timeData={timeData}
+                        {timeData}
                     />
                 </TabsContent>
                 <TabsContent value="raw">
