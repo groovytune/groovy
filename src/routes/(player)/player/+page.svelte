@@ -14,11 +14,14 @@
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
     import LyricsViewport from '$lib/components/shared/app/lyrics/LyricsViewport.svelte';
     import { parseLyrics } from '$lib/helpers/lyrics';
+    import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
+    import PlayerQueueDialog from '../../../lib/components/shared/app/player/dialogs/PlayerQueueDialog.svelte';
 
     const audioPlayer = AudioPlayer.context.get();
     const playerLastNavigate = PlayerLastNavigate.get();
     const isLargeWindow = new MediaQuery('(width >= 900px)');
     const keysPressed = new PressedKeys();
+    const queueDialogState = new DialogState({ id: 'player-queue' });
 
     let isLyricsEnabled = $derived(true);
     let isFullscreen = $state(false);
@@ -159,7 +162,7 @@
                 onclick={
                     () => !isLargeWindow.current
                         ? goto(resolve('/(player)/queue'))
-                        : undefined
+                        : queueDialogState.open()
                 }
             >
                 <ListMusicIcon class="min-[900px]:size-6 size-4"/>
@@ -190,3 +193,4 @@
         </div>
     {/if}
 </main>
+<PlayerQueueDialog dialogState={queueDialogState}/>

@@ -27,7 +27,7 @@
         dialogState?: DialogState;
         dialogContentProps?: DialogContentProps;
         drawerContentProps?: DrawerContentProps;
-        [key: string]: any;
+        [key: string]: unknown;
     } = $props();
 
     let isDesktop: MediaQuery = $state()!;
