@@ -136,7 +136,7 @@
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 {#snippet child({ props })}
-                                    <a {...props} href={resolve('/(app)/release/[releaseId]/edit/track/[trackId]', { releaseId: track.releaseId, trackId: track.id })}>
+                                    <a {...props} href={resolve('/(app)/release/[releaseId]/edit/track/[trackId]/lyrics', { releaseId: track.releaseId, trackId: track.id })}>
                                         <TextAlignStartIcon/>
                                         Edit Lyrics
                                     </a>
