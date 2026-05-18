@@ -114,8 +114,8 @@
         }
         <a href={resolve('/(app)/release/[releaseId]', { releaseId: release.id })} class="p-5 w-full max-w-sm relative">
             <AspectRatio class="w-full rounded-md bg-muted cursor-pointer transition-blur duration-300">
-                <img src={coverURL} alt="Release Cover" class="size-full object-cover rounded-md"/>
-                <img src={coverURL} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
+                <img src={coverURL} alt={release.name} class="size-full object-cover rounded-md"/>
+                <img src={coverURL} alt={release.name} class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
             </AspectRatio>
             <header class="w-full max-w-sm text-center px-5">
                 <h1

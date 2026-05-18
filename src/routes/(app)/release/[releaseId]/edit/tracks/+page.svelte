@@ -49,12 +49,12 @@
         <div class="p-5 w-full max-w-sm relative">
             <AspectRatio class="w-full rounded-md bg-muted">
                 <img
-                    alt="Release Cover"
+                    alt={data.release.name}
                     src={coverURL}
                     class="size-full object-cover rounded-md"
                 />
                 <img
-                    alt="Release Cover"
+                    alt={data.release.name}
                     src={coverURL}
                     class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"
                 />

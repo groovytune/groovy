@@ -43,7 +43,7 @@
     {#if !backgroundLoaded}
         <div transition:fade={{ duration: 1000 }} class="size-full absolute top-0 left-0 -z-10">
             <div class="size-full absolute top-0 left-0 backdrop-blur-3xl backdrop-saturate-150 backdrop-brightness-75"></div>
-            <img src={audioPlayer.previewCoverURL} alt="Track Cover" class="size-full object-cover"/>
+            <img src={audioPlayer.previewCoverURL} alt={audioPlayer.currentTrack?.name || 'Track Cover'} class="size-full object-cover"/>
         </div>
     {/if}
 </div>

@@ -96,8 +96,8 @@
                     class="w-full rounded-md bg-muted cursor-pointer"
                     onclick={() => coverInput?.click()}
                 >
-                    <img src={coverURL} alt="Release Cover" class="size-full object-cover rounded-md"/>
-                    <img src={coverURL} alt="Release Cover" class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
+                    <img src={coverURL} alt={data.track.name} class="size-full object-cover rounded-md"/>
+                    <img src={coverURL} alt={data.track.name} class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
                 </AspectRatio>
             {/key}
         </div>

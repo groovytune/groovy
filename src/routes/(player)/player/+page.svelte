@@ -122,7 +122,7 @@
             >
                 <img
                     src={audioPlayer.coverURL}
-                    alt="Release Cover"
+                    alt={audioPlayer.currentTrack?.name || 'Track Cover'}
                     class="now-cover size-full object-cover"
                 />
             </AspectRatio>

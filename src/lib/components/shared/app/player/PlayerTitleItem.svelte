@@ -34,7 +34,11 @@
 <Item class={cn(className)}>
     {#if cover}
         <ItemMedia variant="image" class={cn("size-14", coverClassName)} onclick={oncoverclick}>
-            <img src={audioPlayer.previewCoverURL} alt="" class="now-cover">
+            <img
+                src={audioPlayer.previewCoverURL}
+                alt={audioPlayer.currentTrack?.name ?? "Cover Art"}
+                class="now-cover"
+            >
         </ItemMedia>
     {/if}
     <ItemContent class="gap-0">

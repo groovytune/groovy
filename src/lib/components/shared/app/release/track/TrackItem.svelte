@@ -95,7 +95,7 @@
             {#if cover}
                 <ItemMedia variant="image">
                     <img
-                        alt="Track Cover"
+                        alt={track.name}
                         src={coverURL}
                         class="rounded-md"
                     />

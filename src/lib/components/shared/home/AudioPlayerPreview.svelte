@@ -21,7 +21,7 @@
 >
     <ItemMedia variant="image" class="-mt-1">
         <img
-            alt="Track Cover"
+            alt={audioPlayer.currentTrack?.name ?? 'No Track Playing'}
             src={audioPlayer.coverURL}
             class="now-cover size-full object-cover rounded-md"
         />
