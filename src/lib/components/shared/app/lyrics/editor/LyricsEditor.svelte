@@ -21,13 +21,14 @@
 <svelte:window
     onkeydown={event => {
         const hasModifier = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
-        if (hasModifier) return;
-
-        event.preventDefault();
+        const isFocusedOnInput = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName || '');
+        if (hasModifier || isFocusedOnInput) return;
 
         switch (event.key) {
             case 'Enter':
             case ' ': {
+                event.preventDefault();
+
                 timeData.set(currentLyricIndex, currentTime);
                 currentLyricIndex = currentLyricIndex + 1 < lines.length ? currentLyricIndex + 1 : currentLyricIndex;
 
@@ -36,10 +37,14 @@
                 break;
             }
             case 'Backspace':
+                event.preventDefault();
+
                 timeData.delete(currentLyricIndex);
                 break;
             case 'ArrowUp':
             case 'ArrowDown': {
+                event.preventDefault();
+
                 const direction = event.key === 'ArrowUp' ? -1 : 1;
                 currentLyricIndex = currentLyricIndex + direction >= 0 && currentLyricIndex + direction < lines.length ? currentLyricIndex + direction : currentLyricIndex;
 

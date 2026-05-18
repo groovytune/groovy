@@ -15,6 +15,7 @@
     import LyricsUpload from '../../../../../../../../lib/components/shared/app/lyrics/editor/LyricsUpload.svelte';
     import { SvelteMap } from 'svelte/reactivity';
     import type { Snapshot } from './$types.js';
+    import { Textarea } from '../../../../../../../../lib/components/ui/input-group/index.js';
 
     let { data } = $props();
 
@@ -59,6 +60,7 @@
 
     onMount(() => {
         reset();
+        audio.load();
     });
 
     function reset() {
@@ -75,9 +77,10 @@
         history.clear();
     }
 
-    export const snapshot: Snapshot<{ timeData: [number, number][]; }> = {
-        capture: () => ({ timeData: timeData.entries().toArray() }),
+    export const snapshot: Snapshot<{ timeData: [number, number][]; content: string; }> = {
+        capture: () => ({ timeData: timeData.entries().toArray(), content }),
         restore: snapshot => {
+            content = snapshot.content;
             timeData.clear();
             snapshot.timeData.forEach(([index, time]) => timeData.set(index, time));
             history.clear();
@@ -169,7 +172,7 @@
                     />
                 </TabsContent>
                 <TabsContent value="raw">
-                    <textarea bind:value={content} class="w-full h-full p-2 border rounded-md" placeholder="Enter lyrics here..."></textarea>
+                    <Textarea bind:value={content} class="w-full h-full min-h-40 p-2 border rounded-md" placeholder="Enter lyrics here..."></Textarea>
                 </TabsContent>
             </Tabs>
         </div>
