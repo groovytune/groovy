@@ -65,7 +65,15 @@
             </Button>
         </nav>
         <div class="shrink-0 flex gap-2">
-            <Button variant="outline" class="md:justify-start lg:w-xs md:w-auto w-9 sm:inline-flex hidden">
+            <Button
+                href={resolve('/(app)/search')}
+                variant="outline"
+                class={[
+                    "md:justify-start lg:w-xs md:w-auto w-9 sm:inline-flex hidden",
+                    active?.id === 'search' && "opacity-0! pointer-events-none"
+                ]}
+                aria-disabled={active?.id === 'search'}
+            >
                 <SearchIcon/>
                 <span class="md:inline hidden">Search</span>
             </Button>
