@@ -8,27 +8,24 @@ export async function load({ params, locals, url }) {
         throw redirect(302, createAuthRedirect('signin', url));
     }
 
-    const lyrics = await prisma.lyrics.findUnique({
+    const track = await prisma.track.findUnique({
         where: {
-            trackId: params.trackId,
-            track: {
-                id: params.trackId,
-                release: {
-                    id: params.releaseId,
-                    userId: locals.session.user.id
-                }
+            id: params.trackId,
+            release: {
+                id: params.releaseId,
+                userId: locals.session.user.id
             }
         },
         include: {
-            track: true
+            lyrics: true
         }
     });
 
-    if (!lyrics) {
+    if (!track) {
         throw redirect(302, resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId: params.releaseId }));
     }
 
     return {
-        lyrics
+        track
     };
 }

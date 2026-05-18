@@ -4,7 +4,6 @@
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import { SvelteMap } from 'svelte/reactivity';
     import { parseLyrics, stringifyLyrics } from '$lib/helpers/lyrics';
-    import type { Lyrics } from '$lib/server/prisma/browser';
     import type { LyricLine } from '@applemusic-like-lyrics/core';
     import { formatDuration } from '$lib/helpers/utils.js';
     import { Badge } from '$lib/components/ui/badge/index.js';
@@ -14,8 +13,8 @@
     const audioPlayer = AudioPlayer.context.get();
     const pressedKeys = new PressedKeys();
 
-    let lyrics = $derived(data.lyrics as Lyrics);
-    let track = $derived(data.lyrics.track);
+    let track = $derived(data.track);
+    let lyrics = $derived(data.track?.lyrics);
 
     let audioURL: string = $derived(Appwrite.storage.getFileView({
         bucketId: 'audio',
@@ -28,11 +27,18 @@
 
     let lyricsContent = $derived(stringifyLyrics(parseLyrics(lyrics) as LyricLine[]));
     let lyricsLines = $derived(lyricsContent.split('\n'));
-    let timeData = new SvelteMap<number, number>([
-        [0, 20000],
-        [1, 40000],
-        [2, 60000],
-    ]);
+    let timeData = new SvelteMap<number, number>();
+
+    $effect(() => {
+        const parsed = parseLyrics(lyrics) as LyricLine[];
+
+        timeData.clear();
+        parsed.forEach((line, index) => {
+            if (line.startTime !== undefined) {
+                timeData.set(index, line.startTime);
+            }
+        });
+    });
 
     const history = new StateHistory(
         () => timeData.entries().toArray(),
@@ -53,6 +59,18 @@
     pressedKeys.onKeys(['meta', 'y'], () => history.redo());
     pressedKeys.onKeys(['Control', 'z'], () => history.undo());
     pressedKeys.onKeys(['Control', 'y'], () => history.redo());
+
+    export const snapshot = {
+        capture: () => ({
+            timeData: timeData.entries().toArray(),
+        }),
+        restore: snapshot => {
+            timeData.clear();
+            for (const [index, time] of snapshot.timeData) {
+                timeData.set(index, time);
+            }
+        },
+    };
 </script>
 
 <svelte:window
@@ -79,35 +97,52 @@
     class="w-full"
 ></audio>
 
-{#if lyricsContent}
-    <div class="flex flex-col gap-2">
-        {#each lyricsLines as line, index (index)}
-            {@const timeStamp = timeData.get(index)}
-            {@const isActive = timeStamp !== undefined && currentTimeMs >= timeStamp}
-            {@const isCurrent = index === currentLyricIndex}
-            <a
-                href="#/"
-                data-lyric-index={index}
-                onclick={e => {
-                    e.preventDefault();
-                    currentLyricIndex = index;
-                }}
-                class="flex gap-2"
-                class:text-muted-foreground={!isActive}
-                class:text-primary={isCurrent}
-                class:font-semibold={isCurrent}
-            >
-                <Badge variant={isCurrent ? "default" : "outline"} class="w-14">
-                    {#if timeStamp !== undefined}
-                        {formatDuration(timeStamp)}
-                    {:else}
-                        --:--
-                    {/if}
-                </Badge>
-                <span>{line}</span>
-            </a>
-        {/each}
+<div class="flex gap-2">
+    {#if lyricsContent}
+        <div class="flex flex-col gap-2">
+            {#each lyricsLines as line, index (index)}
+                {@const timeStamp = timeData.get(index)}
+                {@const isActive = timeStamp !== undefined && currentTimeMs >= timeStamp}
+                {@const isCurrent = index === currentLyricIndex}
+                <div
+                    data-lyric-index={index}
+                    class="flex gap-2 transition-all duration-300"
+                    class:text-muted-foreground={!isActive}
+                    class:text-primary={isCurrent}
+                    class:font-medium={isCurrent}
+                >
+                    <Badge
+                        class="w-16 cursor-pointer"
+                        variant={isCurrent ? "default" : "outline"}
+                        onclick={e => {
+                            e.preventDefault();
+                            if (timeStamp !== undefined) {
+                                audio.currentTime = timeStamp / 1000;
+                            }
+                        }}
+                    >
+                        {#if timeStamp !== undefined}
+                            {formatDuration(timeStamp / 1000 , 'mm:ss')}
+                        {:else}
+                            --:--
+                        {/if}
+                    </Badge>
+                    <a
+                        href="#/"
+                        onclick={e => {
+                            e.preventDefault();
+                            currentLyricIndex = index;
+                        }}
+                    >
+                        {line}
+                    </a>
+                </div>
+            {/each}
+        </div>
+    {:else}
+        <p>No lyrics available for this track.</p>
+    {/if}
+    <div class="w-1/2">
+        <textarea bind:value={lyricsContent} class="w-full h-full p-2 border rounded-md" placeholder="Enter lyrics here..."></textarea>
     </div>
-{:else}
-    <p>No lyrics available for this track.</p>
-{/if}
+</div>
