@@ -5,6 +5,7 @@
     import { cn } from '$lib/helpers/utils';
     import { useDebounce, useEventListener } from 'runed';
     import { getActiveLines } from '$lib/helpers/lyrics';
+    import { untrack } from 'svelte';
 
     let {
         currentTime,
@@ -38,6 +39,7 @@
 
     const activeLines = $derived(lyrics && typeof lyrics !== 'string' ? getActiveLines(lyrics, currentTime) : null);
     const revertUserScrolling = useDebounce(() => isUserScrolling = false, 5000);
+    const isDone = $derived(lyrics && typeof lyrics !== 'string' ? lyrics.at(-1)!.endTime / 1000 <= currentTime : true);
 
     $effect(() => {
         if (!viewportRef) return;
@@ -53,34 +55,36 @@
     });
 
     function scrollToCurrentLine() {
-        const activeLines = document.getElementsByClassName('active-lrc');
-        const activeLine = activeLines.item(0) as HTMLAnchorElement|null;
-        if (isUserScrolling || !activeLine) return;
+        const lines = document.getElementsByClassName('active-lrc');
+        const active = lines.item(0) as HTMLAnchorElement|null;
+        if (isUserScrolling) return;
 
         let top: number = 0;
 
-        switch (scrollBlock) {
-            case 'start':
-                top = activeLine.offsetTop - 50;
-                break;
-            case 'center':
-                top = activeLine.offsetTop - (viewportRef!.clientHeight / 2) + (activeLine.clientHeight / 2);
-                break;
-            case 'end':
-                top = activeLine.offsetTop + activeLine.clientHeight - viewportRef!.clientHeight;
-                break;
-            case 'nearest': {
-                const lineTop = activeLine.offsetTop;
-                const lineBottom = lineTop + activeLine.clientHeight;
-                const viewTop = viewportRef!.scrollTop;
-                const viewBottom = viewTop + viewportRef!.clientHeight;
+        if (active && untrack(() => !isDone)) {
+            switch (scrollBlock) {
+                case 'start':
+                    top = active.offsetTop - 50;
+                    break;
+                case 'center':
+                    top = active.offsetTop - (viewportRef!.clientHeight / 2) + (active.clientHeight / 2);
+                    break;
+                case 'end':
+                    top = active.offsetTop + active.clientHeight - viewportRef!.clientHeight;
+                    break;
+                case 'nearest': {
+                    const lineTop = active.offsetTop;
+                    const lineBottom = lineTop + active.clientHeight;
+                    const viewTop = viewportRef!.scrollTop;
+                    const viewBottom = viewTop + viewportRef!.clientHeight;
 
-                if (lineTop < viewTop) {
-                    top = lineTop;
-                } else if (lineBottom > viewBottom) {
-                    top = lineBottom - viewportRef!.clientHeight;
-                } else {
-                    top = viewportRef!.scrollTop;
+                    if (lineTop < viewTop) {
+                        top = lineTop;
+                    } else if (lineBottom > viewBottom) {
+                        top = lineBottom - viewportRef!.clientHeight;
+                    } else {
+                        top = viewportRef!.scrollTop;
+                    }
                 }
             }
         }
@@ -153,9 +157,10 @@
                         lineIndex === 0 && "mt-0",
                         isLineActive && "active-lrc",
                         hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0! pointer-events-none blur-none",
+                        isDone && isLinePassed && "opacity-50! pointer-events-none blur-none!",
                         line.isDuet && "text-end",
                         line.isBG && "text-[0.6em] mt-2 mb-2 font-semibold",
-                        line.isBG && isLineFuture && "opacity-10!"
+                        line.isBG && isLineFuture && "opacity-10!",
                     )}
                     onclick={e => {
                         e.preventDefault();
