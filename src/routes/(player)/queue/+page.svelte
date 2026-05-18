@@ -21,9 +21,15 @@
             addReleaseName={true}
             oncoverclick={() => goto(resolve('/(player)/player'))}
         />
-        <ScrollArea class="h-full px-4 overflow-y-auto pt-1">
-            <PlayerQueueOrder itemClass="ps-3"/>
-        </ScrollArea>
+        {#if audioPlayer.queue.length}
+            <ScrollArea class="h-full px-4 overflow-y-auto pt-1">
+                <PlayerQueueOrder itemClass="ps-3"/>
+            </ScrollArea>
+        {:else}
+            <div class="h-full flex flex-col items-center justify-center gap-4 text-center px-4">
+                <p class="text-xl text-white/70">Your queue is empty</p>
+            </div>
+        {/if}
         <section class="w-full p-6">
             <div class="grid w-full gap-2 text-xs text-muted-foreground">
                 <PlayerProgressBar class="mono"/>
