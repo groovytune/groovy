@@ -8,8 +8,9 @@
     import PlayerProgressBar from '$lib/components/shared/app/player/PlayerProgressBar.svelte';
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
     import { formatDuration } from '$lib/helpers/utils';
-    import { dndzone } from 'svelte-dnd-action';
+    import { dragHandle, dragHandleZone } from 'svelte-dnd-action';
     import { flip } from 'svelte/animate';
+    import { EqualIcon } from '@lucide/svelte';
 
     const audioPlayer = AudioPlayer.context.get();
 </script>
@@ -24,10 +25,10 @@
             oncoverclick={() => goto(resolve('/(player)/player'))}
         />
         <ScrollArea
-            class="h-full p-4 overflow-y-auto mask-t-from-90% mask-t-to-100% mask-b-from-90% mask-b-to-100%"
+            class="h-full px-3 overflow-y-auto"
         >
             <div
-                use:dndzone={{
+                use:dragHandleZone={{
                     dragDisabled: audioPlayer.queue.length < 2,
                     items: audioPlayer.queue,
                     flipDurationMs: 100,
@@ -40,16 +41,27 @@
                 class="flex flex-col gap-1 py-3"
             >
                 {#each audioPlayer.queue as track, index (track.id)}
-                    <div
+                    <a
+                        href="#/"
+                        onclick={e => {
+                            e.preventDefault();
+                            audioPlayer.next(index);
+                        }}
                         animate:flip={{ duration: 100 }}
-                        class="w-full flex gap-2 items-center"
+                        class="w-full flex gap-2 items-center ps-3"
                     >
-                        <span class="text-sm text-white/50">{index + 1}</span>
+                        <span
+                            use:dragHandle
+                            class="text-sm text-white/50"
+                            aria-label="Drag handle for track number {index + 1} ({track.track.name})"
+                        >
+                            <EqualIcon class="size-5"/>
+                        </span>
                         <TrackItem
                             cover={true}
                             track={track.track}
                         />
-                    </div>
+                    </a>
                 {/each}
             </div>
         </ScrollArea>
