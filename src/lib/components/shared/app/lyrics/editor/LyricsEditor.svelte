@@ -1,15 +1,16 @@
 <script lang="ts">
-    import { formatDuration } from '../../../../../helpers/utils';
+    import { SvelteMap } from 'svelte/reactivity';
+    import { formatDuration } from '$lib/helpers/utils';
     import { Badge } from '../../../../ui/badge';
 
     let {
         currentTime = $bindable(0),
         lyrics = $bindable(''),
-        timeData = $bindable({})
+        timeData = new SvelteMap()
     }: {
         currentTime: number;
         lyrics: string;
-        timeData?: Record<number, number>;
+        timeData?: Map<number, number>;
     } = $props();
 
     let currentLyricIndex: number = $state(0);
@@ -18,15 +19,16 @@
 </script>
 
 <svelte:window
-    onkeyup={event => {
+    onkeydown={event => {
         const hasModifier = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
         if (hasModifier) return;
 
         event.preventDefault();
 
         switch (event.key) {
-            case 'Enter': {
-                timeData[currentLyricIndex] = currentTime;
+            case 'Enter':
+            case ' ': {
+                timeData.set(currentLyricIndex, currentTime);
                 currentLyricIndex = currentLyricIndex + 1 < lines.length ? currentLyricIndex + 1 : currentLyricIndex;
 
                 const currentLine = document.querySelector(`[data-lyric-index="${currentLyricIndex}"]`);
@@ -34,7 +36,7 @@
                 break;
             }
             case 'Backspace':
-                delete timeData[currentLyricIndex];
+                timeData.delete(currentLyricIndex);
                 break;
             case 'ArrowUp':
             case 'ArrowDown': {
@@ -51,17 +53,17 @@
 
 <div class="flex flex-col gap-2">
     {#each lines as line, index (index)}
-        {@const timeStamp: number|undefined = timeData[index]}
+        {@const timeStamp = timeData.get(index)}
         {@const isActive = timeStamp !== undefined && currentTime >= timeStamp}
         {@const isCurrent = index === currentLyricIndex}
         <div
             data-lyric-index={index}
-            class="flex gap-2 transition-all duration-300 font-medium"
+            class="flex gap-2 font-medium"
             class:text-muted-foreground={!isActive}
             class:text-primary={isCurrent}
         >
             <Badge
-                class="w-16 cursor-pointer transition-all duration-300"
+                class="w-16 cursor-pointer"
                 variant={isCurrent ? "default" : "outline"}
                 onclick={e => {
                     e.preventDefault();

@@ -13,6 +13,40 @@ export function parseLyrics(lyrics: Lyrics): LyricLine[]|string {
     }
 }
 
+export function parseLyricsContent(content: string): LyricLine[] {
+    try {
+        return parseLrc(content);
+    } catch (e) {
+        console.warn('Not LRC format, trying other formats...', e);
+    }
+
+    try {
+        return parseTTML(content).lines;
+    } catch (e) {
+        console.warn('Not TTML format, trying other formats...', e);
+    }
+
+    try {
+        return parseLyl(content);
+    } catch (e) {
+        console.warn('Not LYL format, trying other formats...', e);
+    }
+
+    try {
+        return parseLys(content);
+    } catch (e) {
+        console.warn('Not LYS format, trying other formats...', e);
+    }
+
+    try {
+        return parseYrc(content);
+    } catch (e) {
+        console.warn('Not YRC format, treating as TXT', e);
+    }
+
+    throw new Error('Unsupported lyrics format');
+}
+
 export function stringifyLyrics(lyrics: LyricLine[]): string {
     return lyrics.map(line => line.words.map(word => word.word).join('')).join('\n');
 }

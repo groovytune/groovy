@@ -17,7 +17,13 @@ export async function load({ params, locals, url }) {
             }
         },
         include: {
-            lyrics: true
+            lyrics: true,
+            release: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            }
         }
     });
 
