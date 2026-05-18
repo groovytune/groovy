@@ -59,9 +59,9 @@
         const active = lines.item(0) as HTMLAnchorElement|null;
         if (isUserScrolling) return;
 
-        let top: number = 0;
+        let top: number|null = null;
 
-        if (active && untrack(() => !isDone)) {
+        if (active) {
             switch (scrollBlock) {
                 case 'start':
                     top = active.offsetTop - 50;
@@ -89,10 +89,12 @@
             }
         }
 
-        requestAnimationFrame(() => viewportRef!.scrollTo({
-            top,
-            behavior: scrollBehavior,
-        }));
+        if (top !== null || untrack(() => isDone)) {
+            requestAnimationFrame(() => viewportRef!.scrollTo({
+                top: top ?? 0,
+                behavior: scrollBehavior,
+            }));
+        }
     }
 
     function getOpacityBlur(distanceFromCurrent: number): string {
