@@ -18,6 +18,9 @@ export async function load({ params, locals, url }) {
                     userId: locals.session.user.id
                 }
             }
+        },
+        include: {
+            track: true
         }
     });
 
