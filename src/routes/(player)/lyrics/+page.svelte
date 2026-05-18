@@ -47,7 +47,7 @@
         {#if audioPlayer.lyrics.loading}
             <div
                 bind:this={scrollContainer}
-                class="h-full flex items-center justify-center"
+                class="h-full pb-32 flex items-center justify-center"
             >
                 <p class="text-xl text-center text-white/50">
                     Loading lyrics...
@@ -56,7 +56,7 @@
         {:else if !audioPlayer.lyrics.current}
             <div
                 bind:this={scrollContainer}
-                class="h-full flex items-center justify-center"
+                class="h-full pb-32 flex items-center justify-center"
             >
                 <p class="text-xl text-center text-white/50">
                     No lyrics found for this track.
