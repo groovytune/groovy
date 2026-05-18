@@ -17,17 +17,27 @@ export function stringifyLyrics(lyrics: LyricLine[]): string {
     return lyrics.map(line => line.words.map(word => word.word).join('')).join('\n');
 }
 
-export function getActiveLines(lyrics: LyricLine[], currentTime: number): Map<number, number[]> {
+export interface LyricsTimelineData {
+    passedLines: number[];
+    activeLines: Map<number, number[]>;
+    futureLines: number[];
+}
+
+export function getLyricsTimeline(lyrics: LyricLine[], currentTime: number): LyricsTimelineData {
+    const passedLines: number[] = [];
     const activeLines = new Map<number, number[]>();
-    const currentTimeMs = Math.round(currentTime * 1000);
+    const futureLines: number[] = [];
 
     for (let i = 0; i < lyrics.length; i++) {
         const line = lyrics[i];
 
-        const lineStartTime = line.startTime;
-        const lineEndTime = line.endTime;
-
-        if (currentTimeMs < lineStartTime || currentTimeMs > lineEndTime) continue;
+        if (currentTime > line.endTime) {
+            passedLines.push(i);
+            continue;
+        } else if (currentTime < line.startTime) {
+            futureLines.push(i);
+            continue;
+        }
 
         const activeWords: number[] = [];
 
@@ -36,7 +46,7 @@ export function getActiveLines(lyrics: LyricLine[], currentTime: number): Map<nu
 
             const wordStartTime = word.startTime;
 
-            if (currentTimeMs >= wordStartTime) {
+            if (currentTime >= wordStartTime) {
                 activeWords.push(j);
             }
         }
@@ -44,5 +54,5 @@ export function getActiveLines(lyrics: LyricLine[], currentTime: number): Map<nu
         activeLines.set(i, activeWords);
     }
 
-    return activeLines;
+    return { passedLines, activeLines, futureLines };
 }

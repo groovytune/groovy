@@ -4,7 +4,7 @@
     import type { ClassValue } from 'clsx';
     import { cn } from '$lib/helpers/utils';
     import { useDebounce, useEventListener } from 'runed';
-    import { getActiveLines } from '$lib/helpers/lyrics';
+    import { getLyricsTimeline } from '$lib/helpers/lyrics';
     import { untrack } from 'svelte';
 
     let {
@@ -37,9 +37,11 @@
         scrollBehavior?: ScrollBehavior;
     } = $props();
 
-    const activeLines = $derived(lyrics && typeof lyrics !== 'string' ? getActiveLines(lyrics, currentTime) : null);
     const revertUserScrolling = useDebounce(() => isUserScrolling = false, 5000);
-    const isDone = $derived(lyrics && typeof lyrics !== 'string' ? lyrics.at(-1)!.endTime / 1000 <= currentTime : true);
+
+    let currentTimeMs = $derived(Math.round(currentTime * 1000));
+    let lyricsTimeline = $derived(lyrics && typeof lyrics !== 'string' ? getLyricsTimeline(lyrics, currentTimeMs) : null);
+    let isDone = $derived(lyricsTimeline?.futureLines.length === 0 && lyricsTimeline?.activeLines.size === 0);
 
     $effect(() => {
         if (!viewportRef) return;
@@ -119,7 +121,7 @@
     }
 
     function calculateLineIndexDistance(index: number): number {
-        const activeIndices = activeLines?.keys().toArray();
+        const activeIndices = lyricsTimeline?.activeLines.keys().toArray();
         if (!activeIndices?.length) return 0;
 
         const distances = activeIndices.map(activeIndex => Math.abs(activeIndex - index));
@@ -142,12 +144,10 @@
             {/each}
         {:else}
             {#each lyrics as line, lineIndex (lineIndex)}
-                {@const lineStartTime = line.startTime / 1000}
-                {@const lineEndTime = line.endTime / 1000}
-                {@const activeWords = activeLines?.get(lineIndex)}
-                {@const isLinePassed = currentTime > lineEndTime}
-                {@const isLineFuture = currentTime < lineStartTime}
+                {@const activeWords = lyricsTimeline?.activeLines.get(lineIndex)}
                 {@const isLineActive = activeWords !== undefined}
+                {@const isLinePassed = !isLineActive && !!lyricsTimeline?.passedLines.includes(lineIndex)}
+                {@const isLineFuture = !isLineActive && !!lyricsTimeline?.futureLines.includes(lineIndex)}
                 {@const distanceFromCurrent = calculateLineIndexDistance(lineIndex)}
                 <a
                     href="#/"
@@ -166,7 +166,7 @@
                     )}
                     onclick={e => {
                         e.preventDefault();
-                        setCurrentTime?.(parseFloat(lineStartTime.toFixed(3)));
+                        setCurrentTime?.(parseFloat((line.startTime / 1000).toFixed(3)));
                     }}
                 >
                     {#each line.words as word, wordIndex (wordIndex)}
