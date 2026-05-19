@@ -14,32 +14,46 @@ export function parseLyrics(lyrics: Lyrics): LyricLine[]|string {
 }
 
 export function parseLyricsContent(content: string): LyricLine[] {
+    if (!content || !content.trim().length) {
+        throw new Error('Lyrics content is empty');
+    }
+
     try {
-        return parseLrc(content);
+        const lrc = parseLrc(content);
+        if (!lrc || !lrc.length) throw new Error('Parsed LRC content is empty');
+        return lrc;
     } catch (e) {
         console.warn('Not LRC format, trying other formats...', e);
     }
 
     try {
-        return parseTTML(content).lines;
+        const ttml = parseTTML(content).lines;
+        if (!ttml || !ttml.length) throw new Error('Parsed TTML content is empty');
+        return ttml;
     } catch (e) {
         console.warn('Not TTML format, trying other formats...', e);
     }
 
     try {
-        return parseLyl(content);
+        const lyl = parseLyl(content);
+        if (!lyl || !lyl.length) throw new Error('Parsed LYL content is empty');
+        return lyl;
     } catch (e) {
         console.warn('Not LYL format, trying other formats...', e);
     }
 
     try {
-        return parseLys(content);
+        const lys = parseLys(content);
+        if (!lys || !lys.length) throw new Error('Parsed LYS content is empty');
+        return lys;
     } catch (e) {
         console.warn('Not LYS format, trying other formats...', e);
     }
 
     try {
-        return parseYrc(content);
+        const yrc = parseYrc(content);
+        if (!yrc || !yrc.length) throw new Error('Parsed YRC content is empty');
+        return yrc;
     } catch (e) {
         console.warn('Not YRC format, treating as TXT', e);
     }

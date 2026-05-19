@@ -16,7 +16,7 @@
     const queueDialogState = new DialogState({ id: 'player-queue' });
 </script>
 
-{#if audioPlayer.currentTrack}
+{#if audioPlayer.currentTrack && !audioPlayer.hidden}
     <div
         in:fly={{ y: 100 }}
         out:fly={{ y: 100 }}

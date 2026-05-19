@@ -14,7 +14,6 @@
     } = $props();
 
     let currentLyricIndex: number = $state(0);
-
     let lines = $derived(lyrics.split('\n'));
 </script>
 
@@ -25,8 +24,7 @@
         if (hasModifier || isFocusedOnInput) return;
 
         switch (event.key) {
-            case 'Enter':
-            case ' ': {
+            case 'Enter': {
                 event.preventDefault();
 
                 timeData.set(currentLyricIndex, currentTime);
@@ -68,7 +66,7 @@
             class:text-primary={isCurrent}
         >
             <Badge
-                class="w-16 cursor-pointer"
+                class="w-16 cursor-pointer h-fit"
                 variant={isCurrent ? "default" : "outline"}
                 onclick={e => {
                     e.preventDefault();

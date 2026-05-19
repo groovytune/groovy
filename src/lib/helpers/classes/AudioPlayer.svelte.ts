@@ -9,6 +9,7 @@ import { resolve } from '$app/paths';
 import { QueueTrack } from './QueueTrack';
 
 export class AudioPlayer {
+    public hidden: boolean = $state(false);
     public audio: HTMLAudioElement|null = $state(null);
     public releaseCache: ReleaseInfoCache = new ReleaseInfoCache();
 

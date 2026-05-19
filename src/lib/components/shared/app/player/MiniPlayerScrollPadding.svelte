@@ -4,6 +4,6 @@
     const audioPlayer = AudioPlayer.context.get();
 </script>
 
-{#if audioPlayer.currentTrack}
+{#if audioPlayer.currentTrack && !audioPlayer.hidden}
     <div class="sm:h-17 h-16"></div>
 {/if}

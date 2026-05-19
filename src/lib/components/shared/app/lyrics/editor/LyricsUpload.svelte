@@ -65,9 +65,12 @@
         isBusy = true;
 
         try {
-            parseLyrics(parseLyricsContent(content));
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const data = parseLyricsContent(content);
+
+            parseLyrics(data);
+            console.log('Parsed lyrics content:', data);
         } catch (error) {
+            console.error('Error parsing lyrics content:', error);
             parseLyrics(content);
         } finally {
             isBusy = false;
@@ -75,7 +78,7 @@
     }
 </script>
 
-<Empty>
+<Empty class="px-0">
     <EmptyHeader class="gap-0">
         <EmptyMedia variant="icon">
             <MicVocalIcon/>
@@ -87,7 +90,7 @@
             Upload a supprted lyrics file or paste the lyrics to start syncing with your track.
         </EmptyDescription>
     </EmptyHeader>
-    <EmptyContent>
+    <EmptyContent class="max-w-lg">
         <FileInput
             disabled={isBusy}
             accept=".lrc,.txt,.ttml,.yrc,.lyl,.lys"
@@ -119,7 +122,7 @@
                     class="ms-auto"
                     variant="secondary"
                     size="sm"
-                    disabled={isBusy}
+                    disabled={isBusy || !content.trim()}
                     onclick={parseContent}
                 >
                     <CheckIcon/>
