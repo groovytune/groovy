@@ -1,6 +1,5 @@
 import type { Lyrics, Track as RawTrack } from '$lib/server/prisma/browser';
 import { Context, resource, useEventListener } from 'runed';
-import { Appwrite } from '$lib/client/appwrite';
 import { ImageFormat, ImageGravity } from 'appwrite';
 import coverPlaceholder from '$lib/assets/cover.webp';
 import { ReleaseInfoCache } from './ReleaseInfoCache.svelte';
@@ -261,10 +260,7 @@ export class AudioPlayer {
 
         this.current = track instanceof QueueTrack ? track : new QueueTrack(track);
 
-        const source = Appwrite.storage.getFileView({
-            bucketId: 'audio',
-            fileId: this.current.track.file
-        });
+        const source = resolve('/(app)/api/assets/audio/[fileId]', { fileId: this.current.track.file });
 
         this.audio.pause();
         this.audio.src = source;
