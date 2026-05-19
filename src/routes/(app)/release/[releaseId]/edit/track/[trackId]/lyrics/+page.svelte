@@ -163,14 +163,29 @@
         return lines.join('\n');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    export const snapshot: Snapshot<{ timeData: [number, number][]; content: string; form: any; }> = {
-        capture: () => ({ timeData: timeData.entries().toArray(), content, form: capture() }),
+    type LogEvent<T> = {
+        snapshot: T;
+        timestamp: number;
+    }
+
+    export const snapshot: Snapshot<{
+        timeData: [number, number][];
+        content: string;
+        history: LogEvent<[number, number][]>[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        form: any;
+    }> = {
+        capture: () => ({
+            timeData: timeData.entries().toArray(),
+            content,
+            history: history.log,
+            form: capture()
+        }),
         restore: snapshot => {
             content = snapshot.content;
             timeData.clear();
             snapshot.timeData.forEach(([index, time]) => timeData.set(index, time));
-            history.clear();
+            history.log = snapshot.history;
             restore(snapshot.form);
         }
     };
