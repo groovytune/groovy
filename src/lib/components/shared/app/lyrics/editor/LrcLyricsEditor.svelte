@@ -3,10 +3,10 @@
     import type { SuperForm } from 'sveltekit-superforms';
     import type z from 'zod';
     import type { newLyricsSchema } from '$lib/schema/lyrics';
-    import { Item, ItemActions, ItemContent, ItemMedia } from '../../../../ui/item';
-    import { Button } from '../../../../ui/button';
+    import { Item, ItemActions, ItemContent, ItemMedia } from '$lib/components/ui/item';
+    import { Button } from '$lib/components/ui/button';
     import { PlayIcon } from '@lucide/svelte';
-    import { Textarea } from '../../../../ui/textarea';
+    import { Textarea } from '$lib/components/ui/textarea';
 
     let {
         currentTime = $bindable(0),
@@ -22,7 +22,7 @@
 
     const { form: formData } = form;
 
-    let highlightedInput: HTMLTextAreaElement|null = $state(null);
+    let highlightedInput: HTMLTextAreaElement|null = $derived(document.querySelector(`[data-lyric-index="${highlightedIndex}"] textarea`));
 
     $effect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -30,8 +30,6 @@
 
         $formData.format = 'LRC';
         $formData.content = toLrcString();
-
-        highlightedInput = document.querySelector(`[data-lyric-index="${highlightedIndex}"] textarea`) as HTMLTextAreaElement | null;
     });
 
     $effect(() => {
@@ -107,7 +105,7 @@
             variant="default"
             size="sm"
         >
-            <ItemMedia class="flex-col">
+            <ItemMedia class="flex-col gap-2">
                 <Button
                     class="w-16 cursor-pointer h-fit py-1 text-xs font-mono"
                     variant={isHighlighted ? "default" : "outline"}
@@ -137,9 +135,13 @@
                     }}
                 >
                     {#if isActive}
-                        <span class="text-green-500">● Passed</span>
+                        <span class="text-green-500">
+                            Reached
+                        </span>
                     {:else}
-                        <span class="text-gray-500">● Pending</span>
+                        <span class="text-gray-500">
+                            Pending
+                        </span>
                     {/if}
                 </Button>
             </ItemMedia>
