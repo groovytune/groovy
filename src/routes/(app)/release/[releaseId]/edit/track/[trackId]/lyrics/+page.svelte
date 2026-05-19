@@ -5,19 +5,19 @@
     import { parseLyrics, stringifyLyrics } from '$lib/helpers/lyrics';
     import type { LyricLine } from '@applemusic-like-lyrics/core';
     import LyricsEditor from '$lib/components/shared/app/lyrics/editor/LyricsEditor.svelte';
-    import { Tabs, TabsContent } from '$lib/components/ui/tabs/index.js';
+    import { Tabs, TabsContent } from '$lib/components/ui/tabs';
     import { onMount } from 'svelte';
     import RangeSlider from 'svelte-range-slider-pips';
-    import { Button } from '$lib/components/ui/button/index.js';
+    import { Button } from '$lib/components/ui/button';
     import { ArrowDownIcon, ArrowUpIcon, BetweenHorizontalEndIcon, DeleteIcon, EllipsisVerticalIcon, NotepadTextDashed, PauseIcon, PlayIcon, RotateCcwIcon, RotateCwIcon, TimelineIcon, TimerResetIcon } from '@lucide/svelte';
     import { formatDuration } from '$lib/helpers/utils.js';
     import LyricsUpload from '$lib/components/shared/app/lyrics/editor/LyricsUpload.svelte';
     import { SvelteMap } from 'svelte/reactivity';
     import type { Snapshot } from './$types.js';
-    import { Textarea } from '$lib/components/ui/textarea/index.js';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '../../../../../../../../lib/components/ui/dropdown-menu/index.js';
-    import DropdownMenuItem from '../../../../../../../../lib/components/ui/dropdown-menu/dropdown-menu-item.svelte';
-    import Label from '../../../../../../../../lib/components/ui/label/label.svelte';
+    import { Textarea } from '$lib/components/ui/textarea';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
+    import DropdownMenuItem from '$lib/components/ui/dropdown-menu/dropdown-menu-item.svelte';
+    import Label from '$lib/components/ui/label/label.svelte';
 
     let { data } = $props();
 

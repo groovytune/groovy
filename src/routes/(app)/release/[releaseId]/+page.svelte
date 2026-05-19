@@ -1,9 +1,9 @@
 <script lang="ts">
     import { ImageFormat, ImageGravity } from 'appwrite';
     import coverPlaceholder from '$lib/assets/cover.webp';
-    import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
+    import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
-    import { Button } from '$lib/components/ui/button/index.js';
+    import { Button } from '$lib/components/ui/button';
     import { resolve } from '$app/paths';
     import { Disc3Icon, EllipsisIcon, HeartIcon, ListMusicIcon, PencilIcon, PlayIcon, Share2Icon } from '@lucide/svelte';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';

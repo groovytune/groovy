@@ -12,7 +12,7 @@
 	import { page } from '$app/state';
 	import '$lib/styles/app.css';
 	import { ActiveNavigationPageContext } from '$lib/contexts/navigation.js';
-	import { TooltipProvider } from '$lib/components/ui/tooltip/index.js';
+	import { TooltipProvider } from '$lib/components/ui/tooltip';
 	import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
 	import { onDestroy, onMount } from 'svelte';
 	import PlayerMediaSession from '$lib/components/shared/app/player/PlayerMediaSession.svelte';

@@ -10,14 +10,14 @@
     import placeholderCover from '$lib/assets/cover.webp';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
-    import { Button } from '$lib/components/ui/button/index.js';
+    import { Button } from '$lib/components/ui/button';
     import { DownloadIcon, ListMusicIcon, LoaderIcon, MicVocalIcon, PlayIcon, Trash2Icon } from '@lucide/svelte';
     import { FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form';
     import { Input } from '$lib/components/ui/input';
     import FileInput from '$lib/components/shared/FileInput.svelte';
     import GenreSearchInput from '$lib/components/shared/app/release/GenreSearchInput.svelte';
-    import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item/index.js';
-    import { Switch } from '$lib/components/ui/switch/index.js';
+    import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
+    import { Switch } from '$lib/components/ui/switch';
     import { formatDuration, formatFileSize } from '$lib/helpers/utils';
     import { Badge } from '$lib/components/ui/badge';
     import { categoryInfos } from '$lib/helpers/constants';

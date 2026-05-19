@@ -13,7 +13,7 @@
     import { auth } from '$lib/client/auth.js';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import Card from '$lib/components/ui/card/card.svelte';
-    import { CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
+    import { CardHeader, CardTitle } from '$lib/components/ui/card';
     import CardContent from '$lib/components/ui/card/card-content.svelte';
     import { parseLyrics } from '$lib/helpers/lyrics.js';
     import type { LyricLine } from '@applemusic-like-lyrics/core';

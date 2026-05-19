@@ -2,8 +2,8 @@
     import { superForm } from 'sveltekit-superforms';
     import { zod4Client } from 'sveltekit-superforms/adapters';
     import { editReleaseSchema } from '$lib/schema/release.js';
-    import { Button } from '$lib/components/ui/button/index.js';
-    import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
+    import { Button } from '$lib/components/ui/button';
+    import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { auth } from '$lib/client/auth.js';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { ListMusicIcon, LoaderIcon, PlayIcon, Trash2Icon } from '@lucide/svelte';

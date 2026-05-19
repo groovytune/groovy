@@ -1,14 +1,14 @@
 <script lang="ts">
     import { resolve } from '$app/paths';
     import { BoomBoxIcon, MoonIcon, SunIcon, UserRoundPlusIcon } from '@lucide/svelte';
-    import { Button } from '$lib/components/ui/button/index.js';
+    import { Button } from '$lib/components/ui/button';
     import { mode, toggleMode } from 'mode-watcher';
     import { Badge } from '$lib/components/ui/badge';
     import { auth } from '$lib/client/auth.js';
     import AvatarDropdown from '$lib/components/shared/AvatarDropdown.svelte';
     import { onMount } from 'svelte';
     import { cn } from '$lib/helpers/utils';
-    import { AspectRatio } from '$lib/components/ui/aspect-ratio/index.js';
+    import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { ImageFormat, ImageGravity } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
     import AudioPlayerPreview from '$lib/components/shared/home/AudioPlayerPreview.svelte';

@@ -2,7 +2,7 @@
     import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '$lib/components/ui/dialog';
     import { Drawer, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '$lib/components/ui/drawer';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
-    import { DrawerContent } from '$lib/components/ui/drawer/index.js';
+    import { DrawerContent } from '$lib/components/ui/drawer';
     import type { DrawerContentProps } from 'vaul-svelte';
     import type { DialogContentProps } from 'bits-ui';
     import { MediaQuery } from 'svelte/reactivity';

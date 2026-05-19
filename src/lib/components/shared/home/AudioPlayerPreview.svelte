@@ -1,7 +1,7 @@
 <script lang="ts">
     import { LoaderCircleIcon, PauseIcon, PlayIcon, SkipBackIcon, SkipForwardIcon } from '@lucide/svelte';
-    import { Button } from '$lib/components/ui/button/index.js';
-    import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item/index.js';
+    import { Button } from '$lib/components/ui/button';
+    import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import ExplicitIcon from '../icons/ExplicitIcon.svelte';
     import { resolve } from '$app/paths';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
