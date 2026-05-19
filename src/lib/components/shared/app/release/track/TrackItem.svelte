@@ -130,7 +130,7 @@
                                 {#snippet child({ props })}
                                     <a {...props} href={resolve('/(app)/release/[releaseId]/edit/track/[trackId]', { releaseId: track.releaseId, trackId: track.id })}>
                                         <PencilIcon/>
-                                        Edit
+                                        Edit Info
                                     </a>
                                 {/snippet}
                             </DropdownMenuItem>
