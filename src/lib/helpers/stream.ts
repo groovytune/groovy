@@ -1,0 +1,40 @@
+import { prisma } from '../server/prisma';
+
+export interface CountStreamOptions {
+    trackId: string;
+    hostname?: string;
+    userAgent?: string;
+    userId?: string;
+}
+
+export async function countStream(options: CountStreamOptions): Promise<boolean> {
+    const stream = await prisma.stream.findFirst({
+        where: {
+            trackId: options.trackId,
+            hostname: options.hostname,
+            userAgent: options.userAgent,
+            userId: options.userId,
+            createdAt: {
+                gte: new Date(Date.now() - 5 * 60 * 1000)
+            }
+        },
+        cacheStrategy: {
+            swr: 60,
+            ttl: 2 * 60
+        }
+    });
+
+    if (stream) return false;
+
+    await prisma.stream.create({
+        data: {
+            trackId: options.trackId,
+            hostname: options.hostname,
+            userAgent: options.userAgent,
+            userId: options.userId
+        }
+    });
+
+    return true;
+}
+

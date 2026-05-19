@@ -170,10 +170,7 @@
                 </ItemContent>
                 <ItemActions>
                     <Button
-                        href={Appwrite.storage.getFileDownload({
-                            bucketId: 'audio',
-                            fileId: data.track.file
-                        })}
+                        href={resolve('/(app)/api/track/[id]/audio', { id: data.track.id }) + '?download'}
                         target="_blank"
                         rel="noopener noreferrer"
                         variant="outline"

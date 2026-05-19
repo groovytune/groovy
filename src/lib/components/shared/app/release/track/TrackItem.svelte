@@ -6,7 +6,6 @@
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import type { Track } from '$lib/server/prisma/browser';
     import { Button } from '$lib/components/ui/button';
-    import { Appwrite } from '$lib/client/appwrite';
     import { resolve } from '$app/paths';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { ImageFormat, ImageGravity } from 'appwrite';
@@ -150,7 +149,7 @@
                             <DropdownMenuItem>
                                 {#snippet child({ props })}
                                     <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-                                    <a {...props} href={Appwrite.storage.getFileDownload({ bucketId: 'audio', fileId: track.file })} target="_blank" rel="noopener noreferrer">
+                                    <a {...props} href={resolve('/(app)/api/track/[id]/audio', { id: track.id }) + '?download'} target="_blank" rel="noopener noreferrer">
                                         <DownloadIcon/>
                                         Download File
                                     </a>

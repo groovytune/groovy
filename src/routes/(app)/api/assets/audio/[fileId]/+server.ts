@@ -1,8 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { Appwrite } from '$lib/server/appwrite';
-import { prisma } from '$lib/server/prisma';
 
-export async function GET({ params, url, locals, request }) {
+export async function GET({ params, url, request }) {
     const file = await Appwrite.storage.getFile({
         bucketId: 'audio',
         fileId: params.fileId
@@ -16,24 +15,6 @@ export async function GET({ params, url, locals, request }) {
         bucketId: 'audio',
         fileId: params.fileId
     });
-
-    prisma.track
-        .findUnique({
-            where: {
-                file: params.fileId
-            }
-        })
-        .then(async (track) => {
-            if (!track) return;
-
-            await countStream({
-                trackId: track.id,
-                hostname: request.headers.get('x-forwarded-for') || request.headers.get('remote-addr') || undefined,
-                userAgent: request.headers.get('user-agent') || undefined,
-                userId: locals.user?.id
-            });
-        })
-        .catch(() => null);
 
     const fileSize = file.sizeOriginal;
     const rangeHeader = request.headers.get('range');
@@ -77,42 +58,3 @@ export async function GET({ params, url, locals, request }) {
         headers
     });
 }
-
-interface StreamOptions {
-    trackId: string;
-    hostname?: string;
-    userAgent?: string;
-    userId?: string;
-}
-
-async function countStream(options: StreamOptions): Promise<boolean> {
-    const stream = await prisma.stream.findFirst({
-        where: {
-            trackId: options.trackId,
-            hostname: options.hostname,
-            userAgent: options.userAgent,
-            userId: options.userId,
-            createdAt: {
-                gte: new Date(Date.now() - 5 * 60 * 1000)
-            }
-        },
-        cacheStrategy: {
-            swr: 60,
-            ttl: 2 * 60
-        }
-    });
-
-    if (stream) return false;
-
-    await prisma.stream.create({
-        data: {
-            trackId: options.trackId,
-            hostname: options.hostname,
-            userAgent: options.userAgent,
-            userId: options.userId
-        }
-    });
-
-    return true;
-}
-

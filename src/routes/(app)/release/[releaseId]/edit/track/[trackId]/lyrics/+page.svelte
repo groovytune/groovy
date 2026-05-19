@@ -11,8 +11,7 @@
     import { formatDuration } from '$lib/helpers/utils.js';
     import LyricsUpload from '$lib/components/shared/app/lyrics/editor/LyricsUpload.svelte';
     import type { Snapshot } from './$types.js';
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import DropdownMenuItem from '$lib/components/ui/dropdown-menu/dropdown-menu-item.svelte';
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import Label from '$lib/components/ui/label/label.svelte';
     import { superForm } from 'sveltekit-superforms';
     import { zod4Client } from 'sveltekit-superforms/adapters';
@@ -60,7 +59,7 @@
     const { enhance, submitting, allErrors, form: formData, capture, restore, tainted } = form;
 
     let track = $derived(data.track);
-    let audioURL: string = $derived(resolve('/(app)/api/assets/audio/[fileId]', { fileId: track.file }));
+    let audioURL: string = $derived(resolve('/(app)/api/track/[id]/audio', { id: track.id }));
 
     let audio: HTMLAudioElement = $state()!;
     let currentTime: number = $state(0);

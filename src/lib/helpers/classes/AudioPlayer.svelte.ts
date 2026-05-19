@@ -260,7 +260,7 @@ export class AudioPlayer {
 
         this.current = track instanceof QueueTrack ? track : new QueueTrack(track);
 
-        const source = resolve('/(app)/api/assets/audio/[fileId]', { fileId: this.current.track.file });
+        const source = resolve('/(app)/api/track/[id]/audio', { id: this.current.track.id });
 
         this.audio.pause();
         this.audio.src = source;

@@ -1,8 +1,9 @@
 import { prisma } from '$lib/server/prisma';
 import { error, redirect } from '@sveltejs/kit';
 import { resolve } from '$app/paths';
+import { countStream } from '$lib/helpers/stream';
 
-export async function GET({ params, locals }) {
+export async function GET({ params, locals, request, url }) {
     const track = await prisma.track.findUnique({
         where: {
             id: params.id,
@@ -27,5 +28,14 @@ export async function GET({ params, locals }) {
         throw error(404, 'Track not found');
     }
 
-    redirect(307, resolve('/(app)/api/assets/audio/[fileId]', { fileId: track.file }));
+    countStream({
+        trackId: track.id,
+        hostname: request.headers.get('x-forwarded-for') || request.headers.get('remote-addr') || undefined,
+        userAgent: request.headers.get('user-agent') || undefined,
+        userId: locals.user?.id
+    })
+        .then(counted => console.log(counted ? 'Stream counted' : 'Stream already counted recently'))
+        .catch(err => console.error('Error counting stream:', err));
+
+    redirect(307, resolve('/(app)/api/assets/audio/[fileId]', { fileId: track.file }) + url.search);
 }
