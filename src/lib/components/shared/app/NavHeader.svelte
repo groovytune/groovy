@@ -78,9 +78,7 @@
                 <span class="md:inline hidden">Search</span>
             </Button>
             <NewReleaseDropdown/>
-            {#if $session.data?.user}
-                <AvatarDropdown user={$session?.data?.user}/>
-            {/if}
+            <AvatarDropdown user={$session?.data?.user}/>
         </div>
     </div>
 </header>
