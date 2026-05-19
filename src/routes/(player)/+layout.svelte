@@ -32,7 +32,7 @@
 {@render children?.()}
 
 <div
-    class="fixed -z-10 top-0 left-0 w-full h-full transition-all duration-300"
+    class="fixed -z-10 top-0 left-0 w-full h-full transition-all duration-300 bg-black"
 >
     <PlayerGradientBackground
         image={coverAPIURL}

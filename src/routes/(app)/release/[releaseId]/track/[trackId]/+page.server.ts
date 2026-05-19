@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { createAuthRedirect, type PartialUser } from '$lib/helpers/utils';
+import { type PartialUser } from '$lib/helpers/utils';
 import { prisma } from '$lib/server/prisma';
 import { resolve } from '$app/paths';
 import { definePageMetaTags } from 'svelte-meta-tags';
@@ -16,10 +16,6 @@ export type TrackPageData = Track & {
 };
 
 export async function load({ params, locals, url }) {
-    if (!locals.session) {
-        throw redirect(302, createAuthRedirect('signin', url));
-    }
-
     const track = await prisma.track.findUnique({
         where: {
             id: params.trackId,

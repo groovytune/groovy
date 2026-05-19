@@ -44,7 +44,7 @@
 
         for (const [index, timestamp] of timeData) {
             const text = lines[index];
-            if (!text) continue;
+            if (typeof text !== 'string') continue;
 
             data.push({
                 timestamp,

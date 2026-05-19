@@ -16,9 +16,9 @@
 <RangeSlider
     on:start={() => audioPlayer.pause()}
     on:stop={e => {
-        audioPlayer.play();
-        audioPlayer.seek(e.detail.value);
         snapshot = e.detail.value;
+        audioPlayer.seek(e.detail.value);
+        audioPlayer.play();
     }}
     value={snapshot}
     step={0.5}
