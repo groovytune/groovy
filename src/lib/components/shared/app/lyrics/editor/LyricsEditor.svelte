@@ -6,15 +6,23 @@
     let {
         currentTime = $bindable(0),
         lyrics = $bindable(''),
-        timeData = new SvelteMap()
+        timeData = new SvelteMap(),
+        currentLyricIndex = $bindable(0)
     }: {
         currentTime: number;
         lyrics: string;
         timeData?: Map<number, number>;
+        currentLyricIndex?: number;
     } = $props();
 
-    let currentLyricIndex: number = $state(0);
     let lines = $derived(lyrics.split('\n'));
+
+    function setCurrentLyricIndex(index: number) {
+        currentLyricIndex = Math.max(0, Math.min(lines.length - 1, index));
+
+        const currentLine = document.querySelector(`[data-lyric-index="${currentLyricIndex}"]`);
+        if (currentLine) currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 </script>
 
 <svelte:window
@@ -28,10 +36,7 @@
                 event.preventDefault();
 
                 timeData.set(currentLyricIndex, currentTime);
-                currentLyricIndex = currentLyricIndex + 1 < lines.length ? currentLyricIndex + 1 : currentLyricIndex;
-
-                const currentLine = document.querySelector(`[data-lyric-index="${currentLyricIndex}"]`);
-                if (currentLine) currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setCurrentLyricIndex(currentLyricIndex + 1);
                 break;
             }
             case 'Backspace':
@@ -44,10 +49,7 @@
                 event.preventDefault();
 
                 const direction = event.key === 'ArrowUp' ? -1 : 1;
-                currentLyricIndex = currentLyricIndex + direction >= 0 && currentLyricIndex + direction < lines.length ? currentLyricIndex + direction : currentLyricIndex;
-
-                const currentLine = document.querySelector(`[data-lyric-index="${currentLyricIndex}"]`);
-                if (currentLine) currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setCurrentLyricIndex(currentLyricIndex + direction);
                 break;
             }
         }
@@ -86,7 +88,7 @@
                 href="#/"
                 onclick={e => {
                     e.preventDefault();
-                    currentLyricIndex = index;
+                    setCurrentLyricIndex(index);
                 }}
             >
                 {line}

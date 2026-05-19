@@ -9,7 +9,7 @@
     import { onMount } from 'svelte';
     import RangeSlider from 'svelte-range-slider-pips';
     import { Button } from '$lib/components/ui/button/index.js';
-    import { DeleteIcon, EllipsisIcon, NotepadTextDashed, PauseIcon, PlayIcon, RotateCcwIcon, RotateCwIcon, TimelineIcon, TimerResetIcon } from '@lucide/svelte';
+    import { ArrowDownIcon, ArrowUpIcon, BetweenHorizontalEndIcon, DeleteIcon, EllipsisVerticalIcon, NotepadTextDashed, PauseIcon, PlayIcon, RotateCcwIcon, RotateCwIcon, TimelineIcon, TimerResetIcon } from '@lucide/svelte';
     import { formatDuration } from '$lib/helpers/utils.js';
     import LyricsUpload from '$lib/components/shared/app/lyrics/editor/LyricsUpload.svelte';
     import { SvelteMap } from 'svelte/reactivity';
@@ -39,6 +39,7 @@
     let duration: number = $state(0);
 
     let content: string = $state('');
+    let currentLyricIndex: number = $state(0);
 
     const timeData: Map<number, number> = new SvelteMap();
     const history = new StateHistory(
@@ -91,6 +92,18 @@
         history.clear();
     }
 
+    function setLyricTimestamp(index: number, time: number) {
+        timeData.set(index, time);
+        setCurrentLyricIndex(index + 1);
+    }
+
+    function setCurrentLyricIndex(index: number) {
+        currentLyricIndex = Math.max(0, Math.min(content.split('\n').length - 1, index));
+
+        const currentLine = document.querySelector(`[data-lyric-index="${currentLyricIndex}"]`);
+        if (currentLine) currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     export const snapshot: Snapshot<{ timeData: [number, number][]; content: string; }> = {
         capture: () => ({ timeData: timeData.entries().toArray(), content }),
         restore: snapshot => {
@@ -111,7 +124,7 @@
     loop
 ></audio>
 
-<main class="p-5 pb-16 w-full flex flex-col">
+<main class="p-5 pb-20 w-full flex flex-col">
     {#if !content}
         <div class="text-center text-muted-foreground min-h-[calc(100svh-16rem)] flex items-center justify-center">
             <LyricsUpload
@@ -128,8 +141,8 @@
     {:else}
         <div class="flex gap-2">
             <Tabs bind:value={currentView} class="w-full md:hidden">
-                <TabsContent value="editor">
-                    <Label class="text-xl font-semibold mb-2 text-center block">
+                <TabsContent value="editor" class="pb-10">
+                    <Label class="text-xl font-semibold mb-4 text-center block">
                         Synced Editor
                     </Label>
                     <LyricsEditor
@@ -138,6 +151,7 @@
                             value => audio.currentTime = value
                         }
                         bind:lyrics={content}
+                        bind:currentLyricIndex
                         {timeData}
                     />
                 </TabsContent>
@@ -163,6 +177,7 @@
                             value => audio.currentTime = value
                         }
                         bind:lyrics={content}
+                        bind:currentLyricIndex
                         {timeData}
                     />
                 </div>
@@ -181,10 +196,24 @@
     {/if}
 </main>
 
-<section class="fixed bottom-16 sm:bottom-0 left-0 flex justify-center w-full pointer-events-none">
-    <div class="flex items-center gap-1 rounded-md container pointer-events-auto pb-2 sm:px-7 px-2">
+<section class="fixed bottom-16 sm:bottom-0 left-0 flex flex-col items-center w-full pointer-events-none gap-2">
+    {#if currentView === 'editor'}
+        <div class="flex md:hidden gap-1 w-full container justify-center lg:px-7 px-5 [&_button]:pointer-events-auto">
+            <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(currentLyricIndex - 1)}>
+                <ArrowUpIcon/>
+            </Button>
+            <Button variant="default" size="lg" onclick={() => setLyricTimestamp(currentLyricIndex, currentTime)}>
+                <BetweenHorizontalEndIcon/>
+                Update Timestamp
+            </Button>
+                <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(currentLyricIndex + 1)}>
+                    <ArrowDownIcon/>
+                </Button>
+        </div>
+    {/if}
+    <div class="flex items-center gap-1 rounded-md container pointer-events-auto pb-2 lg:px-7 px-5">
         <Button
-            size="icon"
+            size="icon-lg"
             variant="default"
             onclick={() => {
                 if (paused) {
@@ -200,7 +229,7 @@
                 <PauseIcon/>
             {/if}
         </Button>
-        <div class="bg-muted h-9 px-3 rounded-full w-full flex items-center text-xs text-muted-foreground font-medium sticky top-2 left-0">
+        <div class="bg-muted h-10 px-3 rounded-full w-full flex items-center text-xs text-muted-foreground font-medium sticky top-2 left-0">
             <span class="w-8 text-start shrink-0">{formatDuration(currentTime)}</span>
             <RangeSlider
                 on:start={() => audio.pause()}
@@ -223,8 +252,8 @@
         <DropdownMenu>
             <DropdownMenuTrigger>
                 {#snippet child({ props })}
-                    <Button {...props} variant="secondary" size="icon">
-                        <EllipsisIcon/>
+                    <Button {...props} variant="secondary" size="icon-lg">
+                        <EllipsisVerticalIcon/>
                     </Button>
                 {/snippet}
             </DropdownMenuTrigger>
