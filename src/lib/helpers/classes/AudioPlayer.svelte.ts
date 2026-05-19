@@ -25,6 +25,7 @@ export class AudioPlayer {
     public volume: number = $state(1);
     public duration: number = $state(0);
     public currentTime: number = $state(0);
+    public isDurationEstimated: boolean = $state(true);
 
     public skippable: boolean = $derived(!!this.queue.length && !!this.audio);
     public previousable: boolean = $derived(!!this.history.length && !!this.audio);
@@ -102,6 +103,8 @@ export class AudioPlayer {
         this.audio.preload = 'auto';
         this.audio.crossOrigin = 'anonymous';
 
+        document.body.appendChild(this.audio);
+
 
         useEventListener(
             () => this.audio,
@@ -141,14 +144,11 @@ export class AudioPlayer {
         useEventListener(
             () => this.audio,
             'durationchange',
-            event => this.duration = AudioPlayer.getRealDuration(event.currentTarget, this.currentTrack),
+            event =>  {
+                this.duration = AudioPlayer.getRealDuration(event.currentTarget, this.currentTrack);
+                this.isDurationEstimated = !Number.isFinite(event.currentTarget.duration);
+            },
             { passive: true }
-        );
-
-        useEventListener(
-            () => this.audio,
-            'durationchange',
-            event => this.duration = AudioPlayer.getRealDuration(event.currentTarget, this.currentTrack)
         );
 
         useEventListener(
@@ -347,8 +347,9 @@ export class AudioPlayer {
     }
 
     public async seek(time: number): Promise<void> {
-        if (!this.audio || !this.currentTrack || !this.audio.seekable.length) return;
+        if (!this.audio || !this.currentTrack || !this.audio.seekable.length || this.isDurationEstimated) return;
 
+        console.log('Seeking to', time, 'with duration', this.duration);
         this.currentTime = this.audio.currentTime = Math.min(Math.max(time, 0), this.duration);
     }
 
