@@ -2,26 +2,57 @@
     import { SvelteMap } from 'svelte/reactivity';
     import { formatDuration } from '$lib/helpers/utils';
     import { Badge } from '../../../../ui/badge';
+    import type { SuperForm } from 'sveltekit-superforms';
+    import type z from 'zod';
+    import type { newLyricsSchema } from '$lib/schema/lyrics';
 
     let {
         currentTime = $bindable(0),
         lyrics = $bindable(''),
         timeData = new SvelteMap(),
-        currentLyricIndex = $bindable(0)
+        currentLyricIndex = $bindable(0),
+        form
     }: {
         currentTime: number;
         lyrics: string;
         timeData?: Map<number, number>;
         currentLyricIndex?: number;
+        form: SuperForm<z.infer<typeof newLyricsSchema>>;
     } = $props();
 
+    const { form: formData } = form;
+
     let lines = $derived(lyrics.split('\n'));
+
+    $effect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        timeData; lines; lyrics;
+
+        $formData.format = 'LRC';
+        $formData.content = toLrcString();
+    });
 
     function setCurrentLyricIndex(index: number) {
         currentLyricIndex = Math.max(0, Math.min(lines.length - 1, index));
 
         const currentLine = document.querySelector(`[data-lyric-index="${currentLyricIndex}"]`);
         if (currentLine) currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function toLrcString() {
+        const data: { timestamp: number; text: string; }[] = [];
+
+        for (const [index, timestamp] of timeData) {
+            const text = lines[index];
+            if (!text) continue;
+
+            data.push({
+                timestamp,
+                text: `[${formatDuration(timestamp, 'mm:ss.S')}] ${text}`
+            });
+        }
+
+        return data.sort((a, b) => a.timestamp - b.timestamp).map(line => line.text).join('\n');
     }
 </script>
 

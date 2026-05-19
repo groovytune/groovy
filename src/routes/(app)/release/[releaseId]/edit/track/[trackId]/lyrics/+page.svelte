@@ -4,7 +4,7 @@
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import { parseLyrics, stringifyLyrics } from '$lib/helpers/lyrics';
     import type { LyricLine } from '@applemusic-like-lyrics/core';
-    import LyricsEditor from '$lib/components/shared/app/lyrics/editor/LyricsEditor.svelte';
+    import LrcLyricsEditor from '$lib/components/shared/app/lyrics/editor/LrcLyricsEditor.svelte';
     import { Tabs, TabsContent } from '$lib/components/ui/tabs';
     import { onMount } from 'svelte';
     import RangeSlider from 'svelte-range-slider-pips';
@@ -112,14 +112,6 @@
         };
     });
 
-    $effect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        timeData;
-
-        $formData.format = 'LRC';
-        $formData.content = toLrcString();
-    });
-
     function reset() {
         const lines = lyrics && lyrics?.format !== 'TXT' ? parseLyrics(lyrics) as LyricLine[] : [];
 
@@ -152,15 +144,17 @@
         if (currentLine) currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    function toLrcString() {
-        const lines: string[] = [];
+    function downloadContent() {
+        const blob = new Blob([$formData.content], { type: 'text/plain' });
 
-        for (const [index, timeStamp] of timeData) {
-            const text = content.split('\n')[index] || '';
-            lines.push(`[${formatDuration(timeStamp, 'mm:ss.S')}]${text}`);
-        }
-
-        return lines.join('\n');
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${slug(track.name)}.lrc`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 
     type LogEvent<T> = {
@@ -246,7 +240,7 @@
                         <Label class="text-xl font-semibold mb-4 text-center block">
                             Synced Editor
                         </Label>
-                        <LyricsEditor
+                        <LrcLyricsEditor
                             bind:currentTime={
                                 () => currentTime,
                                 value => audio.currentTime = value
@@ -254,6 +248,7 @@
                             bind:lyrics={content}
                             bind:currentLyricIndex
                             {timeData}
+                            {form}
                         />
                     </TabsContent>
                     <TabsContent value="raw" class="h-full">
@@ -262,7 +257,7 @@
                         </Label>
                         <Textarea
                             bind:value={content}
-                            class="w-full h-full min-h-[calc(100svh-17rem)] p-2 border rounded-md"
+                            class="w-full h-full min-h-[calc(100svh-17rem)] border rounded-md"
                             placeholder="Enter lyrics here..."
                         />
                     </TabsContent>
@@ -273,7 +268,7 @@
                         <Label class="text-xl font-semibold mb-2">
                             Synced Editor
                         </Label>
-                        <LyricsEditor
+                        <LrcLyricsEditor
                             bind:currentTime={
                                 () => currentTime,
                                 value => audio.currentTime = value
@@ -281,6 +276,7 @@
                             bind:lyrics={content}
                             bind:currentLyricIndex
                             {timeData}
+                            {form}
                         />
                     </div>
                     <div class="w-1/2 p-2">
@@ -289,7 +285,7 @@
                         </Label>
                         <Textarea
                             bind:value={content}
-                            class="w-full h-full min-h-40 px-2 font-medium border rounded-md text-base! leading-8"
+                            class="w-full h-full min-h-40 font-medium border rounded-md text-base! leading-8"
                             placeholder="Enter lyrics here..."
                         />
                     </div>
@@ -318,6 +314,7 @@
         <Button
             size="icon-lg"
             variant="default"
+            class="[&>svg]:fill-current"
             onclick={() => {
                 if (paused) {
                     audio.play();
@@ -409,27 +406,17 @@
                         Switch to Synced Editor
                     {/if}
                 </DropdownMenuItem>
-                <DropdownMenuSeparator/>
+                <DropdownMenuSeparator class="md:hidden"/>
                 <DropdownMenuItem
                     disabled={!content.trim()}
-                    onclick={() => {
-                        const blob = new Blob([toLrcString()], { type: 'text/plain' });
-
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${slug(track.name)}.lrc`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    }}
+                    onclick={downloadContent}
+                    class="md:hidden"
                 >
                     <DownloadIcon/>
                     Download .lrc
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                    class="text-primary"
+                    class="text-primary md:hidden"
                     aria-disabled={!content.trim() || $submitting || !!$allErrors.length}
                     onclick={() => form.submit()}
                 >
@@ -438,5 +425,11 @@
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
+        <Button variant="secondary" size="icon-lg" class="hidden md:inline-flex" onclick={downloadContent}>
+            <DownloadIcon/>
+        </Button>
+        <Button variant="default" size="icon-lg" class="hidden md:inline-flex" onclick={() => form.submit()}>
+            <SaveIcon/>
+        </Button>
     </div>
 </section>
