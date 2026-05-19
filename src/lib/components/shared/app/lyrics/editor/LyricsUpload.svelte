@@ -120,5 +120,8 @@
                 </InputGroupButton>
             </InputGroupAddon>
         </InputGroup>
+        <p class="text-xs">
+            Find supported lyrics from <a href="https://lrclib.foo.ng/search" target="_blank" rel="noopener noreferrer" class="text-primary underline">lrclib.foo.ng</a>
+        </p>
     </EmptyContent>
 </Empty>
