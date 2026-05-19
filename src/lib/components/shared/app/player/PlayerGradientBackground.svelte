@@ -8,10 +8,10 @@
         loaded = $bindable(false),
         playing = true,
         fps = 30,
-        flowSpeed = 2.5,
-        renderScale = 1,
+        flowSpeed = 2,
+        renderScale = 2,
         staticMode = false,
-        lowFreqVolume = 0.6,
+        lowFreqVolume = 2.5,
         hasLyric = true,
         class: className,
     }: {
