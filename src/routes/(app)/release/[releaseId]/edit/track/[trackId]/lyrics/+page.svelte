@@ -62,7 +62,7 @@
         }
     });
 
-    const { enhance, submitting, allErrors, form: formData } = form;
+    const { enhance, submitting, allErrors, form: formData, capture, restore } = form;
 
     let track = $derived(data.track);
     let lyrics = $derived(data.track?.lyrics);
@@ -163,13 +163,15 @@
         return lines.join('\n');
     }
 
-    export const snapshot: Snapshot<{ timeData: [number, number][]; content: string; }> = {
-        capture: () => ({ timeData: timeData.entries().toArray(), content }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    export const snapshot: Snapshot<{ timeData: [number, number][]; content: string; form: any; }> = {
+        capture: () => ({ timeData: timeData.entries().toArray(), content, form: capture() }),
         restore: snapshot => {
             content = snapshot.content;
             timeData.clear();
             snapshot.timeData.forEach(([index, time]) => timeData.set(index, time));
             history.clear();
+            restore(snapshot.form);
         }
     };
 </script>
