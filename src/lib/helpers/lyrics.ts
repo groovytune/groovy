@@ -1,15 +1,16 @@
 import type { LyricLine } from '@applemusic-like-lyrics/core';
-import type { Lyrics } from '../server/prisma/browser';
 import { parseLrc, parseLyl, parseLys, parseTTML, parseYrc } from '@applemusic-like-lyrics/lyric';
 
-export function parseLyrics(lyrics: Lyrics): LyricLine[]|string {
+export function parseLyrics(lyrics: { format: string; content: string }): LyricLine[]|string {
     switch (lyrics.format) {
         case 'LRC': return parseLrc(lyrics.content);
         case 'TTML': return parseTTML(lyrics.content).lines;
         case 'LYL': return parseLyl(lyrics.content);
         case 'LYS': return parseLys(lyrics.content);
         case 'YRC': return parseYrc(lyrics.content);
-        case 'TXT': return lyrics.content;
+        case 'TXT':
+        default:
+            return lyrics.content;
     }
 }
 

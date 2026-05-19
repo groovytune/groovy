@@ -38,6 +38,7 @@
                 audioPlayer.next(index);
             }}
             animate:flip={{ duration: 100 }}
+            oncontextmenu={e => e.preventDefault()}
             class={cn("w-full flex gap-2 items-center min-h-14", itemClass)}
         >
             <span

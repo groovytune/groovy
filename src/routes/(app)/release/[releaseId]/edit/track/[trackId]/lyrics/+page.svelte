@@ -9,20 +9,60 @@
     import { onMount } from 'svelte';
     import RangeSlider from 'svelte-range-slider-pips';
     import { Button } from '$lib/components/ui/button';
-    import { ArrowDownIcon, ArrowUpIcon, BetweenHorizontalEndIcon, DeleteIcon, EllipsisVerticalIcon, NotepadTextDashed, PauseIcon, PlayIcon, RotateCcwIcon, RotateCwIcon, TimelineIcon, TimerResetIcon } from '@lucide/svelte';
+    import { ArrowDownIcon, ArrowUpIcon, BetweenHorizontalEndIcon, DeleteIcon, DownloadIcon, EllipsisVerticalIcon, PauseIcon, PencilLineIcon, PlayIcon, RotateCcwIcon, RotateCwIcon, SaveIcon, TimelineIcon, TimerResetIcon } from '@lucide/svelte';
     import { formatDuration } from '$lib/helpers/utils.js';
     import LyricsUpload from '$lib/components/shared/app/lyrics/editor/LyricsUpload.svelte';
-    import { SvelteMap } from 'svelte/reactivity';
+    import { MediaQuery, SvelteMap } from 'svelte/reactivity';
     import type { Snapshot } from './$types.js';
     import { Textarea } from '$lib/components/ui/textarea';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import DropdownMenuItem from '$lib/components/ui/dropdown-menu/dropdown-menu-item.svelte';
     import Label from '$lib/components/ui/label/label.svelte';
+    import { superForm } from 'sveltekit-superforms';
+    import { zod4Client } from 'sveltekit-superforms/adapters';
+    import { newLyricsSchema } from '$lib/schema/lyrics.js';
+    import { toast } from 'svelte-sonner';
+    import { resolve } from '$app/paths';
+    import { page } from '$app/state';
+    import { slug } from 'github-slugger';
 
     let { data } = $props();
 
     const audioPlayer = AudioPlayer.context.get();
     const pressedKeys = new PressedKeys();
+    const isTouchUI = new MediaQuery('(width >= 48rem)');
+
+    // svelte-ignore state_referenced_locally
+    const form = superForm(data.form, {
+        validators: zod4Client(newLyricsSchema),
+        clearOnSubmit: 'errors-and-message',
+        dataType: 'json',
+        autoFocusOnError: true,
+        validationMethod: 'auto',
+        taintedMessage: true,
+        invalidateAll: false,
+        resetForm: false,
+        onError: event => {
+            console.error('Form submission error:', event.result);
+            toast.error(event.result.error.message);
+        },
+        onResult: event => {
+            const { type } = event.result;
+
+            if (type === 'failure') {
+                console.error('Form submission failed:', event.result);
+                toast.error(event.result.data?.message ?? 'Failed to save changes.');
+                return;
+            }
+
+            if (type != 'success') return;
+
+            const message = event.result.data?.form.message;
+            toast.success(message.message ?? 'Changes saved successfully!');
+        }
+    });
+
+    const { enhance, submitting, allErrors, form: formData } = form;
 
     let track = $derived(data.track);
     let lyrics = $derived(data.track?.lyrics);
@@ -72,6 +112,14 @@
         };
     });
 
+    $effect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        timeData;
+
+        $formData.format = 'LRC';
+        $formData.content = toLrcString();
+    });
+
     function reset() {
         const lines = lyrics && lyrics?.format !== 'TXT' ? parseLyrics(lyrics) as LyricLine[] : [];
 
@@ -104,6 +152,17 @@
         if (currentLine) currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
+    function toLrcString() {
+        const lines: string[] = [];
+
+        for (const [index, timeStamp] of timeData) {
+            const text = content.split('\n')[index] || '';
+            lines.push(`[${formatDuration(timeStamp, 'mm:ss.S')}]${text}`);
+        }
+
+        return lines.join('\n');
+    }
+
     export const snapshot: Snapshot<{ timeData: [number, number][]; content: string; }> = {
         capture: () => ({ timeData: timeData.entries().toArray(), content }),
         restore: snapshot => {
@@ -114,6 +173,20 @@
         }
     };
 </script>
+
+<svelte:window
+    onkeypress={event => {
+        if (['TEXTAREA', 'INPUT'].includes(document.activeElement?.tagName || '')) return;
+
+        event.preventDefault();
+
+        if (paused) {
+            audio.play();
+        } else {
+            audio.pause();
+        }
+    }}
+/>
 
 <audio
     src={audioURL}
@@ -139,64 +212,77 @@
             />
         </div>
     {:else}
-        <div class="flex gap-2">
-            <Tabs bind:value={currentView} class="w-full md:hidden">
-                <TabsContent value="editor" class="pb-10">
-                    <Label class="text-xl font-semibold mb-4 text-center block">
-                        Synced Editor
-                    </Label>
-                    <LyricsEditor
-                        bind:currentTime={
-                            () => currentTime,
-                            value => audio.currentTime = value
-                        }
-                        bind:lyrics={content}
-                        bind:currentLyricIndex
-                        {timeData}
-                    />
-                </TabsContent>
-                <TabsContent value="raw" class="h-full pb-2">
-                    <Label class="text-xl font-semibold mb-2 text-center block">
-                        Raw Lyrics
-                    </Label>
-                    <Textarea
-                        bind:value={content}
-                        class="w-full h-full min-h-[calc(100svh-17rem)] p-2 border rounded-md"
-                        placeholder="Enter lyrics here..."
-                    />
-                </TabsContent>
-            </Tabs>
-            <section class="hidden md:flex w-full gap-2">
-                <div class="w-1/2 p-2">
-                    <Label class="text-xl font-semibold mb-2">
-                        Synced Editor
-                    </Label>
-                    <LyricsEditor
-                        bind:currentTime={
-                            () => currentTime,
-                            value => audio.currentTime = value
-                        }
-                        bind:lyrics={content}
-                        bind:currentLyricIndex
-                        {timeData}
-                    />
-                </div>
-                <div class="w-1/2 p-2">
-                    <Label class="text-xl font-semibold mb-2">
-                        Raw Lyrics
-                    </Label>
-                    <Textarea
-                        bind:value={content}
-                        class="w-full h-full min-h-40 px-2 font-medium border rounded-md text-base! leading-8"
-                        placeholder="Enter lyrics here..."
-                    />
-                </div>
-            </section>
-        </div>
+        <form
+            use:enhance
+            method="POST"
+            action={
+                resolve(
+                    '/(app)/release/[releaseId]/edit/track/[trackId]/lyrics',
+                    { releaseId: page.params.releaseId!, trackId: page.params.trackId! }
+                ) + '?/edit'
+            }
+            class="pb-10"
+        >
+            {#if !isTouchUI.current}
+                <Tabs bind:value={currentView} class="w-full">
+                    <TabsContent value="editor">
+                        <Label class="text-xl font-semibold mb-4 text-center block">
+                            Synced Editor
+                        </Label>
+                        <LyricsEditor
+                            bind:currentTime={
+                                () => currentTime,
+                                value => audio.currentTime = value
+                            }
+                            bind:lyrics={content}
+                            bind:currentLyricIndex
+                            {timeData}
+                        />
+                    </TabsContent>
+                    <TabsContent value="raw" class="h-full">
+                        <Label class="text-xl font-semibold mb-2 text-center block">
+                            Raw Lyrics
+                        </Label>
+                        <Textarea
+                            bind:value={content}
+                            class="w-full h-full min-h-[calc(100svh-17rem)] p-2 border rounded-md"
+                            placeholder="Enter lyrics here..."
+                        />
+                    </TabsContent>
+                </Tabs>
+            {:else}
+                <section class="flex w-full gap-2">
+                    <div class="w-1/2 p-2">
+                        <Label class="text-xl font-semibold mb-2">
+                            Synced Editor
+                        </Label>
+                        <LyricsEditor
+                            bind:currentTime={
+                                () => currentTime,
+                                value => audio.currentTime = value
+                            }
+                            bind:lyrics={content}
+                            bind:currentLyricIndex
+                            {timeData}
+                        />
+                    </div>
+                    <div class="w-1/2 p-2">
+                        <Label class="text-xl font-semibold mb-2">
+                            Raw Lyrics
+                        </Label>
+                        <Textarea
+                            bind:value={content}
+                            class="w-full h-full min-h-40 px-2 font-medium border rounded-md text-base! leading-8"
+                            placeholder="Enter lyrics here..."
+                        />
+                    </div>
+                </section>
+            {/if}
+        </form>
     {/if}
 </main>
 
-<section class="fixed bottom-16 sm:bottom-0 left-0 flex flex-col items-center w-full pointer-events-none gap-2">
+<section class="fixed bottom-16 sm:bottom-0 left-0 select-none flex flex-col items-center w-full pointer-events-none gap-2">
     {#if currentView === 'editor'}
         <div class="flex md:hidden gap-1 w-full container justify-center lg:px-7 px-5 [&_button]:pointer-events-auto">
             <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(currentLyricIndex - 1)}>
@@ -257,7 +343,7 @@
                     </Button>
                 {/snippet}
             </DropdownMenuTrigger>
-            <DropdownMenuContent class="min-w-3xs" align="end">
+            <DropdownMenuContent class="min-w-3xs font-medium" align="end">
                 <DropdownMenuItem onclick={reset}>
                     <TimerResetIcon/>
                     Reset Lyrics
@@ -299,12 +385,39 @@
                     class="sm:hidden"
                 >
                     {#if currentView === 'editor'}
-                        <NotepadTextDashed/>
+                        <PencilLineIcon/>
                         Switch to Raw Lyrics
                     {:else}
                         <TimelineIcon/>
                         Switch to Synced Editor
                     {/if}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator/>
+                <DropdownMenuItem
+                    disabled={!content.trim()}
+                    onclick={() => {
+                        const blob = new Blob([toLrcString()], { type: 'text/plain' });
+
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${slug(track.name)}.lrc`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }}
+                >
+                    <DownloadIcon/>
+                    Download .lrc
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    class="text-primary"
+                    aria-disabled={!content.trim() || $submitting || !!$allErrors.length}
+                    onclick={() => form.submit()}
+                >
+                    <SaveIcon class="text-current"/>
+                    Save Changes
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
