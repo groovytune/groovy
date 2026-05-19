@@ -26,7 +26,7 @@ export function createAuthRedirect(type: 'signin'|'signout', url: string|URL) {
 }
 
 export function formatDuration(duration: number, pattern = 'm:ss') {
-    return DateTime.fromSeconds(duration).toFormat(pattern);
+    return DateTime.fromSeconds(duration).toFormat(pattern, { locale: 'en' });
 }
 
 export function formatFileSize(bytes: number, decimals = 2) {

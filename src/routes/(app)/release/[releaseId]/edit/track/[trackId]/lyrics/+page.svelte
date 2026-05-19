@@ -1,20 +1,16 @@
 <script lang="ts">
-    import { Appwrite } from '$lib/client/appwrite.js';
     import { PressedKeys, StateHistory, useEventListener } from 'runed';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
-    import { parseLyrics, stringifyLyrics } from '$lib/helpers/lyrics';
+    import { parseLyrics } from '$lib/helpers/lyrics';
     import type { LyricLine } from '@applemusic-like-lyrics/core';
     import LrcLyricsEditor from '$lib/components/shared/app/lyrics/editor/LrcLyricsEditor.svelte';
-    import { Tabs, TabsContent } from '$lib/components/ui/tabs';
     import { onMount } from 'svelte';
     import RangeSlider from 'svelte-range-slider-pips';
     import { Button } from '$lib/components/ui/button';
-    import { ArrowDownIcon, ArrowUpIcon, BetweenHorizontalEndIcon, DeleteIcon, DownloadIcon, EllipsisVerticalIcon, PauseIcon, PencilLineIcon, PlayIcon, RotateCcwIcon, RotateCwIcon, SaveIcon, TimelineIcon, TimerResetIcon } from '@lucide/svelte';
+    import { ArrowDownIcon, ArrowUpIcon, BetweenHorizontalEndIcon, DeleteIcon, DownloadIcon, EllipsisVerticalIcon, LoaderCircleIcon, PauseIcon, PlayIcon, RotateCcwIcon, RotateCwIcon, SaveIcon, TimerResetIcon } from '@lucide/svelte';
     import { formatDuration } from '$lib/helpers/utils.js';
     import LyricsUpload from '$lib/components/shared/app/lyrics/editor/LyricsUpload.svelte';
-    import { MediaQuery, SvelteMap } from 'svelte/reactivity';
     import type { Snapshot } from './$types.js';
-    import { Textarea } from '$lib/components/ui/textarea';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import DropdownMenuItem from '$lib/components/ui/dropdown-menu/dropdown-menu-item.svelte';
     import Label from '$lib/components/ui/label/label.svelte';
@@ -30,7 +26,6 @@
 
     const audioPlayer = AudioPlayer.context.get();
     const pressedKeys = new PressedKeys();
-    const isTouchUI = new MediaQuery('(width >= 48rem)');
 
     // svelte-ignore state_referenced_locally
     const form = superForm(data.form, {
@@ -62,32 +57,23 @@
         }
     });
 
-    const { enhance, submitting, allErrors, form: formData, capture, restore } = form;
+    const { enhance, submitting, allErrors, form: formData, capture, restore, tainted } = form;
 
     let track = $derived(data.track);
-    let lyrics = $derived(data.track?.lyrics);
+    let audioURL: string = $derived(resolve('/(app)/api/assets/audio/[fileId]', { fileId: track.file }));
 
-    let audioURL: string = $derived(Appwrite.storage.getFileView({
-        bucketId: 'audio',
-        fileId: track.file,
-    }));
-
-    let currentView: 'editor'|'raw' = $state('editor');
     let audio: HTMLAudioElement = $state()!;
     let currentTime: number = $state(0);
     let paused: boolean = $state(true);
     let duration: number = $state(0);
 
-    let content: string = $state('');
-    let currentLyricIndex: number = $state(0);
+    let lines: LineData[] = $state([]);
+    let highlightedIndex: number = $state(0);
 
-    const timeData: Map<number, number> = new SvelteMap();
     const history = new StateHistory(
-        () => timeData.entries().toArray(),
-        newTimeData => {
-            timeData.clear();
-            newTimeData.forEach(([index, time]) => timeData.set(index, time));
-        }
+        () => lines,
+        newLines => lines = newLines,
+        { capacity: 200 }
     );
 
     useEventListener(() => audio, 'play', () => audioPlayer.pause());
@@ -113,34 +99,42 @@
     });
 
     function reset() {
-        const lines = lyrics && lyrics?.format !== 'TXT' ? parseLyrics(lyrics) as LyricLine[] : [];
+        const lyrics = track.lyrics;
 
-        content = lyrics && lyrics?.format === 'TXT' ? lyrics.content : stringifyLyrics(lines);
+        if (lyrics && lyrics.format !== 'TXT') {
+            const content = parseLyrics($formData) as LyricLine[];
 
-        timeData.clear();
-        lines.forEach((line, index) => {
-            if (line.startTime !== undefined) {
-                timeData.set(index, line.startTime / 1000);
-            }
-        });
+            lines = content.map(l => ({
+                text: l.words.map(w => w.word).join(''),
+                startTime: l.startTime / 1000
+            }));
+        } else {
+            lines = lyrics ? lyrics.content.split('\n').map(text => ({ text })) : [];
+        }
+
         history.clear();
     }
 
     function clear() {
-        content = '';
-        timeData.clear();
+        lines = [];
         history.clear();
     }
 
     function setLyricTimestamp(index: number, time: number) {
-        timeData.set(index, time);
+        if (index < 0 || index >= lines.length) return;
+
+        const line = lines[index];
+        if (!line) return;
+
+        line.startTime = time;
+
         setCurrentLyricIndex(index + 1);
     }
 
     function setCurrentLyricIndex(index: number) {
-        currentLyricIndex = Math.max(0, Math.min(content.split('\n').length - 1, index));
+        highlightedIndex = index;
 
-        const currentLine = document.querySelector(`[data-lyric-index="${currentLyricIndex}"]`);
+        const currentLine = document.querySelector(`[data-lyric-index="${highlightedIndex}"]`);
         if (currentLine) currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
@@ -162,25 +156,27 @@
         timestamp: number;
     }
 
+    type LineData = {
+        text: string;
+        startTime?: number;
+    }
+
     export const snapshot: Snapshot<{
-        timeData: [number, number][];
-        content: string;
-        history: LogEvent<[number, number][]>[];
+        lines: LineData[];
+        history: LogEvent<LineData[]>[];
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         form: any;
     }> = {
         capture: () => ({
-            timeData: timeData.entries().toArray(),
-            content,
+            lines,
             history: history.log,
             form: capture()
         }),
         restore: snapshot => {
-            content = snapshot.content;
-            timeData.clear();
-            snapshot.timeData.forEach(([index, time]) => timeData.set(index, time));
-            history.log = snapshot.history;
             restore(snapshot.form);
+
+            lines = snapshot.lines;
+            history.log = snapshot.history;
         }
     };
 </script>
@@ -209,14 +205,18 @@
 ></audio>
 
 <main class="p-5 pb-20 w-full flex flex-col">
-    {#if !content}
+    {#if !lines.length}
         <div class="text-center text-muted-foreground min-h-[calc(100svh-16rem)] flex items-center justify-center">
             <LyricsUpload
                 onParse={(data) => {
-                    content = data.content;
-
-                    timeData.clear();
-                    data.timeData.forEach(([index, time]) => timeData.set(index, time));
+                    lines = data.lines.length
+                        ? data.lines.map(line => ({
+                            text: line.words.map(w => w.word).join(''),
+                            startTime: line.startTime / 1000
+                        }))
+                        : data.content.split('\n').map(text => ({
+                            text
+                        }));
 
                     history.clear();
                 }}
@@ -234,82 +234,37 @@
             }
             class="pb-10"
         >
-            {#if !isTouchUI.current}
-                <Tabs bind:value={currentView} class="w-full">
-                    <TabsContent value="editor">
-                        <Label class="text-xl font-semibold mb-4 text-center block">
-                            Synced Editor
-                        </Label>
-                        <LrcLyricsEditor
-                            bind:currentTime={
-                                () => currentTime,
-                                value => audio.currentTime = value
-                            }
-                            bind:lyrics={content}
-                            bind:currentLyricIndex
-                            {timeData}
-                            {form}
-                        />
-                    </TabsContent>
-                    <TabsContent value="raw" class="h-full">
-                        <Label class="text-xl font-semibold mb-2 text-center block">
-                            Raw Lyrics
-                        </Label>
-                        <Textarea
-                            bind:value={content}
-                            class="w-full h-full min-h-[calc(100svh-17rem)] border rounded-md"
-                            placeholder="Enter lyrics here..."
-                        />
-                    </TabsContent>
-                </Tabs>
-            {:else}
-                <section class="flex w-full gap-2">
-                    <div class="w-1/2 p-2">
-                        <Label class="text-xl font-semibold mb-2">
-                            Synced Editor
-                        </Label>
-                        <LrcLyricsEditor
-                            bind:currentTime={
-                                () => currentTime,
-                                value => audio.currentTime = value
-                            }
-                            bind:lyrics={content}
-                            bind:currentLyricIndex
-                            {timeData}
-                            {form}
-                        />
-                    </div>
-                    <div class="w-1/2 p-2">
-                        <Label class="text-xl font-semibold mb-2">
-                            Raw Lyrics
-                        </Label>
-                        <Textarea
-                            bind:value={content}
-                            class="w-full h-full min-h-40 font-medium border rounded-md text-base! leading-8"
-                            placeholder="Enter lyrics here..."
-                        />
-                    </div>
-                </section>
-            {/if}
+            <section class="w-full gap-2">
+                <Label class="text-xl font-semibold mb-4">
+                    Lyrics Editor
+                </Label>
+                <LrcLyricsEditor
+                    bind:currentTime={
+                        () => currentTime,
+                        value => audio.currentTime = value
+                    }
+                    bind:lines
+                    bind:highlightedIndex
+                    {form}
+                />
+            </section>
         </form>
     {/if}
 </main>
 
 <section class="fixed bottom-16 sm:bottom-0 left-0 select-none flex flex-col items-center w-full pointer-events-none gap-2">
-    {#if currentView === 'editor'}
-        <div class="flex md:hidden gap-1 w-full container justify-center lg:px-7 px-5 [&_button]:pointer-events-auto">
-            <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(currentLyricIndex - 1)}>
-                <ArrowUpIcon/>
+    <div class="flex md:hidden gap-1 w-full container justify-center lg:px-7 px-5 [&_button]:pointer-events-auto">
+        <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(highlightedIndex - 1)}>
+            <ArrowUpIcon/>
+        </Button>
+        <Button variant="default" size="lg" onclick={() => setLyricTimestamp(highlightedIndex, currentTime)}>
+            <BetweenHorizontalEndIcon/>
+            Update Timestamp
+        </Button>
+            <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(highlightedIndex + 1)}>
+                <ArrowDownIcon/>
             </Button>
-            <Button variant="default" size="lg" onclick={() => setLyricTimestamp(currentLyricIndex, currentTime)}>
-                <BetweenHorizontalEndIcon/>
-                Update Timestamp
-            </Button>
-                <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(currentLyricIndex + 1)}>
-                    <ArrowDownIcon/>
-                </Button>
-        </div>
-    {/if}
+    </div>
     <div class="flex items-center gap-1 rounded-md container pointer-events-auto pb-2 lg:px-7 px-5">
         <Button
             size="icon-lg"
@@ -334,10 +289,7 @@
             <RangeSlider
                 on:start={() => audio.pause()}
                 on:change={e => audio.currentTime = e.detail.value}
-                on:stop={e => {
-                    audio.play();
-                    audio.currentTime = e.detail.value;
-                }}
+                on:stop={e => audio.currentTime = e.detail.value}
                 value={currentTime}
                 step={0.5}
                 range="min"
@@ -363,7 +315,7 @@
                     Reset Lyrics
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                    disabled={!content.trim()}
+                    disabled={!lines.length}
                     onclick={clear}
                 >
                     <DeleteIcon/>
@@ -392,23 +344,9 @@
                         ⌘+Z
                     </DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator class="sm:hidden"/>
-                <DropdownMenuItem
-                    onclick={() => currentView = currentView === 'editor' ? 'raw' : 'editor'}
-                    closeOnSelect={false}
-                    class="sm:hidden"
-                >
-                    {#if currentView === 'editor'}
-                        <PencilLineIcon/>
-                        Switch to Raw Lyrics
-                    {:else}
-                        <TimelineIcon/>
-                        Switch to Synced Editor
-                    {/if}
-                </DropdownMenuItem>
                 <DropdownMenuSeparator class="md:hidden"/>
                 <DropdownMenuItem
-                    disabled={!content.trim()}
+                    disabled={!lines.length}
                     onclick={downloadContent}
                     class="md:hidden"
                 >
@@ -417,19 +355,43 @@
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     class="text-primary md:hidden"
-                    aria-disabled={!content.trim() || $submitting || !!$allErrors.length}
+                    aria-disabled={!lines.length || $submitting || !!$allErrors.length}
                     onclick={() => form.submit()}
                 >
-                    <SaveIcon class="text-current"/>
+                    {#if $submitting}
+                        <LoaderCircleIcon class="animate-spin text-current"/>
+                    {:else}
+                        <SaveIcon class="text-current"/>
+                    {/if}
                     Save Changes
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
-        <Button variant="secondary" size="icon-lg" class="hidden md:inline-flex" onclick={downloadContent}>
+        <Button
+            variant="secondary"
+            size="icon-lg"
+            class="hidden md:inline-flex"
+            onclick={downloadContent}
+        >
             <DownloadIcon/>
         </Button>
-        <Button variant="default" size="icon-lg" class="hidden md:inline-flex" onclick={() => form.submit()}>
-            <SaveIcon/>
+        <Button
+            variant="default" size="lg"
+            class={[
+                "hidden md:inline-flex size-10",
+                $tainted && "w-fit"
+            ]}
+            aria-disabled={!lines.length || $submitting || !!$allErrors.length}
+            onclick={() => form.submit()}
+        >
+            {#if $submitting}
+                <LoaderCircleIcon class="animate-spin text-current"/>
+            {:else}
+                <SaveIcon class="text-current"/>
+                {#if $tainted}
+                    <span>Save</span>
+                {/if}
+            {/if}
         </Button>
     </div>
 </section>

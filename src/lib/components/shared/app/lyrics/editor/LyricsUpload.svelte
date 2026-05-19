@@ -13,7 +13,7 @@
     }: {
         onParse: (data: {
             content: string;
-            timeData: [number, number][];
+            lines: LyricLine[];
         }) => void;
     } = $props();
 
@@ -50,27 +50,17 @@
     function parseLyrics(data: LyricLine[]|string) {
         const lines = typeof data !== 'string' ? data : [];
         const content = typeof data === 'string' ? data : stringifyLyrics(lines);
-        const timeData = lines.reduce((curr, val, index) => {
-            if (val.startTime !== undefined) {
-                curr.push([index, val.startTime / 1000]);
-            }
 
-            return curr;
-        }, [] as [number, number][]);
-
-        onParse({ content, timeData });
+        onParse({ content, lines });
     }
 
     function parseContent() {
         isBusy = true;
 
         try {
-            const data = parseLyricsContent(content);
-
-            parseLyrics(data);
-            console.log('Parsed lyrics content:', data);
+            parseLyrics(parseLyricsContent(content));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
-            console.error('Error parsing lyrics content:', error);
             parseLyrics(content);
         } finally {
             isBusy = false;
