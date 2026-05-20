@@ -23,6 +23,7 @@
         cover = false,
         editable = false,
         playingIndicator = true,
+        class: className = '',
         onclick,
         ondelete
     }: {
@@ -30,6 +31,7 @@
         cover?: boolean;
         editable?: boolean;
         playingIndicator?: boolean;
+        class?: string;
         onclick?: (event: MouseEvent & { currentTarget: EventTarget & HTMLDivElement; }) => void;
         ondelete?: (trackId: string) => void;
     } = $props();
@@ -84,7 +86,8 @@
     onclick={e => onclick?.(e)}
     class={[
         "p-2 hover:bg-secondary/50 rounded-md w-full gap-3 flex-nowrap",
-        isPlaying && "bg-accent/30"
+        isPlaying && "bg-accent/30",
+        className
     ]}
     style="content-visibility: auto;"
 >

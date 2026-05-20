@@ -10,26 +10,33 @@
         value = $bindable([]),
         query = $bindable(''),
         disabled = false,
+        single = false,
+        initialFetch = true,
+        limit,
         ...props
     }: {
         value?: Record<'id'|'name', string>[];
         query?: string;
+        single?: boolean;
+        initialFetch?: boolean;
+        limit?: number;
     } & Omit<HTMLInputAttributes, "type"|"files"|"value"> & {
         type?: Exclude<HTMLInputTypeAttribute, "file">;
     } = $props();
 
     const genresResource = resource(
-        [() => query],
-        async ([query]) => {
+        [() => query, () => limit],
+        async ([query, limit ]) => {
             const res = await fetch(
                 resolve('/api/genres') +
-                `?search=${encodeURIComponent(query)}`
+                `?search=${encodeURIComponent(query)}&take=${limit}`
             );
 
             return res.json() as Promise<Record<'id'|'name', string>[]>;
         },
         {
-            debounce: 500
+            debounce: 500,
+            lazy: !initialFetch
         }
     );
 </script>
@@ -63,7 +70,13 @@
                 variant="default"
                 size="sm"
                 disabled={disabled}
-                onclick={() => value = value.filter((v) => v.id !== genre.id)}
+                onclick={() => {
+                    if (single) {
+                        value = [];
+                    } else {
+                        value = value.filter((v) => v.id !== genre.id);
+                    }
+                }}
             >
                 {genre.name}
             </Button>
@@ -74,7 +87,13 @@
                 variant="outline"
                 size="sm"
                 disabled={disabled}
-                onclick={() => value = [...value, genre]}
+                onclick={() => {
+                    if (single) {
+                        value = [genre];
+                    } else {
+                        value = [...value, genre];
+                    }
+                }}
             >
                 {genre.name}
             </Button>
