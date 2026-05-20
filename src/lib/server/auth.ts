@@ -48,9 +48,7 @@ export const auth = betterAuth({
         "http://localhost:4173",
         "https://groovy.foo.ng",
     ],
-    advanced: {
-        defaultCookieAttributes: {
-            sameSite: 'None'
-        }
+    account: {
+        skipStateCookieCheck: true
     }
 });
