@@ -12,7 +12,6 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: 'postgresql'
     }),
-    storeStateStrategy: 'cookie',
     user: {
         additionalFields: {
             role: {
@@ -40,5 +39,11 @@ export const auth = betterAuth({
             clientId: env.AUTH_DISCORD_ID!,
             clientSecret: env.AUTH_DISCORD_SECRET
         }
+    },
+    account: {
+        storeStateStrategy: 'cookie',
+    },
+    advanced: {
+        disableOriginCheck: true
     }
 });
