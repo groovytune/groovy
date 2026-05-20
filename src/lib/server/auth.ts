@@ -41,7 +41,7 @@ export const auth = betterAuth({
         }
     },
     account: {
-        storeStateStrategy: 'cookie',
+        skipStateCookieCheck: true
     },
     advanced: {
         disableOriginCheck: true
