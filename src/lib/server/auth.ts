@@ -18,7 +18,7 @@ export const auth = betterAuth({
                 type: ["user", "admin"],
                 required: false,
                 defaultValue: "user",
-                input: false,
+                input: false
             },
             username: {
                 type: 'string',
@@ -39,9 +39,6 @@ export const auth = betterAuth({
             clientId: env.AUTH_DISCORD_ID!,
             clientSecret: env.AUTH_DISCORD_SECRET
         }
-    },
-    account: {
-        storeStateStrategy: 'cookie'
     },
     advanced: {
         cookiePrefix: 'groovytune'
