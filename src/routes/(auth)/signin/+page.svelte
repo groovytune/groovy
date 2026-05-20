@@ -14,7 +14,10 @@
     async function signInWrapper(provider: SocialProvider) {
         const { error } = await auth.signIn.social({
             provider,
-            callbackURL: redirect
+            callbackURL: redirect,
+            fetchOptions: {
+                credentials: 'include'
+            }
         });
 
         if (error) {
