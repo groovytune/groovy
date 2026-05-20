@@ -14,7 +14,7 @@
     let backgroundLoaded = $state(false);
     let coverAPIURL = $derived(
         audioPlayer.currentTrack
-            ? resolve('/(app)/api/track/[id]/cover', { id: audioPlayer.currentTrack?.id ?? '' }) + '?size=300'
+            ? resolve('/(app)/api/track/[trackId]/cover', { trackId: audioPlayer.currentTrack?.id ?? '' }) + '?size=300'
             : coverPlaceholder
     );
 

@@ -6,7 +6,7 @@ import { countStream } from '$lib/helpers/stream';
 export async function GET({ params, locals, request, url }) {
     const track = await prisma.track.findUnique({
         where: {
-            id: params.id,
+            id: params.trackId,
             release: {
                 AND: locals.user?.id
                     ? {

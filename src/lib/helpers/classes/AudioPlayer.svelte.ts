@@ -61,7 +61,7 @@ export class AudioPlayer {
         async trackId => {
             if (!trackId) return null;
 
-            const lyrics = await fetch(resolve('/(app)/api/track/[id]/lyrics', { id: trackId }))
+            const lyrics = await fetch(resolve('/(app)/api/track/[trackId]/lyrics', { trackId }))
                 .then(res => {
                     if (!res.ok) throw new Error('Failed to fetch lyrics');
                     return res.json() as Promise<Lyrics>;
@@ -260,7 +260,7 @@ export class AudioPlayer {
 
         this.current = track instanceof QueueTrack ? track : new QueueTrack(track);
 
-        const source = resolve('/(app)/api/track/[id]/audio', { id: this.current.track.id });
+        const source = resolve('/(app)/api/track/[trackId]/audio', { trackId: this.current.track.id });
 
         this.audio.pause();
         this.audio.src = source;

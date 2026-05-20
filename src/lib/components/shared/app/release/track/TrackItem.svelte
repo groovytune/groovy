@@ -65,7 +65,7 @@
                 data={{
                     title: track.name,
                     text: `${track.name} ${artistInfo.current?.name ? 'by ' + artistInfo.current.name : ''} on Groovy`,
-                    url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: track.releaseId }), location.origin).href
+                    url: new URL(resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: track.releaseId, trackId: track.id }), location.origin).href
                 }}
             >
                 {#snippet child({ onclick })}
@@ -149,7 +149,7 @@
                             <DropdownMenuItem>
                                 {#snippet child({ props })}
                                     <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-                                    <a {...props} href={resolve('/(app)/api/track/[id]/audio', { id: track.id }) + '?download'} target="_blank" rel="noopener noreferrer">
+                                    <a {...props} href={resolve('/(app)/api/track/[trackId]/audio', { trackId: track.id }) + '?download'} target="_blank" rel="noopener noreferrer">
                                         <DownloadIcon/>
                                         Download File
                                     </a>

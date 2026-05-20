@@ -59,7 +59,7 @@
     const { enhance, submitting, allErrors, form: formData, capture, restore, tainted } = form;
 
     let track = $derived(data.track);
-    let audioURL: string = $derived(resolve('/(app)/api/track/[id]/audio', { id: track.id }));
+    let audioURL: string = $derived(resolve('/(app)/api/track/[trackId]/audio', { trackId: track.id }));
 
     let audio: HTMLAudioElement = $state()!;
     let currentTime: number = $state(0);

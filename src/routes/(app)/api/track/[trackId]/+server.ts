@@ -12,7 +12,7 @@ export type GETResponse = Track & {
 export async function GET({ params, locals }) {
     const track = await prisma.track.findUnique({
         where: {
-            id: params.id,
+            id: params.trackId,
             release: {
                 AND: locals.user?.id
                     ? {

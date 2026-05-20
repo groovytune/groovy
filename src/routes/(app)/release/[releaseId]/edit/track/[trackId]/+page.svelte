@@ -170,7 +170,7 @@
                 </ItemContent>
                 <ItemActions>
                     <Button
-                        href={resolve('/(app)/api/track/[id]/audio', { id: data.track.id }) + '?download'}
+                        href={resolve('/(app)/api/track/[trackId]/audio', { trackId: data.track.id }) + '?download'}
                         target="_blank"
                         rel="noopener noreferrer"
                         variant="outline"

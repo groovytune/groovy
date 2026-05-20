@@ -4,7 +4,7 @@ import { error, json } from '@sveltejs/kit';
 export async function GET({ params, locals }) {
     const lyrics = await prisma.lyrics.findUnique({
         where: {
-            trackId: params.id,
+            trackId: params.trackId,
             track: {
                 release: {
                     AND: locals.user?.id
