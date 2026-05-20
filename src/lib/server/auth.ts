@@ -5,7 +5,6 @@ import { env } from '$env/dynamic/private';
 import { env as publicEnv } from '$env/dynamic/public';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
-import { oAuthProxy } from 'better-auth/plugins/oauth-proxy';
 
 export const auth = betterAuth({
     baseURL: publicEnv.PUBLIC_BETTER_AUTH_URL,
@@ -32,10 +31,6 @@ export const auth = betterAuth({
         }
     },
     plugins: [
-        oAuthProxy({
-            secret: env.BETTER_AUTH_SECRET,
-            productionURL: publicEnv.PUBLIC_BETTER_AUTH_URL
-        }),
         sveltekitCookies(getRequestEvent) // Make sure this is the last plugin
     ],
     socialProviders: {
@@ -52,5 +47,10 @@ export const auth = betterAuth({
         "http://localhost:5173",
         "http://localhost:4173",
         "https://groovy.foo.ng",
-    ]
+    ],
+    advanced: {
+        defaultCookieAttributes: {
+            sameSite: 'None'
+        }
+    }
 });
