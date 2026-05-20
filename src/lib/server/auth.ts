@@ -12,9 +12,6 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: 'postgresql'
     }),
-    logger: {
-        level: 'debug'
-    },
     user: {
         additionalFields: {
             role: {
@@ -43,12 +40,4 @@ export const auth = betterAuth({
             clientSecret: env.AUTH_DISCORD_SECRET
         }
     },
-    trustedOrigins: [
-        "http://localhost:5173",
-        "http://localhost:4173",
-        "https://groovy.foo.ng",
-    ],
-    account: {
-        skipStateCookieCheck: true
-    }
 });
