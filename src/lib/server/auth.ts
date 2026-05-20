@@ -39,5 +39,13 @@ export const auth = betterAuth({
             clientId: env.AUTH_DISCORD_ID!,
             clientSecret: env.AUTH_DISCORD_SECRET
         }
+    },
+    trustedOrigins: [
+        "http://localhost:5173",
+        "http://localhost:4173",
+        "https://groovy.foo.ng",
+    ],
+    advanced: {
+        useSecureCookies: true
     }
 });
