@@ -101,17 +101,23 @@
         const lyrics = track.lyrics;
 
         if (lyrics && lyrics.format !== 'TXT') {
-            const content = parseLyrics($formData) as LyricLine[];
-
-            lines = content.map(l => ({
-                text: l.words.map(w => w.word).join(''),
-                startTime: l.startTime / 1000
-            }));
+            lines = parseLyricLines(parseLyrics($formData) as LyricLine[]);
         } else {
             lines = lyrics ? lyrics.content.split('\n').map(text => ({ text })) : [];
         }
 
         history.clear();
+    }
+
+    function parseLyricLines(lines: LyricLine[]): LineData[] {
+        return lines.map(l => {
+            let text = l.words.map(w => w.word).join('');
+
+            return {
+                text: l.isBG ? `(${text})` : text,
+                startTime: l.startTime / 1000
+            };
+        })
     }
 
     function clear() {
@@ -209,13 +215,8 @@
             <LyricsUpload
                 onParse={(data) => {
                     lines = data.lines.length
-                        ? data.lines.map(line => ({
-                            text: line.words.map(w => w.word).join(''),
-                            startTime: line.startTime / 1000
-                        }))
-                        : data.content.split('\n').map(text => ({
-                            text
-                        }));
+                        ? parseLyricLines(data.lines)
+                        : data.content.split('\n').map(text => ({ text }));
 
                     history.clear();
                 }}
