@@ -12,9 +12,6 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: 'postgresql'
     }),
-    account: {
-        skipStateCookieCheck: true
-    },
     user: {
         additionalFields: {
             role: {
