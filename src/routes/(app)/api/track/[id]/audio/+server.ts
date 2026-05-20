@@ -33,9 +33,7 @@ export async function GET({ params, locals, request, url }) {
         hostname: request.headers.get('x-forwarded-for') || request.headers.get('remote-addr') || undefined,
         userAgent: request.headers.get('user-agent') || undefined,
         userId: locals.user?.id
-    })
-        .then(counted => console.log(counted ? 'Stream counted' : 'Stream already counted recently'))
-        .catch(err => console.error('Error counting stream:', err));
+    }).catch(err => console.error(`Error counting stream for ${track.id}:`, err));
 
     redirect(307, resolve('/(app)/api/assets/audio/[fileId]', { fileId: track.file }) + url.search);
 }

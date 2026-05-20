@@ -2,19 +2,20 @@ import { error } from '@sveltejs/kit';
 import { Appwrite } from '$lib/server/appwrite';
 
 export async function GET({ params, url, request }) {
-    const file = await Appwrite.storage.getFile({
-        bucketId: 'audio',
-        fileId: params.fileId
-    }).catch(() => null);
+    const [file, data] = await Promise.all([
+        Appwrite.storage.getFile({
+            bucketId: 'audio',
+            fileId: params.fileId
+        }).catch(() => null),
+        Appwrite.storage.getFileDownload({
+            bucketId: 'audio',
+            fileId: params.fileId
+        }).catch(() => null)
+    ]);
 
-    if (!file) {
+    if (!file || !data) {
         throw error(404, 'File not found');
     }
-
-    const data = await Appwrite.storage.getFileDownload({
-        bucketId: 'audio',
-        fileId: params.fileId
-    });
 
     const fileSize = file.sizeOriginal;
     const rangeHeader = request.headers.get('range');
