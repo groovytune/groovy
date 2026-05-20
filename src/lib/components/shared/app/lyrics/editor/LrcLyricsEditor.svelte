@@ -20,6 +20,7 @@
         form: SuperForm<z.infer<typeof newLyricsSchema>>;
     } = $props();
 
+    // svelte-ignore state_referenced_locally
     const { form: formData } = form;
 
     let highlightedInput: HTMLTextAreaElement|null = $derived(document.querySelector(`[data-lyric-index="${highlightedIndex}"] textarea`));
