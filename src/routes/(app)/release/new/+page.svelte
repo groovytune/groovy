@@ -12,12 +12,19 @@
     import { resolve } from '$app/paths';
     import ReleaseFormFields from '$lib/components/shared/app/release/forms/fields/ReleaseFormFields.svelte';
     import { ActiveNavigationPageContext } from '$lib/contexts/navigation.js';
+    import { onDestroy, onMount } from 'svelte';
 
     let { data } = $props();
 
     const activeNavigationPage = ActiveNavigationPageContext.get();
 
-    activeNavigationPage.id = 'create';
+    onMount(() => {
+        activeNavigationPage.id = 'create';
+    });
+
+    onDestroy(() => {
+        activeNavigationPage.id = '';
+    });
 
     // svelte-ignore state_referenced_locally
     const form = superForm(data.form, {
