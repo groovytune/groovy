@@ -40,4 +40,7 @@ export const auth = betterAuth({
             clientSecret: env.AUTH_DISCORD_SECRET
         }
     },
+    account: {
+        storeStateStrategy: 'database'
+    }
 });
