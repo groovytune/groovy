@@ -41,6 +41,9 @@ export const auth = betterAuth({
         }
     },
     account: {
-        storeStateStrategy: 'database'
+        storeStateStrategy: 'cookie'
+    },
+    advanced: {
+        cookiePrefix: 'groovytune'
     }
 });
