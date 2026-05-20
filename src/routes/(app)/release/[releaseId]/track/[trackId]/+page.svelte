@@ -6,18 +6,20 @@
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { Button } from '$lib/components/ui/button';
     import { resolve } from '$app/paths';
-    import { Disc3Icon, EllipsisIcon, HeartIcon, ListMusicIcon, MicVocalIcon, PencilIcon, PlayIcon, Share2Icon } from '@lucide/svelte';
+    import { Disc3Icon, EllipsisIcon, HeadphonesIcon, HeartIcon, HourglassIcon, ListMusicIcon, MicVocalIcon, PencilIcon, PlayIcon, Share2Icon } from '@lucide/svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
     import { auth } from '$lib/client/auth.js';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import Card from '$lib/components/ui/card/card.svelte';
-    import { CardHeader, CardTitle } from '$lib/components/ui/card';
+    import { CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
     import CardContent from '$lib/components/ui/card/card-content.svelte';
     import { parseLyrics } from '$lib/helpers/lyrics.js';
     import type { LyricLine } from '@applemusic-like-lyrics/core';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
+    import { resource } from 'runed';
+    import { formatDuration } from '../../../../../../lib/helpers/utils.js';
 
     let { data } = $props();
 
@@ -47,6 +49,25 @@
                 output: ImageFormat.Webp
             })
             : coverPlaceholder
+    );
+
+    const streams = resource(
+        () => data.track.id,
+        async (trackId) => {
+            const streams = await fetch(resolve('/(app)/api/track/[trackId]/streams', { trackId }));
+
+            if (!streams.ok) {
+                throw new Error('Failed to fetch stream count');
+            }
+
+            const { count } = await streams.json() as { count: number };
+            return count;
+        }
+    );
+
+    const likes = resource(
+        () => data.track.id,
+        async (trackId) => 4884
     );
 </script>
 
@@ -163,32 +184,74 @@
             </div>
         </header>
     </section>
-    <section class="py-5 px-2.5 w-full pt-0 flex flex-col">
-        {#if lyrics}
+    <section class="py-5 px-2.5 w-full pt-5 flex flex-col gap-2">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
             <Card>
                 <CardHeader>
-                    <CardTitle>Lyrics</CardTitle>
+                    <CardTitle class="flex items-center gap-1">
+                        <HeadphonesIcon class="text-blue-500 size-5 -mt-1"/>
+                        <span>Total Streams</span>
+                    </CardTitle>
+                    <CardDescription>
+                        {streams.current?.toLocaleString() ?? 'loading'} stream{streams.current === 1 ? '' : 's'}
+                    </CardDescription>
                 </CardHeader>
-                <CardContent class="leading-loose text-sm">
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle class="flex items-center gap-1">
+                        <HeartIcon class="text-primary size-5 -mt-1"/>
+                        <span>Total Likes</span>
+                    </CardTitle>
+                    <CardDescription>
+                        {likes.current?.toLocaleString() ?? 'loading'} like{likes.current === 1 ? '' : 's'}
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle class="flex items-center gap-1">
+                        <HourglassIcon class="text-orange-500 size-5 -mt-1"/>
+                        <span>Duration</span>
+                    </CardTitle>
+                    <CardDescription>
+                        {#if track.duration}
+                            {formatDuration(track.duration)}
+                        {:else}
+                            Not available
+                        {/if}
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+        </div>
+        <Card>
+            <CardHeader>
+                <CardTitle class="flex items-center gap-1">
+                    <MicVocalIcon class="text-mauve-500 size-5 -mt-1"/>
+                    <span>Lyrics</span>
+                </CardTitle>
+            </CardHeader>
+            <CardContent class="leading-loose text-sm">
+                {#if lyrics}
                     {#each lyricsContent as line, i (i)}
                         <p>{line.words.map(w => w.word).join('')}</p>
                     {/each}
-                </CardContent>
-            </Card>
-        {:else}
-            <Empty class="m-5 py-10 gap-0">
-                <EmptyHeader>
-                    <EmptyMedia variant="icon">
-                        <MicVocalIcon/>
-                    </EmptyMedia>
-                </EmptyHeader>
-                <EmptyTitle>
-                    No lyrics available
-                </EmptyTitle>
-                <EmptyDescription>
-                    This release has no lyrics added yet
-                </EmptyDescription>
-            </Empty>
-        {/if}
+                {:else}
+                    <Empty class="m-5 py-10 gap-0">
+                        <EmptyHeader>
+                            <EmptyMedia variant="icon">
+                                <MicVocalIcon/>
+                            </EmptyMedia>
+                        </EmptyHeader>
+                        <EmptyTitle>
+                            No lyrics available
+                        </EmptyTitle>
+                        <EmptyDescription>
+                            This release has no lyrics added yet
+                        </EmptyDescription>
+                    </Empty>
+                {/if}
+            </CardContent>
+        </Card>
     </section>
 </div>

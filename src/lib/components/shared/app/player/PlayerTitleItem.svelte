@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Button } from '$lib/components/ui/button';
-    import { Disc3Icon, EllipsisIcon, HeartIcon, InfoIcon, ListMusicIcon, Share2Icon } from '@lucide/svelte';
+    import { Disc3Icon, EllipsisIcon, HeartIcon, InfoIcon, ListMusicIcon, Music4Icon, Share2Icon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
@@ -103,7 +103,20 @@
                     {/snippet}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent class="mx-2 min-w-40">
-                    <!-- TODO: Implement these functionalities -->
+                    <DropdownMenuItem>
+                        {#snippet child({ props })}
+                            <a
+                                {...props}
+                                href={resolve(
+                                    '/(app)/release/[releaseId]/track/[trackId]',
+                                    { releaseId: audioPlayer.currentTrack!.releaseId, trackId: audioPlayer.currentTrack!.id }
+                                )}
+                            >
+                                <Music4Icon/>
+                                View Track
+                            </a>
+                        {/snippet}
+                    </DropdownMenuItem>
                     <DropdownMenuItem>
                         {#snippet child({ props })}
                             <a {...props} href={resolve('/(app)/release/[releaseId]', { releaseId: audioPlayer.currentTrack!.releaseId })}>
