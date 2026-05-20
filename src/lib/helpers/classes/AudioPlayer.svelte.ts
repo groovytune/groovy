@@ -263,8 +263,8 @@ export class AudioPlayer {
         const source = resolve('/(app)/api/track/[trackId]/audio', { trackId: this.current.track.id });
 
         this.audio.pause();
-        this.audio.src = source;
         this.audio.currentTime = 0;
+        this.audio.src = source;
         this.audio.load();
     }
 

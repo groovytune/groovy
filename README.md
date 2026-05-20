@@ -20,13 +20,13 @@ cd groovy
 Install dependencies
 
 ```sh
-bun install
+npm install
 ```
 
 Start the development server
 
 ```sh
-bun run dev
+npm run dev
 ```
 
 ## Building
@@ -34,7 +34,7 @@ bun run dev
 To create a production version of your app
 
 ```sh
-bun run build
+npm run build
 ```
 
-You can preview the production build with `bun run preview`.
+You can preview the production build with `npm run preview`.
