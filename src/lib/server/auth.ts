@@ -12,6 +12,9 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: 'postgresql'
     }),
+    logger: {
+        level: 'debug'
+    },
     user: {
         additionalFields: {
             role: {
@@ -44,8 +47,5 @@ export const auth = betterAuth({
         "http://localhost:5173",
         "http://localhost:4173",
         "https://groovy.foo.ng",
-    ],
-    advanced: {
-        useSecureCookies: true
-    }
+    ]
 });
