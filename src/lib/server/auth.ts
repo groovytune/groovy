@@ -39,8 +39,5 @@ export const auth = betterAuth({
             clientId: env.AUTH_DISCORD_ID!,
             clientSecret: env.AUTH_DISCORD_SECRET
         }
-    },
-    advanced: {
-        cookiePrefix: 'groovytune'
     }
 });
