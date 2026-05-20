@@ -65,9 +65,10 @@
         }
     );
 
+    // TODO: Implement likes endpoint and fetch real like count
     const likes = resource(
         () => data.track.id,
-        async (trackId) => 4884
+        async () => 4884
     );
 </script>
 
@@ -185,8 +186,8 @@
         </header>
     </section>
     <section class="py-5 px-2.5 w-full pt-5 flex flex-col gap-2">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-            <Card>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            <Card class="col-span-1 sm:col-span-2 lg:col-span-1">
                 <CardHeader>
                     <CardTitle class="flex items-center gap-1">
                         <HeadphonesIcon class="text-blue-500 size-5 -mt-1"/>
