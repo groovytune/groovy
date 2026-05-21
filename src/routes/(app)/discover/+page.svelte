@@ -14,6 +14,7 @@
     import type { GETResponse as GETMostLikedReleases } from '../api/chart/likes/releases/+server';
     import type { GETResponse as GETMostLikedTracks } from '../api/chart/likes/tracks/+server';
     import { numberFormatter } from '../../../lib/helpers/constants';
+    import Skeleton from '../../../lib/components/ui/skeleton/skeleton.svelte';
 
     const newReleases = resource(
         () => null,
@@ -107,6 +108,18 @@
     </div>
 {/snippet}
 
+{#snippet ItemSkeletons(length: number = 5)}
+    {#each { length }}
+        <div class="flex flex-col shrink-0">
+            <Skeleton class="size-40 sm:size-80"/>
+            <div class="mt-2 space-y-2">
+                <Skeleton class="w-20 sm:w-48 h-4"/>
+                <Skeleton class="w-14 sm:w-40 h-3"/>
+            </div>
+        </div>
+    {/each}
+{/snippet}
+
 <section class="px-5">
     <h1 class="text-2xl sm:text-4xl font-bold my-4 flex items-center gap-2">
         <StarIcon class="text-primary size-7 sm:size-8"/>
@@ -151,11 +164,11 @@
         New Releases
     </h1>
     <div class="pb-5">
-        {#if newReleases.loading}
-            please wait...
-        {:else if newReleases.current?.length}
-            <ScrollArea orientation="horizontal">
-                <div class="flex gap-4 px-5">
+        <ScrollArea orientation="horizontal">
+            <div class="flex gap-4 px-5">
+                {#if newReleases.loading}
+                    {@render ItemSkeletons()}
+                {:else if newReleases.current?.length}
                     {#each newReleases.current as release (release.id)}
                         {@const releaseURL = resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
                         {@const coverURL = release.cover
@@ -177,9 +190,9 @@
                             resolve('/(app)/artist/[userResolvable]', { userResolvable: release.user.username ? `@${release.user.username}` : release.user.id })
                         )}
                     {/each}
-                </div>
-            </ScrollArea>
-        {/if}
+                {/if}
+            </div>
+        </ScrollArea>
     </div>
 </section>
 <section>
@@ -189,10 +202,10 @@
     </h1>
     <div class="pb-5">
         <ScrollArea orientation="horizontal">
-            {#if mostLikedTracks.loading}
-                please wait...
-            {:else if mostLikedTracks.current?.length}
-                <div class="flex gap-4 px-5">
+            <div class="flex gap-4 px-5">
+                {#if mostLikedTracks.loading}
+                    {@render ItemSkeletons()}
+                {:else if mostLikedTracks.current?.length}
                     {#each mostLikedTracks.current as track (track.id)}
                         {@const trackURL = resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: track.release.id, trackId: track.id })}
                         {@const coverURL = track.cover || track.release.cover
@@ -214,8 +227,8 @@
                             resolve('/(app)/release/[releaseId]', { releaseId: track.release.id })
                         )}
                     {/each}
-                </div>
-            {/if}
+                {/if}
+            </div>
         </ScrollArea>
     </div>
 </section>
@@ -225,11 +238,11 @@
         Most Liked Releases
     </h1>
     <div class="pb-10">
-        {#if mostLikedReleases.loading}
-            please wait...
-        {:else if mostLikedReleases.current?.length}
-            <ScrollArea orientation="horizontal">
-                <div class="flex gap-4 px-5">
+        <ScrollArea orientation="horizontal">
+            <div class="flex gap-4 px-5">
+                {#if mostLikedReleases.loading}
+                    {@render ItemSkeletons()}
+                {:else if mostLikedReleases.current?.length}
                     {#each mostLikedReleases.current as release (release.id)}
                         {@const releaseURL = resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
                         {@const coverURL = release.cover
@@ -251,8 +264,8 @@
                             resolve('/(app)/artist/[userResolvable]', { userResolvable: release.user.username ? `@${release.user.username}` : release.user.id })
                         )}
                     {/each}
-                </div>
-            </ScrollArea>
-        {/if}
+                {/if}
+            </div>
+        </ScrollArea>
     </div>
 </section>
