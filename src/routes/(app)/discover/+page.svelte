@@ -1,20 +1,21 @@
 <script lang="ts">
     import { ArrowRight, ListMusicIcon, MegaphoneIcon, Music4Icon, StarIcon } from '@lucide/svelte';
-    import { Button } from '../../../lib/components/ui/button';
-    import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '../../../lib/components/ui/card';
+    import { Button } from '$lib/components/ui/button';
+    import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
     import { resolve } from '$app/paths';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import type { GETResponse as GETNewReleases } from '../api/discover/new/releases/+server';
     import { resource } from 'runed';
-    import { Image } from '../../../lib/client/image';
+    import { Image } from '$lib/client/image';
     import { ImageFormat, ImageGravity } from 'appwrite';
-    import ExplicitIcon from '../../../lib/components/shared/icons/ExplicitIcon.svelte';
-    import { ScrollArea } from '../../../lib/components/ui/scroll-area';
+    import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
+    import { ScrollArea } from '$lib/components/ui/scroll-area';
     import { DateTime } from 'luxon';
-    import type { GETResponse as GETMostLikedReleases } from '../api/chart/likes/releases/+server';
-    import type { GETResponse as GETMostLikedTracks } from '../api/chart/likes/tracks/+server';
-    import { numberFormatter } from '../../../lib/helpers/constants';
-    import Skeleton from '../../../lib/components/ui/skeleton/skeleton.svelte';
+    import type { GETResponse as GETMostLikedReleases } from '../api/discover/chart/likes/releases/+server';
+    import type { GETResponse as GETMostLikedTracks } from '../api/discover/chart/likes/tracks/+server';
+    import { numberFormatter } from '$lib/helpers/constants';
+    import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+    import type { PartialUser } from '$lib/helpers/utils';
 
     const newReleases = resource(
         () => null,
@@ -32,7 +33,7 @@
     const mostLikedTracks = resource(
         () => null,
         async () => {
-            const res = await fetch(resolve('/(app)/api/chart/likes/tracks') + '?take=20');
+            const res = await fetch(resolve('/(app)/api/discover/chart/likes/tracks') + '?take=20');
 
             if (!res.ok) {
                 throw new Error('Failed to fetch most liked tracks');
@@ -45,7 +46,7 @@
     const mostLikedReleases = resource(
         () => null,
         async () => {
-            const res = await fetch(resolve('/(app)/api/chart/likes/releases') + '?take=20');
+            const res = await fetch(resolve('/(app)/api/discover/chart/likes/releases') + '?take=20');
 
             if (!res.ok) {
                 throw new Error('Failed to fetch most liked releases');
@@ -118,6 +119,28 @@
             </div>
         </div>
     {/each}
+{/snippet}
+
+{#snippet ArtistItem(artist: PartialUser, followers: number = 0)}
+    {@const artistURL = resolve('/(app)/artist/[userResolvable]', { userResolvable: artist.username ? `@${artist.username}` : artist.id })}
+    <div class="flex flex-col shrink-0 w-40 sm:w-80 gap-2" title={artist.name} style="content-visibility: auto;">
+        <a href={artistURL}>
+            <img src={artist.image} alt="Artist" class="size-40 sm:size-80 rounded-full object-cover"/>
+        </a>
+        <div>
+            <h2 class="text-lg sm:text-xl font-semibold mt-2 line-clamp-2 truncate text-balance text-center">
+                <a href={artistURL}>
+                    {artist.name}
+                </a>
+            </h2>
+            <p class="text-sm text-muted-foreground text-center leading-tight">
+                {artist.username ? `@${artist.username}` : ''}
+            </p>
+            <p class="text-sm text-muted-foreground text-center leading-tight">
+                {numberFormatter.format(followers)} follower{followers !== 1 ? 's' : ''}
+            </p>
+        </div>
+    </div>
 {/snippet}
 
 <section>
@@ -195,6 +218,26 @@
                         )}
                     {/each}
                 {/if}
+            </div>
+        </ScrollArea>
+    </div>
+</section>
+<section class="mt-10">
+    <h1 class="text-2xl sm:text-4xl font-bold my-4 flex items-center gap-2 px-5">
+        <MegaphoneIcon class="text-primary size-7 sm:size-8"/>
+        Popular Artists
+    </h1>
+    <div class="pb-5">
+        <ScrollArea orientation="horizontal">
+            <div class="flex gap-4 px-5">
+                {#each { length: 10 }}
+                    {@render ArtistItem({
+                        id: '',
+                        name: 'Artist Name',
+                        username: 'artistusername',
+                        image: 'https://i.pravatar.cc/300'
+                    })}
+                {/each}
             </div>
         </ScrollArea>
     </div>
