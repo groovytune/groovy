@@ -32,7 +32,7 @@
     const mostLikedTracks = resource(
         () => null,
         async () => {
-            const res = await fetch(resolve('/(app)/api/chart/likes/tracks') + '?limit=50');
+            const res = await fetch(resolve('/(app)/api/chart/likes/tracks') + '?limit=20');
 
             if (!res.ok) {
                 throw new Error('Failed to fetch most liked tracks');
@@ -45,7 +45,7 @@
     const mostLikedReleases = resource(
         () => null,
         async () => {
-            const res = await fetch(resolve('/(app)/api/chart/likes/releases') + '?limit=50');
+            const res = await fetch(resolve('/(app)/api/chart/likes/releases') + '?limit=20');
 
             if (!res.ok) {
                 throw new Error('Failed to fetch most liked releases');
