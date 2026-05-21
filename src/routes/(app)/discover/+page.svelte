@@ -150,7 +150,7 @@
         <MegaphoneIcon class="text-primary size-7 sm:size-8"/>
         New Releases
     </h1>
-    <div class="">
+    <div class="pb-5">
         {#if newReleases.loading}
             please wait...
         {:else if newReleases.current?.length}
@@ -187,7 +187,7 @@
         <Music4Icon class="text-primary size-7 sm:size-8"/>
         Most Liked Tracks
     </h1>
-    <div class="pb-10">
+    <div class="pb-5">
         <ScrollArea orientation="horizontal">
             {#if mostLikedTracks.loading}
                 please wait...
