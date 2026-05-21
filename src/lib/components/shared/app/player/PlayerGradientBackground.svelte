@@ -2,6 +2,7 @@
     import { onDestroy, onMount } from 'svelte';
     import type { BackgroundRender, MeshGradientRenderer } from '@applemusic-like-lyrics/core';
     import { cn } from '$lib/helpers/utils';
+    import isMobile from 'is-mobile';
 
     let {
         image,
@@ -10,7 +11,7 @@
         fps = 30,
         flowSpeed = 2,
         renderScale = 2,
-        staticMode = false,
+        staticMode = isMobile(),
         lowFreqVolume = 2.5,
         hasLyric = true,
         class: className,
