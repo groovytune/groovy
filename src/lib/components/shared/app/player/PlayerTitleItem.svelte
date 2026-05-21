@@ -5,14 +5,11 @@
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import type { ClassValue } from 'clsx';
-    import { cn, createAuthRedirect } from '$lib/helpers/utils';
+    import { cn } from '$lib/helpers/utils';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import ShareButton from '../release/ShareButton.svelte';
     import { resolve } from '$app/paths';
-    import { LikedCache } from '$lib/helpers/classes/LikedCache.svelte';
-    import { auth } from '$lib/client/auth';
-    import { goto } from '$app/navigation';
-    import { untrack } from 'svelte';
+    import TrackLikeButton from '../release/track/TrackLikeButton.svelte';
 
     let {
         cover = false,
@@ -33,31 +30,6 @@
     } = $props();
 
     const audioPlayer = AudioPlayer.context.get();
-    const likedCache = LikedCache.context.get();
-    const session = auth.useSession();
-
-    let liked = $derived(audioPlayer.currentTrack ? likedCache.tracks.get(audioPlayer.currentTrack.id) : false);
-
-    async function toggleLike() {
-        if (!$session.data?.user) {
-            // eslint-disable-next-line svelte/no-navigation-without-resolve
-            await goto(createAuthRedirect('signin', location.href));
-            return;
-        }
-
-        if (!audioPlayer.currentTrack) return;
-
-        const trackId = audioPlayer.currentTrack.id;
-        const currentlyLiked = likedCache.tracks.get(trackId) ?? false;
-
-        await likedCache.updateTrackLike(trackId, !currentlyLiked);
-    }
-
-    $effect(() => {
-        if (!audioPlayer.currentTrack || untrack(() => !$session.data?.user)) return;
-
-        likedCache.fetchTrackLike(audioPlayer.currentTrack.id);
-    });
 </script>
 
 <Item class={cn(className)}>
@@ -120,17 +92,22 @@
     </ItemContent>
     {#if audioPlayer.currentTrack != null}
         <ItemActions>
-            <Button
-                variant="secondary"
-                size="icon"
-                class={[
-                    "bg-white/10! shadow-none",
-                    liked && "bg-white/80! text-black!"
-                ]}
-                onclick={toggleLike}
-            >
-                <HeartIcon class={[liked && "fill-current"]}/>
-            </Button>
+            <TrackLikeButton trackId={audioPlayer.currentTrack.id}>
+                {#snippet child({ liked, toggleLike, props })}
+                    <Button
+                        {...props}
+                        onclick={toggleLike}
+                        variant="secondary"
+                        size="icon"
+                        class={[
+                            "bg-white/10! shadow-none",
+                            liked && "bg-white/80! text-black!"
+                        ]}
+                    >
+                        <HeartIcon class={[liked && "fill-current"]}/>
+                    </Button>
+                {/snippet}
+            </TrackLikeButton>
             <DropdownMenu>
                 <DropdownMenuTrigger>
                     {#snippet child({ props })}

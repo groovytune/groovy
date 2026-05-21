@@ -50,6 +50,10 @@ export async function DELETE({ params, locals }) {
         return json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    if (params.artistId === locals.user.id) {
+        throw error(400, 'You cannot unfollow yourself');
+    }
+
     const hasLiked = await prisma.userFollow.findUnique({
         where: {
             followerId_userId: {

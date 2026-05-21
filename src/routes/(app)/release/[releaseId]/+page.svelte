@@ -5,7 +5,7 @@
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { Button } from '$lib/components/ui/button';
     import { resolve } from '$app/paths';
-    import { Disc3Icon, EllipsisIcon, HeartIcon, ListMusicIcon, PencilIcon, PlayIcon, Share2Icon } from '@lucide/svelte';
+    import { Disc3Icon, EllipsisIcon, ListMusicIcon, PencilIcon, PlayIcon, Share2Icon } from '@lucide/svelte';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
@@ -15,19 +15,14 @@
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import { Image } from '$lib/client/image.js';
-    import { LikedCache } from '$lib/helpers/classes/LikedCache.svelte.js';
-    import { goto } from '$app/navigation';
-    import { createAuthRedirect } from '$lib/helpers/utils.js';
-    import { untrack } from 'svelte';
+    import ReleaseLikeButton from '$lib/components/shared/app/release/ReleaseLikeButton.svelte';
 
     let { data } = $props();
 
     const audioPlayer = AudioPlayer.context.get();
-    const likedCache = LikedCache.context.get();
     const session = auth.useSession();
 
     let tracks = $derived(data.release.tracks.toSorted((a, b) => a.position - b.position));
-    let liked = $derived(likedCache.releases.get(data.release.id));
 
     let coverURL = $derived(
         data.release.cover
@@ -42,22 +37,6 @@
     );
 
     let totalDuration = $derived(tracks.reduce((acc, track) => acc + (track.duration ?? 0), 0));
-
-    $effect(() => {
-        if (untrack(() => !$session.data?.user)) return;
-        likedCache.fetchReleaseLike(data.release.id);
-    });
-
-    async function toggleLike() {
-        if (!$session.data?.user) {
-            // eslint-disable-next-line svelte/no-navigation-without-resolve
-            await goto(createAuthRedirect('signin', location.href));
-            return;
-        }
-
-        const liked = await likedCache.fetchReleaseLike(data.release.id);
-        await likedCache.updateReleaseLike(data.release.id, !liked);
-    }
 </script>
 
 <div class="flex flex-col md:flex-row">
@@ -89,13 +68,7 @@
                 {data.release.description || ''}
             </p>
             <div class="flex gap-2 justify-center mt-5 max-w-sm px-20">
-                <Button
-                    variant={liked ? "default" : "outline"}
-                    size="icon"
-                    onclick={toggleLike}
-                >
-                    <HeartIcon class={[liked && "fill-current"]}/>
-                </Button>
+                <ReleaseLikeButton releaseId={data.release.id}/>
                 <Button
                     class="w-full"
                     onclick={async () => {

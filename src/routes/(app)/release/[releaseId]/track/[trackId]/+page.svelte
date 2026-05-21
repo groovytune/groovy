@@ -19,15 +19,12 @@
     import type { LyricLine } from '@applemusic-like-lyrics/core';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import { resource } from 'runed';
-    import { createAuthRedirect, formatDuration } from '$lib/helpers/utils.js';
-    import { LikedCache } from '$lib/helpers/classes/LikedCache.svelte.js';
-    import { goto } from '$app/navigation';
-    import { untrack } from 'svelte';
+    import { formatDuration } from '$lib/helpers/utils.js';
+    import TrackLikeButton from '../../../../../../lib/components/shared/app/release/track/TrackLikeButton.svelte';
 
     let { data } = $props();
 
     const audioPlayer = AudioPlayer.context.get();
-    const likedCache = LikedCache.context.get();
     const session = auth.useSession();
 
     let track = $derived({ ...data.track, release: undefined, lyrics: undefined });
@@ -37,17 +34,10 @@
     let userLink = $derived(resolve('/(app)/artist/[userResolvable]', { userResolvable: user.username ? `@${user.username}` : user.id }));
 
     let lyricsContent: LyricLine[] = $state([]);
-    let liked = $derived(likedCache.tracks.get(track.id));
 
     $effect(() => {
         const lines = lyrics ? parseLyrics(lyrics) : [];
         lyricsContent = Array.isArray(lines) ? lines : [];
-    });
-
-    $effect(() => {
-        if (untrack(() => !$session.data?.user)) return;
-
-        likedCache.fetchTrackLike(track.id);
     });
 
     let coverURL = $derived(
@@ -89,18 +79,6 @@
             return count;
         }
     );
-
-    async function toggleLike() {
-        if (!$session.data?.user) {
-            // eslint-disable-next-line svelte/no-navigation-without-resolve
-            await goto(createAuthRedirect('signin', location.href));
-            return;
-        }
-
-        const liked = await likedCache.fetchTrackLike(track.id);
-        await likedCache.updateTrackLike(track.id, !liked);
-        await likes.refetch();
-    }
 </script>
 
 <div class="flex flex-col md:flex-row">
@@ -125,13 +103,7 @@
                 {release.user.name}
             </p>
             <div class="flex gap-2 justify-center mt-5 max-w-sm px-20">
-                <Button
-                    variant={liked ? "default" : "outline"}
-                    size="icon"
-                    onclick={toggleLike}
-                >
-                    <HeartIcon class={[liked && "fill-current"]}/>
-                </Button>
+                <TrackLikeButton trackId={data.track.id} onupdate={() => likes.refetch()}/>
                 <Button
                     class="w-full"
                     onclick={async () => {

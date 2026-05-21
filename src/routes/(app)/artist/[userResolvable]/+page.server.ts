@@ -1,4 +1,5 @@
 import { prisma } from '$lib/server/prisma.js';
+import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {
     const { userResolvable } = params;
@@ -14,6 +15,10 @@ export async function load({ params }) {
             image: true,
         }
     });
+
+    if (!user) {
+        throw error(404, 'Artist not found');
+    }
 
     return { user };
 }
