@@ -39,5 +39,12 @@ export async function GET({ url }) {
         take: take.data ?? 100
     });
 
-    return json(tracks);
+    return json(
+        tracks,
+        {
+            headers: {
+                'Cache-Control': 'public, max-age=300'
+            }
+        }
+    );
 }
