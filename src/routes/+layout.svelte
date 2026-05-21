@@ -19,6 +19,7 @@
 	import { onNavigate } from '$app/navigation';
 	import { ReleaseInfoCache } from '$lib/helpers/classes/ReleaseInfoCache.svelte.js';
 	import { PlayerLastNavigate } from '$lib/contexts/player.js';
+	import { LikedCache } from '$lib/helpers/classes/LikedCache.svelte.js';
 
 	let { children, data } = $props();
 
@@ -26,10 +27,12 @@
     let playerLastNavigate: Record<string, string|null> = $state({ path: null });
 
     const audioPlayer = new AudioPlayer();
+    const likedCache = new LikedCache();
 
     ActiveNavigationPageContext.set(activeNavigationPage);
     AudioPlayer.context.set(audioPlayer);
     ReleaseInfoCache.context.set(audioPlayer.releaseCache);
+    LikedCache.context.set(likedCache);
     PlayerLastNavigate.set(playerLastNavigate);
 
     onMount(() => {

@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/lib/server/prisma"
+  provider        = "prisma-client"
+  output          = "../src/lib/server/prisma"
   previewFeatures = ["fullTextSearchPostgres"]
 }
 
@@ -15,19 +15,21 @@ enum Privacy {
 }
 
 model User {
-  id            String    @id
+  id            String        @id
   name          String
   username      String?
-  role          String    @default("user")
+  role          String        @default("user")
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean       @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   sessions      Session[]
   accounts      Account[]
   releases      Release[]
   streamed      Stream[]
+  likedReleases ReleaseLike[]
+  likedTracks   TrackLike[]
 
   @@unique([email])
   @@unique([username])
@@ -89,19 +91,20 @@ enum ReleaseType {
 }
 
 model Release {
-  id          String      @id @default(cuid())
+  id          String        @id @default(cuid())
   userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   type        ReleaseType
   name        String
   description String?
-  privacy     Privacy     @default(PUBLIC)
-  explicit    Boolean     @default(false)
+  privacy     Privacy       @default(PUBLIC)
+  explicit    Boolean       @default(false)
   cover       String?
   tracks      Track[]
-  genres      Genre[]     @relation("ReleaseGenres")
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  genres      Genre[]       @relation("ReleaseGenres")
+  likes       ReleaseLike[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   @@unique([cover])
 }
@@ -120,6 +123,7 @@ model Track {
   lyrics    Lyrics?
   genres    Genre[]  @relation("TrackGenres")
   streams   Stream[]
+  likes     TrackLike[]
   metadata  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -169,4 +173,26 @@ model Stream {
   hostname  String?
   userAgent String?
   createdAt DateTime @default(now())
+}
+
+model ReleaseLike {
+  id        String   @id @default(cuid())
+  releaseId String
+  release   Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([releaseId, userId])
+}
+
+model TrackLike {
+  id        String   @id @default(cuid())
+  trackId   String
+  track     Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([trackId, userId])
 }

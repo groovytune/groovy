@@ -1,9 +1,9 @@
 import { resolve } from '$app/paths';
 import { error } from '@sveltejs/kit';
 import type { GETResponse } from '../../api/chart/tracks/+server.js';
-import { prisma } from '../../../../lib/server/prisma.js';
+import { prisma } from '$lib/server/prisma.js';
 import { definePageMetaTags } from 'svelte-meta-tags';
-import { Image } from '../../../../lib/client/image.js';
+import { Image } from '$lib/client/image.js';
 import path from 'node:path';
 import { ImageGravity } from 'node-appwrite';
 import { ImageFormat } from 'node-appwrite';

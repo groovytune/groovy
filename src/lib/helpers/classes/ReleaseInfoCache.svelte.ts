@@ -26,7 +26,6 @@ export class ReleaseInfoCache {
         }
 
         const req = options.fetch || fetch;
-
         const release: Promise<Release> = req(resolve(
             '/(app)/api/release/[releaseId]',
             { releaseId: options?.releaseId }
@@ -61,7 +60,8 @@ export class ReleaseInfoCache {
             return pending.promise;
         }
 
-        const artist: Promise<PartialUser> = (options.fetch || fetch)(resolve(
+        const req = options.fetch || fetch;
+        const artist: Promise<PartialUser> = req(resolve(
             '/(app)/api/release/[releaseId]/artist',
             { releaseId: options.releaseId }
         )).then(res => {

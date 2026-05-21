@@ -15,13 +15,18 @@
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import { Image } from '$lib/client/image.js';
+    import { LikedCache } from '$lib/helpers/classes/LikedCache.svelte.js';
+    import { goto } from '$app/navigation';
+    import { createAuthRedirect } from '$lib/helpers/utils.js';
 
     let { data } = $props();
 
     const audioPlayer = AudioPlayer.context.get();
+    const likedCache = LikedCache.context.get();
     const session = auth.useSession();
 
     let tracks = $derived(data.release.tracks.toSorted((a, b) => a.position - b.position));
+    let liked = $derived(likedCache.releases.get(data.release.id));
 
     let coverURL = $derived(
         data.release.cover
@@ -36,6 +41,21 @@
     );
 
     let totalDuration = $derived(tracks.reduce((acc, track) => acc + (track.duration ?? 0), 0));
+
+    $effect(() => {
+        likedCache.fetchReleaseLike(data.release.id);
+    });
+
+    async function toggleLike() {
+        if (!$session.data?.user) {
+            // eslint-disable-next-line svelte/no-navigation-without-resolve
+            await goto(createAuthRedirect('signin', location.href));
+            return;
+        }
+
+        const liked = await likedCache.fetchReleaseLike(data.release.id);
+        await likedCache.updateReleaseLike(data.release.id, !liked);
+    }
 </script>
 
 <div class="flex flex-col md:flex-row">
@@ -68,11 +88,11 @@
             </p>
             <div class="flex gap-2 justify-center mt-5 max-w-sm px-20">
                 <Button
-                    variant="outline"
+                    variant={liked ? "default" : "outline"}
                     size="icon"
-                    href={resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId: data.release.id })}
+                    onclick={toggleLike}
                 >
-                    <HeartIcon/>
+                    <HeartIcon class={[liked && "fill-current"]}/>
                 </Button>
                 <Button
                     class="w-full"
