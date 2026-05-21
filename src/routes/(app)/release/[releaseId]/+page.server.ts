@@ -2,9 +2,10 @@ import { error } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
 import type { Release, Track } from '$lib/server/prisma/client.js';
 import { definePageMetaTags } from 'svelte-meta-tags';
-import { Appwrite } from '$lib/client/appwrite.js';
 import { ImageFormat, ImageGravity } from 'appwrite';
 import type { PartialUser } from '$lib/helpers/utils.js';
+import { Image } from '$lib/client/image.js';
+import path from 'node:path';
 
 export type ReleasePageData = Release & {
     user: PartialUser;
@@ -44,14 +45,19 @@ export async function load({ params, locals, url }) {
     }
 
     const coverImage = release.cover
-        ? Appwrite.storage.getFilePreview({
-            bucketId: 'image',
-            fileId: release.cover,
-            height: 600,
-            width: 600,
-            gravity: ImageGravity.Center,
-            output: ImageFormat.Jpeg
-        })
+        ? new URL(
+            path.resolve(
+                url.pathname,
+                Image.getPreviewPath({
+                    fileId: release.cover,
+                    height: 600,
+                    width: 600,
+                    gravity: ImageGravity.Center,
+                    output: ImageFormat.Jpeg
+                })
+            ),
+            url.origin
+        )
         : undefined;
 
     return {
@@ -70,7 +76,7 @@ export async function load({ params, locals, url }) {
                 },
                 images: coverImage ? [
                     {
-                        url: coverImage,
+                        url: coverImage.toString(),
                         alt: `${release.name} cover image`,
                         width: 600,
                         height: 600,
@@ -82,7 +88,7 @@ export async function load({ params, locals, url }) {
                 cardType: 'summary_large_image',
                 title: `${release.name} by ${release.user.name}`,
                 description: release.description ?? undefined,
-                image: coverImage,
+                image: coverImage?.toString(),
                 imageAlt: `${release.name} cover image`
             }
         })

@@ -7,7 +7,7 @@ import z from 'zod';
 export async function GET({ params, url }) {
     const {  artistId } = params;
 
-    const take = z.coerce.number().positive().max(100).default(20).safeParse(url.searchParams.get('take'));
+    const take = z.coerce.number().int().positive().max(100).default(20).safeParse(url.searchParams.get('take'));
     const after = z.cuid2().optional().safeParse(url.searchParams.get('after'));
     const order = orderFilterSchema.optional().safeParse(url.searchParams.get('order'));
     const type = newReleaseSchema.shape.type.safeParse(url.searchParams.get('type'));

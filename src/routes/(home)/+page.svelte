@@ -91,7 +91,7 @@
             <Button href={resolve('/(app)/release/new')} size="lg">
                 Start sharing music
             </Button>
-            <Button href={resolve('/(app)/discover')} variant="outline" size="lg">
+            <Button href={resolve('/(app)/discover/chart')} variant="outline" size="lg">
                 Explore top songs
             </Button>
         </div>

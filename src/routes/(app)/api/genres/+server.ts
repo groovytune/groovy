@@ -6,7 +6,7 @@ import { tsQueryParser } from '$lib/helpers/constants';
 
 export async function GET({ url }) {
     const search = z.string().transform(val => tsQueryParser.parseAndStringify(val)).safeParse(url.searchParams.get('search'));
-    const take = z.coerce.number().positive().max(100).optional().safeParse(url.searchParams.get('take'));
+    const take = z.coerce.number().int().positive().max(100).optional().safeParse(url.searchParams.get('take'));
     const order = orderFilterSchema.optional().safeParse(url.searchParams.get('order'));
     const after = z.cuid2().optional().safeParse(url.searchParams.get('after'));
 

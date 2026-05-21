@@ -3,10 +3,11 @@ import { type PartialUser } from '$lib/helpers/utils';
 import { prisma } from '$lib/server/prisma';
 import { resolve } from '$app/paths';
 import { definePageMetaTags } from 'svelte-meta-tags';
-import { Appwrite } from '$lib/client/appwrite';
 import { ImageGravity } from 'appwrite';
 import { ImageFormat } from 'appwrite';
 import type { Lyrics, Release, Track } from '$lib/server/prisma/browser.js';
+import { Image } from '../../../../../../lib/client/image.js';
+import path from 'node:path';
 
 export type TrackPageData = Track & {
     release: Release & {
@@ -56,14 +57,19 @@ export async function load({ params, locals, url }) {
     const description = `Listen to ${track.name} by ${track.release.user.name} on Groovy.`;
 
     const coverImage = track.cover || track.release.cover
-        ? Appwrite.storage.getFilePreview({
-            bucketId: 'image',
-            fileId: track.cover || track.release.cover!,
-            height: 600,
-            width: 600,
-            gravity: ImageGravity.Center,
-            output: ImageFormat.Jpeg
-        })
+        ? new URL(
+            path.resolve(
+                url.pathname,
+                Image.getPreviewPath({
+                    fileId: track.cover || track.release.cover!,
+                    height: 600,
+                    width: 600,
+                    gravity: ImageGravity.Center,
+                    output: ImageFormat.Jpeg
+                })
+            ),
+            url.origin
+        )
         : undefined;
 
     return {
@@ -82,7 +88,7 @@ export async function load({ params, locals, url }) {
                 },
                 images: coverImage ? [
                     {
-                        url: coverImage,
+                        url: coverImage.toString(),
                         alt: `${track.name} cover image`,
                         width: 600,
                         height: 600,
@@ -94,7 +100,7 @@ export async function load({ params, locals, url }) {
                 cardType: 'summary_large_image',
                 title: `${track.name} by ${track.release.user.name}`,
                 description: `Listen to ${track.name} by ${track.release.user.name} on Groovy.`,
-                image: coverImage,
+                image: coverImage?.toString(),
                 imageAlt: `${track.name} cover image`
             }
         })
