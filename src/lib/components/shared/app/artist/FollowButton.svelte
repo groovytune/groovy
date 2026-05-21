@@ -45,18 +45,21 @@
         }
 
         isLoading = true;
-        following.mutate(!following.current);
 
-        const response = await fetch(
+        const response = fetch(
             resolve('/(app)/api/artist/[artistId]/follow', { artistId: userId }),
             {
                 method: following.current ? 'DELETE' : 'POST'
             }
         );
 
+
+        following.mutate(!following.current);
         isLoading = false;
 
-        if (!response.ok) {
+        const res = await response;
+
+        if (!res.ok) {
             following.mutate(!following.current);
             throw new Error('Failed to toggle follow status');
         }
