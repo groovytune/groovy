@@ -16,6 +16,7 @@
     import { numberFormatter } from '$lib/helpers/constants';
     import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
     import type { PartialUser } from '$lib/helpers/utils';
+    import type { GETResponse as GETPopularArtists } from '../api/discover/chart/followers/artists/+server';
 
     const newReleases = resource(
         () => null,
@@ -53,6 +54,19 @@
             }
 
             return res.json() as Promise<GETMostLikedReleases>;
+        }
+    );
+
+    const popularArtists = resource(
+        () => null,
+        async () => {
+            const res = await fetch(resolve('/(app)/api/discover/chart/followers/artists') + '?take=20');
+
+            if (!res.ok) {
+                throw new Error('Failed to fetch popular artists');
+            }
+
+            return res.json() as Promise<GETPopularArtists>;
         }
     );
 </script>
@@ -123,12 +137,12 @@
 
 {#snippet ArtistItem(artist: PartialUser, followers: number = 0)}
     {@const artistURL = resolve('/(app)/artist/[userResolvable]', { userResolvable: artist.username ? `@${artist.username}` : artist.id })}
-    <div class="flex flex-col shrink-0 w-40 sm:w-80 gap-2" title={artist.name} style="content-visibility: auto;">
+    <div class="flex flex-col shrink-0 w-40 gap-2" title={artist.name} style="content-visibility: auto;">
         <a href={artistURL}>
-            <img src={artist.image} alt="Artist" class="size-40 sm:size-80 rounded-full object-cover"/>
+            <img src={artist.image} alt="Artist" class="size-40 rounded-full object-cover"/>
         </a>
         <div>
-            <h2 class="text-lg sm:text-xl font-semibold mt-2 line-clamp-2 truncate text-balance text-center">
+            <h2 class="text-lg font-semibold mt-2 line-clamp-2 truncate text-balance text-center">
                 <a href={artistURL}>
                     {artist.name}
                 </a>
@@ -136,7 +150,7 @@
             <p class="text-sm text-muted-foreground text-center leading-tight">
                 {artist.username ? `@${artist.username}` : ''}
             </p>
-            <p class="text-sm text-muted-foreground text-center leading-tight">
+            <p class="text-sm text-muted-foreground/70 text-center leading-tight">
                 {numberFormatter.format(followers)} follower{followers !== 1 ? 's' : ''}
             </p>
         </div>
@@ -230,14 +244,13 @@
     <div class="pb-5">
         <ScrollArea orientation="horizontal">
             <div class="flex gap-4 px-5">
-                {#each { length: 10 }}
-                    {@render ArtistItem({
-                        id: '',
-                        name: 'Artist Name',
-                        username: 'artistusername',
-                        image: 'https://i.pravatar.cc/300'
-                    })}
-                {/each}
+                {#if popularArtists.loading}
+                    {@render ItemSkeletons()}
+                {:else if popularArtists.current?.length}
+                    {#each popularArtists.current as artist (artist.id)}
+                        {@render ArtistItem(artist, artist._count.followers)}
+                    {/each}
+                {/if}
             </div>
         </ScrollArea>
     </div>

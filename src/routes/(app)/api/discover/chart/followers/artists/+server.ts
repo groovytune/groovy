@@ -1,6 +1,14 @@
 import { json } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma';
 import z from 'zod';
+import type { PartialUser } from '$lib/helpers/utils';
+
+export type GETResponse = (PartialUser & {
+    _count: {
+        followers: number;
+        following: number;
+    };
+})[];
 
 export async function GET({ url }) {
     const take = z.coerce.number().int().positive().max(100).safeParse(url.searchParams.get('take'));
