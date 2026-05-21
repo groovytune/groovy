@@ -133,7 +133,7 @@
                 resolve('/(app)/discover/chart'),
                 'radial-gradient( circle farthest-corner at 10% 20%,  rgba(170,245,248,1) 0%, rgba(248,162,239,0.8) 90% )',
                 'black',
-                'lg:col-span-2 xl:col-span-1 shrink-0 w-96 md:w-full'
+                'lg:col-span-2 xl:col-span-1 shrink-0 w-66 md:w-full'
             )}
             {@render Chart(
                 'Top Pop Tracks',
@@ -141,7 +141,7 @@
                 resolve('/(app)/discover/chart') + '?genre=pop',
                 'linear-gradient( 101.9deg,  rgba(239,151,189,1) -13.9%, rgba(204,239,243,1) 34.6%, rgba(227,241,202,1) 54.2%, rgba(237,187,187,1) 88.6% )',
                 'black',
-                'md:w-full shrink-0 w-96 md:w-full'
+                'md:w-full shrink-0 w-66 md:w-full'
             )}
             {@render Chart(
                 'Top Hip Hop Tracks',
@@ -149,7 +149,7 @@
                 resolve('/(app)/discover/chart') + '?genre=hiphop',
                 'radial-gradient( circle farthest-corner at -8.8% -6.6%,  rgba(255,206,78,1) 0%, rgba(253,169,124,1) 70.1% )',
                 'black',
-                'shrink-0 w-96 md:w-full'
+                'shrink-0 w-66 md:w-full'
             )}
             {@render Chart(
                 'Top Rock Tracks',
@@ -157,7 +157,7 @@
                 resolve('/(app)/discover/chart') + '?genre=rock',
                 'linear-gradient( 91.7deg,  rgba(135,206,235,1) 7.3%, rgba(255,154,139,1) 40.3%, rgba(255,195,160,1) 57.9%, rgba(255,215,0,1) 93.5% )',
                 'black',
-                'lg:col-span-2 xl:col-span-1 shrink-0 w-96 md:w-full'
+                'lg:col-span-2 xl:col-span-1 shrink-0 w-66 md:w-full'
             )}
         </div>
     </ScrollArea>
