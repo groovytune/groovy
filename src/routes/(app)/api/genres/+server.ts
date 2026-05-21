@@ -10,8 +10,6 @@ export async function GET({ url }) {
     const order = orderFilterSchema.optional().safeParse(url.searchParams.get('order'));
     const after = z.cuid2().optional().safeParse(url.searchParams.get('after'));
 
-    console.log(search.data);
-
     const genres = await prisma.genre.findMany({
         where: {
             name: search.data

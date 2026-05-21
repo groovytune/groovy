@@ -36,6 +36,17 @@
     onMount(() => {
         tracks.mutate(data.tracks);
     });
+
+    export const snapshot = {
+        capture: () => ({
+            genre,
+            tracks: tracks.current
+        }),
+        restore: (snapshot) => {
+            genre = snapshot.genre;
+            tracks.mutate(snapshot.tracks);
+        }
+    }
 </script>
 
 <h1 class="text-2xl sm:text-4xl font-bold my-4 px-5 flex items-center gap-2">

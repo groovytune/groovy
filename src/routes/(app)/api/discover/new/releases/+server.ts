@@ -19,8 +19,6 @@ export async function GET({ url }) {
 
     const date = DateTime.now().minus({ days: days.data || 30 });
 
-    console.log('gte', days, date.toLocaleString(DateTime.DATE_FULL));
-
     const releases = await prisma.release.findMany({
         where: {
             privacy: 'PUBLIC',

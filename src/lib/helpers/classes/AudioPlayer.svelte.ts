@@ -346,7 +346,6 @@ export class AudioPlayer {
     public async seek(time: number): Promise<void> {
         if (!this.audio || !this.currentTrack || !this.audio.seekable.length || this.isDurationEstimated) return;
 
-        console.log('Seeking to', time, 'with duration', this.duration);
         this.currentTime = this.audio.currentTime = Math.min(Math.max(time, 0), this.duration);
     }
 
