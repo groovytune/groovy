@@ -59,7 +59,7 @@
 {#snippet Chart(title: string, description: string, href: string, background: string, color: string, className: string = '')}
     <Card
         class={["border-transparent", className]}
-        style="background: {background}; color: {color};"
+        style="background: {background}; color: {color}; content-visibility: auto;"
     >
         <CardHeader>
             <CardTitle class="text-current text-2xl font-bold">
@@ -83,7 +83,7 @@
 {/snippet}
 
 {#snippet Item(name: string, description: string, coverURL: string, explicit: boolean, href: string, descriptionHref?: string)}
-    <div class="flex flex-col shrink-0 w-40 sm:w-80" title={name}>
+    <div class="flex flex-col shrink-0 w-40 sm:w-80" title={name} style="content-visibility: auto;">
         <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
         <a href={href}>
             <img src={coverURL} alt="Album Cover" class="size-40 sm:size-80 rounded-md object-cover"/>
@@ -110,7 +110,7 @@
 
 {#snippet ItemSkeletons(length: number = 5)}
     {#each { length }}
-        <div class="flex flex-col shrink-0">
+        <div class="flex flex-col shrink-0" style="content-visibility: auto;">
             <Skeleton class="size-40 sm:size-80"/>
             <div class="mt-2 space-y-2">
                 <Skeleton class="w-20 sm:w-48 h-4"/>
