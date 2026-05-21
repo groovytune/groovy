@@ -54,7 +54,6 @@
     }
 
     $effect(() => {
-        console.log('Current track changed, fetching like status...');
         if (!audioPlayer.currentTrack || untrack(() => !$session.data?.user)) return;
 
         likedCache.fetchTrackLike(audioPlayer.currentTrack.id);
