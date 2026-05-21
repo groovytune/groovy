@@ -18,6 +18,7 @@
     import { LikedCache } from '$lib/helpers/classes/LikedCache.svelte.js';
     import { goto } from '$app/navigation';
     import { createAuthRedirect } from '$lib/helpers/utils.js';
+    import { untrack } from 'svelte';
 
     let { data } = $props();
 
@@ -43,6 +44,7 @@
     let totalDuration = $derived(tracks.reduce((acc, track) => acc + (track.duration ?? 0), 0));
 
     $effect(() => {
+        if (untrack(() => !$session.data?.user)) return;
         likedCache.fetchReleaseLike(data.release.id);
     });
 

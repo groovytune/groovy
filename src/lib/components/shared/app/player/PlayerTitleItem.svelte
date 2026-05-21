@@ -12,6 +12,7 @@
     import { LikedCache } from '$lib/helpers/classes/LikedCache.svelte';
     import { auth } from '$lib/client/auth';
     import { goto } from '$app/navigation';
+    import { untrack } from 'svelte';
 
     let {
         cover = false,
@@ -53,9 +54,10 @@
     }
 
     $effect(() => {
-        if (audioPlayer.currentTrack) {
-            likedCache.fetchTrackLike(audioPlayer.currentTrack.id);
-        }
+        console.log('Current track changed, fetching like status...');
+        if (!audioPlayer.currentTrack || untrack(() => !$session.data?.user)) return;
+
+        likedCache.fetchTrackLike(audioPlayer.currentTrack.id);
     });
 </script>
 

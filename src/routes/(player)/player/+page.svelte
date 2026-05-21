@@ -16,6 +16,7 @@
     import { parseLyrics } from '$lib/helpers/lyrics';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import PlayerQueueDialog from '../../../lib/components/shared/app/player/dialogs/PlayerQueueDialog.svelte';
+    import isMobile from 'is-mobile';
 
     const audioPlayer = AudioPlayer.context.get();
     const playerLastNavigate = PlayerLastNavigate.get();
@@ -71,7 +72,13 @@
 />
 
 <main class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none">
-    <div class="max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:py-14 shrink-0">
+    <div
+        class={cn(
+            "min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:py-14 shrink-0",
+            "max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full",
+            isMobile() && 'max-w-sm'
+        )}
+    >
         <header class="min-[900px]:fixed min-[900px]:px-5 z-10 top-0 left-0 flex w-full h-fit items-center justify-between gap-2 pt-4 pb-0">
             <Button
                 variant="ghost"

@@ -22,6 +22,7 @@
     import { createAuthRedirect, formatDuration } from '$lib/helpers/utils.js';
     import { LikedCache } from '$lib/helpers/classes/LikedCache.svelte.js';
     import { goto } from '$app/navigation';
+    import { untrack } from 'svelte';
 
     let { data } = $props();
 
@@ -44,6 +45,8 @@
     });
 
     $effect(() => {
+        if (untrack(() => !$session.data?.user)) return;
+
         likedCache.fetchTrackLike(track.id);
     });
 
