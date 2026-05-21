@@ -19,7 +19,7 @@
     const newReleases = resource(
         () => null,
         async () => {
-            const res = await fetch(resolve('/(app)/api/discover/new/releases') + '?limit=50');
+            const res = await fetch(resolve('/(app)/api/discover/new/releases') + '?limit=20');
 
             if (!res.ok) {
                 throw new Error('Failed to fetch new releases');
