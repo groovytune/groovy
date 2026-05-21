@@ -1,6 +1,6 @@
 import { resolve } from '$app/paths';
 import { error } from '@sveltejs/kit';
-import type { GETResponse } from '../../api/chart/tracks/+server.js';
+import type { GETResponse } from '../../api/chart/streams/tracks/+server.js';
 import { prisma } from '$lib/server/prisma.js';
 import { definePageMetaTags } from 'svelte-meta-tags';
 import { Image } from '$lib/client/image.js';
@@ -30,7 +30,7 @@ export async function load({ fetch, url }) {
         })
         : null;
 
-    const res = await fetch(resolve('/api/chart/tracks') + (genre ? `?genre=${genre.id}` : ''));
+    const res = await fetch(resolve('/api/chart/streams/tracks') + (genre ? `?genre=${genre.id}` : ''));
     if (!res.ok) throw error(res.status, 'Failed to fetch chart tracks');
 
     const tracks: GETResponse = await res.json();
