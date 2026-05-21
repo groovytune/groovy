@@ -30,6 +30,8 @@ model User {
   streamed      Stream[]
   likedReleases ReleaseLike[]
   likedTracks   TrackLike[]
+  followers     UserFollow[]  @relation("UserFollowers")
+  following     UserFollow[]  @relation("UserFollowing")
 
   @@unique([email])
   @@unique([username])
@@ -195,4 +197,15 @@ model TrackLike {
   createdAt DateTime @default(now())
 
   @@unique([trackId, userId])
+}
+
+model UserFollow {
+  id         String   @id @default(cuid())
+  followerId String
+  follower   User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation("UserFollowers", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([followerId, userId])
 }
