@@ -3,7 +3,7 @@
     import GenreSearchInput from '$lib/components/shared/app/release/GenreSearchInput.svelte';
     import { resolve } from '$app/paths';
     import type { GETResponse } from '../../api/chart/tracks/+server';
-    import { LoaderCircleIcon, MusicIcon } from '@lucide/svelte';
+    import { ChartLineIcon, LoaderCircleIcon, MusicIcon } from '@lucide/svelte';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import TrackItem from '$lib/components/shared/app/release/track/TrackItem.svelte';
     import { goto } from '$app/navigation';
@@ -38,14 +38,15 @@
     });
 </script>
 
-<main class="flex flex-col p-5 gap-5">
-    <h1 class="text-2xl font-bold mb-2">
-        {#if genre}
-            Top {tracks.current?.length ?? ''} Tracks in {genre.name}
-        {:else}
-            Top {tracks.current?.length ?? ''} Tracks
-        {/if}
-    </h1>
+<h1 class="text-2xl sm:text-4xl font-bold my-4 px-5 flex items-center gap-2">
+    <ChartLineIcon class="text-primary size-7 sm:size-8"/>
+    {#if genre}
+        Top {genre.name} Tracks
+    {:else}
+        Top {tracks.current?.length || ''} Tracks
+    {/if}
+</h1>
+<div class="flex flex-col p-5 gap-5">
     <section>
         <GenreSearchInput
             bind:value={
@@ -101,4 +102,4 @@
             </Empty>
         {/if}
     </section>
-</main>
+</div>

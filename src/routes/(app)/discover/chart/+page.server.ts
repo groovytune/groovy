@@ -36,7 +36,7 @@ export async function load({ fetch, url }) {
     const tracks: GETResponse = await res.json();
     const title = genre ? `Groovy ${genre.name} Chart` : 'Groovy Global Chart';
     const description = `Discover the top tracks in the ${genre ? genre.name : 'global'} chart on Groovy. Explore the most streamed songs from various genres and find your next favorite track!`;
-    const coverImage = tracks[0].cover
+    const coverImage = tracks[0]?.cover
         ? new URL(
             path.resolve(
                 url.pathname,

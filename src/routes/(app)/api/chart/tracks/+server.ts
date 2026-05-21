@@ -18,11 +18,11 @@ export async function GET({ url }) {
             release: {
                 privacy: 'PUBLIC'
             },
-            genres: genre ? {
-                some: {
-                    id: genre
+            genres: genre
+                ? {
+                    some: { id: genre }
                 }
-            } : undefined
+                : undefined
         },
         include: {
             _count: {
