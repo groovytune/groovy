@@ -2,7 +2,7 @@
     import { resource } from 'runed';
     import GenreSearchInput from '$lib/components/shared/app/release/GenreSearchInput.svelte';
     import { resolve } from '$app/paths';
-    import type { GETResponse } from '../../api/chart/tracks/+server';
+    import type { GETResponse } from '../../api/chart/streams/tracks/+server.js';
     import { ChartLineIcon, LoaderCircleIcon, MusicIcon } from '@lucide/svelte';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import TrackItem from '$lib/components/shared/app/release/track/TrackItem.svelte';
@@ -17,7 +17,7 @@
         [() => genre?.id],
         async ([genreId]) => {
             const res = await fetch(
-                resolve('/(app)/api/chart/tracks') +
+                resolve('/(app)/api/chart/streams/tracks') +
                 (genreId ? `?genre=${encodeURIComponent(genreId)}` : '')
             );
 

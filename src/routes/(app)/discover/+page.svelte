@@ -1,27 +1,56 @@
 <script lang="ts">
-    import { ArrowRight, MegaphoneIcon, StarIcon } from '@lucide/svelte';
+    import { ArrowRight, ListMusicIcon, MegaphoneIcon, Music4Icon, StarIcon } from '@lucide/svelte';
     import { Button } from '../../../lib/components/ui/button';
     import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '../../../lib/components/ui/card';
     import { resolve } from '$app/paths';
     import coverPlaceholder from '$lib/assets/cover.webp';
-    import type { GETResponse } from '../api/discover/new/releases/+server';
+    import type { GETResponse as GETNewReleases } from '../api/discover/new/releases/+server';
     import { resource } from 'runed';
     import { Image } from '../../../lib/client/image';
     import { ImageFormat, ImageGravity } from 'appwrite';
     import ExplicitIcon from '../../../lib/components/shared/icons/ExplicitIcon.svelte';
     import { ScrollArea } from '../../../lib/components/ui/scroll-area';
     import { DateTime } from 'luxon';
+    import type { GETResponse as GETMostLikedReleases } from '../api/chart/likes/releases/+server';
+    import type { GETResponse as GETMostLikedTracks } from '../api/chart/likes/tracks/+server';
+    import { numberFormatter } from '../../../lib/helpers/constants';
 
     const newReleases = resource(
         () => null,
         async () => {
-            const res = await fetch(resolve('/api/discover/new/releases') + '?limit=50');
+            const res = await fetch(resolve('/(app)/api/discover/new/releases') + '?limit=50');
 
             if (!res.ok) {
                 throw new Error('Failed to fetch new releases');
             }
 
-            return res.json() as Promise<GETResponse>;
+            return res.json() as Promise<GETNewReleases>;
+        }
+    );
+
+    const mostLikedTracks = resource(
+        () => null,
+        async () => {
+            const res = await fetch(resolve('/(app)/api/chart/likes/tracks') + '?limit=50');
+
+            if (!res.ok) {
+                throw new Error('Failed to fetch most liked tracks');
+            }
+
+            return res.json() as Promise<GETMostLikedTracks>;
+        }
+    );
+
+    const mostLikedReleases = resource(
+        () => null,
+        async () => {
+            const res = await fetch(resolve('/(app)/api/chart/likes/releases') + '?limit=50');
+
+            if (!res.ok) {
+                throw new Error('Failed to fetch most liked releases');
+            }
+
+            return res.json() as Promise<GETMostLikedReleases>;
         }
     );
 </script>
@@ -50,6 +79,32 @@
             </Button>
         </CardFooter>
     </Card>
+{/snippet}
+
+{#snippet Item(name: string, description: string, coverURL: string, explicit: boolean, href: string, descriptionHref?: string)}
+    <div class="flex flex-col shrink-0 w-40 sm:w-80" title={name}>
+        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+        <a href={href}>
+            <img src={coverURL} alt="Album Cover" class="size-40 sm:size-80 rounded-md object-cover"/>
+        </a>
+        <div>
+            <h2 class="sm:text-lg text-sm font-semibold mt-2 line-clamp-2 truncate text-balance">
+                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+                <a href={href}>
+                    {name}
+                    {#if explicit}
+                        <ExplicitIcon class="size-4 sm:size-5"/>
+                    {/if}
+                </a>
+            </h2>
+            <p class="text-xs sm:text-sm text-muted-foreground line-clamp-2 truncate text-balance">
+                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+                <a href={descriptionHref ?? href}>
+                    {description}
+                </a>
+            </p>
+        </div>
+    </div>
 {/snippet}
 
 <section class="px-5">
@@ -95,7 +150,7 @@
         <MegaphoneIcon class="text-primary size-7 sm:size-8"/>
         New Releases
     </h1>
-    <div class="pb-10">
+    <div class="">
         {#if newReleases.loading}
             please wait...
         {:else if newReleases.current?.length}
@@ -113,26 +168,88 @@
                             })
                             : coverPlaceholder
                         }
-                        <div class="flex flex-col shrink-0 w-40 sm:w-80" title={release.name}>
-                            <a href={releaseURL}>
-                                <img src={coverURL} alt="Album Cover" class="size-40 sm:size-80 rounded-md object-cover"/>
-                            </a>
-                            <div>
-                                <h2 class="sm:text-lg text-sm font-semibold mt-2 line-clamp-2 truncate text-balance">
-                                    <a href={releaseURL}>
-                                        {release.name}
-                                        {#if release.explicit}
-                                            <ExplicitIcon class="size-4 sm:size-5"/>
-                                        {/if}
-                                    </a>
-                                </h2>
-                                <p class="text-xs sm:text-sm text-muted-foreground line-clamp-2 truncate text-balance">
-                                    <a href={resolve('/(app)/artist/[userResolvable]', { userResolvable: release.user.username ? `@${release.user.username}` : release.user.id })}>
-                                        {release.user.name} • {DateTime.fromISO(String(release.createdAt)).toLocaleString(DateTime.DATE_MED)}
-                                    </a>
-                                </p>
-                            </div>
-                        </div>
+                        {@render Item(
+                            release.name,
+                            `${release.user.name} • ${DateTime.fromISO(String(release.createdAt)).toLocaleString(DateTime.DATE_MED)}`,
+                            coverURL,
+                            release.explicit,
+                            releaseURL,
+                            resolve('/(app)/artist/[userResolvable]', { userResolvable: release.user.username ? `@${release.user.username}` : release.user.id })
+                        )}
+                    {/each}
+                </div>
+            </ScrollArea>
+        {/if}
+    </div>
+</section>
+<section>
+    <h1 class="text-2xl sm:text-4xl font-bold my-4 flex items-center gap-2 px-5">
+        <Music4Icon class="text-primary size-7 sm:size-8"/>
+        Most Liked Tracks
+    </h1>
+    <div class="pb-10">
+        <ScrollArea orientation="horizontal">
+            {#if mostLikedTracks.loading}
+                please wait...
+            {:else if mostLikedTracks.current?.length}
+                <div class="flex gap-4 px-5">
+                    {#each mostLikedTracks.current as track (track.id)}
+                        {@const trackURL = resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: track.release.id, trackId: track.id })}
+                        {@const coverURL = track.cover || track.release.cover
+                            ? Image.getPreviewPath({
+                                fileId: track.cover || track.release.cover!,
+                                width: 300,
+                                height: 300,
+                                gravity: ImageGravity.Center,
+                                output: ImageFormat.Webp
+                            })
+                            : coverPlaceholder
+                        }
+                        {@render Item(
+                            track.name,
+                            `${track.release.name} • ${numberFormatter.format(track._count.likes)} like${track._count.likes !== 1 ? 's' : ''}`,
+                            coverURL,
+                            track.explicit,
+                            trackURL,
+                            resolve('/(app)/release/[releaseId]', { releaseId: track.release.id })
+                        )}
+                    {/each}
+                </div>
+            {/if}
+        </ScrollArea>
+    </div>
+</section>
+<section>
+    <h1 class="text-2xl sm:text-4xl font-bold my-4 flex items-center gap-2 px-5">
+        <ListMusicIcon class="text-primary size-7 sm:size-8"/>
+        Most Liked Releases
+    </h1>
+    <div class="pb-10">
+        {#if mostLikedReleases.loading}
+            please wait...
+        {:else if mostLikedReleases.current?.length}
+            <ScrollArea orientation="horizontal">
+                <div class="flex gap-4 px-5">
+                    {#each mostLikedReleases.current as release (release.id)}
+                        {@const releaseURL = resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
+                        {@const coverURL = release.cover
+                            ? Image.getPreviewPath({
+                                fileId: release.cover,
+                                width: 300,
+                                height: 300,
+                                gravity: ImageGravity.Center,
+                                output: ImageFormat.Webp
+                            })
+                            : coverPlaceholder
+                        }
+                        {@render Item(
+                            release.name,
+                            `${release.user.name} • ${numberFormatter.format(release._count.likes)} like${release._count.likes !== 1 ? 's' : ''}`,
+                            coverURL,
+                            release.explicit,
+                            releaseURL,
+                            resolve('/(app)/artist/[userResolvable]', { userResolvable: release.user.username ? `@${release.user.username}` : release.user.id })
+                        )}
                     {/each}
                 </div>
             </ScrollArea>

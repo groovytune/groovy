@@ -1,9 +1,12 @@
 import { getSupportedMimeTypes } from 'music-metadata';
 import tsquery from 'pg-tsquery';
+import { getLocale } from './utils';
 
 export const tsQueryParser = new tsquery.Tsquery();
 
 export const supportedAudioMimeTypes = getSupportedMimeTypes();
+
+export const numberFormatter = new Intl.NumberFormat(getLocale(), { notation: 'compact' });
 
 export const categoryInfos = {
     album: {

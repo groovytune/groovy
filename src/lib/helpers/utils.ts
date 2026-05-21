@@ -46,14 +46,10 @@ export function roundToTwoDecimals(num: number): number {
     return Math.round(num * 100) / 100;
 }
 
-export function shuffleArray<T>(array: T[]): T[] {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const temp = array[i];
-
-        array[i] = array[j];
-        array[j] = temp;
+export function getLocale(): string {
+    if (typeof navigator !== 'undefined') {
+        return navigator.language || 'en-US';
     }
 
-    return array;
+    return 'en-US';
 }
