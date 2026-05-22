@@ -159,7 +159,6 @@
                             <ShareButton
                                 data={{
                                     title: audioPlayer.currentTrack?.name,
-                                    text: `${audioPlayer.currentTrack?.name} by ${audioPlayer.artistInfo.current?.name}`,
                                     url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: audioPlayer.currentTrack!.releaseId }), location.origin).href
                                 }}
                             >

@@ -66,7 +66,6 @@
             <ShareButton
                 data={{
                     title: track.name,
-                    text: `${track.name} ${artistInfo.current?.name ? 'by ' + artistInfo.current.name : ''} on Groovy`,
                     url: new URL(resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: track.releaseId, trackId: track.id }), location.origin).href
                 }}
             >

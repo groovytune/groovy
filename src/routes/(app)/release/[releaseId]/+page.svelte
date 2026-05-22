@@ -126,7 +126,6 @@
                                 <ShareButton
                                     data={{
                                         title: data.release.name,
-                                        text: `${data.release.name} by ${data.release.user.name} on Groovy`,
                                         url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: data.release.id }), location.origin).href
                                     }}
                                 >
