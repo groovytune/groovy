@@ -5,7 +5,7 @@ import { resolve } from '$app/paths';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { newLyricsSchema } from '$lib/schema/lyrics.js';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { parseLyrics } from '../../../../../../../../lib/helpers/lyrics.js';
+import { parseLyrics } from '$lib/helpers/lyrics.js';
 
 export async function load({ params, locals, url }) {
     if (!locals.session) {

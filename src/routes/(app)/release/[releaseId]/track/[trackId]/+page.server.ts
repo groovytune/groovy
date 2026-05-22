@@ -6,7 +6,7 @@ import { definePageMetaTags } from 'svelte-meta-tags';
 import { ImageGravity } from 'appwrite';
 import { ImageFormat } from 'appwrite';
 import type { Lyrics, Release, Track } from '$lib/server/prisma/browser.js';
-import { Image } from '../../../../../../lib/client/image.js';
+import { Image } from '$lib/client/image.js';
 import path from 'node:path';
 
 export type TrackPageData = Track & {

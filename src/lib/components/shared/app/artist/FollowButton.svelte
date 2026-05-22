@@ -3,8 +3,8 @@
     import { resource } from 'runed';
     import { auth } from '$lib/client/auth';
     import { goto } from '$app/navigation';
-    import { createAuthRedirect } from '../../../../helpers/utils';
-    import Button, { type ButtonProps } from '../../../ui/button/button.svelte';
+    import { createAuthRedirect } from '$lib/helpers/utils';
+    import Button, { type ButtonProps } from '$lib/components/ui/button/button.svelte';
     import type { Snippet } from 'svelte';
     import { page } from '$app/state';
 

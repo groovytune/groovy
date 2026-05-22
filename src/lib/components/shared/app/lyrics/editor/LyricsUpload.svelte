@@ -1,9 +1,9 @@
 <script lang="ts">
     import type { LyricLine } from '@applemusic-like-lyrics/core';
-    import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../../ui/empty';
+    import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import { CheckIcon, MicVocalIcon } from '@lucide/svelte';
     import FileInput from '../../../FileInput.svelte';
-    import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '../../../../ui/input-group';
+    import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '$lib/components/ui/input-group';
     import { parseLrc, parseLyl, parseLys, parseTTML, parseYrc } from '@applemusic-like-lyrics/lyric';
     import { toast } from 'svelte-sonner';
     import { parseLyricsContent, stringifyLyrics } from '$lib/helpers/lyrics';

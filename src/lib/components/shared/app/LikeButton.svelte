@@ -8,14 +8,18 @@
     import { HeartIcon } from '@lucide/svelte';
 
     let {
-        releaseId,
+        itemId,
+        itemType,
+        optimistic = true,
         ref = $bindable(null),
         children,
         child,
         onupdate,
         ...props
     }: {
-        releaseId: string;
+        itemId: string;
+        itemType: LikedCache.PendingState['type'];
+        optimistic?: boolean;
         children?: Snippet<[{ liked: boolean|undefined }]>;
         child?: Snippet<[{ liked: boolean|undefined; toggleLike: () => Promise<void>; props: ButtonProps; }]>;
         onupdate?: (liked: boolean) => void;
@@ -24,11 +28,15 @@
     const likedCache = LikedCache.context.get();
     const session = auth.useSession();
 
-    let liked = $derived(likedCache.releases.get(releaseId));
+    let liked = $derived(likedCache.tracks.get(itemId));
 
     $effect(() => {
         if (!$session.data?.user) return;
-        likedCache.fetchReleaseLike(releaseId);
+
+        likedCache.fetchLikeStatus({
+            id: itemId,
+            type: itemType
+        });
     });
 
     async function toggleLike() {
@@ -38,8 +46,12 @@
             return;
         }
 
-        const liked = await likedCache.fetchReleaseLike(releaseId);
-        const updated = await likedCache.updateReleaseLike(releaseId, !liked);
+        const updated = await likedCache.updateLikeStatus({
+            id: itemId,
+            type: itemType,
+            status: 'toggle',
+            optimistic
+        });
 
         onupdate?.(updated);
     }

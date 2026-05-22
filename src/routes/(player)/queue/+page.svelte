@@ -7,7 +7,7 @@
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
     import { formatDuration } from '$lib/helpers/utils';
     import PlayerQueueOrder from '$lib/components/shared/app/player/PlayerQueueOrder.svelte';
-    import { ScrollArea } from '../../../lib/components/ui/scroll-area';
+    import { ScrollArea } from '$lib/components/ui/scroll-area';
 
     const audioPlayer = AudioPlayer.context.get();
 </script>

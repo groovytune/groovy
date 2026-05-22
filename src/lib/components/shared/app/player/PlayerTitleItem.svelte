@@ -9,7 +9,7 @@
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import ShareButton from '../release/ShareButton.svelte';
     import { resolve } from '$app/paths';
-    import TrackLikeButton from '../release/track/TrackLikeButton.svelte';
+    import LikeButton from '../LikeButton.svelte';
 
     let {
         cover = false,
@@ -92,7 +92,7 @@
     </ItemContent>
     {#if audioPlayer.currentTrack != null}
         <ItemActions>
-            <TrackLikeButton trackId={audioPlayer.currentTrack.id}>
+            <LikeButton itemId={audioPlayer.currentTrack.id} itemType="track">
                 {#snippet child({ liked, toggleLike, props })}
                     <Button
                         {...props}
@@ -107,7 +107,7 @@
                         <HeartIcon class={[liked && "fill-current"]}/>
                     </Button>
                 {/snippet}
-            </TrackLikeButton>
+            </LikeButton>
             <DropdownMenu>
                 <DropdownMenuTrigger>
                     {#snippet child({ props })}

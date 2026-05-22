@@ -5,25 +5,40 @@ import { Context } from 'runed';
 export class LikedCache {
     public tracks = new SvelteMap<string, boolean>();
     public releases = new SvelteMap<string, boolean>();
+    public posts = new SvelteMap<string, boolean>();
 
     public pending: LikedCache.PendingState[] = $state([]);
 
-    public async fetchTrackLike(trackId: string, options?: LikedCache.FetchOptions): Promise<boolean> {
-        if (this.tracks.has(trackId) && !options?.force) {
-            return this.tracks.get(trackId) ?? false;
+    public async fetchLikeStatus(options: LikedCache.FetchOptions & { id: string, type: LikedCache.PendingState['type'] }): Promise<boolean> {
+        if (!options.force) {
+            switch (options.type) {
+                case 'track':
+                    if (this.tracks.has(options.id)) {
+                        return this.tracks.get(options.id) ?? false;
+                    }
+                    break;
+                case 'release':
+                    if (this.releases.has(options.id)) {
+                        return this.releases.get(options.id) ?? false;
+                    }
+                    break;
+                case 'post':
+                    if (this.posts.has(options.id)) {
+                        return this.posts.get(options.id) ?? false;
+                    }
+                    break;
+            }
         }
 
-        const pending = this.pending.find(p => p.id === trackId && p.type === 'track');
+        const pending = this.pending.find(p => p.id === options.id && p.type === options.type);
+        const endpoint = LikedCache.getEndpoint(options.type, options.id);
 
-        if (pending?.type === 'track') {
+        if (pending) {
             return pending.promise;
         }
 
-        const req = options?.fetch || fetch;
-        const track: Promise<boolean> = req(resolve(
-            '/(app)/api/track/[trackId]/like',
-            { trackId }
-        ))
+        const req = options.fetch || fetch;
+        const promise = req(endpoint)
             .then(res => {
                 if (!res.ok) {
                     throw new Error('Failed to fetch like status');
@@ -33,89 +48,80 @@ export class LikedCache {
             })
             .then(data => data.liked)
             .finally(() => {
-                this.pending = this.pending.filter(p => !(p.id === trackId && p.type === 'track'));
+                this.pending = this.pending.filter(p => p.id !== options.id && p.type !== options.type);
             });
 
-        this.pending.push({ id: trackId, type: 'track', promise: track });
-        this.tracks.set(trackId, await track);
+        this.pending.push({ id: options.id, type: options.type, promise });
 
-        return track;
-    }
-
-    public async fetchReleaseLike(releaseId: string, options?: LikedCache.FetchOptions): Promise<boolean> {
-        if (this.releases.has(releaseId) && !options?.force) {
-            return this.releases.get(releaseId) ?? false;
+        switch (options.type) {
+            case 'track':
+                this.tracks.set(options.id, await promise);
+                break;
+            case 'release':
+                this.releases.set(options.id, await promise);
+                break;
+            case 'post':
+                this.posts.set(options.id, await promise);
+                break;
         }
 
-        const pending = this.pending.find(p => p.id === releaseId && p.type === 'release');
+        return promise;
+    }
 
-        if (pending?.type === 'release') {
-            return pending.promise;
+    public async updateLikeStatus(
+        options: Omit<LikedCache.FetchOptions, 'force'> & {
+            id: string;
+            type: LikedCache.PendingState['type'];
+            status: 'toggle'|boolean;
+            optimistic?: boolean;
+        }
+    ): Promise<boolean> {
+        const status: boolean = typeof options.status === 'boolean'
+            ? options.status
+            : !(await this.fetchLikeStatus({
+                id: options.id,
+                type: options.type,
+                fetch: options.fetch
+            }));
+
+        const cached = this.tracks.get(options.id);
+        const optimistic = options.optimistic ?? true;
+
+        if (optimistic) {
+            this._setCachedValue(options.type, options.id, status);
         }
 
         const req = options?.fetch || fetch;
-        const release: Promise<boolean> = req(resolve(
-            '/(app)/api/release/[releaseId]/like',
-            { releaseId }
-        ))
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error('Failed to fetch like status');
-                }
-
-                return res.json() as Promise<LikedCache.Response>;
-            })
-            .then(data => data.liked)
-            .finally(() => {
-                this.pending = this.pending.filter(p => !(p.id === releaseId && p.type === 'release'));
-            });
-
-        this.pending.push({ id: releaseId, type: 'release', promise: release });
-        this.releases.set(releaseId, await release);
-
-        return release;
-    }
-
-    public async updateTrackLike(trackId: string, liked: boolean, options?: Omit<LikedCache.FetchOptions, 'force'>): Promise<boolean> {
-        const cached = this.tracks.get(trackId);
-
-        this.tracks.set(trackId, liked);
-
-        const req = options?.fetch || fetch;
-        const method = liked ? 'POST' : 'DELETE';
-
-        const response = await req(resolve(
-            '/(app)/api/track/[trackId]/like',
-            { trackId }
-        ), { method });
+        const endpoint = LikedCache.getEndpoint(options.type, options.id);
+        const response = await req(endpoint, { method: status ? 'POST' : 'DELETE' });
 
         if (!response.ok) {
-            this.tracks.set(trackId, cached ?? !liked);
+            if (optimistic) {
+                this._setCachedValue(options.type, options.id, cached ?? !status);
+            }
+
             throw new Error('Failed to update like status');
         }
 
-        return liked;
-    }
-
-    public async updateReleaseLike(releaseId: string, liked: boolean, options?: Omit<LikedCache.FetchOptions, 'force'>): Promise<boolean> {
-        const cached = this.releases.get(releaseId);
-
-        this.releases.set(releaseId, liked);
-
-        const req = options?.fetch || fetch;
-        const method = liked ? 'POST' : 'DELETE';
-
-        const response = await req(resolve(
-            '/(app)/api/release/[releaseId]/like',
-            { releaseId }
-        ), { method });
-
-        if (!response.ok) {
-            this.releases.set(releaseId, cached ?? !liked);
-            throw new Error('Failed to update like status');
+        if (!optimistic) {
+            this._setCachedValue(options.type, options.id, status);
         }
 
-        return liked;
+        return status;
+    }
+
+    private _setCachedValue(type: LikedCache.PendingState['type'], id: string, liked: boolean) {
+        switch (type) {
+            case 'track':
+                this.tracks.set(id, liked);
+                break;
+            case 'release':
+                this.releases.set(id, liked);
+                break;
+            case 'post':
+                this.posts.set(id, liked);
+                break;
+        }
     }
 }
 
@@ -124,12 +130,24 @@ export namespace LikedCache {
 
     export type PendingTrackState = { id: string; type: 'track'; promise: Promise<boolean>; }
     export type PendingReleaseState = { id: string; type: 'release'; promise: Promise<boolean>; }
+    export type PendingPostState = { id: string; type: 'post'; promise: Promise<boolean>; }
     export type Response = { liked: boolean; data: unknown; }
 
-    export type PendingState = PendingTrackState | PendingReleaseState;
+    export type PendingState = PendingTrackState | PendingReleaseState | PendingPostState;
 
     export interface FetchOptions {
         force?: boolean;
         fetch?: typeof fetch;
+    }
+
+    export function getEndpoint(type: PendingState['type'], id: string): string {
+        switch (type) {
+            case 'track':
+                return resolve('/(app)/api/track/[trackId]/like', { trackId: id });
+            case 'release':
+                return resolve('/(app)/api/release/[releaseId]/like', { releaseId: id });
+            case 'post':
+                return resolve('/(app)/api/post/[postId]/like', { postId: id });
+        }
     }
 }

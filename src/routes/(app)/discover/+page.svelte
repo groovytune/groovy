@@ -15,7 +15,7 @@
     import { numberFormatter } from '$lib/helpers/constants';
     import type { GETResponse as GETPopularArtists } from '../api/discover/chart/followers/artists/+server';
     import ScrollableReleases, { ScrollableItem } from '$lib/components/shared/app/showcase/HorizontallyScrollableItems.svelte';
-    import { Skeleton } from '../../../lib/components/ui/skeleton';
+    import { Skeleton } from '$lib/components/ui/skeleton';
 
     const newReleases = resource(
         () => null,

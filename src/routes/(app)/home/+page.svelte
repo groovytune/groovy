@@ -3,13 +3,13 @@
     import { EllipsisIcon, ForwardIcon, HeartIcon, MessageCircle, UserRound, UserRoundPlusIcon } from '@lucide/svelte';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
     import { Item, ItemContent, ItemMedia } from '$lib/components/ui/item';
-    import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../../lib/components/ui/card';
-    import { Button } from '../../../lib/components/ui/button';
-    import { createAuthRedirect } from '../../../lib/helpers/utils';
+    import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
+    import { Button } from '$lib/components/ui/button';
+    import { createAuthRedirect } from '$lib/helpers/utils';
     import { page } from '$app/state';
-    import ArtistsYouMayKnow from '../../../lib/components/shared/app/home/ArtistsYouMayKnowCard.svelte';
-    import SuggestedTracksCard from '../../../lib/components/shared/app/home/SuggestedTracksCard.svelte';
-    import { numberFormatter } from '../../../lib/helpers/constants';
+    import ArtistsYouMayKnow from '$lib/components/shared/app/home/ArtistsYouMayKnowCard.svelte';
+    import SuggestedTracksCard from '$lib/components/shared/app/home/SuggestedTracksCard.svelte';
+    import { numberFormatter } from '$lib/helpers/constants';
 
     const session = auth.useSession();
 </script>

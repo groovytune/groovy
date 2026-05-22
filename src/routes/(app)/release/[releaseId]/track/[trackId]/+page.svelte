@@ -20,7 +20,7 @@
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import { resource } from 'runed';
     import { formatDuration } from '$lib/helpers/utils.js';
-    import TrackLikeButton from '../../../../../../lib/components/shared/app/release/track/TrackLikeButton.svelte';
+    import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
 
     let { data } = $props();
 
@@ -103,7 +103,7 @@
                 {release.user.name}
             </p>
             <div class="flex gap-2 justify-center mt-5 max-w-sm px-20">
-                <TrackLikeButton trackId={data.track.id} onupdate={() => likes.refetch()}/>
+                <LikeButton itemId={data.track.id} itemType="track" onupdate={() => likes.refetch()}/>
                 <Button
                     class="w-full"
                     onclick={async () => {

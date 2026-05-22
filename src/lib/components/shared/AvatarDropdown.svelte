@@ -8,7 +8,7 @@
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import type { ClassValue } from 'tailwind-variants';
-    import { createAuthRedirect } from '../../helpers/utils';
+    import { createAuthRedirect } from '$lib/helpers/utils';
 
     let {
         user,

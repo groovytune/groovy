@@ -4,7 +4,7 @@
     import { resource } from 'runed';
     import { resolve } from '$app/paths';
     import TrackItem from '../release/track/TrackItem.svelte';
-    import type { Track } from '../../../../server/prisma/browser';
+    import type { Track } from '$lib/server/prisma/browser';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import { LoaderCircleIcon, Music4Icon } from '@lucide/svelte';
 

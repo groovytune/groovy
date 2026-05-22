@@ -1,10 +1,10 @@
 <script lang="ts">
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import type { Snippet } from 'svelte';
-    import { Button } from '../../../ui/button';
+    import { Button } from '$lib/components/ui/button';
     import ResponsiveDialog from '../../ResponsiveDialog.svelte';
     import { SiBluesky, SiFacebook, SiReddit, SiTelegram, SiWhatsapp, SiX } from '@icons-pack/svelte-simple-icons';
-    import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '../../../ui/input-group';
+    import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '$lib/components/ui/input-group';
     import { CopyIcon, Link2Icon } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
 

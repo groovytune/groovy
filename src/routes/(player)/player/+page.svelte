@@ -15,7 +15,7 @@
     import LyricsViewport from '$lib/components/shared/app/lyrics/LyricsViewport.svelte';
     import { parseLyrics } from '$lib/helpers/lyrics';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
-    import PlayerQueueDialog from '../../../lib/components/shared/app/player/dialogs/PlayerQueueDialog.svelte';
+    import PlayerQueueDialog from '$lib/components/shared/app/player/dialogs/PlayerQueueDialog.svelte';
     import isMobile from 'is-mobile';
 
     const audioPlayer = AudioPlayer.context.get();

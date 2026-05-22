@@ -3,7 +3,7 @@
     import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '$lib/components/ui/dialog';
     import PlayerQueueOrder from '../PlayerQueueOrder.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
-    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../../ui/empty';
+    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import { ListMusicIcon } from '@lucide/svelte';
 
     let {

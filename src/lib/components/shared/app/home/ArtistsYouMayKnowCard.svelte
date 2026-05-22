@@ -9,7 +9,7 @@
     import type { GETResponse } from '../../../../../routes/(app)/api/suggestions/artists/+server';
     import { numberFormatter } from '$lib/helpers/constants';
     import FollowButton from '../artist/FollowButton.svelte';
-    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../ui/empty';
+    import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
 
     const artists = resource(
         [],

@@ -15,7 +15,7 @@
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import { Image } from '$lib/client/image.js';
-    import ReleaseLikeButton from '$lib/components/shared/app/release/ReleaseLikeButton.svelte';
+    import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
 
     let { data } = $props();
 
@@ -68,7 +68,7 @@
                 {data.release.description || ''}
             </p>
             <div class="flex gap-2 justify-center mt-5 max-w-sm px-20">
-                <ReleaseLikeButton releaseId={data.release.id}/>
+                <LikeButton itemId={data.release.id} itemType="release"/>
                 <Button
                     class="w-full"
                     onclick={async () => {
