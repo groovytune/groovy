@@ -28,6 +28,12 @@
     let following = $derived(followCache.following.get(userId));
     let isLoading = $derived(!optimistic && followCache.pending.some(p => p.userId === userId && p.type === 'following'));
 
+    $effect(() => {
+        if (!$session.data?.user) return;
+
+        followCache.fetchStatus({ userId, type: 'following' });
+    });
+
     async function toggleFollow() {
         if (!$session.data?.user) {
             // eslint-disable-next-line svelte/no-navigation-without-resolve
