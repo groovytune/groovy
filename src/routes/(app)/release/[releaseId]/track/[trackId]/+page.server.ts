@@ -46,6 +46,10 @@ export async function load({ params, locals, url }) {
                 }
             },
             lyrics: true
+        },
+        cacheStrategy: {
+            ttl: 300,
+            swr: 60
         }
     }) as TrackPageData|null;
 

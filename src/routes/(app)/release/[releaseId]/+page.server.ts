@@ -37,6 +37,10 @@ export async function load({ params, locals, url }) {
                 },
             },
             tracks: true
+        },
+        cacheStrategy: {
+            ttl: 300,
+            swr: 60
         }
     }) as ReleasePageData | null;
 
