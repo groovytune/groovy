@@ -8,15 +8,14 @@
     import { resource } from 'runed';
     import { Image } from '$lib/client/image';
     import { ImageFormat, ImageGravity } from 'appwrite';
-    import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { ScrollArea } from '$lib/components/ui/scroll-area';
     import { DateTime } from 'luxon';
     import type { GETResponse as GETMostLikedReleases } from '../api/discover/chart/likes/releases/+server';
     import type { GETResponse as GETMostLikedTracks } from '../api/discover/chart/likes/tracks/+server';
     import { numberFormatter } from '$lib/helpers/constants';
-    import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
-    import type { PartialUser } from '$lib/helpers/utils';
     import type { GETResponse as GETPopularArtists } from '../api/discover/chart/followers/artists/+server';
+    import ScrollableReleases, { ScrollableItem } from '$lib/components/shared/app/showcase/HorizontallyScrollableItems.svelte';
+    import { Skeleton } from '../../../lib/components/ui/skeleton';
 
     const newReleases = resource(
         () => null,
@@ -97,66 +96,6 @@
     </Card>
 {/snippet}
 
-{#snippet Item(name: string, description: string, coverURL: string, explicit: boolean, href: string, descriptionHref?: string)}
-    <div class="flex flex-col shrink-0 w-40 sm:w-80" title={name} style="content-visibility: auto;">
-        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-        <a href={href}>
-            <img src={coverURL} alt="Album Cover" class="size-40 sm:size-80 rounded-md object-cover"/>
-        </a>
-        <div>
-            <h2 class="sm:text-lg text-sm font-semibold mt-2 line-clamp-2 truncate text-balance">
-                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-                <a href={href}>
-                    {name}
-                    {#if explicit}
-                        <ExplicitIcon class="size-4 sm:size-5"/>
-                    {/if}
-                </a>
-            </h2>
-            <p class="text-xs sm:text-sm text-muted-foreground line-clamp-2 truncate text-balance">
-                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-                <a href={descriptionHref ?? href}>
-                    {description}
-                </a>
-            </p>
-        </div>
-    </div>
-{/snippet}
-
-{#snippet ItemSkeletons(length: number = 5)}
-    {#each { length }}
-        <div class="flex flex-col shrink-0" style="content-visibility: auto;">
-            <Skeleton class="size-40 sm:size-80"/>
-            <div class="mt-2 space-y-2">
-                <Skeleton class="w-20 sm:w-48 h-4"/>
-                <Skeleton class="w-14 sm:w-40 h-3"/>
-            </div>
-        </div>
-    {/each}
-{/snippet}
-
-{#snippet ArtistItem(artist: PartialUser, followers: number = 0)}
-    {@const artistURL = resolve('/(app)/artist/[userResolvable]', { userResolvable: artist.username ? `@${artist.username}` : artist.id })}
-    <div class="flex flex-col shrink-0 w-40 gap-2" title={artist.name} style="content-visibility: auto;">
-        <a href={artistURL}>
-            <img src={artist.image} alt="Artist" class="size-40 rounded-full object-cover"/>
-        </a>
-        <div>
-            <h2 class="text-lg font-semibold mt-2 line-clamp-2 truncate text-balance text-center">
-                <a href={artistURL}>
-                    {artist.name}
-                </a>
-            </h2>
-            <p class="text-sm text-muted-foreground text-center leading-tight">
-                {artist.username ? `@${artist.username}` : ''}
-            </p>
-            <p class="text-sm text-muted-foreground/70 text-center leading-tight">
-                {numberFormatter.format(followers)} follower{followers !== 1 ? 's' : ''}
-            </p>
-        </div>
-    </div>
-{/snippet}
-
 <section>
     <h1 class="text-2xl sm:text-4xl font-bold my-4 flex items-center gap-2 px-5">
         <StarIcon class="text-primary size-7 sm:size-8"/>
@@ -199,133 +138,121 @@
         </div>
     </ScrollArea>
 </section>
-<section class="mt-10">
-    <h1 class="text-2xl sm:text-4xl font-bold my-4 flex items-center gap-2 px-5">
-        <MegaphoneIcon class="text-primary size-7 sm:size-8"/>
-        New Releases
-    </h1>
-    <div class="pb-5">
-        <ScrollArea orientation="horizontal">
-            <div class="flex gap-4 px-5">
-                {#if newReleases.loading}
-                    {@render ItemSkeletons()}
-                {:else if newReleases.current?.length}
-                    {#each newReleases.current as release (release.id)}
-                        {@const releaseURL = resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
-                        {@const coverURL = release.cover
-                            ? Image.getPreviewPath({
-                                fileId: release.cover,
-                                width: 300,
-                                height: 300,
-                                gravity: ImageGravity.Center,
-                                output: ImageFormat.Webp
-                            })
-                            : coverPlaceholder
-                        }
-                        {@render Item(
-                            release.name,
-                            `${release.user.name} • ${DateTime.fromISO(String(release.createdAt)).toLocaleString(DateTime.DATE_MED)}`,
-                            coverURL,
-                            release.explicit,
-                            releaseURL,
-                            resolve('/(app)/artist/[userResolvable]', { userResolvable: release.user.username ? `@${release.user.username}` : release.user.id })
-                        )}
-                    {/each}
-                {/if}
+<ScrollableReleases
+    title="New Releases"
+    icon={MegaphoneIcon}
+    items={newReleases.current ?? []}
+    loading={newReleases.loading}
+    class="mt-10"
+>
+    {#snippet child({ item })}
+        {@render ScrollableItem(
+            item.name,
+            `${item.user.name} • ${DateTime.fromISO(String(item.createdAt)).toLocaleString(DateTime.DATE_MED)}`,
+            item.cover
+                ? Image.getPreviewPath({
+                    fileId: item.cover,
+                    width: 300,
+                    height: 300,
+                    gravity: ImageGravity.Center,
+                    output: ImageFormat.Webp
+                })
+                : coverPlaceholder,
+            item.explicit,
+            resolve('/(app)/release/[releaseId]', { releaseId: item.id }),
+            resolve('/(app)/artist/[userResolvable]', { userResolvable: item.user.username ? `@${item.user.username}` : item.user.id })
+        )}
+    {/snippet}
+</ScrollableReleases>
+<ScrollableReleases
+    title="Popular Artists"
+    icon={MegaphoneIcon}
+    items={popularArtists.current ?? []}
+    loading={popularArtists.loading}
+    class="mt-10"
+>
+    {#snippet child({ item })}
+        {@const artistURL = resolve('/(app)/artist/[userResolvable]', { userResolvable: item.username ? `@${item.username}` : item.id })}
+        <div class="flex flex-col shrink-0 w-40 gap-2" title={item.name} style="content-visibility: auto;">
+            <a href={artistURL}>
+                <img src={item.image} alt="Artist" class="size-40 rounded-full object-cover"/>
+            </a>
+            <div>
+                <h2 class="text-lg font-semibold mt-2 line-clamp-2 truncate text-balance text-center">
+                    <a href={artistURL}>
+                        {item.name}
+                    </a>
+                </h2>
+                <p class="text-sm text-muted-foreground text-center leading-tight">
+                    {item.username ? `@${item.username}` : ''}
+                </p>
+                <p class="text-sm text-muted-foreground/70 text-center leading-tight">
+                    {numberFormatter.format(item._count.followers)} follower{item._count.followers !== 1 ? 's' : ''}
+                </p>
             </div>
-        </ScrollArea>
-    </div>
-</section>
-<section class="mt-10">
-    <h1 class="text-2xl sm:text-4xl font-bold my-4 flex items-center gap-2 px-5">
-        <MegaphoneIcon class="text-primary size-7 sm:size-8"/>
-        Popular Artists
-    </h1>
-    <div class="pb-5">
-        <ScrollArea orientation="horizontal">
-            <div class="flex gap-5 px-5">
-                {#if popularArtists.loading}
-                    {@render ItemSkeletons()}
-                {:else if popularArtists.current?.length}
-                    {#each popularArtists.current as artist (artist.id)}
-                        {@render ArtistItem(artist, artist._count.followers)}
-                    {/each}
-                {/if}
+        </div>
+    {/snippet}
+    {#snippet skeletonItem()}
+        {#each { length: 5 }}
+            <div class="flex flex-col shrink-0" style="content-visibility: auto;">
+                <Skeleton class="size-40 rounded-full"/>
+                <div class="mt-2 space-y-2 flex flex-col items-center">
+                    <Skeleton class="w-20 h-4"/>
+                    <Skeleton class="w-14 h-3"/>
+                </div>
             </div>
-        </ScrollArea>
-    </div>
-</section>
-<section>
-    <h1 class="text-2xl sm:text-4xl font-bold my-4 flex items-center gap-2 px-5">
-        <Music4Icon class="text-primary size-7 sm:size-8"/>
-        Most Liked Tracks
-    </h1>
-    <div class="pb-5">
-        <ScrollArea orientation="horizontal">
-            <div class="flex gap-4 px-5">
-                {#if mostLikedTracks.loading}
-                    {@render ItemSkeletons()}
-                {:else if mostLikedTracks.current?.length}
-                    {#each mostLikedTracks.current as track (track.id)}
-                        {@const trackURL = resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: track.release.id, trackId: track.id })}
-                        {@const coverURL = track.cover || track.release.cover
-                            ? Image.getPreviewPath({
-                                fileId: track.cover || track.release.cover!,
-                                width: 300,
-                                height: 300,
-                                gravity: ImageGravity.Center,
-                                output: ImageFormat.Webp
-                            })
-                            : coverPlaceholder
-                        }
-                        {@render Item(
-                            track.name,
-                            `${track.release.name} • ${numberFormatter.format(track._count.likes)} like${track._count.likes !== 1 ? 's' : ''}`,
-                            coverURL,
-                            track.explicit,
-                            trackURL,
-                            resolve('/(app)/release/[releaseId]', { releaseId: track.release.id })
-                        )}
-                    {/each}
-                {/if}
-            </div>
-        </ScrollArea>
-    </div>
-</section>
-<section>
-    <h1 class="text-2xl sm:text-4xl font-bold my-4 flex items-center gap-2 px-5">
-        <ListMusicIcon class="text-primary size-7 sm:size-8"/>
-        Most Liked Releases
-    </h1>
-    <div class="pb-10">
-        <ScrollArea orientation="horizontal">
-            <div class="flex gap-4 px-5">
-                {#if mostLikedReleases.loading}
-                    {@render ItemSkeletons()}
-                {:else if mostLikedReleases.current?.length}
-                    {#each mostLikedReleases.current as release (release.id)}
-                        {@const releaseURL = resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
-                        {@const coverURL = release.cover
-                            ? Image.getPreviewPath({
-                                fileId: release.cover,
-                                width: 300,
-                                height: 300,
-                                gravity: ImageGravity.Center,
-                                output: ImageFormat.Webp
-                            })
-                            : coverPlaceholder
-                        }
-                        {@render Item(
-                            release.name,
-                            `${release.user.name} • ${numberFormatter.format(release._count.likes)} like${release._count.likes !== 1 ? 's' : ''}`,
-                            coverURL,
-                            release.explicit,
-                            releaseURL,
-                            resolve('/(app)/artist/[userResolvable]', { userResolvable: release.user.username ? `@${release.user.username}` : release.user.id })
-                        )}
-                    {/each}
-                {/if}
-            </div>
-        </ScrollArea>
-    </div>
-</section>
+        {/each}
+    {/snippet}
+</ScrollableReleases>
+<ScrollableReleases
+    title="Most Liked Tracks"
+    icon={Music4Icon}
+    items={mostLikedTracks.current ?? []}
+    loading={mostLikedTracks.loading}
+    class="mt-10"
+>
+    {#snippet child({ item })}
+        {@render ScrollableItem(
+            item.name,
+            `${item.release.name} • ${numberFormatter.format(item._count.likes)} like${item._count.likes !== 1 ? 's' : ''}`,
+            item.cover || item.release.cover
+                ? Image.getPreviewPath({
+                    fileId: item.cover || item.release.cover!,
+                    width: 300,
+                    height: 300,
+                    gravity: ImageGravity.Center,
+                    output: ImageFormat.Webp
+                })
+                : coverPlaceholder,
+            item.explicit,
+            resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: item.releaseId, trackId: item.id }),
+            resolve('/(app)/release/[releaseId]', { releaseId: item.releaseId })
+        )}
+    {/snippet}
+</ScrollableReleases>
+<ScrollableReleases
+    title="Most Liked Releases"
+    icon={ListMusicIcon}
+    items={mostLikedReleases.current ?? []}
+    loading={mostLikedReleases.loading}
+    class="mt-10"
+>
+    {#snippet child({ item })}
+        {@render ScrollableItem(
+            item.name,
+            `${item.user.name} • ${numberFormatter.format(item._count.likes)} like${item._count.likes !== 1 ? 's' : ''}`,
+            item.cover
+                ? Image.getPreviewPath({
+                    fileId: item.cover,
+                    width: 300,
+                    height: 300,
+                    gravity: ImageGravity.Center,
+                    output: ImageFormat.Webp
+                })
+                : coverPlaceholder,
+            item.explicit,
+            resolve('/(app)/release/[releaseId]', { releaseId: item.id }),
+            resolve('/(app)/artist/[userResolvable]', { userResolvable: item.user.username ? `@${item.user.username}` : item.user.id })
+        )}
+    {/snippet}
+</ScrollableReleases>

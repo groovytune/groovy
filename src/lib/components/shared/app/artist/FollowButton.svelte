@@ -6,6 +6,7 @@
     import { createAuthRedirect } from '../../../../helpers/utils';
     import Button, { type ButtonProps } from '../../../ui/button/button.svelte';
     import type { Snippet } from 'svelte';
+    import { page } from '$app/state';
 
     let {
         userId,
@@ -40,7 +41,7 @@
     async function toggleFollow() {
         if (!$session.data?.user) {
             // eslint-disable-next-line svelte/no-navigation-without-resolve
-            await goto(createAuthRedirect('signin', location.href));
+            await goto(createAuthRedirect('signin', page.url));
             return;
         }
 
@@ -69,6 +70,7 @@
 <Button
     bind:ref
     {...props}
+    href={!$session.data?.user ? createAuthRedirect('signin', page.url) : undefined}
     onclick={isLoading || following.current === null ? undefined : toggleFollow}
 >
     {#if children}
