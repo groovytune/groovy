@@ -16,6 +16,7 @@
     import type { GETResponse as GETPopularArtists } from '../api/discover/chart/followers/artists/+server';
     import ScrollableReleases, { ScrollableItem } from '$lib/components/shared/app/showcase/HorizontallyScrollableItems.svelte';
     import { Skeleton } from '$lib/components/ui/skeleton';
+    import { createUserProfileURL } from '$lib/helpers/utils';
 
     const newReleases = resource(
         () => null,
@@ -160,7 +161,7 @@
                 : coverPlaceholder,
             item.explicit,
             resolve('/(app)/release/[releaseId]', { releaseId: item.id }),
-            resolve('/(app)/artist/[userResolvable]', { userResolvable: item.user.username ? `@${item.user.username}` : item.user.id })
+            createUserProfileURL(item.user)
         )}
     {/snippet}
 </ScrollableReleases>
@@ -171,7 +172,7 @@
     loading={popularArtists.loading}
 >
     {#snippet child({ item })}
-        {@const artistURL = resolve('/(app)/artist/[userResolvable]', { userResolvable: item.username ? `@${item.username}` : item.id })}
+        {@const artistURL = createUserProfileURL(item)}
         <div class="flex flex-col shrink-0 w-40 gap-2" title={item.name} style="content-visibility: auto;">
             <a href={artistURL}>
                 <img src={item.image} alt="Artist" class="size-40 rounded-full object-cover"/>
@@ -249,7 +250,7 @@
                 : coverPlaceholder,
             item.explicit,
             resolve('/(app)/release/[releaseId]', { releaseId: item.id }),
-            resolve('/(app)/artist/[userResolvable]', { userResolvable: item.user.username ? `@${item.user.username}` : item.user.id })
+            createUserProfileURL(item.user)
         )}
     {/snippet}
 </ScrollableReleases>

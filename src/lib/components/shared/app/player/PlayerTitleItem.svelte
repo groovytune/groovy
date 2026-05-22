@@ -5,7 +5,7 @@
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import type { ClassValue } from 'clsx';
-    import { cn } from '$lib/helpers/utils';
+    import { cn, createUserProfileURL } from '$lib/helpers/utils';
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import ShareButton from '../release/ShareButton.svelte';
     import { resolve } from '$app/paths';
@@ -74,14 +74,7 @@
                     data-sveltekit-preload-code="eager"
                     href={
                         audioPlayer.artistInfo.current
-                            ? resolve(
-                                '/(app)/artist/[userResolvable]',
-                                {
-                                    userResolvable: audioPlayer.artistInfo.current.username
-                                        ? `@${audioPlayer.artistInfo.current.username}`
-                                        : audioPlayer.artistInfo.current.id
-                                }
-                            )
+                            ? createUserProfileURL(audioPlayer.artistInfo.current)
                             : '#/'
                     }
                 >
@@ -140,24 +133,17 @@
                         {/snippet}
                     </DropdownMenuItem>
                     {#if audioPlayer.artistInfo.current}
-                    <DropdownMenuItem>
-                        {#snippet child({ props })}
-                            <a
-                                {...props}
-                                href={resolve(
-                                    '/(app)/artist/[userResolvable]',
-                                    {
-                                        userResolvable: audioPlayer.artistInfo.current?.username
-                                            ? `@${audioPlayer.artistInfo.current.username}`
-                                            : audioPlayer.artistInfo.current!.id 
-                                    }
-                                )}
-                            >
-                                <Disc3Icon/>
-                                View Artist
-                            </a>
-                        {/snippet}
-                    </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            {#snippet child({ props })}
+                                <a
+                                    {...props}
+                                    href={createUserProfileURL(audioPlayer.artistInfo.current!)}
+                                >
+                                    <Disc3Icon/>
+                                    View Artist
+                                </a>
+                            {/snippet}
+                        </DropdownMenuItem>
                     {/if}
                     <DropdownMenuSeparator/>
                     <DropdownMenuItem>

@@ -19,7 +19,7 @@
     import type { LyricLine } from '@applemusic-like-lyrics/core';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import { resource } from 'runed';
-    import { formatDuration } from '$lib/helpers/utils.js';
+    import { createUserProfileURL, formatDuration } from '$lib/helpers/utils.js';
     import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
 
     let { data } = $props();
@@ -31,7 +31,6 @@
     let lyrics = $derived(data.track.lyrics);
     let release = $derived(data.track.release);
     let user = $derived(release.user);
-    let userLink = $derived(resolve('/(app)/artist/[userResolvable]', { userResolvable: user.username ? `@${user.username}` : user.id }));
 
     let lyricsContent: LyricLine[] = $state([]);
 
@@ -157,10 +156,7 @@
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             {#snippet child({ props })}
-                                <a
-                                    {...props}
-                                    href={userLink}
-                                >
+                                <a {...props} href={createUserProfileURL(user)}>
                                     <Disc3Icon/>
                                     View Artist
                                 </a>

@@ -16,6 +16,7 @@
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import { Image } from '$lib/client/image.js';
     import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
+    import { createUserProfileURL } from '../../../../lib/helpers/utils.js';
 
     let { data } = $props();
 
@@ -113,14 +114,7 @@
                             {#snippet child({ props })}
                                 <a
                                     {...props}
-                                    href={resolve(
-                                        '/(app)/artist/[userResolvable]',
-                                        {
-                                            userResolvable: data.release.user.username
-                                                ? `@${data.release.user.username}`
-                                                : data.release.user.id
-                                        }
-                                    )}
+                                    href={createUserProfileURL(data.release.user)}
                                 >
                                     <Disc3Icon/>
                                     View Artist

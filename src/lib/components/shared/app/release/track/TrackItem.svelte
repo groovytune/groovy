@@ -9,7 +9,7 @@
     import { resolve } from '$app/paths';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { ImageFormat, ImageGravity } from 'appwrite';
-    import { formatDuration } from '$lib/helpers/utils';
+    import { createUserProfileURL, formatDuration } from '$lib/helpers/utils';
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
     import DeleteTrackDialog from '../dialogs/DeleteTrackDialog.svelte';
     import { resource } from 'runed';
@@ -187,14 +187,7 @@
                                     {#snippet child({ props })}
                                         <a
                                             {...props}
-                                            href={resolve(
-                                                '/(app)/artist/[userResolvable]',
-                                                {
-                                                    userResolvable: artistInfo.current?.username
-                                                        ? `@${artistInfo.current.username}`
-                                                        : artistInfo.current!.id
-                                                }
-                                            )}
+                                            href={createUserProfileURL(artistInfo.current!)}
                                         >
                                             <Disc3Icon/>
                                             View Artist

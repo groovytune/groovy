@@ -10,6 +10,7 @@
     import { numberFormatter } from '$lib/helpers/constants';
     import FollowButton from '../artist/FollowButton.svelte';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
+    import { createUserProfileURL } from '$lib/helpers/utils';
 
     const artists = resource(
         [],
@@ -55,7 +56,6 @@
             </Empty>
          {:else}
             {#each artists.current as artist (artist.id)}
-                {@const artistURL = resolve('/(app)/artist/[userResolvable]', { userResolvable: artist.username ? `@${artist.username}` : artist.id })}
                 <Item size="sm" class="p-0">
                     <ItemMedia>
                         <Avatar class="size-10">
@@ -67,7 +67,7 @@
                     </ItemMedia>
                     <ItemContent class="gap-0">
                         <ItemTitle class="text-sm font-medium line-clamp-1">
-                            <a href={artistURL}>
+                            <a href={createUserProfileURL(artist)}>
                                 {artist.name}
                             </a>
                         </ItemTitle>

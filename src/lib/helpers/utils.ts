@@ -25,6 +25,15 @@ export function createAuthRedirect(type: 'signin'|'signout', url: string|URL) {
     return `${authURL}?redirect=${encodeURIComponent(redirectURL)}`;
 }
 
+export function createUserProfileURL(data: { id: string; username?: string|null; }) {
+    return resolve(
+        '/(app)/artist/[userResolvable]',
+        {
+            userResolvable: data.username ? `@${data.username}` : data.id
+        }
+    );
+}
+
 export function formatDuration(duration: number, pattern = 'm:ss') {
     return DateTime.fromSeconds(duration).toFormat(pattern, { locale: 'en' });
 }
