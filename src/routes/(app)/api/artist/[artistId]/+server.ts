@@ -10,7 +10,7 @@ export async function GET({ params }) {
             id: true,
             name: true,
             image: true,
-        },
+        }
     });
 
     if (!artist) {
