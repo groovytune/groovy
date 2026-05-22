@@ -169,7 +169,6 @@
     icon={MegaphoneIcon}
     items={popularArtists.current ?? []}
     loading={popularArtists.loading}
-    class="mt-10"
 >
     {#snippet child({ item })}
         {@const artistURL = resolve('/(app)/artist/[userResolvable]', { userResolvable: item.username ? `@${item.username}` : item.id })}
@@ -209,7 +208,6 @@
     icon={Music4Icon}
     items={mostLikedTracks.current ?? []}
     loading={mostLikedTracks.loading}
-    class="mt-10"
 >
     {#snippet child({ item })}
         {@render ScrollableItem(
@@ -235,7 +233,6 @@
     icon={ListMusicIcon}
     items={mostLikedReleases.current ?? []}
     loading={mostLikedReleases.loading}
-    class="mt-10"
 >
     {#snippet child({ item })}
         {@render ScrollableItem(

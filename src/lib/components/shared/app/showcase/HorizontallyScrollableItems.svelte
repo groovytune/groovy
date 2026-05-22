@@ -78,7 +78,7 @@
     </h1>
     <div class="pb-5">
         <ScrollArea orientation="horizontal">
-            <div class="flex gap-4 px-5">
+            <div class="flex gap-4 px-5 pb-4">
                 {#if loading}
                     {#if skeletonItem}
                         {@render skeletonItem?.()}
