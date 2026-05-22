@@ -8,89 +8,77 @@ export class ReleaseInfoCache {
     public releases: SvelteMap<string, Release> = new SvelteMap();
     public artists: SvelteMap<string, PartialUser> = new SvelteMap();
 
-    public pending: (ReleaseInfoCache.PendingRelease|ReleaseInfoCache.PendingArtist)[] = $state([]);
+    public pending: ReleaseInfoCache.PendingState[] = $state([]);
 
-    public async fetchReleaseInfo(options: ReleaseInfoCache.FetchOptions): Promise<Release|null> {
-        if (this.releases.has(options.releaseId) && !options.force) {
-            const cached = this.releases.get(options.releaseId);
-
-            if (cached) {
-                return cached;
-            }
+    public async fetchInfo<T extends ReleaseInfoCache.PendingState['type']>(options: ReleaseInfoCache.FetchOptions & { type: T }): Promise<ReleaseInfoCache.ResponseType<T>> {
+        if (!options.force) switch (options.type) {
+            case 'release':
+                if (this.releases.has(options.releaseId)) {
+                    return this.releases.get(options.releaseId) as ReleaseInfoCache.ResponseType<T>;
+                }
+                break;
+            case 'artist':
+                if (this.artists.has(options.releaseId)) {
+                    return this.artists.get(options.releaseId) as ReleaseInfoCache.ResponseType<T>;
+                }
+                break;
         }
 
-        const pending = this.pending.find(p => p.id === options.releaseId && p.type === 'release');
+        const pending = this.pending.find((p): p is ReleaseInfoCache.PendingStateType<T> => p.id === options.releaseId && p.type === options.type);
 
-        if (pending?.type === 'release') {
-            return pending.promise;
-        }
-
-        const req = options.fetch || fetch;
-        const release: Promise<Release> = req(resolve(
-            '/(app)/api/release/[releaseId]',
-            { releaseId: options?.releaseId }
-        )).then(res => {
-            if (!res.ok) {
-                throw new Error(`Failed to fetch release info: ${res.status} ${res.statusText}`);
-            }
-
-            return res.json();
-        }).finally(() => {
-            this.pending = this.pending.filter(p => !(p.id === options.releaseId && p.type === 'release'));
-        });
-
-        this.pending.push({ id: options.releaseId, type: 'release', promise: release });
-        this.releases.set(options.releaseId, await release);
-
-        return release;
-    }
-
-    public async fetchReleaseArtistInfo(options: ReleaseInfoCache.FetchOptions): Promise<PartialUser|null> {
-        if (this.artists.has(options.releaseId) && !options.force) {
-            const cached = this.artists.get(options.releaseId);
-
-            if (cached) {
-                return cached;
-            }
-        }
-
-        const pending = this.pending.find(p => p.id === options.releaseId && p.type === 'artist');
-
-        if (pending?.type === 'artist') {
-            return pending.promise;
+        if (pending) {
+            return pending.promise as Promise<ReleaseInfoCache.ResponseType<T>>;
         }
 
         const req = options.fetch || fetch;
-        const artist: Promise<PartialUser> = req(resolve(
-            '/(app)/api/release/[releaseId]/artist',
-            { releaseId: options.releaseId }
-        )).then(res => {
-            if (!res.ok) {
-                throw new Error(`Failed to fetch artist info: ${res.status} ${res.statusText}`);
-            }
+        const endpoint = options.type === 'release'
+            ? resolve('/(app)/api/release/[releaseId]', { releaseId: options.releaseId })
+            : resolve('/(app)/api/release/[releaseId]/artist', { releaseId: options.releaseId });
 
-            return res.json();
-        }).finally(() => {
-            this.pending = this.pending.filter(p => !(p.id === options.releaseId && p.type === 'artist'));
-        });
+        const promise = req(endpoint)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Failed to fetch ${options.type} info: ${res.status} ${res.statusText}`);
+                }
 
-        this.pending.push({ id: options.releaseId, type: 'artist', promise: artist });
-        this.artists.set(options.releaseId, await artist);
+                return res.json() as Promise<ReleaseInfoCache.ResponseType<T>>;
+            })
+            .finally(() => {
+                this.pending = this.pending.filter(p => p.id !== options.releaseId && p.type !== options.type);
+            });
 
-        return artist;
+        this.pending.push({ id: options.releaseId, type: options.type, promise } as ReleaseInfoCache.PendingStateType<T>);
+
+        const result = await promise;
+
+        switch (options.type) {
+            case 'release':
+                this.releases.set(options.releaseId, result as Release);
+                break;
+            case 'artist':
+                this.artists.set(options.releaseId, result as PartialUser);
+                break;
+        }
+
+        return result;
     }
 
     public clear() {
         this.releases.clear();
         this.artists.clear();
+        this.pending = [];
     }
 }
 
 export namespace ReleaseInfoCache {
     export const context = new Context<ReleaseInfoCache>('release-info-cache');
 
-    export interface PendingRelease { id: string; type: 'release'; promise: Promise<Release|null> }
-    export interface PendingArtist { id: string; type: 'artist'; promise: Promise<PartialUser|null> }
+    export interface PendingReleaseState { id: string; type: 'release'; promise: Promise<Release> }
+    export interface PendingArtistState { id: string; type: 'artist'; promise: Promise<PartialUser> }
+    export type PendingState = PendingReleaseState | PendingArtistState;
+
+    export type PendingStateType<T extends PendingState['type']> = T extends 'release' ? PendingReleaseState : PendingArtistState;
+    export type ResponseType<T extends PendingState['type']> = T extends 'release' ? Release : PartialUser;
 
     export interface FetchOptions {
         releaseId: string;

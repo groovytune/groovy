@@ -110,6 +110,13 @@ export class LikedCache {
         return status;
     }
 
+    public clear() {
+        this.tracks.clear();
+        this.releases.clear();
+        this.posts.clear();
+        this.pending = [];
+    }
+
     private _setCachedValue(type: LikedCache.PendingState['type'], id: string, liked: boolean) {
         switch (type) {
             case 'track':

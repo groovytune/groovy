@@ -41,7 +41,7 @@ export class AudioPlayer {
         async releaseId => {
             if (!releaseId) return null;
 
-            return this.releaseCache.fetchReleaseInfo({ releaseId });
+            return this.releaseCache.fetchInfo({ releaseId, type: 'release' });
         },
         { debounce: 200 }
     );
@@ -51,7 +51,7 @@ export class AudioPlayer {
         async releaseId => {
             if (!releaseId) return null;
 
-            return this.releaseCache.fetchReleaseArtistInfo({ releaseId });
+            return this.releaseCache.fetchInfo({ releaseId, type: 'artist' });
         },
         { debounce: 200 }
     );

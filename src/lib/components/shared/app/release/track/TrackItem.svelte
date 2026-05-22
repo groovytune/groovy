@@ -43,7 +43,7 @@
     const deleteDialogState: DialogState = new DialogState({ id: `delete-track-${track.id}` });
     const artistInfo = resource(
         () => track.releaseId,
-        async releaseId => releaseInfoCache.fetchReleaseArtistInfo({ releaseId }),
+        async releaseId => releaseInfoCache.fetchInfo({ releaseId, type: 'artist' }),
     );
 
     let isPlaying = $derived(audioPlayer.currentTrack?.id === track.id && playingIndicator);
