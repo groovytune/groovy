@@ -110,7 +110,7 @@
         {:else}
             <ArtistsYouMayKnow/>
             <SuggestedTracksCard/>
-            <footer class="text-sm text-muted-foreground text-center mt-4">
+            <footer class="text-sm text-muted-foreground text-center mt-2">
                 <p>&copy; {new Date().getFullYear()} Groovy. All rights reserved.</p>
             </footer>
         {/if}
