@@ -13,6 +13,10 @@ export async function load({ params }) {
             name: true,
             username: true,
             image: true,
+        },
+        cacheStrategy: {
+            ttl: 300,
+            swr: 60
         }
     });
 
