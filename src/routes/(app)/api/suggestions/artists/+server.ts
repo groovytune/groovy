@@ -21,7 +21,7 @@ export async function GET({ locals }) {
             },
             followers: {
                 none: {
-                    id: locals.user.id
+                    followerId: locals.user.id
                 }
             }
         },
