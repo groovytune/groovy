@@ -1,5 +1,5 @@
 import { resolve } from '$app/paths';
-import type { ImageTransform } from '../helpers/classes/ImageTransform';
+import type { ImageTransform } from '$lib/helpers/classes/ImageTransform';
 
 export namespace Image {
     export interface PreviewOptions {
