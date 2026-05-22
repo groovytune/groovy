@@ -3,20 +3,22 @@
     import { UserRound, UserRoundPlusIcon } from '@lucide/svelte';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
     import { Item, ItemContent, ItemMedia } from '$lib/components/ui/item';
-    import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../lib/components/ui/card';
+    import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '../../../lib/components/ui/card';
     import { Button } from '../../../lib/components/ui/button';
     import { createAuthRedirect } from '../../../lib/helpers/utils';
     import { page } from '$app/state';
+    import TrackItem from '../../../lib/components/shared/app/release/track/TrackItem.svelte';
+    import SuggestedArtistsCard from '../../../lib/components/shared/app/home/SuggestedArtistsCard.svelte';
 
     const session = auth.useSession();
 </script>
 
-<div class="flex gap-4 p-5">
-    <aside class="w-full max-w-xs hidden xl:grid gap-4">
+<div class="flex gap-4 px-5 justify-center">
+    <aside class="w-full h-fit max-w-xs hidden xl:grid gap-4">
         <h2 class="text-lg font-semibold">Trending</h2>
         <p>Some trending content...</p>
     </aside>
-    <section class="w-full max-w-3xl">
+    <section class="w-full h-[200vh] max-w-3xl">
         <Item variant="outline" size="sm" class="bg-card rounded-xl">
             <ItemMedia>
                 <Avatar class="size-9">
@@ -37,7 +39,7 @@
             </ItemContent>
         </Item>
     </section>
-    <aside class="w-full max-w-xs hidden md:grid gap-4">
+    <aside class="w-full h-fit max-w-xs hidden md:grid gap-4">
         {#if !$session.data?.user}
             <Card>
                 <CardHeader>
@@ -56,17 +58,47 @@
                 </CardContent>
             </Card>
         {:else}
+            <SuggestedArtistsCard/>
             <Card>
                 <CardHeader>
                     <CardTitle>
-                        Welcome back, {$session.data.user.name}!
+                        Suggested Tracks
                     </CardTitle>
                     <CardDescription>
+                        Discover music
                     </CardDescription>
+                    <CardAction>
+                        <Button variant="outline" size="sm">
+                            Refresh
+                        </Button>
+                    </CardAction>
                 </CardHeader>
-                <CardContent>
+                <CardContent class="grid gap-2">
+                    {#each { length: 5 }}
+                        <TrackItem
+                            cover
+                            class="p-0 bg-transparent!"
+                            track={{
+                                id: '1',
+                                name: 'Sample Track',
+                                duration: 240,
+                                cover: null,
+                                releaseId: '1',
+                                file: 'e',
+                                explicit: false,
+                                position: 1,
+                                lyricsId: null,
+                                metadata: {},
+                                createdAt: new Date(),
+                                updatedAt: new Date()
+                            }}
+                        />
+                    {/each}
                 </CardContent>
             </Card>
+            <footer class="text-sm text-muted-foreground text-center mt-4">
+                <p>&copy; {new Date().getFullYear()} Groovy. All rights reserved.</p>
+            </footer>
         {/if}
     </aside>
 </div>

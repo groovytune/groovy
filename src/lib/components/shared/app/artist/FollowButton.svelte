@@ -11,10 +11,12 @@
     let {
         userId,
         ref = $bindable(null),
+        onupdate,
         children,
         ...props
     }: {
         userId: string;
+        onupdate?: (following: boolean) => void;
         children?: Snippet<[data: { following: boolean; loading: boolean; }]>;
     } & Omit<ButtonProps, 'children'> = $props();
 
@@ -64,6 +66,8 @@
             following.mutate(!following.current);
             throw new Error('Failed to toggle follow status');
         }
+
+        onupdate?.(following.current);
     }
 </script>
 
