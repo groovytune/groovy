@@ -39,7 +39,7 @@ export async function load({ fetch, url }) {
     const coverImage = tracks[0]?.cover
         ? new URL(
             path.resolve(
-                url.pathname,
+                '/',
                 Image.getPreviewPath({
                     fileId: tracks[0].cover,
                     height: 600,

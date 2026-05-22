@@ -63,7 +63,7 @@ export async function load({ params, locals, url }) {
     const coverImage = track.cover || track.release.cover
         ? new URL(
             path.resolve(
-                url.pathname,
+                '/',
                 Image.getPreviewPath({
                     fileId: track.cover || track.release.cover!,
                     height: 600,

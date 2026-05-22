@@ -51,7 +51,7 @@ export async function load({ params, locals, url }) {
     const coverImage = release.cover
         ? new URL(
             path.resolve(
-                url.pathname,
+                '/',
                 Image.getPreviewPath({
                     fileId: release.cover,
                     height: 600,
