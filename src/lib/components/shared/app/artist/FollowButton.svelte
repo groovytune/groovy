@@ -1,44 +1,32 @@
 <script lang="ts">
-    import { resolve } from '$app/paths';
-    import { resource } from 'runed';
     import { auth } from '$lib/client/auth';
     import { goto } from '$app/navigation';
     import { createAuthRedirect } from '$lib/helpers/utils';
     import Button, { type ButtonProps } from '$lib/components/ui/button/button.svelte';
     import type { Snippet } from 'svelte';
     import { page } from '$app/state';
+    import { FollowCache } from '$lib/helpers/classes/FollowCache.svelte';
+    import { LoaderCircleIcon } from '@lucide/svelte';
 
     let {
         userId,
+        optimistic = true,
         ref = $bindable(null),
         onupdate,
         children,
         ...props
     }: {
         userId: string;
+        optimistic?: boolean;
         onupdate?: (following: boolean) => void;
         children?: Snippet<[data: { following: boolean; loading: boolean; }]>;
     } & Omit<ButtonProps, 'children'> = $props();
 
+    const followCache = FollowCache.context.get();
     const session = auth.useSession();
-    const following = resource(
-        () => userId,
-        async (userId) => {
-            const response = await fetch(resolve('/(app)/api/artist/[artistId]/follow', { artistId: userId }));
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch follow status');
-            }
-
-            const data = await response.json();
-            return data.following;
-        },
-        {
-            initialValue: null
-        }
-    );
-
-    let isLoading = $state(false);
+    let following = $derived(followCache.following.get(userId));
+    let isLoading = $derived(!optimistic && followCache.pending.some(p => p.userId === userId && p.type === 'following'));
 
     async function toggleFollow() {
         if (!$session.data?.user) {
@@ -47,27 +35,13 @@
             return;
         }
 
-        isLoading = true;
+        const following = await followCache.updateFollowingStatus({
+            userId,
+            status: 'toggle',
+            optimistic
+        });
 
-        const response = fetch(
-            resolve('/(app)/api/artist/[artistId]/follow', { artistId: userId }),
-            {
-                method: following.current ? 'DELETE' : 'POST'
-            }
-        );
-
-
-        following.mutate(!following.current);
-        isLoading = false;
-
-        const res = await response;
-
-        if (!res.ok) {
-            following.mutate(!following.current);
-            throw new Error('Failed to toggle follow status');
-        }
-
-        onupdate?.(following.current);
+        onupdate?.(following);
     }
 </script>
 
@@ -75,12 +49,14 @@
     bind:ref
     {...props}
     href={!$session.data?.user ? createAuthRedirect('signin', page.url) : undefined}
-    onclick={isLoading || following.current === null ? undefined : toggleFollow}
+    onclick={isLoading || following !== undefined ? toggleFollow : undefined}
 >
     {#if children}
-        {@render children?.({ following: following.current, loading: isLoading })}
+        {@render children?.({ following: !!following, loading: isLoading })}
     {:else}
-        {#if following.current}
+        {#if isLoading}
+            <LoaderCircleIcon class="animate-spin"/>
+        {:else if following}
             Unfollow
         {:else}
             Follow

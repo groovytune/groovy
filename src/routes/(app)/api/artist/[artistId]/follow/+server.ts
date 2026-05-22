@@ -58,7 +58,7 @@ export async function DELETE({ params, locals }) {
         throw error(400, 'You cannot unfollow yourself');
     }
 
-    const hasLiked = await prisma.userFollow.findUnique({
+    const isFollowing = await prisma.userFollow.findUnique({
         where: {
             followerId_userId: {
                 userId: params.artistId,
@@ -67,7 +67,7 @@ export async function DELETE({ params, locals }) {
         }
     });
 
-    if (hasLiked) {
+    if (isFollowing) {
         await prisma.userFollow.delete({
             where: {
                 followerId_userId: {

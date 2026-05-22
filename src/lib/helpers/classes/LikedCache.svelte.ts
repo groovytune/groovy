@@ -41,7 +41,7 @@ export class LikedCache {
         const promise = req(endpoint)
             .then(res => {
                 if (!res.ok) {
-                    throw new Error('Failed to fetch like status');
+                    throw new Error(`Failed to fetch like status: ${res.statusText}`);
                 }
 
                 return res.json() as Promise<LikedCache.Response>;
@@ -100,7 +100,7 @@ export class LikedCache {
                 this._setCachedValue(options.type, options.id, cached ?? !status);
             }
 
-            throw new Error('Failed to update like status');
+            throw new Error(`Failed to update like status: ${response.statusText}`);
         }
 
         if (!optimistic) {
