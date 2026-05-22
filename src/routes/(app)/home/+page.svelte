@@ -19,7 +19,7 @@
         <h2 class="text-lg font-semibold">Trending</h2>
         <p>Some trending content...</p>
     </aside>
-    <section class="w-full h-[200vh] max-w-2xl flex flex-col gap-4">
+    <section class="w-full min-h-[200vh] max-w-2xl flex flex-col gap-4 pb-5">
         <Item variant="outline" size="sm" class="bg-card rounded-xl">
             <ItemMedia>
                 <Avatar class="size-9">
