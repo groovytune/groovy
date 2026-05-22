@@ -36,6 +36,8 @@
         },
         {
             debounce: 500,
+            // eslint-disable-next-line svelte/no-unused-svelte-ignore
+            // svelte-ignore state_referenced_locally
             lazy: !initialFetch
         }
     );
