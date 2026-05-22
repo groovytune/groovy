@@ -24,6 +24,10 @@ export async function GET({ params, locals }) {
                     image: true
                 }
             }
+        },
+        cacheStrategy: {
+            ttl: 300,
+            swr: 60
         }
     }) as Record<'user', PartialUser>|null;
 

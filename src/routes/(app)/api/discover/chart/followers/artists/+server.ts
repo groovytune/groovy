@@ -35,7 +35,11 @@ export async function GET({ url }) {
                 _count: 'desc'
             }
         },
-        take: take.data ?? 20
+        take: take.data ?? 20,
+        cacheStrategy: {
+            ttl: 300,
+            swr: 60
+        }
     });
 
     return json(

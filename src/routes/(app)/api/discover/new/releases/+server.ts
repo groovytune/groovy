@@ -50,6 +50,10 @@ export async function GET({ url }) {
             createdAt: 'desc',
         },
         take: take.data || 40,
+        cacheStrategy: {
+            ttl: 3600,
+            swr: 60
+        }
     });
 
     return json(

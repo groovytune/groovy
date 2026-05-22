@@ -33,8 +33,19 @@ export async function GET({ url }) {
                     sort: order.data ?? 'asc',
                 }
             }
-            : { name: order.data ?? 'asc' }
+            : { name: order.data ?? 'asc' },
+        cacheStrategy: {
+            ttl: 3600,
+            swr: 300
+        }
     });
 
-    return json(genres);
+    return json(
+        genres,
+        {
+            headers: {
+                'Cache-Control': 'public, max-age=3600'
+            }
+        }
+    );
 }

@@ -27,6 +27,10 @@ export async function GET({ params, locals, url, fetch }) {
                     cover: true
                 }
             }
+        },
+        cacheStrategy: {
+            ttl: 120,
+            swr: 60
         }
     }) as Track & {
         release: Record<'cover', string|null>;

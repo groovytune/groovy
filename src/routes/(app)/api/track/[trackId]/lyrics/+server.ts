@@ -17,6 +17,10 @@ export async function GET({ params, locals }) {
                         : { privacy: { not: 'PRIVATE' } }
                 }
             }
+        },
+        cacheStrategy: {
+            ttl: 300,
+            swr: 60
         }
     });
 
@@ -24,5 +28,12 @@ export async function GET({ params, locals }) {
         throw error(404, 'Track not found');
     }
 
-    return json(lyrics);
+    return json(
+        lyrics,
+        {
+            headers: {
+                'Cache-Control': 'public, max-age=300'
+            }
+        }
+    );
 }

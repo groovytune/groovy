@@ -9,6 +9,10 @@ export async function GET({ params }) {
                     userId: params.artistId
                 }
             }
+        },
+        cacheStrategy: {
+            ttl: 3600,
+            swr: 300
         }
     });
 
@@ -16,7 +20,7 @@ export async function GET({ params }) {
         { count: streams },
         {
             headers: {
-                'Cache-Control': 'public, max-age=300'
+                'Cache-Control': 'public, max-age=3600'
             }
         }
     );

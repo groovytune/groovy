@@ -27,6 +27,10 @@ export async function GET({ locals }) {
             }
         },
         take: 4,
+        cacheStrategy: {
+            ttl: 3600,
+            swr: 300
+        }
     });
 
     return json(

@@ -19,6 +19,10 @@ export async function GET({ params, locals, url, fetch }) {
         },
         select: {
             cover: true
+        },
+        cacheStrategy: {
+            ttl: 120,
+            swr: 60
         }
     });
 

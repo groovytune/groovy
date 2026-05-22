@@ -17,6 +17,10 @@ export async function GET({ params, locals }) {
                         : { privacy: { not: 'PRIVATE' } }
                 }
             }
+        },
+        cacheStrategy: {
+            ttl: 3600,
+            swr: 60
         }
     });
 
@@ -24,7 +28,7 @@ export async function GET({ params, locals }) {
         { count: streams },
         {
             headers: {
-                'Cache-Control': 'public, max-age=300'
+                'Cache-Control': 'public, max-age=3600'
             }
         }
     );

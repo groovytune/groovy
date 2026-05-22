@@ -21,6 +21,10 @@ export async function GET({ params, locals, request, url }) {
         select: {
             id: true,
             file: true
+        },
+        cacheStrategy: {
+            ttl: 3600,
+            swr: 300
         }
     });
 

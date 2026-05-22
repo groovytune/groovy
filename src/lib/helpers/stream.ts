@@ -20,7 +20,7 @@ export async function countStream(options: CountStreamOptions): Promise<boolean>
         },
         cacheStrategy: {
             swr: 60,
-            ttl: 2 * 60
+            ttl: 120
         }
     });
 

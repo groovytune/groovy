@@ -26,6 +26,10 @@ export async function GET({ params, locals, url }) {
                 ...(before ? { lt: z.coerce.date().safeParse(before).data } : {}),
                 ...(after ? { gt: z.coerce.date().safeParse(after).data } : {})
             }
+        },
+        cacheStrategy: {
+            ttl: 3600,
+            swr: 300
         }
     });
 

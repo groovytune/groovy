@@ -27,6 +27,10 @@ export async function GET({ params, url }) {
             : undefined,
         orderBy: {
             id: order.data ?? 'desc'
+        },
+        cacheStrategy: {
+            ttl: 300,
+            swr: 60
         }
     });
 
