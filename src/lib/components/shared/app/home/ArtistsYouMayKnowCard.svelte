@@ -23,10 +23,10 @@
 <Card>
     <CardHeader>
         <CardTitle>
-            Artists To Follow
+            Artists You May Know
         </CardTitle>
         <CardDescription>
-            Discover new artists
+            Based on your followed artists
         </CardDescription>
         <CardAction>
             <Button variant="outline" size="sm" disabled={artists.loading} onclick={() => artists.refetch()}>

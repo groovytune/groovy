@@ -22,6 +22,16 @@ export async function GET({ locals }) {
             followers: {
                 none: {
                     followerId: locals.user.id
+                },
+                // the user is followed by an artist that the current user follows, so we can suggest them
+                some: {
+                    follower: {
+                        followers: {
+                            some: {
+                                followerId: locals.user.id
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -40,5 +50,12 @@ export async function GET({ locals }) {
         take: 4
     });
 
-    return json(artists);
+    return json(
+        artists,
+        {
+            headers: {
+                'Cache-Control': 'public, max-age=3600'
+            }
+        }
+    );
 }

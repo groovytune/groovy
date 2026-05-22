@@ -3,12 +3,12 @@
     import { UserRound, UserRoundPlusIcon } from '@lucide/svelte';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
     import { Item, ItemContent, ItemMedia } from '$lib/components/ui/item';
-    import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '../../../lib/components/ui/card';
+    import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../lib/components/ui/card';
     import { Button } from '../../../lib/components/ui/button';
     import { createAuthRedirect } from '../../../lib/helpers/utils';
     import { page } from '$app/state';
-    import TrackItem from '../../../lib/components/shared/app/release/track/TrackItem.svelte';
-    import SuggestedArtistsCard from '../../../lib/components/shared/app/home/SuggestedArtistsCard.svelte';
+    import ArtistsYouMayKnow from '../../../lib/components/shared/app/home/ArtistsYouMayKnowCard.svelte';
+    import SuggestedTracksCard from '../../../lib/components/shared/app/home/SuggestedTracksCard.svelte';
 
     const session = auth.useSession();
 </script>
@@ -58,44 +58,8 @@
                 </CardContent>
             </Card>
         {:else}
-            <SuggestedArtistsCard/>
-            <Card>
-                <CardHeader>
-                    <CardTitle>
-                        Suggested Tracks
-                    </CardTitle>
-                    <CardDescription>
-                        Discover music
-                    </CardDescription>
-                    <CardAction>
-                        <Button variant="outline" size="sm">
-                            Refresh
-                        </Button>
-                    </CardAction>
-                </CardHeader>
-                <CardContent class="grid gap-2">
-                    {#each { length: 5 }}
-                        <TrackItem
-                            cover
-                            class="p-0 bg-transparent!"
-                            track={{
-                                id: '1',
-                                name: 'Sample Track',
-                                duration: 240,
-                                cover: null,
-                                releaseId: '1',
-                                file: 'e',
-                                explicit: false,
-                                position: 1,
-                                lyricsId: null,
-                                metadata: {},
-                                createdAt: new Date(),
-                                updatedAt: new Date()
-                            }}
-                        />
-                    {/each}
-                </CardContent>
-            </Card>
+            <ArtistsYouMayKnow/>
+            <SuggestedTracksCard/>
             <footer class="text-sm text-muted-foreground text-center mt-4">
                 <p>&copy; {new Date().getFullYear()} Groovy. All rights reserved.</p>
             </footer>
