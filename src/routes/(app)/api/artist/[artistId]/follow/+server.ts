@@ -30,20 +30,22 @@ export async function POST({ params, locals }) {
         throw error(400, 'You cannot follow yourself');
     }
 
-    let data = await prisma.userFollow.findUnique({
-        where: {
-            followerId_userId: {
-                userId: params.artistId,
-                followerId: locals.user.id
+    const data = await prisma.$transaction(async (tx) => {
+        const result = await tx.userFollow.findUnique({
+            where: {
+                followerId_userId: {
+                    userId: params.artistId,
+                    followerId: locals.user!.id
+                }
             }
-        }
-    });
+        });
 
-    data ??= await prisma.userFollow.create({
-        data: {
-            userId: params.artistId,
-            followerId: locals.user.id
-        }
+        return result ?? await tx.userFollow.create({
+            data: {
+                userId: params.artistId,
+                followerId: locals.user!.id
+            }
+        })
     });
 
     return json(data);
@@ -58,25 +60,27 @@ export async function DELETE({ params, locals }) {
         throw error(400, 'You cannot unfollow yourself');
     }
 
-    const isFollowing = await prisma.userFollow.findUnique({
-        where: {
-            followerId_userId: {
-                userId: params.artistId,
-                followerId: locals.user.id
-            }
-        }
-    });
-
-    if (isFollowing) {
-        await prisma.userFollow.delete({
+    await prisma.$transaction(async (tx) => {
+        const isFollowing = await tx.userFollow.findUnique({
             where: {
                 followerId_userId: {
                     userId: params.artistId,
-                    followerId: locals.user.id
+                    followerId: locals.user!.id
                 }
             }
         });
-    }
+
+        if (!isFollowing) return;
+
+        await tx.userFollow.delete({
+            where: {
+                followerId_userId: {
+                    userId: params.artistId,
+                    followerId: locals.user!.id
+                }
+            }
+        });
+    });
 
     return json({ success: true });
 }

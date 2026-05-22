@@ -240,26 +240,32 @@ export const actions = {
             throw redirect(302, createAuthRedirect('signin', url));
         }
 
-        const release = await prisma.release.findUnique({
-            where: {
-                id: params.releaseId,
-                userId: locals.user.id
-            },
-            select: {
-                id: true
-            }
+        const [releases, tracks] = await prisma.$transaction(async (tx) => {
+            const release = await tx.release.findUnique({
+                where: {
+                    id: params.releaseId,
+                    userId: locals.user!.id
+                },
+                select: {
+                    id: true
+                }
+            });
+
+            if (!release) return [null, null];
+
+            const tracks = await tx.track.deleteMany({
+                where: {
+                    id: { in: form.data.trackIds },
+                    releaseId: release.id
+                }
+            });
+
+            return [release, tracks];
         });
 
-        if (!release) {
-            throw fail(404, { form, message: 'Release not found.' });
+        if (!releases || !tracks) {
+            return fail(404, { form, message: 'Release not found.' });
         }
-
-        const tracks = await prisma.track.deleteMany({
-            where: {
-                id: { in: form.data.trackIds },
-                releaseId: release.id
-            }
-        });
 
         if (!tracks.count) {
             return fail(404, { form, message: 'No tracks found to delete.' });

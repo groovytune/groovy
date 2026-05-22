@@ -36,20 +36,22 @@ export async function POST({ params, locals }) {
         return json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    let data = await prisma.releaseLike.findUnique({
-        where: {
-            releaseId_userId: {
-                releaseId: params.releaseId,
-                userId: locals.user.id
+    const data = await prisma.$transaction(async (tx) => {
+        const result = await tx.releaseLike.findUnique({
+            where: {
+                releaseId_userId: {
+                    releaseId: params.releaseId,
+                    userId: locals.user!.id
+                }
             }
-        }
-    });
+        });
 
-    data ??= await prisma.releaseLike.create({
-        data: {
-            userId: locals.user.id,
-            releaseId: params.releaseId
-        }
+        return result ?? await tx.releaseLike.create({
+            data: {
+                userId: locals.user!.id,
+                releaseId: params.releaseId
+            }
+        })
     });
 
     return json(data);
@@ -60,25 +62,27 @@ export async function DELETE({ params, locals }) {
         return json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const hasLiked = await prisma.releaseLike.findUnique({
-        where: {
-            releaseId_userId: {
-                releaseId: params.releaseId,
-                userId: locals.user.id
-            }
-        }
-    });
-
-    if (hasLiked) {
-        await prisma.releaseLike.delete({
+    await prisma.$transaction(async (tx) => {
+        const hasLiked = await tx.releaseLike.findUnique({
             where: {
                 releaseId_userId: {
                     releaseId: params.releaseId,
-                    userId: locals.user.id
+                    userId: locals.user!.id
                 }
             }
         });
-    }
+
+        if (!hasLiked) return;
+
+        await tx.releaseLike.delete({
+            where: {
+                releaseId_userId: {
+                    releaseId: params.releaseId,
+                    userId: locals.user!.id
+                }
+            }
+        });
+    });
 
     return json({ success: true });
 }
