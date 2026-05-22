@@ -19,15 +19,38 @@
     );
 
     onMount(async () => {
-        if (!('wakeLock' in navigator) || !navigator.wakeLock) return;
-
-        wakelock = await navigator.wakeLock.request('screen');
+        await requestWakeLock();
     });
 
     onDestroy(() => {
         wakelock?.release();
     });
+
+    async function requestWakeLock() {
+        if (!('wakeLock' in navigator) || !navigator.wakeLock) return;
+
+        if (wakelock) return;
+
+        try {
+            wakelock = await navigator.wakeLock.request('screen');
+            wakelock.addEventListener('release', () => {
+                wakelock = null;
+            }, { once: true });
+        } catch (err) {
+            console.error('Failed to acquire wake lock:', err);
+        }
+    }
 </script>
+
+<svelte:window
+    onvisibilitychange={() => {
+        if (document.visibilityState === 'visible') {
+            requestWakeLock();
+        } else {
+            wakelock?.release();
+        }
+    }}
+/>
 
 {@render children?.()}
 
