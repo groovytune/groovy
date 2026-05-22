@@ -28,8 +28,10 @@ model User {
   accounts      Account[]
   releases      Release[]
   streamed      Stream[]
+  posts         Post[]
   likedReleases ReleaseLike[]
   likedTracks   TrackLike[]
+  likedPosts    PostLike[]
   followers     UserFollow[]  @relation("UserFollowers")
   following     UserFollow[]  @relation("UserFollowing")
 
@@ -208,4 +210,28 @@ model UserFollow {
   createdAt  DateTime @default(now())
 
   @@unique([followerId, userId])
+}
+
+model Post {
+    id       String   @id @default(cuid())
+    userId   String
+    user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    content  String
+    referenceId String?
+    reference   Post?    @relation("PostReference", fields: [referenceId], references: [id], onDelete: SetNull)
+    likes    PostLike[]
+    replies  Post[]   @relation("PostReference")
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model PostLike {
+    id       String   @id @default(cuid())
+    postId   String
+    post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+    userId   String
+    user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+
+    @@unique([postId, userId])
 }
