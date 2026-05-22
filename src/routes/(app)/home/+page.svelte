@@ -50,16 +50,16 @@
                             </AvatarFallback>
                         </Avatar>
                     </a>
-                    <a href="#/" class="flex flex-col w-full">
-                        <CardTitle class="text-sm font-medium">
+                    <a href="#/" class="flex flex-col w-full truncate">
+                        <CardTitle class="text-sm font-medium text-balance line-clamp-2">
                             Sample Post Title
                         </CardTitle>
-                        <CardDescription class="text-xs text-muted-foreground">
-                            @sampleuser &#183; 2 hours ago
+                        <CardDescription class="text-xs text-muted-foreground text-balance line-clamp-1">
+                            <span class="hidden sm:inline">@sampleuser &#183; </span>2 hours ago
                         </CardDescription>
                     </a>
                     <div class="flex gap-2 w-fit">
-                        <Button variant="outline" size="sm" class="ml-auto">
+                        <Button variant="outline" size="sm" class="ml-auto hidden sm:inline-flex">
                             Follow
                         </Button>
                         <Button variant="outline" size="icon-sm" class="ml-auto">
@@ -79,7 +79,7 @@
                     </Button>
                     <Button variant="outline" size="sm">
                         <MessageCircle/>
-                        Comments
+                        Reply
                     </Button>
                     <Button variant="outline" size="sm">
                         <ForwardIcon/>
