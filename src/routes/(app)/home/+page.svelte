@@ -3,7 +3,7 @@
     import { UserRound, UserRoundPlusIcon } from '@lucide/svelte';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
     import { Item, ItemContent, ItemMedia } from '$lib/components/ui/item';
-    import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
+    import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
     import { Button } from '$lib/components/ui/button';
     import { createAuthRedirect } from '$lib/helpers/utils';
     import { page } from '$app/state';
@@ -14,10 +14,7 @@
     import type { GETResponse as FeedResponse } from '../api/feed/+server';
     import PostCard from '$lib/components/shared/app/post/PostCard.svelte';
     import { onMount } from 'svelte';
-    import type { GETResponse as MostLikedReleases } from '../api/discover/chart/likes/releases/+server';
-    import { Image } from '../../../lib/client/image';
-    import { ImageFormat } from 'appwrite';
-    import coverPlaceholder from '$lib/assets/cover.webp';
+    import DiscoverReleasesCard from '../../../lib/components/shared/app/home/DiscoverReleasesCard.svelte';
 
     const session = auth.useSession();
 
@@ -66,45 +63,7 @@
 
 <div class="flex gap-4 px-5 justify-center">
     <aside class="w-full h-fit max-w-xs hidden xl:grid gap-4">
-        <Card>
-            <CardHeader>
-                <CardTitle>
-                    Discover
-                </CardTitle>
-                <CardDescription>
-                   Explore a world of creativity inspired by music.
-                </CardDescription>
-                <CardAction>
-                    <Button href={resolve('/(app)/discover')} variant="outline" size="sm">
-                        View All
-                    </Button>
-                </CardAction>
-            </CardHeader>
-            <CardContent>
-                {#await fetch(resolve('/(app)/api/discover/chart/likes/releases') + '?take=3').then(res => res.json() as Promise<MostLikedReleases>) then data}
-                    <div class="grid grid-cols-3 gap-2">
-                        {#each data as release (release.id)}
-                            {@const coverURL = release.cover
-                                ? Image.getPreviewPath({
-                                    fileId: release.cover,
-                                    width: 300,
-                                    height: 300,
-                                    output: ImageFormat.Webp
-                                })
-                                : coverPlaceholder}
-                            <a
-                                href={resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
-                                class="flex flex-col text-center"
-                            >
-                                <img src={coverURL} alt={release.name} class="w-full aspect-square rounded-md object-cover mb-2"/>
-                                <p class="text-sm font-medium line-clamp-1">{release.name}</p>
-                                <p class="text-xs text-muted-foreground line-clamp-1">{release.user.name}</p>
-                            </a>
-                        {/each}
-                    </div>
-                {/await}
-            </CardContent>
-        </Card>
+        <DiscoverReleasesCard/>
     </aside>
     <section class="w-full max-w-xl flex flex-col gap-4 pb-5">
         <Item variant="outline" size="sm" class="bg-card rounded-xl">
