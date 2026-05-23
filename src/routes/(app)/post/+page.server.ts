@@ -10,8 +10,6 @@ export async function load({ locals, url }) {
     if (!locals.session?.user) {
         throw redirect(302, createAuthRedirect('signin', url));
     }
-
-    return {};
 }
 
 export const actions = {

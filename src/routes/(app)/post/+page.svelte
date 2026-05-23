@@ -3,8 +3,6 @@
     import PostForm from '$lib/components/shared/app/post/forms/PostForm.svelte';
     import { SquarePenIcon } from '@lucide/svelte';
     import PostFormFields from '$lib/components/shared/app/post/forms/PostFormFields.svelte';
-
-    let { data } = $props();
 </script>
 
 <PostForm class="grid">
