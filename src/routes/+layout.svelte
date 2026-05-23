@@ -20,7 +20,7 @@
 	import { ReleaseInfoCache } from '$lib/helpers/classes/ReleaseInfoCache.svelte.js';
 	import { PlayerLastNavigate } from '$lib/contexts/player.js';
 	import { LikedCache } from '$lib/helpers/classes/LikedCache.svelte.js';
-	import { FollowCache } from '../lib/helpers/classes/FollowCache.svelte.js';
+	import { FollowCache } from '$lib/helpers/classes/FollowCache.svelte.js';
 
 	let { children, data } = $props();
 

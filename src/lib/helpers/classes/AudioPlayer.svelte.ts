@@ -1,6 +1,6 @@
 import type { Lyrics, Track as RawTrack } from '$lib/server/prisma/browser';
 import { Context, resource, useEventListener } from 'runed';
-import { ImageFormat, ImageGravity } from 'appwrite';
+import { ImageFormat } from 'appwrite';
 import coverPlaceholder from '$lib/assets/cover.webp';
 import { ReleaseInfoCache } from './ReleaseInfoCache.svelte';
 import { Image } from '$lib/client/image';
@@ -77,10 +77,9 @@ export class AudioPlayer {
         this.currentTrack?.cover || this.releaseInfo.current?.cover
             ? Image.getPreviewPath({
                 fileId: (this.currentTrack?.cover || this.releaseInfo.current?.cover)!,
-                height: 800,
-                width: 800,
-                gravity: ImageGravity.Center,
-                output: ImageFormat.Jpeg
+                height: 500,
+                width: 500,
+                output: ImageFormat.Webp
             })
             : coverPlaceholder
     );
@@ -91,7 +90,6 @@ export class AudioPlayer {
                 fileId: (this.currentTrack?.cover || this.releaseInfo.current?.cover)!,
                 height: 300,
                 width: 300,
-                gravity: ImageGravity.Center,
                 output: ImageFormat.Webp
             })
             : coverPlaceholder

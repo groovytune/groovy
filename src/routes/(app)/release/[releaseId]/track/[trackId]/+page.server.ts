@@ -3,7 +3,6 @@ import { type PartialUser } from '$lib/helpers/utils';
 import { prisma } from '$lib/server/prisma';
 import { resolve } from '$app/paths';
 import { definePageMetaTags } from 'svelte-meta-tags';
-import { ImageGravity } from 'appwrite';
 import { ImageFormat } from 'appwrite';
 import type { Lyrics, Release, Track } from '$lib/server/prisma/browser.js';
 import { Image } from '$lib/client/image.js';
@@ -66,9 +65,8 @@ export async function load({ params, locals, url }) {
                 '/',
                 Image.getPreviewPath({
                     fileId: track.cover || track.release.cover!,
-                    height: 600,
-                    width: 600,
-                    gravity: ImageGravity.Center,
+                    height: 512,
+                    width: 512,
                     output: ImageFormat.Jpeg
                 })
             ),
@@ -94,8 +92,8 @@ export async function load({ params, locals, url }) {
                     {
                         url: coverImage.toString(),
                         alt: `${track.name} cover image`,
-                        width: 600,
-                        height: 600,
+                        width: 512,
+                        height: 512,
                         type: 'image/jpeg'
                     }
                 ] : undefined

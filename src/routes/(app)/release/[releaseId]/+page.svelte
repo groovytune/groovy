@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ImageFormat, ImageGravity } from 'appwrite';
+    import { ImageFormat } from 'appwrite';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
@@ -16,7 +16,7 @@
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import { Image } from '$lib/client/image.js';
     import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
-    import { createUserProfileURL } from '../../../../lib/helpers/utils.js';
+    import { createUserProfileURL } from '$lib/helpers/utils.js';
 
     let { data } = $props();
 
@@ -29,9 +29,8 @@
         data.release.cover
             ? Image.getPreviewPath({
                 fileId: data.release.cover,
-                width: 800,
-                height: 800,
-                gravity: ImageGravity.Center,
+                width: 500,
+                height: 500,
                 output: ImageFormat.Webp
             })
             : coverPlaceholder

@@ -8,7 +8,7 @@
     import { Button } from '$lib/components/ui/button';
     import { resolve } from '$app/paths';
     import coverPlaceholder from '$lib/assets/cover.webp';
-    import { ImageFormat, ImageGravity } from 'appwrite';
+    import { ImageFormat } from 'appwrite';
     import { createUserProfileURL, formatDuration } from '$lib/helpers/utils';
     import PlayerDropdownItems from '$lib/components/shared/app/player/PlayerDropdownItems.svelte';
     import DeleteTrackDialog from '../dialogs/DeleteTrackDialog.svelte';
@@ -53,7 +53,6 @@
                 fileId: track.cover,
                 height: 100,
                 width: 100,
-                gravity: ImageGravity.Center,
                 output: ImageFormat.Webp
             })
             : coverPlaceholder

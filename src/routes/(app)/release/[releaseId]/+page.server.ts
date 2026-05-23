@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
 import type { Release, Track } from '$lib/server/prisma/client.js';
 import { definePageMetaTags } from 'svelte-meta-tags';
-import { ImageFormat, ImageGravity } from 'appwrite';
+import { ImageFormat } from 'appwrite';
 import type { PartialUser } from '$lib/helpers/utils.js';
 import { Image } from '$lib/client/image.js';
 import path from 'node:path';
@@ -54,9 +54,8 @@ export async function load({ params, locals, url }) {
                 '/',
                 Image.getPreviewPath({
                     fileId: release.cover,
-                    height: 600,
-                    width: 600,
-                    gravity: ImageGravity.Center,
+                    height: 512,
+                    width: 512,
                     output: ImageFormat.Jpeg
                 })
             ),

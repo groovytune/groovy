@@ -11,7 +11,7 @@
     import placeholderCover from '$lib/assets/cover.webp';
     import { resolve } from '$app/paths';
     import ReleaseFormFields from '$lib/components/shared/app/release/forms/fields/ReleaseFormFields.svelte';
-    import { ImageFormat, ImageGravity } from 'appwrite';
+    import { ImageFormat } from 'appwrite';
     import type { GETResponse } from '../../../api/release/[releaseId]/tracks/+server.js';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte.js';
     import DeleteReleaseDialog from '$lib/components/shared/app/release/dialogs/DeleteReleaseDialog.svelte';
@@ -68,9 +68,8 @@
             : data.release.cover
                 ? Image.getPreviewPath({
                     fileId: data.release.cover,
-                    width: 800,
-                    height: 800,
-                    gravity: ImageGravity.Center,
+                    width: 500,
+                    height: 500,
                     output: ImageFormat.Webp
                 })
                 : placeholderCover

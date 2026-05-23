@@ -1,7 +1,7 @@
 <script lang="ts">
     import { untrack } from 'svelte';
     import coverPlaceholder from '$lib/assets/cover.webp';
-    import { ImageFormat, ImageGravity } from 'appwrite';
+    import { ImageFormat } from 'appwrite';
     import { beforeNavigate } from '$app/navigation';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import { Image } from '$lib/client/image';
@@ -27,7 +27,6 @@
                             fileId: cover,
                             width: 512,
                             height: 512,
-                            gravity: ImageGravity.Center,
                             output: ImageFormat.Jpeg
                         })
                         : coverPlaceholder

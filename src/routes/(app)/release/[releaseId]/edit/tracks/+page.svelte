@@ -7,7 +7,7 @@
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
     import { Button } from '$lib/components/ui/button';
     import { auth } from '$lib/client/auth.js';
-    import { ImageFormat, ImageGravity } from 'appwrite';
+    import { ImageFormat } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
     import type { SuperForm } from 'sveltekit-superforms';
     import type z from 'zod';
@@ -35,9 +35,8 @@
         data.release.cover
             ? Image.getPreviewPath({
                 fileId: data.release.cover,
-                height: 800,
-                width: 800,
-                gravity: ImageGravity.Center,
+                height: 500,
+                width: 500,
                 output: ImageFormat.Webp
             })
             : placeholderCover

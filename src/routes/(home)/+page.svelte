@@ -9,7 +9,7 @@
     import { onMount } from 'svelte';
     import { cn } from '$lib/helpers/utils';
     import { AspectRatio } from '$lib/components/ui/aspect-ratio';
-    import { ImageFormat, ImageGravity } from 'appwrite';
+    import { ImageFormat } from 'appwrite';
     import placeholderCover from '$lib/assets/cover.webp';
     import AudioPlayerPreview from '$lib/components/shared/home/AudioPlayerPreview.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
@@ -107,7 +107,6 @@
                 fileId: release.cover,
                 height: 500,
                 width: 500,
-                gravity: ImageGravity.Center,
                 output: ImageFormat.Webp
             })
             : placeholderCover

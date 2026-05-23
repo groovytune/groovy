@@ -5,7 +5,6 @@ import { prisma } from '$lib/server/prisma.js';
 import { definePageMetaTags } from 'svelte-meta-tags';
 import { Image } from '$lib/client/image.js';
 import path from 'node:path';
-import { ImageGravity } from 'node-appwrite';
 import { ImageFormat } from 'node-appwrite';
 
 export async function load({ fetch, url }) {
@@ -42,9 +41,8 @@ export async function load({ fetch, url }) {
                 '/',
                 Image.getPreviewPath({
                     fileId: tracks[0].cover,
-                    height: 600,
-                    width: 600,
-                    gravity: ImageGravity.Center,
+                    height: 512,
+                    width: 512,
                     output: ImageFormat.Jpeg
                 })
             ),
@@ -66,8 +64,8 @@ export async function load({ fetch, url }) {
                     ? {
                         url: coverImage.toString(),
                         alt: `${tracks[0].name} cover image`,
-                        width: 600,
-                        height: 600
+                        width: 512,
+                        height: 512
                     }
                     : undefined
             }

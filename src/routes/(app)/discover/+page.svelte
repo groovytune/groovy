@@ -7,7 +7,7 @@
     import type { GETResponse as GETNewReleases } from '../api/discover/new/releases/+server';
     import { resource } from 'runed';
     import { Image } from '$lib/client/image';
-    import { ImageFormat, ImageGravity } from 'appwrite';
+    import { ImageFormat } from 'appwrite';
     import { ScrollArea } from '$lib/components/ui/scroll-area';
     import { DateTime } from 'luxon';
     import type { GETResponse as GETMostLikedReleases } from '../api/discover/chart/likes/releases/+server';
@@ -155,7 +155,6 @@
                     fileId: item.cover,
                     width: 300,
                     height: 300,
-                    gravity: ImageGravity.Center,
                     output: ImageFormat.Webp
                 })
                 : coverPlaceholder,
@@ -219,7 +218,6 @@
                     fileId: item.cover || item.release.cover!,
                     width: 300,
                     height: 300,
-                    gravity: ImageGravity.Center,
                     output: ImageFormat.Webp
                 })
                 : coverPlaceholder,
@@ -244,7 +242,6 @@
                     fileId: item.cover,
                     width: 300,
                     height: 300,
-                    gravity: ImageGravity.Center,
                     output: ImageFormat.Webp
                 })
                 : coverPlaceholder,
