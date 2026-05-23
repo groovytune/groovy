@@ -215,7 +215,7 @@
         {/snippet}
     </PostForm>
     {#if replies.length}
-        <div class="w-full max-w-2xl grid gap-2 pt-2 sm:px-0 px-5">
+        <div class="w-full max-w-2xl grid gap-4 pt-2 sm:px-0 px-5">
             {#each replies as reply (reply.id)}
                 <PostCard data={reply} class="rounded-lg"/>
             {/each}
