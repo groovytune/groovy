@@ -1,10 +1,11 @@
 <script lang="ts">
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import coverPlaceholder from '$lib/assets/cover.webp';
-    import { resolve } from '$app/paths';
     import PlayerGradientBackground from '$lib/components/shared/app/player/PlayerGradientBackground.svelte';
     import { fade } from 'svelte/transition';
     import { onDestroy, onMount } from 'svelte';
+    import { Image } from '$lib/client/image';
+    import { ImageFormat } from 'appwrite';
 
     let { children } = $props();
 
@@ -13,8 +14,13 @@
     let wakelock: WakeLockSentinel|null = $state(null);
     let backgroundLoaded = $state(false);
     let coverAPIURL = $derived(
-        audioPlayer.currentTrack
-            ? resolve('/(app)/api/track/[trackId]/cover', { trackId: audioPlayer.currentTrack?.id ?? '' }) + '?size=300'
+        audioPlayer.currentTrack?.cover
+            ? Image.getPreviewPath({
+                fileId: audioPlayer.currentTrack.cover,
+                width: 300,
+                height: 300,
+                output: ImageFormat.Webp
+            })
             : coverPlaceholder
     );
 
