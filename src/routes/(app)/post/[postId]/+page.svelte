@@ -27,9 +27,9 @@
     });
 </script>
 
-<section class="flex justify-center px-2 pt-5">
-    <div class="w-full max-w-2xl py-5 border rounded-lg grid gap-5">
-        <div class="flex items-center gap-3 px-3">
+<section class="flex justify-center sm:px-2 sm:pt-5">
+    <div class="w-full max-w-2xl py-5 border-y sm:border-x border-x-0 sm:rounded-lg grid gap-5">
+        <div class="flex items-center gap-3 px-5">
             <a href={createUserProfileURL(user)}>
                 <Avatar class="size-10">
                     <AvatarImage src={user.image}/>
