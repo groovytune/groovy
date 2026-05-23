@@ -38,10 +38,6 @@ export async function load({ locals, url, params }) {
                     likes: true
                 }
             }
-        },
-        cacheStrategy: {
-            ttl: 120,
-            swr: 60
         }
     });
 
