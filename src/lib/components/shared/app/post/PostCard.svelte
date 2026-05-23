@@ -13,13 +13,16 @@
     import { resolve } from '$app/paths';
     import PostMediaGrid from './PostMediaGrid.svelte';
     import { Item, ItemContent, ItemMedia, ItemTitle } from '../../../ui/item';
+    import type { ClassValue } from 'clsx';
 
     let {
-        data
+        data,
+        class: className
     }: {
         data: Omit<PostItemData[0], 'reference'> & {
             reference?: Pick<PostItemData[0], 'reference'>;
         };
+        class?: ClassValue;
     } = $props();
 
     const session = auth.useSession();
@@ -29,7 +32,7 @@
     let user = $derived(data.user);
 </script>
 
-<Card class="py-4 gap-2">
+<Card class={["py-4 gap-2", className]}>
     <CardHeader class="flex gap-2 px-4">
         <a href={createUserProfileURL(user)}>
             <Avatar class="size-9">

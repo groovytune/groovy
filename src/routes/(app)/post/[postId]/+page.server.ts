@@ -35,7 +35,8 @@ export async function load({ locals, url, params }) {
             },
             _count: {
                 select: {
-                    likes: true
+                    likes: true,
+                    replies: true
                 }
             }
         }

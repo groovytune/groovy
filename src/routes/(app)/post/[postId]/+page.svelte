@@ -16,6 +16,7 @@
     import { resolve } from '$app/paths';
     import type { GETResponse as RepliesResponse } from '../../api/post/[postId]/replies/+server.js';
     import PostCard from '$lib/components/shared/app/post/PostCard.svelte';
+    import { afterNavigate, beforeNavigate } from '$app/navigation';
 
     let { data } = $props();
 
@@ -24,7 +25,8 @@
     let post = $derived(data.post);
     let user = $derived(post.user);
     let media: { type: 'image'|'video'; url: string; }[] = $state([]);
-    let likes = $derived(post._count.likes);
+    let likeCount = $derived(post._count.likes);
+    let replyCount = $derived(post._count.replies);
 
     let replyTextarea: HTMLTextAreaElement|null = $state(null);
 
@@ -32,11 +34,11 @@
     let isLoading = $state(false);
     let isAtEnd = $state(false);
 
-    async function loadReplies(postId: string) {
+    async function loadReplies() {
         isLoading = true;
 
         const lastPost = replies.at(-1)?.id;
-        const response = await fetch(resolve('/(app)/api/post/[postId]/replies', { postId }) + '?take=3' + (lastPost ? `&after=${lastPost}` : ''))
+        const response = await fetch(resolve('/(app)/api/post/[postId]/replies', { postId: post.id }) + '?take=3' + (lastPost ? `&after=${lastPost}` : ''))
             .then(res => res.ok
                 ? res.json() as Promise<RepliesResponse>
                 : Promise.reject(res)
@@ -60,7 +62,7 @@
         const threshold = document.documentElement.scrollHeight - 100;
 
         if (scrollPosition >= threshold && !isLoading && !isAtEnd) {
-            await loadReplies(post.id);
+            await loadReplies();
         }
     }
 
@@ -69,7 +71,21 @@
             media = await getPostMediaFiles(post.media);
         }
 
-        loadReplies(post.id);
+        if (!replies.length && !isAtEnd) {
+            loadReplies();
+        }
+    });
+
+    beforeNavigate(() => {
+        media = [];
+        replies = [];
+        isAtEnd = false;
+    });
+
+    afterNavigate(() => {
+        if (!replies.length && !isAtEnd) {
+            loadReplies();
+        }
     });
 </script>
 
@@ -127,7 +143,7 @@
                 {post.content}
             </p>
             {#if media.length}
-                 <PostMediaGrid {media} class="mt-4"/>
+                <PostMediaGrid {media} class="mt-4"/>
             {/if}
         </div>
         <div class="px-5 flex gap-2">
@@ -145,16 +161,16 @@
                             liked && "text-primary!"
                         ]}
                         onclick={async () => {
-                            likes = liked ? likes - 1 : likes + 1;
+                            likeCount = liked ? likeCount - 1 : likeCount + 1;
 
                             await toggleLike()
                                 .catch(() => {
-                                    likes = liked ? likes + 1 : likes - 1;
+                                    likeCount = liked ? likeCount + 1 : likeCount - 1;
                                 });
                         }}
                     >
                         <HeartIcon class={[liked && "fill-current"]}/>
-                        {likes ? numberFormatter.format(likes) : 'Like'}
+                        {likeCount ? numberFormatter.format(likeCount) : 'Like'}
                     </Button>
                 {/snippet}
             </LikeButton>
@@ -173,9 +189,13 @@
             content: '',
             referenceId: post.id
         }}
-        class="w-full max-w-2xl grid gap-2"
+        class="w-full max-w-2xl grid gap-2 mt-5 px-5 sm:px-0"
     >
         {#snippet children({ form })}
+            <h2 class="text-lg font-semibold">
+                <MessageCircle class="inline mr-1 mb-1 text-primary size-5"/>
+                {replyCount ? `${numberFormatter.format(replyCount)} Repl${replyCount === 1 ? 'y' : 'ies'}` : 'Reply'}
+            </h2>
             <PostFormFields
                 {form}
                 bind:textarea={replyTextarea}
@@ -184,12 +204,9 @@
         {/snippet}
     </PostForm>
     {#if replies.length}
-        <div class="w-full max-w-2xl py-5 border-y sm:border-x border-x-0 sm:rounded-lg grid gap-5">
-            <h2 class="text-lg font-semibold px-5">
-                Replies
-            </h2>
+        <div class="w-full max-w-2xl grid gap-5 sm:px-0 px-5">
             {#each replies as reply (reply.id)}
-                <PostCard data={reply}/>
+                <PostCard data={reply} class="rounded-lg"/>
             {/each}
         </div>
     {/if}
