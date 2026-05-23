@@ -8,8 +8,8 @@
     import { EllipsisIcon, ForwardIcon, HeartIcon, MessageCircle } from '@lucide/svelte';
     import PostMediaGrid from '$lib/components/shared/app/post/PostMediaGrid.svelte';
     import { onMount } from 'svelte';
-    import LikeButton from '../../../../lib/components/shared/app/LikeButton.svelte';
-    import { numberFormatter } from '../../../../lib/helpers/constants.js';
+    import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
+    import { numberFormatter } from '$lib/helpers/constants.js';
 
     let { data } = $props();
 
@@ -27,7 +27,7 @@
     });
 </script>
 
-<section class="flex justify-center sm:px-2 sm:pt-5">
+<section class="flex justify-center sm:px-2 sm:pt-5 pb-5">
     <div class="w-full max-w-2xl py-5 border-y sm:border-x border-x-0 sm:rounded-lg grid gap-5">
         <div class="flex items-center gap-3 px-5">
             <a href={createUserProfileURL(user)}>
