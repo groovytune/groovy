@@ -47,8 +47,6 @@
         });
     });
 
-    $inspect(liked, 'liked');
-
     async function toggleLike() {
         if (!$session.data?.user) {
             // eslint-disable-next-line svelte/no-navigation-without-resolve
