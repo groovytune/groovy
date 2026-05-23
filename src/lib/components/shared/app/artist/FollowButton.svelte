@@ -53,6 +53,7 @@
 
 <Button
     bind:ref
+    variant={following ? 'outline' : 'default'}
     {...props}
     href={!$session.data?.user ? createAuthRedirect('signin', page.url) : undefined}
     onclick={isLoading || following !== undefined ? toggleFollow : undefined}

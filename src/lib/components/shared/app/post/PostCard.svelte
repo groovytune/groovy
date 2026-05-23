@@ -5,13 +5,12 @@
     import { Button } from '$lib/components/ui/button';
     import { numberFormatter } from '$lib/helpers/constants';
     import type { GETResponse as PostItemData } from '../../../../../routes/(app)/api/feed/+server';
-    import { createUserProfileURL } from '../../../../helpers/utils';
+    import { createUserProfileURL, getPostMediaFiles } from '../../../../helpers/utils';
     import { DateTime } from 'luxon';
     import { auth } from '../../../../client/auth';
     import FollowButton from '../artist/FollowButton.svelte';
     import LikeButton from '../LikeButton.svelte';
     import { resolve } from '$app/paths';
-    import { Appwrite } from '../../../../client/appwrite';
     import PostMediaGrid from './PostMediaGrid.svelte';
 
     let {
@@ -25,31 +24,6 @@
     let likes = $derived(data._count.likes);
     let replies = $derived(data._count.replies);
     let user = $derived(data.user);
-
-    async function getMediaFiles(ids: string[]): Promise<{ type: 'image'|'video'; url: string; }[]> {
-        const files: { type: 'image'|'video'; url: string; }[] = [];
-
-        for (const id of ids) {
-            const data = await Appwrite.storage.getFile({
-                bucketId: 'media',
-                fileId: id
-            }).catch(() => null);
-
-            if (!data) continue;
-
-            const url = Appwrite.storage.getFileView({
-                bucketId: 'media',
-                fileId: id
-            });
-
-            files.push({
-                type: data.mimeType.startsWith('video') ? 'video' : 'image',
-                url
-            });
-        }
-
-        return files;
-    }
 </script>
 
 <Card class="py-4 gap-2">
@@ -70,7 +44,7 @@
                 {#if user.username}
                     @{user.username} &middot;
                 {/if}
-                {DateTime.fromISO(String(data.createdAt)).toRelative()}
+                {DateTime.fromJSDate(new Date(data.createdAt)).toRelative()}
             </CardDescription>
         </a>
         <div class="flex gap-2 w-fit">
@@ -90,9 +64,9 @@
             <p class="line-clamp-3 leading-relaxed whitespace-break-spaces" style="word-wrap: break-word;">
                 {data.content}
             </p>
-            {#await getMediaFiles(data.media) then media}
+            {#await getPostMediaFiles(data.media) then media}
                 {#if media.length}
-                    <PostMediaGrid {media} class="mb-2"/>
+                    <PostMediaGrid {media} preview disabled class="mb-2"/>
                 {/if}
             {/await}
         </a>

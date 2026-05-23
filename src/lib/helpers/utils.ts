@@ -3,6 +3,7 @@ import { clsx, type ClassValue } from "clsx";
 import { DateTime } from 'luxon';
 import { twMerge } from "tailwind-merge";
 import type { User } from '../server/prisma/browser';
+import { Appwrite } from '../client/appwrite';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -61,4 +62,29 @@ export function getLocale(): string {
     }
 
     return 'en-US';
+}
+
+export async function getPostMediaFiles(ids: string[]): Promise<{ type: 'image'|'video'; url: string; }[]> {
+    const files: { type: 'image'|'video'; url: string; }[] = [];
+
+    for (const id of ids) {
+        const data = await Appwrite.storage.getFile({
+            bucketId: 'media',
+            fileId: id
+        }).catch(() => null);
+
+        if (!data) continue;
+
+        const url = Appwrite.storage.getFileView({
+            bucketId: 'media',
+            fileId: id
+        });
+
+        files.push({
+            type: data.mimeType.startsWith('video') ? 'video' : 'image',
+            url
+        });
+    }
+
+    return files;
 }
