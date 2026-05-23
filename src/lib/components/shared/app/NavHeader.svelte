@@ -34,7 +34,7 @@
     )}
 >
     <div class="container h-full flex items-center justify-between gap-6 px-5">
-        <a href={resolve('/')} class="shrink-0 flex items-center gap-1 self-center font-bold font-fugaz sm:text-lg text-xl text-primary">
+        <a href={resolve('/(app)/home')} class="shrink-0 flex items-center gap-1 self-center font-bold font-fugaz sm:text-lg text-xl text-primary">
 			<BoomBoxIcon class="sm:size-6 size-7"/>
 			<span class="mt-1">Groovy</span>
 		</a>
