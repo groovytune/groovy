@@ -85,9 +85,9 @@
     <CardContent class="px-4 mt-2">
         <a
             href={resolve('/(app)/post/[postId]', { postId: data.id })}
-            class="grid gap-2"
+            class="flex flex-col gap-2"
         >
-            <p class="text-balance line-clamp-3 leading-relaxed">
+            <p class="line-clamp-3 leading-relaxed whitespace-break-spaces" style="word-wrap: break-word;">
                 {data.content}
             </p>
             {#await getMediaFiles(data.media) then media}
