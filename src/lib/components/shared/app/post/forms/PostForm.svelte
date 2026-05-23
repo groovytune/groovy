@@ -32,7 +32,7 @@
         validators: zod4Client(newPostSchema),
         validationMethod: 'auto',
         invalidateAll: false,
-        resetForm: false,
+        resetForm: true,
         dataType: 'json',
         onError: event => {
             console.error('Form submission error:', event.result);

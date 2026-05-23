@@ -4,7 +4,7 @@
     import type { newPostSchema } from '$lib/schema/post';
     import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '$lib/components/ui/input-group';
     import { FormControl, FormField } from '$lib/components/ui/form';
-    import { FilesIcon, ImagesIcon, XIcon } from '@lucide/svelte';
+    import { FilesIcon, ImagesIcon, LoaderCircleIcon, XIcon } from '@lucide/svelte';
     import PostMediaGrid from '../PostMediaGrid.svelte';
     import { onMount } from 'svelte';
     import { useDebounce } from 'runed';
@@ -102,8 +102,13 @@
                         disabled={$submitting}
                         onclick={() => form.submit()}
                     >
-                        <FilesIcon/>
-                        <span>Post</span>
+                        {#if $submitting}
+                            <LoaderCircleIcon class="animate-spin"/>
+                            <span>Posting</span>
+                        {:else}
+                            <FilesIcon/>
+                            <span>Post</span>
+                        {/if}
                     </InputGroupButton>
                 </InputGroupAddon>
             </InputGroup>
