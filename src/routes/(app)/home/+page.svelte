@@ -15,6 +15,7 @@
     import PostCard from '$lib/components/shared/app/post/PostCard.svelte';
     import { onMount } from 'svelte';
     import DiscoverReleasesCard from '../../../lib/components/shared/app/home/DiscoverReleasesCard.svelte';
+    import { Chart } from '../discover/+page.svelte';
 
     const session = auth.useSession();
 
@@ -64,6 +65,13 @@
 <div class="flex gap-4 px-5 justify-center">
     <aside class="w-full h-fit max-w-xs hidden xl:grid gap-4">
         <DiscoverReleasesCard/>
+        {@render Chart(
+            'Top 100 Tracks',
+            'Explore the most popular tracks on Groovy. Discover new music trends and find your next favorite song.',
+            resolve('/(app)/discover/chart'),
+            'radial-gradient( circle farthest-corner at 10% 20%,  rgba(170,245,248,1) 0%, rgba(248,162,239,0.8) 90% )',
+            'black'
+        )}
     </aside>
     <section class="w-full max-w-xl flex flex-col gap-4 pb-5">
         <Item variant="outline" size="sm" class="bg-card rounded-xl">

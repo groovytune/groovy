@@ -71,6 +71,10 @@
     );
 </script>
 
+<script lang="ts" module>
+    export { Chart };
+</script>
+
 {#snippet Chart(title: string, description: string, href: string, background: string, color: string, className: string = '')}
     <Card
         class={["border-transparent", className]}
