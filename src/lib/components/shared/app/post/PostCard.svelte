@@ -17,7 +17,9 @@
     let {
         data
     }: {
-        data: PostItemData[0];
+        data: Omit<PostItemData[0], 'reference'> & {
+            reference?: Pick<PostItemData[0], 'reference'>;
+        };
     } = $props();
 
     const session = auth.useSession();

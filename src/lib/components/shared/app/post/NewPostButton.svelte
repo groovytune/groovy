@@ -4,6 +4,9 @@
     import isMobile from 'is-mobile';
     import { Button, type ButtonProps } from '$lib/components/ui/button';
     import NewPostDialog from './NewPostDialog.svelte';
+    import { auth } from '../../../../client/auth';
+    import { createAuthRedirect } from '../../../../helpers/utils';
+    import { page } from '$app/state';
 
     let {
         ref = $bindable(null),
@@ -12,14 +15,15 @@
     }: ButtonProps = $props();
 
     const dialogState: DialogState = new DialogState({ id: 'new-post-dialog' });
+    const session = auth.useSession();
 </script>
 
 <Button
     {...props}
     bind:ref
-    href={resolve('/(app)/post')}
+    href={$session.data?.user ? resolve('/(app)/post') : createAuthRedirect('signin', page.url)}
     onclick={e => {
-        if (isMobile()) return;
+        if (isMobile() || !$session.data?.user) return;
 
         e.preventDefault();
         dialogState.open();

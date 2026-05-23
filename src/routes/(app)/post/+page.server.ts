@@ -1,6 +1,6 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import { createAuthRedirect } from '$lib/helpers/utils';
-import { message, superValidate } from 'sveltekit-superforms';
+import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { newPostSchema } from '$lib/schema/post';
 import { Appwrite } from '$lib/server/appwrite';
@@ -14,13 +14,13 @@ export async function load({ locals, url }) {
 
 export const actions = {
     upload: async ({ request, locals }) => {
-        if (!locals.user) {
-            return fail(401, { message: 'Unauthorized' });
-        }
-
         const form = await superValidate(request, zod4(newPostSchema), {
             allowFiles: true
         });
+
+        if (!locals.user) {
+            return fail(401, { form, message: 'Unauthorized' });
+        }
 
         if (!form.valid) {
             return fail(400, { form, message: 'Please correct the errors in the form' });

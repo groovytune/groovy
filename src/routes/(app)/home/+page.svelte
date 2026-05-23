@@ -46,21 +46,21 @@
         isAtEnd = response.length === 0;
     }
 
+    async function handleScroll() {
+        const scrollPosition = window.scrollY + window.innerHeight;
+        const threshold = document.documentElement.scrollHeight - 100;
+
+        if (scrollPosition >= threshold && !isLoading && !isAtEnd) {
+            await loadPosts();
+        }
+    }
+
     onMount(() => {
         loadPosts();
     });
 </script>
 
-<svelte:window
-    onscroll={() => {
-        const scrollPosition = window.scrollY + window.innerHeight;
-        const threshold = document.documentElement.scrollHeight - 100;
-
-        if (scrollPosition >= threshold && !isLoading && !isAtEnd) {
-            loadPosts();
-        }
-    }}
-/>
+<svelte:window onscroll={handleScroll}/>
 
 <div class="flex gap-4 px-5 justify-center">
     <aside class="w-full h-fit max-w-xs hidden xl:grid gap-4">

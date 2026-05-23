@@ -134,16 +134,18 @@
         {/each}
     </div>
 {/if}
-<PostMediaGrid
-    media={mediaPreview}
-    preview={true}
-    disabled={$submitting}
-    class={cn(mediaClass)}
-    onremove={index => {
-        const updatedFiles = [...$files];
+{#if mediaPreview.length}
+    <PostMediaGrid
+        media={mediaPreview}
+        preview={true}
+        disabled={$submitting}
+        class={cn(mediaClass)}
+        onremove={index => {
+            const updatedFiles = [...$files];
 
-        URL.revokeObjectURL(mediaPreview[index].url);
-        updatedFiles.splice(index, 1);
-        files.set(updatedFiles);
-    }}
-/>
+            URL.revokeObjectURL(mediaPreview[index].url);
+            updatedFiles.splice(index, 1);
+            files.set(updatedFiles);
+        }}
+    />
+{/if}

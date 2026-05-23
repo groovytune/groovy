@@ -14,6 +14,8 @@
     import PostFormFields from '../../../../lib/components/shared/app/post/forms/PostFormFields.svelte';
     import { Item, ItemContent, ItemMedia, ItemTitle } from '../../../../lib/components/ui/item/index.js';
     import { resolve } from '$app/paths';
+    import type { GETResponse as RepliesResponse } from '../../api/post/[postId]/replies/+server.js';
+    import PostCard from '$lib/components/shared/app/post/PostCard.svelte';
 
     let { data } = $props();
 
@@ -26,12 +28,52 @@
 
     let replyTextarea: HTMLTextAreaElement|null = $state(null);
 
+    let replies: RepliesResponse = $state([]);
+    let isLoading = $state(false);
+    let isAtEnd = $state(false);
+
+    async function loadReplies(postId: string) {
+        isLoading = true;
+
+        const lastPost = replies.at(-1)?.id;
+        const response = await fetch(resolve('/(app)/api/post/[postId]/replies', { postId }) + '?take=3' + (lastPost ? `&after=${lastPost}` : ''))
+            .then(res => res.ok
+                ? res.json() as Promise<RepliesResponse>
+                : Promise.reject(res)
+            )
+            .catch(err => {
+                console.error('Failed to load replies:', err);
+                return null;
+            })
+            .finally(() => {
+                isLoading = false;
+            });
+
+        if (!response) return;
+
+        replies.push(...response);
+        isAtEnd = response.length === 0;
+    }
+
+    async function handleScroll() {
+        const scrollPosition = window.scrollY + window.innerHeight;
+        const threshold = document.documentElement.scrollHeight - 100;
+
+        if (scrollPosition >= threshold && !isLoading && !isAtEnd) {
+            await loadReplies(post.id);
+        }
+    }
+
     onMount(async () => {
         if (post.media) {
             media = await getPostMediaFiles(post.media);
         }
+
+        loadReplies(post.id);
     });
 </script>
+
+<svelte:window onscroll={handleScroll}/>
 
 <section class="flex flex-col gap-2 items-center sm:px-2 sm:pt-5 pb-5">
     <div class="w-full max-w-2xl py-5 border-y sm:border-x border-x-0 sm:rounded-lg grid gap-5">
@@ -141,4 +183,14 @@
             />
         {/snippet}
     </PostForm>
+    {#if replies.length}
+        <div class="w-full max-w-2xl py-5 border-y sm:border-x border-x-0 sm:rounded-lg grid gap-5">
+            <h2 class="text-lg font-semibold px-5">
+                Replies
+            </h2>
+            {#each replies as reply (reply.id)}
+                <PostCard data={reply}/>
+            {/each}
+        </div>
+    {/if}
 </section>
