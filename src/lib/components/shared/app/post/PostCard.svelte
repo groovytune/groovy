@@ -11,6 +11,8 @@
     import FollowButton from '../artist/FollowButton.svelte';
     import LikeButton from '../LikeButton.svelte';
     import { resolve } from '$app/paths';
+    import { Appwrite } from '../../../../client/appwrite';
+    import PostMediaGrid from './PostMediaGrid.svelte';
 
     let {
         data
@@ -23,6 +25,31 @@
     let likes = $derived(data._count.likes);
     let replies = $derived(data._count.replies);
     let user = $derived(data.user);
+
+    async function getMediaFiles(ids: string[]): Promise<{ type: 'image'|'video'; url: string; }[]> {
+        const files: { type: 'image'|'video'; url: string; }[] = [];
+
+        for (const id of ids) {
+            const data = await Appwrite.storage.getFile({
+                bucketId: 'media',
+                fileId: id
+            }).catch(() => null);
+
+            if (!data) continue;
+
+            const url = Appwrite.storage.getFileView({
+                bucketId: 'media',
+                fileId: id
+            });
+
+            files.push({
+                type: data.mimeType.startsWith('video') ? 'video' : 'image',
+                url
+            });
+        }
+
+        return files;
+    }
 </script>
 
 <Card class="py-4 gap-2">
@@ -55,10 +82,15 @@
             </Button>
         </div>
     </CardHeader>
-    <CardContent class="px-4 mt-2 line-clamp-3 leading-relaxed">
+    <CardContent class="px-4 mt-2 line-clamp-3 leading-relaxed grid gap-2">
         <a href={resolve('/(app)/post/[postId]', { postId: data.id })} class="text-balance block">
             <p>{data.content}</p>
         </a>
+        {#await getMediaFiles(data.media) then media}
+            {#if media.length}
+                <PostMediaGrid {media} class="mb-2"/>
+            {/if}
+        {/await}
     </CardContent>
     <CardFooter class="px-4 flex gap-2">
         <LikeButton
