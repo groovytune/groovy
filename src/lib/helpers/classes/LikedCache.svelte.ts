@@ -107,8 +107,6 @@ export class LikedCache {
             this._setCachedValue(options.type, options.id, status);
         }
 
-        console.log(`Updated like status for ${options.type} ${options.id} to ${status}`);
-
         return status;
     }
 
