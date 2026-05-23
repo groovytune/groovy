@@ -219,6 +219,7 @@ model Post {
     content  String
     referenceId String?
     reference   Post?    @relation("PostReference", fields: [referenceId], references: [id], onDelete: SetNull)
+    media    String[] @default([])
     likes    PostLike[]
     replies  Post[]   @relation("PostReference")
     createdAt DateTime @default(now())

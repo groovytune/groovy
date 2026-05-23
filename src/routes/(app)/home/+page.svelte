@@ -10,6 +10,7 @@
     import ArtistsYouMayKnow from '$lib/components/shared/app/home/ArtistsYouMayKnowCard.svelte';
     import SuggestedTracksCard from '$lib/components/shared/app/home/SuggestedTracksCard.svelte';
     import { numberFormatter } from '$lib/helpers/constants';
+    import NewPostButton from '$lib/components/shared/app/post/NewPostButton.svelte';
 
     const session = auth.useSession();
 </script>
@@ -30,13 +31,13 @@
                 </Avatar>
             </ItemMedia>
             <ItemContent>
-                <Button
+                <NewPostButton
                     variant="outline"
                     class="h-10 rounded-full justify-start text-left w-full text-sm text-muted-foreground font-normal cursor-text"
                     href={!$session.data?.user ?  createAuthRedirect('signin', page.url) : undefined}
                 >
                     What's on your mind{$session.data?.user?.name ? `, ${$session?.data.user?.name}` : ''}?
-                </Button>
+                </NewPostButton>
             </ItemContent>
         </Item>
         {#each { length: 10 }}
