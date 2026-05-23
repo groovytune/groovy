@@ -1,18 +1,33 @@
 <script lang="ts">
     import { auth } from '$lib/client/auth';
-    import { EllipsisIcon, ForwardIcon, HeartIcon, MessageCircle, UserRound, UserRoundPlusIcon } from '@lucide/svelte';
+    import { UserRound, UserRoundPlusIcon } from '@lucide/svelte';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
     import { Item, ItemContent, ItemMedia } from '$lib/components/ui/item';
-    import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
+    import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
     import { Button } from '$lib/components/ui/button';
     import { createAuthRedirect } from '$lib/helpers/utils';
     import { page } from '$app/state';
     import ArtistsYouMayKnow from '$lib/components/shared/app/home/ArtistsYouMayKnowCard.svelte';
     import SuggestedTracksCard from '$lib/components/shared/app/home/SuggestedTracksCard.svelte';
-    import { numberFormatter } from '$lib/helpers/constants';
     import NewPostButton from '$lib/components/shared/app/post/NewPostButton.svelte';
+    import { resource } from 'runed';
+    import { resolve } from '$app/paths';
+    import type { GETResponse as FeedResponse } from '../api/feed/+server';
+    import PostCard from '$lib/components/shared/app/post/PostCard.svelte';
 
     const session = auth.useSession();
+    const posts = resource(
+        [],
+        async () => {
+            const res = await fetch(resolve('/(app)/api/feed'));
+
+            if (!res.ok) {
+                throw new Error('Failed to fetch posts');
+            }
+
+            return res.json() as Promise<FeedResponse>;
+        }
+    );
 </script>
 
 <div class="flex gap-4 px-5 justify-center">
@@ -40,54 +55,8 @@
                 </NewPostButton>
             </ItemContent>
         </Item>
-        {#each { length: 10 }}
-            <Card class="py-4 gap-2">
-                <CardHeader class="flex gap-2 px-4">
-                    <a href="#/">
-                        <Avatar class="size-9">
-                            <AvatarImage src="https://i.pravatar.cc/150?img=3"/>
-                            <AvatarFallback>
-                                <UserRound class="size-4"/>
-                            </AvatarFallback>
-                        </Avatar>
-                    </a>
-                    <a href="#/" class="flex flex-col w-full truncate">
-                        <CardTitle class="text-sm font-medium text-balance line-clamp-2">
-                            Sample Post Title
-                        </CardTitle>
-                        <CardDescription class="text-xs text-muted-foreground text-balance line-clamp-1">
-                            <span class="hidden sm:inline">@sampleuser &#183; </span>2 hours ago
-                        </CardDescription>
-                    </a>
-                    <div class="flex gap-2 w-fit">
-                        <Button variant="outline" size="sm" class="ml-auto hidden sm:inline-flex">
-                            Follow
-                        </Button>
-                        <Button variant="outline" size="icon-sm" class="ml-auto">
-                            <EllipsisIcon/>
-                        </Button>
-                    </div>
-                </CardHeader>
-                <CardContent class="px-4 mt-2 line-clamp-3 leading-relaxed">
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor odio beatae delectus neque pariatur id laboriosam, in, eum aliquid officiis odit, ducimus alias harum. Recusandae, nam officia. In ex officia iusto molestias animi quidem est adipisci tempore quaerat. Illo molestiae incidunt possimus provident ad laudantium eius? Modi, mollitia nulla reprehenderit tenetur ipsam maxime architecto pariatur. Mollitia a ut similique nemo optio sunt. Adipisci at repudiandae ducimus temporibus nobis eaque dignissimos quo doloremque aut pariatur commodi incidunt, ad inventore animi, placeat velit ratione ut. Ad culpa obcaecati rem asperiores quae sint tempora, maxime id animi ea, maiores dicta perspiciatis harum corporis.
-                    </p>
-                </CardContent>
-                <CardFooter class="px-4 flex gap-2">
-                    <Button variant="outline" size="sm">
-                        <HeartIcon/>
-                        {numberFormatter.format(Math.floor(Math.random() * 2000))}
-                    </Button>
-                    <Button variant="outline" size="sm">
-                        <MessageCircle/>
-                        Reply
-                    </Button>
-                    <Button variant="outline" size="sm">
-                        <ForwardIcon/>
-                        Share
-                    </Button>
-                </CardFooter>
-            </Card>
+        {#each posts.current as post (post.id)}
+            <PostCard data={post}/>
         {/each}
     </section>
     <aside class="w-full h-fit max-w-xs hidden md:grid gap-4">

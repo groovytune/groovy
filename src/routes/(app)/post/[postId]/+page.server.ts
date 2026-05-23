@@ -21,7 +21,7 @@ export async function load({ locals, url, params }) {
                 }
             },
             reference: {
-                include: {
+                select: {
                     id: true,
                     user: {
                         select: {

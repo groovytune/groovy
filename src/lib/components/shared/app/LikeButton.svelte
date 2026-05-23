@@ -28,7 +28,15 @@
     const likedCache = LikedCache.context.get();
     const session = auth.useSession();
 
-    let liked = $derived(likedCache.tracks.get(itemId));
+    let liked = $derived(
+        itemType === 'track'
+            ? likedCache.tracks.get(itemId)
+            : itemType === 'release'
+                ? likedCache.releases.get(itemId)
+                : itemType === 'post'
+                    ? likedCache.posts.get(itemId)
+                    : undefined
+    );
 
     $effect(() => {
         if (!$session.data?.user) return;
@@ -38,6 +46,8 @@
             type: itemType
         });
     });
+
+    $inspect(liked, 'liked');
 
     async function toggleLike() {
         if (!$session.data?.user) {
