@@ -4,8 +4,8 @@
     import isMobile from 'is-mobile';
     import { Button, type ButtonProps } from '$lib/components/ui/button';
     import NewPostDialog from './NewPostDialog.svelte';
-    import { auth } from '../../../../client/auth';
-    import { createAuthRedirect } from '../../../../helpers/utils';
+    import { auth } from '$lib/client/auth';
+    import { createAuthRedirect } from '$lib/helpers/utils';
     import { page } from '$app/state';
 
     let {

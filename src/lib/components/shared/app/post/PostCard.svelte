@@ -5,22 +5,23 @@
     import { Button } from '$lib/components/ui/button';
     import { numberFormatter } from '$lib/helpers/constants';
     import type { GETResponse as PostItemData } from '../../../../../routes/(app)/api/feed/+server';
-    import { createUserProfileURL, getPostMediaFiles } from '../../../../helpers/utils';
+    import { createUserProfileURL, getPostMediaFiles } from '$lib/helpers/utils';
     import { DateTime } from 'luxon';
-    import { auth } from '../../../../client/auth';
+    import { auth } from '$lib/client/auth';
     import FollowButton from '../artist/FollowButton.svelte';
     import LikeButton from '../LikeButton.svelte';
     import { resolve } from '$app/paths';
     import PostMediaGrid from './PostMediaGrid.svelte';
-    import { Item, ItemContent, ItemMedia, ItemTitle } from '../../../ui/item';
+    import { Item, ItemContent, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import type { ClassValue } from 'clsx';
+    import ShareButton from '../release/ShareButton.svelte';
 
     let {
         data,
         class: className
     }: {
         data: Omit<PostItemData[0], 'reference'> & {
-            reference?: Pick<PostItemData[0], 'reference'>;
+            reference?: Pick<PostItemData[0], 'reference'>['reference'];
         };
         class?: ClassValue;
     } = $props();
@@ -125,9 +126,18 @@
             <MessageCircle/>
             {replies ? numberFormatter.format(replies) : 'Reply'}
         </Button>
-        <Button variant="outline" size="sm">
-            <ForwardIcon/>
-            Share
-        </Button>
+        <ShareButton
+            data={{
+                title: `A post by ${user.name} on Groovy`,
+                url: new URL(resolve('/(app)/post/[postId]', { postId: data.id }), location.origin).href
+            }}
+        >
+            {#snippet child({ onclick })}
+                <Button variant="outline" size="sm" {onclick}>
+                    <ForwardIcon/>
+                    Share
+                </Button>
+            {/snippet}
+    </ShareButton>
     </CardFooter>
 </Card>

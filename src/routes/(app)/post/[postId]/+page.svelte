@@ -1,22 +1,23 @@
 <script lang="ts">
     import { DateTime } from 'luxon';
-    import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar/index.js';
+    import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
     import { createUserProfileURL, getPostMediaFiles } from '$lib/helpers/utils.js';
     import FollowButton from '$lib/components/shared/app/artist/FollowButton.svelte';
     import { auth } from '$lib/client/auth.js';
-    import { Button } from '$lib/components/ui/button/index.js';
+    import { Button } from '$lib/components/ui/button';
     import { CornerUpRightIcon, EllipsisIcon, ForwardIcon, HeartIcon, MessageCircle } from '@lucide/svelte';
     import PostMediaGrid from '$lib/components/shared/app/post/PostMediaGrid.svelte';
     import { onMount } from 'svelte';
     import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
     import { numberFormatter } from '$lib/helpers/constants.js';
     import PostForm from '$lib/components/shared/app/post/forms/PostForm.svelte';
-    import PostFormFields from '../../../../lib/components/shared/app/post/forms/PostFormFields.svelte';
-    import { Item, ItemContent, ItemMedia, ItemTitle } from '../../../../lib/components/ui/item/index.js';
+    import PostFormFields from '$lib/components/shared/app/post/forms/PostFormFields.svelte';
+    import { Item, ItemContent, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { resolve } from '$app/paths';
     import type { GETResponse as RepliesResponse } from '../../api/post/[postId]/replies/+server.js';
     import PostCard from '$lib/components/shared/app/post/PostCard.svelte';
     import { afterNavigate, beforeNavigate } from '$app/navigation';
+    import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
 
     let { data } = $props();
 
@@ -178,10 +179,19 @@
                 <MessageCircle/>
                 Reply
             </Button>
-            <Button variant="outline" size="sm">
-                <ForwardIcon/>
-                Share
-            </Button>
+            <ShareButton
+                data={{
+                    title: `A post by ${user.name} on Groovy`,
+                    url: new URL(resolve('/(app)/post/[postId]', { postId: post.id }), location.origin).href
+                }}
+            >
+                {#snippet child({ onclick })}
+                    <Button variant="outline" size="sm" {onclick}>
+                        <ForwardIcon/>
+                        Share
+                    </Button>
+                {/snippet}
+        </ShareButton>
         </div>
     </div>
     <PostForm

@@ -14,7 +14,7 @@
     import type { GETResponse as FeedResponse } from '../api/feed/+server';
     import PostCard from '$lib/components/shared/app/post/PostCard.svelte';
     import { onMount } from 'svelte';
-    import DiscoverReleasesCard from '../../../lib/components/shared/app/home/DiscoverReleasesCard.svelte';
+    import DiscoverReleasesCard from '$lib/components/shared/app/home/DiscoverReleasesCard.svelte';
     import { Chart } from '../discover/+page.svelte';
 
     const session = auth.useSession();

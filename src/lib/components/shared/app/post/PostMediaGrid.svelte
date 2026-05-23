@@ -1,9 +1,9 @@
 <script lang="ts">
     import { XIcon } from '@lucide/svelte';
-    import { Badge } from '../../../ui/badge';
-    import { Button } from '../../../ui/button';
+    import { Badge } from '$lib/components/ui/badge';
+    import { Button } from '$lib/components/ui/button';
     import type { ClassValue } from 'clsx';
-    import { cn } from '../../../../helpers/utils';
+    import { cn } from '$lib/helpers/utils';
     import type { Snippet } from 'svelte';
 
     let {
