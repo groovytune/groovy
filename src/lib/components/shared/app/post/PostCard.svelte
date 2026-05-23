@@ -82,15 +82,20 @@
             </Button>
         </div>
     </CardHeader>
-    <CardContent class="px-4 mt-2 line-clamp-3 leading-relaxed grid gap-2">
-        <a href={resolve('/(app)/post/[postId]', { postId: data.id })} class="text-balance block">
-            <p>{data.content}</p>
+    <CardContent class="px-4 mt-2">
+        <a
+            href={resolve('/(app)/post/[postId]', { postId: data.id })}
+            class="grid gap-2"
+        >
+            <p class="text-balance line-clamp-3 leading-relaxed">
+                {data.content}
+            </p>
+            {#await getMediaFiles(data.media) then media}
+                {#if media.length}
+                    <PostMediaGrid {media} class="mb-2"/>
+                {/if}
+            {/await}
         </a>
-        {#await getMediaFiles(data.media) then media}
-            {#if media.length}
-                <PostMediaGrid {media} class="mb-2"/>
-            {/if}
-        {/await}
     </CardContent>
     <CardFooter class="px-4 flex gap-2">
         <LikeButton
