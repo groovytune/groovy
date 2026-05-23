@@ -19,7 +19,7 @@
         children
     }: {
         form?: SuperForm<z.infer<typeof newPostSchema>>|null;
-        data?: SuperValidated<z.infer<typeof newPostSchema>>;
+        data?: SuperValidated<z.infer<typeof newPostSchema>>|z.infer<typeof newPostSchema>;
         redirect?: boolean;
         class?: ClassValue;
         children?: Snippet<[{

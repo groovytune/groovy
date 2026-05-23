@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { EllipsisIcon, ForwardIcon, HeartIcon, MessageCircle } from '@lucide/svelte';
+    import { CornerUpRightIcon, EllipsisIcon, ForwardIcon, HeartIcon, MessageCircle } from '@lucide/svelte';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
     import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
     import { Button } from '$lib/components/ui/button';
@@ -12,6 +12,7 @@
     import LikeButton from '../LikeButton.svelte';
     import { resolve } from '$app/paths';
     import PostMediaGrid from './PostMediaGrid.svelte';
+    import { Item, ItemContent, ItemMedia, ItemTitle } from '../../../ui/item';
 
     let {
         data
@@ -57,6 +58,22 @@
         </div>
     </CardHeader>
     <CardContent class="px-4 mt-2">
+        {#if data.reference}
+            <Item size="sm" variant="outline" class="p-1 mb-1">
+                {#snippet child({ props })}
+                    <a href={resolve('/(app)/post/[postId]', { postId: data.reference!.id })} {...props}>
+                        <ItemMedia variant="icon" class="p-2!">
+                            <CornerUpRightIcon/>
+                        </ItemMedia>
+                        <ItemContent>
+                            <ItemTitle class="text-sm block">
+                                Replied to <span class="text-primary">{data.reference!.user.name}</span>
+                            </ItemTitle>
+                        </ItemContent>
+                    </a>
+                {/snippet}
+            </Item>
+        {/if}
         <a
             href={resolve('/(app)/post/[postId]', { postId: data.id })}
             class="flex flex-col gap-2"

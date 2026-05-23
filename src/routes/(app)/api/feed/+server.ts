@@ -6,6 +6,10 @@ import type { PartialUser } from '$lib/helpers/utils';
 
 export type GETResponse = (Post & {
     user: PartialUser;
+    reference: {
+        id: string;
+        user: PartialUser;
+    }|null;
     _count: {
         likes: number;
         replies: number;
@@ -68,6 +72,19 @@ export async function GET({ locals, url }) {
                     name: true,
                     username: true,
                     image: true
+                }
+            },
+            reference: {
+                select: {
+                    id: true,
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            username: true,
+                            image: true
+                        }
+                    },
                 }
             },
             _count: {

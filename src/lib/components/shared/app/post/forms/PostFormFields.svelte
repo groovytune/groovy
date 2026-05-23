@@ -16,6 +16,7 @@
         textarea = $bindable(null),
         filesInput = $bindable(null),
         disableMedia = false,
+        placeholder = "What's on your mind?",
         class: className = '',
         errorClass = '',
         mediaClass = ''
@@ -23,6 +24,7 @@
         form: SuperForm<z.infer<typeof newPostSchema>>;
         textarea?: HTMLTextAreaElement|null;
         filesInput?: HTMLInputElement|null;
+        placeholder?: string;
         disableMedia?: boolean;
         class?: ClassValue;
         errorClass?: ClassValue;
@@ -67,7 +69,7 @@
                     bind:value={$formData.content}
                     bind:ref={textarea}
                     disabled={$submitting}
-                    placeholder="What's on your mind?"
+                    placeholder={placeholder}
                     class="max-h-96 min-h-20"
                 />
                 <InputGroupAddon align="block-end">
