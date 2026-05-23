@@ -20,6 +20,7 @@
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import { Image } from '$lib/client/image.js';
+    import { page } from '$app/state';
  
     let { data } = $props();
 
@@ -146,7 +147,7 @@
                                 <ShareButton
                                     data={{
                                         title: data.release.name,
-                                        url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: data.release.id }), location.origin).href
+                                        url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: data.release.id }), page.url.origin).href
                                     }}
                                 >
                                     {#snippet child({ onclick })}

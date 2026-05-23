@@ -18,6 +18,7 @@
     import PostCard from '$lib/components/shared/app/post/PostCard.svelte';
     import { afterNavigate, beforeNavigate } from '$app/navigation';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
+    import { page } from '$app/state';
 
     let { data } = $props();
 
@@ -182,7 +183,7 @@
             <ShareButton
                 data={{
                     title: `A post by ${user.name} on Groovy`,
-                    url: new URL(resolve('/(app)/post/[postId]', { postId: post.id }), location.origin).href
+                    url: new URL(resolve('/(app)/post/[postId]', { postId: post.id }), page.url.origin).href
                 }}
             >
                 {#snippet child({ onclick })}

@@ -17,6 +17,7 @@
     import { ReleaseInfoCache } from '$lib/helpers/classes/ReleaseInfoCache.svelte';
     import ShareButton from '../ShareButton.svelte';
     import { Image } from '$lib/client/image';
+    import { page } from '$app/state';
 
     let {
         track,
@@ -65,7 +66,7 @@
             <ShareButton
                 data={{
                     title: track.name,
-                    url: new URL(resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: track.releaseId, trackId: track.id }), location.origin).href
+                    url: new URL(resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: track.releaseId, trackId: track.id }), page.url.origin).href
                 }}
             >
                 {#snippet child({ onclick })}

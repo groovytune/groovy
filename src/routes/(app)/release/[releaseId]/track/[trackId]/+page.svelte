@@ -21,6 +21,7 @@
     import { resource } from 'runed';
     import { createUserProfileURL, formatDuration } from '$lib/helpers/utils.js';
     import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
+    import { page } from '$app/state';
 
     let { data } = $props();
 
@@ -166,7 +167,7 @@
                                 <ShareButton
                                     data={{
                                         title: release.name,
-                                        url: new URL(resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: release.id, trackId: track.id }), location.origin).href
+                                        url: new URL(resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: release.id, trackId: track.id }), page.url.origin).href
                                     }}
                                 >
                                     {#snippet child({ onclick })}

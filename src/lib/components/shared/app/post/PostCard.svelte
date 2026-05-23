@@ -15,6 +15,7 @@
     import { Item, ItemContent, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import type { ClassValue } from 'clsx';
     import ShareButton from '../release/ShareButton.svelte';
+    import { page } from '$app/state';
 
     let {
         data,
@@ -129,7 +130,7 @@
         <ShareButton
             data={{
                 title: `A post by ${user.name} on Groovy`,
-                url: new URL(resolve('/(app)/post/[postId]', { postId: data.id }), location.origin).href
+                url: new URL(resolve('/(app)/post/[postId]', { postId: data.id }), page.url.origin).href
             }}
         >
             {#snippet child({ onclick })}

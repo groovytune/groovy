@@ -6,6 +6,7 @@
     import { createAuthRedirect } from '$lib/helpers/utils';
     import Button, { type ButtonProps } from '$lib/components/ui/button/button.svelte';
     import { HeartIcon } from '@lucide/svelte';
+    import { page } from '$app/state';
 
     let {
         itemId,
@@ -50,7 +51,7 @@
     async function toggleLike() {
         if (!$session.data?.user) {
             // eslint-disable-next-line svelte/no-navigation-without-resolve
-            await goto(createAuthRedirect('signin', location.href));
+            await goto(createAuthRedirect('signin', page.url));
             return;
         }
 

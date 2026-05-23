@@ -9,6 +9,7 @@
     import { resolve } from '$app/paths';
     import type { ClassValue } from 'tailwind-variants';
     import { createAuthRedirect } from '$lib/helpers/utils';
+    import { page } from '$app/state';
 
     let {
         user,
@@ -40,7 +41,7 @@
             <DropdownMenuItem>
                 {#snippet child({ props })}
                     <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-                    <a {...props} href={createAuthRedirect('signin', window.location.href)}>
+                    <a {...props} href={createAuthRedirect('signin', page.url)}>
                         <Avatar class="size-14">
                             <AvatarFallback>
                                 <UserRoundIcon/>
@@ -105,7 +106,7 @@
             <DropdownMenuItem
                 onclick={() => {
                     // eslint-disable-next-line svelte/no-navigation-without-resolve
-                    goto(resolve('/(auth)/signout') + `?redirect=${encodeURIComponent(window.location.href)}`);
+                    goto(resolve('/(auth)/signout') + `?redirect=${encodeURIComponent(page.url.href)}`);
                 }}
             >
                 <LogOutIcon/>

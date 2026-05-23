@@ -10,6 +10,7 @@
     import ShareButton from '../release/ShareButton.svelte';
     import { resolve } from '$app/paths';
     import LikeButton from '../LikeButton.svelte';
+    import { page } from '$app/state';
 
     let {
         cover = false,
@@ -159,7 +160,7 @@
                             <ShareButton
                                 data={{
                                     title: audioPlayer.currentTrack?.name,
-                                    url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: audioPlayer.currentTrack!.releaseId }), location.origin).href
+                                    url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: audioPlayer.currentTrack!.releaseId }), page.url.origin).href
                                 }}
                             >
                                 {#snippet child({ onclick })}

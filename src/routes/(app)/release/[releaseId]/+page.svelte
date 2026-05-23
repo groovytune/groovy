@@ -17,6 +17,7 @@
     import { Image } from '$lib/client/image.js';
     import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
     import { createUserProfileURL } from '$lib/helpers/utils.js';
+    import { page } from '$app/state';
 
     let { data } = $props();
 
@@ -125,7 +126,7 @@
                                 <ShareButton
                                     data={{
                                         title: data.release.name,
-                                        url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: data.release.id }), location.origin).href
+                                        url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: data.release.id }), page.url.origin).href
                                     }}
                                 >
                                     {#snippet child({ onclick })}
