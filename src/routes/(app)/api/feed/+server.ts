@@ -80,6 +80,9 @@ export async function GET({ locals, url }) {
         cursor: after.data ? { id: after.data } : undefined,
         skip: after.data ? 1 : undefined,
         take: take.data,
+        orderBy: {
+            createdAt: 'desc'
+        }
     });
 
     return json(posts);
