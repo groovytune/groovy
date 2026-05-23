@@ -8,16 +8,20 @@
     import { resolve } from '$app/paths';
     import type { Post } from '$lib/server/prisma/browser';
     import { goto } from '$app/navigation';
+    import type { ClassValue } from 'clsx';
+    import { cn } from '$lib/helpers/utils';
 
     let {
         form = $bindable(null),
         data,
         redirect = true,
+        class: className = '',
         children
     }: {
         form?: SuperForm<z.infer<typeof newPostSchema>>|null;
         data?: SuperValidated<z.infer<typeof newPostSchema>>;
         redirect?: boolean;
+        class?: ClassValue;
         children?: Snippet<[{
             form: SuperForm<z.infer<typeof newPostSchema>>;
         }]>;
@@ -39,9 +43,6 @@
 
             if (type === 'failure') {
                 console.error('Upload form submission failed:', event.result);
-                const errors: string|undefined = event.result.data?.form.errors?.files?._errors?.join('\n');
-
-                toast.error(errors ?? event.result.data?.message ?? 'Failed to upload tracks.');
                 return;
             }
 
@@ -66,6 +67,7 @@
     action={resolve('/(app)/post') + '?/upload'}
     method="POST"
     encType="multipart/form-data"
+    class={cn(className)}
 >
     {@render children?.({ form })}
 </form>

@@ -20,7 +20,7 @@
 </script>
 
 <Dialog bind:open={() => dialogState.isOpen, dialogState.toggle}>
-    <DialogContent class="sm:max-h-[80dvh] overflow-auto">
+    <DialogContent class="max-h-[80dvh] overflow-auto">
         <DialogHeader class="text-start">
             <DialogTitle>Queue</DialogTitle>
             <DialogDescription></DialogDescription>
