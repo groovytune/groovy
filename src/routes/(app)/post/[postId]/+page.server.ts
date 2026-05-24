@@ -47,7 +47,7 @@ export async function load({ params }) {
         throw error(404, 'Post not found');
     }
 
-    const title = `${post.user.name} on Groovy`;
+    const title = `${post.user.name}${post.reference ? ` replied to ${post.reference.user.name}` : ''} on Groovy`;
     const description = post.content.length > 160 ? post.content.slice(0, 157) + '...' : post.content;
     const mediaId = post.media ? post.media[0] : null;
 

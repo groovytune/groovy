@@ -15,7 +15,7 @@
     import { resolve } from '$app/paths';
     import type { GETResponse as RepliesResponse } from '../../api/post/[postId]/replies/+server.js';
     import PostCard from '$lib/components/shared/app/post/PostCard.svelte';
-    import { afterNavigate } from '$app/navigation';
+    import { afterNavigate, goto } from '$app/navigation';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import { page } from '$app/state';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
@@ -128,7 +128,12 @@
                 {#if post.userId !== $session.data?.user?.id}
                     <FollowButton userId={post.userId} size="sm" class="ml-auto hidden sm:inline-flex"/>
                 {/if}
-                <PostDropdownMenu {post}/>
+                <PostDropdownMenu
+                    {post}
+                    ondelete={() => {
+                        goto(resolve('/(home)'));
+                    }}
+                />
             </div>
         </div>
         <div class="px-5">
