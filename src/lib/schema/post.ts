@@ -21,3 +21,5 @@ export const newPostSchema = z.object({
         .optional(),
     referenceId: z.string().optional()
 });
+
+export const deletePostSchema = z.object({});

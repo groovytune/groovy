@@ -37,6 +37,7 @@
     let likes = $derived(data._count.likes);
     let replies = $derived(data._count.replies);
     let user = $derived(data.user);
+    let deleted = $state(false);
 
     const itemPreview = resource(
         () => data.content,
@@ -77,92 +78,102 @@
             {#if data.userId !== $session.data?.user?.id}
                 <FollowButton userId={data.userId} size="sm" class="ml-auto hidden sm:inline-flex"/>
             {/if}
-            <PostDropdownMenu post={data}/>
+            {#if !deleted}
+                {#key data.id}
+                    <PostDropdownMenu post={data} ondelete={() => deleted = true}/>
+                {/key}
+            {/if}
         </div>
     </CardHeader>
-    <CardContent class="px-4 mt-2">
-        {#if data.reference}
-            <Item size="sm" variant="outline" class="p-1 mb-1">
-                {#snippet child({ props })}
-                    <a href={resolve('/(app)/post/[postId]', { postId: data.reference!.id })} {...props}>
-                        <ItemMedia variant="icon" class="p-2!">
-                            <CornerUpRightIcon/>
-                        </ItemMedia>
-                        <ItemContent>
-                            <ItemTitle class="text-sm block">
-                                Replied to <span class="text-primary">{data.reference!.user.name}</span>
-                            </ItemTitle>
-                        </ItemContent>
-                    </a>
-                {/snippet}
-            </Item>
-        {/if}
-        <a
-            href={resolve('/(app)/post/[postId]', { postId: data.id })}
-            class="flex flex-col gap-2"
-        >
-            <p class="line-clamp-3 whitespace-break-spaces" style="word-wrap: break-word;">
-                {data.content}
-            </p>
-            {#await getPostMediaFiles(data.media) then media}
-                {#if media.length}
-                    <PostMediaGrid {media} preview disabled class="mb-2"/>
-                {/if}
-            {/await}
-        </a>
-        {#if itemPreview.current && !itemPreview.loading}
-            <PostItemPreview
-                title={itemPreview.current.title}
-                description={itemPreview.current.description}
-                coverURL={itemPreview.current.image}
-                href={itemPreview.current.url}
-            />
-        {/if}
-    </CardContent>
-    <CardFooter class="px-4 flex gap-2">
-        <LikeButton
-            itemId={data.id}
-            itemType="post"
-            size="sm"
-        >
-            {#snippet child({ props, liked, toggleLike })}
-                <Button
-                    {...props}
-                    size="sm"
-                    variant="outline"
-                    class={[
-                        liked && "text-primary!"
-                    ]}
-                    onclick={async () => {
-                        likes = liked ? likes - 1 : likes + 1;
+    {#if deleted}
+        <CardContent class="px-4 mt-2">
+            <p class="text-sm text-muted-foreground italic">This post has been deleted.</p>
+        </CardContent>
+    {:else}
+        <CardContent class="px-4 mt-2">
+            {#if data.reference}
+                <Item size="sm" variant="outline" class="p-1 mb-1">
+                    {#snippet child({ props })}
+                        <a href={resolve('/(app)/post/[postId]', { postId: data.reference!.id })} {...props}>
+                            <ItemMedia variant="icon" class="p-2!">
+                                <CornerUpRightIcon/>
+                            </ItemMedia>
+                            <ItemContent>
+                                <ItemTitle class="text-sm block">
+                                    Replied to <span class="text-primary">{data.reference!.user.name}</span>
+                                </ItemTitle>
+                            </ItemContent>
+                        </a>
+                    {/snippet}
+                </Item>
+            {/if}
+            <a
+                href={resolve('/(app)/post/[postId]', { postId: data.id })}
+                class="flex flex-col gap-2"
+            >
+                <p class="line-clamp-3 whitespace-break-spaces" style="word-wrap: break-word;">
+                    {data.content}
+                </p>
+                {#await getPostMediaFiles(data.media) then media}
+                    {#if media.length}
+                        <PostMediaGrid {media} preview disabled class="mb-2"/>
+                    {/if}
+                {/await}
+            </a>
+            {#if itemPreview.current && !itemPreview.loading}
+                <PostItemPreview
+                    title={itemPreview.current.title}
+                    description={itemPreview.current.description}
+                    coverURL={itemPreview.current.image}
+                    href={itemPreview.current.url}
+                />
+            {/if}
+        </CardContent>
+        <CardFooter class="px-4 flex gap-2">
+            <LikeButton
+                itemId={data.id}
+                itemType="post"
+                size="sm"
+            >
+                {#snippet child({ props, liked, toggleLike })}
+                    <Button
+                        {...props}
+                        size="sm"
+                        variant="outline"
+                        class={[
+                            liked && "text-primary!"
+                        ]}
+                        onclick={async () => {
+                            likes = liked ? likes - 1 : likes + 1;
 
-                        await toggleLike()
-                            .catch(() => {
-                                likes = liked ? likes + 1 : likes - 1;
-                            });
-                    }}
-                >
-                    <HeartIcon class={[liked && "fill-current"]}/>
-                    {likes ? numberFormatter.format(likes) : 'Like'}
-                </Button>
-            {/snippet}
-        </LikeButton>
-        <Button href={resolve('/(app)/post/[postId]', { postId: data.id }) + '#replies'} variant="outline" size="sm">
-            <MessageCircle/>
-            {replies ? numberFormatter.format(replies) : 'Reply'}
-        </Button>
-        <ShareButton
-            data={{
-                title: `A post by ${user.name} on Groovy`,
-                url: new URL(resolve('/(app)/post/[postId]', { postId: data.id }), page.url.origin).href
-            }}
-        >
-            {#snippet child({ onclick })}
-                <Button variant="outline" size="sm" {onclick}>
-                    <ForwardIcon/>
-                    Share
-                </Button>
-            {/snippet}
-    </ShareButton>
-    </CardFooter>
+                            await toggleLike()
+                                .catch(() => {
+                                    likes = liked ? likes + 1 : likes - 1;
+                                });
+                        }}
+                    >
+                        <HeartIcon class={[liked && "fill-current"]}/>
+                        {likes ? numberFormatter.format(likes) : 'Like'}
+                    </Button>
+                {/snippet}
+            </LikeButton>
+            <Button href={resolve('/(app)/post/[postId]', { postId: data.id }) + '#replies'} variant="outline" size="sm">
+                <MessageCircle/>
+                {replies ? numberFormatter.format(replies) : 'Reply'}
+            </Button>
+            <ShareButton
+                data={{
+                    title: `A post by ${user.name} on Groovy`,
+                    url: new URL(resolve('/(app)/post/[postId]', { postId: data.id }), page.url.origin).href
+                }}
+            >
+                {#snippet child({ onclick })}
+                    <Button variant="outline" size="sm" {onclick}>
+                        <ForwardIcon/>
+                        Share
+                    </Button>
+                {/snippet}
+            </ShareButton>
+        </CardFooter>
+    {/if}
 </Card>

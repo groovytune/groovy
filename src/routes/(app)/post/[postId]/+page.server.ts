@@ -2,6 +2,9 @@ import { error } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
 import { definePageMetaTags } from 'svelte-meta-tags';
 import { Appwrite } from '$lib/client/appwrite.js';
+import { fail, message, superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { deletePostSchema } from '../../../../lib/schema/post.js';
 
 export async function load({ params }) {
 
@@ -78,3 +81,30 @@ export async function load({ params }) {
         })
     };
 }
+
+export const actions = {
+    delete: async ({ request, locals, params }) => {
+        if (!locals.user) {
+            return fail(401, { message: 'Unauthorized' });
+        }
+
+        const form = await superValidate(request, zod4(deletePostSchema));
+
+        if (!form.valid) {
+            return fail(400, { form, message: 'Please correct the errors in the form' });
+        }
+
+        const post = await prisma.post.delete({
+            where: {
+                id: params.postId,
+                userId: locals.user.id
+            }
+        });
+
+        return message(form, {
+            message: `Post has been deleted successfully.`,
+            postId: post.id,
+            post,
+        });
+    }
+};

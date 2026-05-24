@@ -5,14 +5,19 @@
     import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
     import DropdownMenuContent from '$lib/components/ui/dropdown-menu/dropdown-menu-content.svelte';
     import { auth } from '$lib/client/auth';
+    import DeletePostDialog from './dialogs/DeletePostDialog.svelte';
+    import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
 
     let {
-        post
+        post,
+        ondelete
     }: {
         post: Post;
+        ondelete?: (post: Post) => void;
     } = $props();
 
     const session = auth.useSession();
+    const dialogState = new DialogState({ id: `delete-post-${post.id}` })
 </script>
 
 <DropdownMenu>
@@ -33,7 +38,7 @@
     </DropdownMenuTrigger>
     <DropdownMenuContent>
         {#if $session.data?.user.id && post.userId === $session.data?.user.id}
-            <DropdownMenuItem class="text-destructive!">
+            <DropdownMenuItem class="text-destructive!" onclick={() => dialogState.open()}>
                 <TrashIcon class="text-destructive"/>
                 Delete
             </DropdownMenuItem>
@@ -46,3 +51,4 @@
         {/if}
     </DropdownMenuContent>
 </DropdownMenu>
+<DeletePostDialog {dialogState} postId={post.id} {ondelete}/>
