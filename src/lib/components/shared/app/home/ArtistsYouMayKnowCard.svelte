@@ -12,10 +12,16 @@
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import { createUserProfileURL } from '$lib/helpers/utils';
 
+    let {
+        userId
+    }: {
+        userId?: string;
+    } = $props();
+
     const artists = resource(
         [],
         async () => {
-            const res = await fetch(resolve('/(app)/api/suggestions/artists'))
+            const res = await fetch(resolve('/(app)/api/suggestions/artists') + (userId ? `?userId=${userId}` : ''))
             return await res.json() as GETResponse;
         }
     )

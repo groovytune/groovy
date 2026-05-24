@@ -11,14 +11,25 @@
     import { numberFormatter } from '../../../../lib/helpers/constants.js';
     import MostStreamedTracksCard from '../../../../lib/components/shared/app/artist/MostStreamedTracksCard.svelte';
     import ReleasesCard from '../../../../lib/components/shared/app/artist/ReleasesCard.svelte';
+    import { MessageCircleIcon, Music4Icon } from '@lucide/svelte';
+    import { page } from '$app/state';
+    import { goto } from '$app/navigation';
+    import ArtistFeed from '../../../../lib/components/shared/app/artist/ArtistFeed.svelte';
 
 
     let { data } = $props();
 
     let user = $derived(data.user);
+    let activeTab: 'feed'|'music' = $derived(getActiveTab(page.url));
 
     const audioPlayer = AudioPlayer.context.get();
     const session = auth.useSession();
+
+    function getActiveTab(url: URL): 'feed'|'music' {
+        const tab = url.searchParams.get('tab')?.toLowerCase();
+
+        return tab === 'feed' || tab === 'music' ? tab : 'feed';
+    }
 </script>
 
 <div class="flex gap-4 px-5 justify-center-safe">
@@ -99,11 +110,45 @@
                 </div>
             </div>
         </div>
-        <MostStreamedTracksCard {user}/>
-        <ReleasesCard {user}/>
+        <div class="flex gap-2">
+            <Button
+                variant="outline"
+                class={[
+                    "w-1/2 shrink rounded-lg",
+                    activeTab == "feed" && "text-primary! bg-primary/10! border-primary/20!"
+                ]}
+                onclick={() =>
+                    // eslint-disable-next-line svelte/no-navigation-without-resolve
+                    goto(`?tab=feed`)
+                }
+            >
+                <MessageCircleIcon/>
+                Feed
+            </Button>
+            <Button
+                variant="outline"
+                class={[
+                    "w-1/2 shrink rounded-lg",
+                    activeTab == "music" && "text-primary! bg-primary/10! border-primary/20!"
+                ]}
+                onclick={() =>
+                    // eslint-disable-next-line svelte/no-navigation-without-resolve
+                    goto(`?tab=music`)
+                }
+            >
+                <Music4Icon/>
+                Music
+            </Button>
+        </div>
+        {#if activeTab === 'music'}
+            <MostStreamedTracksCard {user}/>
+            <ReleasesCard {user}/>
+        {:else}
+            <ArtistFeed userId={user.id}/>
+        {/if}
     </section>
     <aside class="w-full h-fit max-w-xs hidden lg:grid gap-4 shrink-0">
-        <ArtistsYouMayKnowCard/>
-        <SuggestedTracksCard/>
+        <ArtistsYouMayKnowCard userId={user.id}/>
+        <SuggestedTracksCard userId={user.id}/>
     </aside>
 </div>

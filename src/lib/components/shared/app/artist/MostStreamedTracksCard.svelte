@@ -39,7 +39,7 @@
     <CardHeader>
         <CardTitle class="flex items-center gap-1">
             <Music4Icon class="size-5 -mt-1 text-primary"/>
-            Most Streamed Tracks
+            Most Played Tracks
         </CardTitle>
         <CardDescription>
             Top tracks by {user.name} based on total streams
@@ -69,7 +69,7 @@
                         <Music4Icon/>
                     </EmptyMedia>
                     <EmptyTitle class="text-muted-foreground text-sm">
-                        No streamed tracks yet
+                        No track data yet
                     </EmptyTitle>
                 </EmptyHeader>
             </Empty>

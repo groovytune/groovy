@@ -9,29 +9,45 @@ export type GETResponse = (PartialUser & {
     };
 })[];
 
-export async function GET({ locals }) {
+export async function GET({ locals, url }) {
     if (!locals.user) {
         return json([]);
     }
 
+    const userId = url.searchParams.get('userId');
     const artists = await prisma.user.findMany({
         where: {
             id: {
-                not: locals.user.id
+                notIn: [locals.user.id, userId].filter(Boolean) as string[]
             },
             followers: {
                 none: {
                     followerId: locals.user.id
                 },
-                // the user is followed by an artist that the current user follows, so we can suggest them
                 some: {
-                    follower: {
-                        followers: {
-                            some: {
-                                followerId: locals.user.id
+                    OR: [
+                        {
+                            follower: {
+                                followers: {
+                                    some: {
+                                        followerId: locals.user.id
+                                    }
+                                }
                             }
-                        }
-                    }
+                        },
+                        ...(userId
+                            ? [
+                                {
+                                    followers: {
+                                        some: {
+                                            followerId: userId
+                                        }
+                                    }
+                                }
+                            ]
+                            : []
+                        )
+                    ]
                 }
             }
         },

@@ -9,11 +9,17 @@
     import { LoaderCircleIcon, Music4Icon } from '@lucide/svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
 
+    let {
+        userId
+    }: {
+        userId?: string;
+    } = $props();
+
     const audioPlayer = AudioPlayer.context.get();
     const tracks = resource(
         [],
         async () => {
-            const res = await fetch(resolve('/(app)/api/suggestions/tracks'))
+            const res = await fetch(resolve('/(app)/api/suggestions/tracks') + (userId ? `?userId=${userId}` : ''));
             return await res.json() as Track[];
         }
     )
