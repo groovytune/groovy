@@ -1,8 +1,12 @@
 import { prisma } from '$lib/server/prisma.js';
 import { error } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
+import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { editUserSchema } from '$lib/schema/user.js';
+import { Appwrite } from '../../../../../lib/server/appwrite';
+import path from 'node:path';
+import { Image } from '../../../../../lib/client/image.js';
+import { ImageFormat } from 'node-appwrite';
 
 export async function load({ params, locals }) {
     const { userResolvable } = params;
@@ -45,3 +49,52 @@ export async function load({ params, locals }) {
 
     return { user, form };
 }
+
+export const actions = {
+    update: async ({ request, locals }) => {
+        if (!locals.user) {
+            return fail(401, { message: 'Unauthorized' });
+        }
+
+        const form = await superValidate(request, zod4(editUserSchema), {
+            allowFiles: true
+        });
+
+        if (!form.valid) {
+            return fail(400, { form, message: 'Please correct the errors in the form' });
+        }
+
+        const avatar = form.data.image
+            ? await Appwrite.uploadFile(form.data.image, 'avatar')
+            : null;
+
+        await prisma.user.update({
+            where: {
+                id: locals.user.id
+            },
+            data: {
+                name: form.data.name,
+                username: form.data.username,
+                bio: form.data.bio,
+                favoriteTrackId: form.data.favoriteTrackId,
+                genres: {
+                    set: form.data.genres.map(genre => ({ id: genre.id }))
+                },
+                image: avatar
+                    ? path.resolve(
+                        '/',
+                        Image.getPreviewPath({
+                            fileId: avatar.$id,
+                            bucketId: avatar.bucketId,
+                            width: 500,
+                            height: 500,
+                            output: ImageFormat.Webp
+                        })
+                    )
+                    : undefined
+            }
+        });
+
+        return message(form, { message: 'Profile updated successfully' });
+    }
+};

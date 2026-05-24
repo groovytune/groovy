@@ -3,13 +3,15 @@ import { imageTransformOptionsSchema } from '$lib/schema/image.js';
 import { ImageTransform } from '$lib/helpers/classes/ImageTransform.js';
 
 export async function GET({ params, url }) {
+    const bucketId = url.searchParams.get('bucketId') || 'image';
+
     const meta = await Appwrite.storage.getFile({
-        bucketId: 'image',
+        bucketId,
         fileId: params.fileId
     });
 
     const data = await Appwrite.storage.getFileView({
-        bucketId: 'image',
+        bucketId,
         fileId: params.fileId
     });
 

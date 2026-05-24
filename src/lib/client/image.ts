@@ -13,7 +13,7 @@ export namespace Image {
         download?: boolean;
     }
 
-    export function getPreviewPath(options: PreviewOptions & { fileId: string; }): string {
+    export function getPreviewPath(options: PreviewOptions & { fileId: string; bucketId?: string; }): string {
         const params = new URLSearchParams();
 
         if (options.width) params.append('width', options.width.toString());
@@ -24,13 +24,18 @@ export namespace Image {
         if (options.output) params.append('output', options.output);
         if (options.token) params.append('token', options.token);
         if (options.download) params.append('download', 'true');
+        if (options.bucketId) params.append('bucketId', options.bucketId);
+
 
         return resolve('/(app)/api/assets/image/[fileId]/preview', {
             fileId: options.fileId
         }) + '?' + params.toString();
     }
 
-    export function getViewPath(fileId: string): string {
-        return resolve('/(app)/api/assets/image/[fileId]', { fileId });
+    export function getViewPath(fileId: string, bucketId?: string): string {
+        const params = new URLSearchParams();
+        if (bucketId) params.append('bucketId', bucketId);
+
+        return resolve('/(app)/api/assets/image/[fileId]', { fileId }) + '?' + params.toString();
     }
 }
