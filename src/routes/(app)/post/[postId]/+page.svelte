@@ -229,7 +229,7 @@
             content: '',
             referenceId: post.id
         }}
-        class="w-full max-w-2xl grid gap-2 mt-5 px-5 sm:px-0"
+        class="w-full max-w-2xl flex flex-col gap-2 mt-5 px-5 sm:px-0"
     >
         {#snippet children({ form })}
             <h2 class="text-lg font-semibold">

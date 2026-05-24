@@ -33,7 +33,7 @@
 </script>
 
 <Dialog bind:open={() => dialogState.isOpen, dialogState.toggle}>
-    <DialogContent class="max-h-[80dvh] overflow-auto">
+    <DialogContent class="max-h-[80dvh] overflow-auto flex flex-col gap-4">
         <DialogHeader class="text-start">
             <Item size="sm" class="p-0">
                 <ItemMedia>
