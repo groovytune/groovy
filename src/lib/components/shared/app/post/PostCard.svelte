@@ -102,7 +102,7 @@
             href={resolve('/(app)/post/[postId]', { postId: data.id })}
             class="flex flex-col gap-2"
         >
-            <p class="line-clamp-3 leading-relaxed whitespace-break-spaces" style="word-wrap: break-word;">
+            <p class="line-clamp-3 whitespace-break-spaces" style="word-wrap: break-word;">
                 {data.content}
             </p>
             {#await getPostMediaFiles(data.media) then media}
