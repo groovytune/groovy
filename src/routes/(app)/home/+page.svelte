@@ -27,7 +27,8 @@
         isLoading = true;
 
         const lastPost = posts.at(-1)?.id;
-        const response = await fetch(resolve('/(app)/api/feed') + '?take=3' + (lastPost ? `&after=${lastPost}` : ''))
+        const take = 3;
+        const response = await fetch(resolve('/(app)/api/feed') + `?take=${take}${lastPost ? '&after=' + lastPost : ''}`)
             .then(res => res.ok
                 ? res.json() as Promise<FeedResponse>
                 : Promise.reject(res)
@@ -43,7 +44,7 @@
         if (!response) return;
 
         posts.push(...response);
-        isAtEnd = response.length === 0;
+        isAtEnd = response.length === 0 || response.length < take;
     }
 
     async function handleScroll() {

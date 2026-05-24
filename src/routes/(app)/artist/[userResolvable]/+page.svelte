@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { Disc3Icon } from '@lucide/svelte';
     import { auth } from '../../../../lib/client/auth.js';
     import FollowButton from '../../../../lib/components/shared/app/artist/FollowButton.svelte';
     import ArtistsYouMayKnowCard from '../../../../lib/components/shared/app/home/ArtistsYouMayKnowCard.svelte';
@@ -8,11 +7,10 @@
     import { Avatar, AvatarFallback, AvatarImage } from '../../../../lib/components/ui/avatar/index.js';
     import { Badge } from '../../../../lib/components/ui/badge/index.js';
     import Button from '../../../../lib/components/ui/button/button.svelte';
-    import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../lib/components/ui/card/index.js';
     import { AudioPlayer } from '../../../../lib/helpers/classes/AudioPlayer.svelte.js';
     import { numberFormatter } from '../../../../lib/helpers/constants.js';
-    import SquareReleaseItem from '../../../../lib/components/shared/app/release/SquareReleaseItem.svelte';
     import MostStreamedTracksCard from '../../../../lib/components/shared/app/artist/MostStreamedTracksCard.svelte';
+    import ReleasesCard from '../../../../lib/components/shared/app/artist/ReleasesCard.svelte';
 
 
     let { data } = $props();
@@ -102,28 +100,7 @@
             </div>
         </div>
         <MostStreamedTracksCard {user}/>
-        <Card>
-            <CardHeader>
-                <CardTitle class="flex items-center gap-1">
-                    <Disc3Icon class="size-5 -mt-1 text-primary"/>
-                    Releases
-                </CardTitle>
-                <CardDescription>
-                    All releases by {user.name}
-                </CardDescription>
-            </CardHeader>
-            <CardContent class="grid grid-cols-2 lg:grid-cols-3 gap-5">
-                {#each { length: 6 }}
-                    <SquareReleaseItem
-                        name="Release Name"
-                        description="Artist Name · Album · 1.2K likes"
-                        explicit
-                        coverURL="https://placehold.co/300x300/png"
-                        href="#"
-                    />
-                {/each}
-            </CardContent>
-        </Card>
+        <ReleasesCard {user}/>
     </section>
     <aside class="w-full h-fit max-w-xs hidden lg:grid gap-4 shrink-0">
         <ArtistsYouMayKnowCard/>
