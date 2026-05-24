@@ -10,7 +10,20 @@ export const editUserSchema = z.object({
         .regex(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/, 'Username can only contain letters, numbers, and underscores')
         .optional(),
     bio: z.string().max(160).trim().optional(),
-    favoriteTrackId: z.string().optional(),
+    favoriteTrack: z.object({
+        id: z.string(),
+        name: z.string(),
+        releaseId: z.string(),
+        cover: z.string().nullable(),
+        duration: z.number().nullable(),
+        explicit: z.boolean(),
+        file: z.string(),
+        position: z.number(),
+        lyricsId: z.string().nullable(),
+        metadata: z.any(),
+        createdAt: z.string(),
+        updatedAt: z.string(),
+    }).optional(),
     image: z.instanceof(File)
         .refine(
             file => file.type.startsWith('image/jpg') || file.type.startsWith('image/jpeg') || file.type.startsWith('image/png'),

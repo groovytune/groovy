@@ -39,7 +39,13 @@ export async function load({ params, locals }) {
             name: user.name,
             username: user.username ?? undefined,
             bio: user.bio ?? undefined,
-            favoriteTrackId: user.favoriteTrack?.id,
+            favoriteTrack: user.favoriteTrack
+                ? {
+                    ...user.favoriteTrack,
+                    createdAt: user.favoriteTrack?.createdAt.toISOString(),
+                    updatedAt: user.favoriteTrack?.updatedAt.toISOString()
+                }
+                : undefined,
             genres: user.genres,
             image: undefined
         },
@@ -76,7 +82,7 @@ export const actions = {
                 name: form.data.name,
                 username: form.data.username,
                 bio: form.data.bio,
-                favoriteTrackId: form.data.favoriteTrackId,
+                favoriteTrackId: form.data.favoriteTrack?.id,
                 genres: {
                     set: form.data.genres.map(genre => ({ id: genre.id }))
                 },

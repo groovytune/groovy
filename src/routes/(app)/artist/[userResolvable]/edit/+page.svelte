@@ -13,6 +13,8 @@
     import { InputGroup, InputGroupAddon, InputGroupInput } from '../../../../../lib/components/ui/input-group/index.js';
     import InputGroupText from '../../../../../lib/components/ui/input-group/input-group-text.svelte';
     import GenreSearchInput from '../../../../../lib/components/shared/app/release/GenreSearchInput.svelte';
+    import TrackSearchInput from '../../../../../lib/components/shared/app/artist/TrackSearchInput.svelte';
+    import type { Track } from '../../../../../lib/server/prisma/browser.js';
 
     let { data } = $props();
 
@@ -173,6 +175,24 @@
                         bind:value={$formData.genres}
                         disabled={$submitting}
                         placeholder="Search and add genres to your profile"
+                    />
+                {/snippet}
+            </FormControl>
+            <FormFieldErrors/>
+        </FormField>
+        <FormField {form} name="favoriteTrack">
+            <FormControl>
+                {#snippet children({ props })}
+                    <FormLabel>Favorite Track</FormLabel>
+                    <TrackSearchInput
+                        {...props}
+                        limit={5}
+                        bind:value={
+                            () => $formData.favoriteTrack as Track|undefined,
+                            track => $formData.favoriteTrack = track as any
+                        }
+                        disabled={$submitting}
+                        placeholder="Search and add your favorite track"
                     />
                 {/snippet}
             </FormControl>
