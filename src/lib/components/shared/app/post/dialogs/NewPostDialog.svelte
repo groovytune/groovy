@@ -3,8 +3,8 @@
     import { newPostSchema } from '$lib/schema/post';
     import { type SuperForm } from 'sveltekit-superforms';
     import type z from 'zod';
-    import PostForm from './forms/PostForm.svelte';
-    import PostFormFields from './forms/PostFormFields.svelte';
+    import PostForm from '../forms/PostForm.svelte';
+    import PostFormFields from '../forms/PostFormFields.svelte';
     import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import { Dialog, DialogContent, DialogHeader } from '$lib/components/ui/dialog';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
@@ -54,7 +54,7 @@
                 </ItemContent>
             </Item>
         </DialogHeader>
-        <PostForm bind:form>
+        <PostForm bind:form class="flex flex-col gap-4">
             {#snippet children({ form })}
                 <PostFormFields {form}/>
             {/snippet}

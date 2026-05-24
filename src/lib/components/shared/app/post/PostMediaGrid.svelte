@@ -43,16 +43,17 @@
                 {#if item.type == 'image'}
                     <img
                         src={item.url}
-                        class="rounded-md object-cover"
-                        class:aspect-square={media.length > 1}
+                        class="rounded-md bg-black size-full object-cover"
+                        class:aspect-square={media.length > 1 || preview}
                         alt="Post Media"
                     />
                 {:else if item.type == 'video'}
                     <!-- svelte-ignore a11y_media_has_caption -->
                     <video
                         src={item.url}
-                        class="rounded-md object-cover"
+                        class="rounded-md bg-black"
                         class:aspect-square={media.length > 1}
+                        class:aspect-video={media.length === 1}
                         controls={!preview}
                     >
                     </video>
