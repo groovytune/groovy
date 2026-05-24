@@ -1,6 +1,6 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "$lib/components/ui/dropdown-menu";
-    import { BoltIcon, LogOutIcon, MoonIcon, MusicIcon, SunIcon, UserRoundIcon } from '@lucide/svelte';
+    import { LogOutIcon, MoonIcon, MusicIcon, SunIcon, UserRoundIcon, UserRoundPenIcon } from '@lucide/svelte';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
     import { Button } from '$lib/components/ui/button';
     import { mode, toggleMode } from 'mode-watcher';
@@ -93,8 +93,13 @@
                 {/snippet}
             </DropdownMenuItem>
             <DropdownMenuItem>
-                <BoltIcon/>
-                Settings
+                {#snippet child({ props })}
+                    <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+                    <a {...props} href={createUserProfileURL(user) + '/edit'}>
+                        <UserRoundPenIcon/>
+                        Edit Profile
+                    </a>
+                {/snippet}
             </DropdownMenuItem>
             <DropdownMenuSeparator/>
             <DropdownMenuItem closeOnSelect={false} onclick={toggleMode}>
