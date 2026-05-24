@@ -6,7 +6,7 @@ import type { Release, Track, User } from '../server/prisma/browser';
 import { Appwrite } from '../client/appwrite';
 import { Image } from '../client/image';
 import { ImageFormat } from 'appwrite';
-import { ReleaseInfoCache } from './classes/ReleaseInfoCache.svelte';
+import { releaseTypeNames } from './constants';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -92,7 +92,13 @@ export async function getPostMediaFiles(ids: string[]): Promise<{ type: 'image'|
     return files;
 }
 
-export async function fetchPostURLPreview(content: string, origin?: string): Promise<{ title: string; description?: string; image?: string; url: string; }|null> {
+export async function fetchPostURLPreview(
+    content: string,
+    options?: {
+        origin?: string;
+        fetchReleaseUser?: (id: string) => Promise<PartialUser|null>;
+    }
+): Promise<{ title: string; description?: string; image?: string; url: string; }|null> {
     const tokens = content.split(/\s+/);
 
     for (const token of tokens) {
@@ -103,7 +109,7 @@ export async function fetchPostURLPreview(content: string, origin?: string): Pro
         try {
             url = new URL(token);
 
-            if (origin && url.origin !== origin) {
+            if (options?.origin && url.origin !== options.origin) {
                 continue;
             }
         } catch {
@@ -113,8 +119,6 @@ export async function fetchPostURLPreview(content: string, origin?: string): Pro
         const result = await match(url.pathname);
         if (!result) continue;
 
-        const releaseInfoCache = ReleaseInfoCache.context.get();
-
         switch (result.id) {
             case '/(app)/release/[releaseId]': {
                 const { releaseId } = result.params;
@@ -123,16 +127,19 @@ export async function fetchPostURLPreview(content: string, origin?: string): Pro
                 if (!response.ok) continue;
 
                 const data: Release = await response.json();
-                const artist: PartialUser|null = await releaseInfoCache
-                    .fetchInfo({ type: 'artist', releaseId: data.id })
-                    .catch(() => null);
+                const artist: PartialUser|null = await (
+                    options?.fetchReleaseUser
+                        ? options.fetchReleaseUser(data.id)
+                        : Promise.resolve(null)
+                );
 
                 return {
                     title: data.name,
                     url: url.href,
                     description: [
-                        data.type,
-                        artist?.name
+                        releaseTypeNames[data.type],
+                        artist?.name,
+                        DateTime.fromJSDate(new Date(data.createdAt)).toRelative()
                     ]
                         .filter(Boolean)
                         .join(' · '),
@@ -153,16 +160,19 @@ export async function fetchPostURLPreview(content: string, origin?: string): Pro
                 if (!response.ok) continue;
 
                 const data: Track = await response.json();
-                const artist: PartialUser|null = await releaseInfoCache
-                    .fetchInfo({ type: 'artist', releaseId: data.releaseId })
-                    .catch(() => null);
+                const artist: PartialUser|null = await (
+                    options?.fetchReleaseUser
+                        ? options.fetchReleaseUser(data.releaseId)
+                        : Promise.resolve(null)
+                );
 
                 return {
                     title: data.name,
                     url: url.href,
                     description: [
                         data.duration ? formatDuration(data.duration) : undefined,
-                        artist?.name
+                        artist?.name,
+                        DateTime.fromJSDate(new Date(data.createdAt)).toRelative()
                     ]
                         .filter(Boolean)
                         .join(' · '),

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { DateTime } from 'luxon';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
-    import { createUserProfileURL, getPostMediaFiles } from '$lib/helpers/utils.js';
+    import { createUserProfileURL, fetchPostURLPreview, getPostMediaFiles } from '$lib/helpers/utils.js';
     import FollowButton from '$lib/components/shared/app/artist/FollowButton.svelte';
     import { auth } from '$lib/client/auth.js';
     import { Button } from '$lib/components/ui/button';
@@ -19,10 +19,14 @@
     import { afterNavigate } from '$app/navigation';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import { page } from '$app/state';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
+    import { resource } from 'runed';
+    import PostItemPreview from '$lib/components/shared/app/post/PostItemPreview.svelte';
 
     let { data } = $props();
 
     const session = auth.useSession();
+    const audioPlayer = AudioPlayer.context.get();
 
     let post = $derived(data.post);
     let user = $derived(post.user);
@@ -35,6 +39,19 @@
     let replies: RepliesResponse = $state([]);
     let isLoading = $state(false);
     let isAtEnd = $state(false);
+
+    const itemPreview = resource(
+        () => post.content,
+        async content => fetchPostURLPreview(
+            content,
+            {
+                fetchReleaseUser: releaseId => audioPlayer.releaseCache.fetchInfo({
+                    releaseId,
+                    type: 'artist'
+                })
+            }
+        )
+    );
 
     async function loadReplies() {
         isLoading = true;
@@ -148,6 +165,14 @@
             <p class="leading-relaxed whitespace-break-spaces" style="word-wrap: break-word;">
                 {post.content}
             </p>
+            {#if itemPreview.current && !itemPreview.loading}
+                <PostItemPreview
+                    title={itemPreview.current.title}
+                    description={itemPreview.current.description}
+                    coverURL={itemPreview.current.image}
+                    href={itemPreview.current.url}
+                />
+            {/if}
             {#if media.length}
                 <PostMediaGrid {media} class="mt-4"/>
             {/if}

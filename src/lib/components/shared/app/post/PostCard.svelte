@@ -16,8 +16,9 @@
     import type { ClassValue } from 'clsx';
     import ShareButton from '../release/ShareButton.svelte';
     import { page } from '$app/state';
-    import PostAudioPreview from './PostItemPreview.svelte';
+    import PostItemPreview from './PostItemPreview.svelte';
     import { resource } from 'runed';
+    import { AudioPlayer } from '../../../../helpers/classes/AudioPlayer.svelte';
 
     let {
         data,
@@ -30,6 +31,7 @@
     } = $props();
 
     const session = auth.useSession();
+    const audioPlayer = AudioPlayer.context.get();
 
     let likes = $derived(data._count.likes);
     let replies = $derived(data._count.replies);
@@ -37,7 +39,15 @@
 
     const itemPreview = resource(
         () => data.content,
-        async content => fetchPostURLPreview(content)
+        async content => fetchPostURLPreview(
+            content,
+            {
+                fetchReleaseUser: releaseId => audioPlayer.releaseCache.fetchInfo({
+                    releaseId,
+                    type: 'artist'
+                })
+            }
+        )
     );
 </script>
 
@@ -102,7 +112,7 @@
             {/await}
         </a>
         {#if itemPreview.current && !itemPreview.loading}
-            <PostAudioPreview
+            <PostItemPreview
                 title={itemPreview.current.title}
                 description={itemPreview.current.description}
                 coverURL={itemPreview.current.image}

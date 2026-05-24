@@ -1,12 +1,19 @@
 import { getSupportedMimeTypes } from 'music-metadata';
 import tsquery from 'pg-tsquery';
 import { getLocale } from './utils';
+import type { ReleaseType } from '../server/prisma/enums';
 
 export const tsQueryParser = new tsquery.Tsquery();
 
 export const supportedAudioMimeTypes = getSupportedMimeTypes();
 
 export const numberFormatter = new Intl.NumberFormat(getLocale(), { notation: 'compact' });
+
+export const releaseTypeNames: Record<ReleaseType, string> = {
+    ALBUM: 'Album',
+    SINGLE: 'Single',
+    EP: 'EP'
+};
 
 export const categoryInfos = {
     album: {
