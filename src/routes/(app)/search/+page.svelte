@@ -8,13 +8,16 @@
     import Button from '$lib/components/ui/button/button.svelte';
     import { resolve } from '$app/paths';
     import type { Post, Release, Track } from '../../../lib/server/prisma/browser';
-    import type { PartialUser } from '../../../lib/helpers/utils';
+    import { createUserProfileURL, type PartialUser } from '../../../lib/helpers/utils';
     import TrackItem from '../../../lib/components/shared/app/release/track/TrackItem.svelte';
     import SquareReleaseItem from '../../../lib/components/shared/app/release/SquareReleaseItem.svelte';
     import { releaseTypeNames } from '../../../lib/helpers/constants';
     import { DateTime } from 'luxon';
     import { Image } from '../../../lib/client/image';
     import { ImageFormat } from 'appwrite';
+    import Avatar from '../../../lib/components/ui/avatar/avatar.svelte';
+    import { AvatarFallback, AvatarImage } from '../../../lib/components/ui/avatar';
+    import PostCard from '../../../lib/components/shared/app/post/PostCard.svelte';
 
     let query = $derived(page.url.searchParams.get('q') ?? '');
     let type = $derived(z.literal(['tracks','releases','artists','posts']).safeParse(page.url.searchParams.get('type')).data || 'artists');
@@ -61,7 +64,20 @@
     export type TracksResult = { type: 'tracks'; data: Track[]; };
     export type ReleasesResult = { type: 'releases'; data: Release[]; };
     export type ArtistsResult = { type: 'artists'; data: PartialUser[]; };
-    export type PostsResult = { type: 'posts'; data: Post[]; };
+    export type PostsResult = {
+        type: 'posts';
+        data: (Post & {
+            user: PartialUser;
+            reference: {
+                id: string;
+                user: PartialUser;
+            }|null;
+            _count: {
+                likes: number;
+                replies: number;
+            };
+        })[];
+    };
 </script>
 
 <h1 class="text-2xl sm:text-4xl font-bold my-4 px-5 flex items-center gap-2">
@@ -189,34 +205,30 @@
                             href={resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
                             {coverURL}
                         />
-                        <SquareReleaseItem
-                            name={release.name}
-                            explicit={release.explicit}
-                            description={`${releaseTypeNames[release.type]} · ${DateTime.fromJSDate(new Date(release.createdAt)).toLocaleString(DateTime.DATE_MED)}`}
-                            href={resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
-                            {coverURL}
-                        />
-                        <SquareReleaseItem
-                            name={release.name}
-                            explicit={release.explicit}
-                            description={`${releaseTypeNames[release.type]} · ${DateTime.fromJSDate(new Date(release.createdAt)).toLocaleString(DateTime.DATE_MED)}`}
-                            href={resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
-                            {coverURL}
-                        />
-                        <SquareReleaseItem
-                            name={release.name}
-                            explicit={release.explicit}
-                            description={`${releaseTypeNames[release.type]} · ${DateTime.fromJSDate(new Date(release.createdAt)).toLocaleString(DateTime.DATE_MED)}`}
-                            href={resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
-                            {coverURL}
-                        />
                     {/each}
                 </div>
             {:else if results.current.type === 'artists'}
-                {#each results.current.data as artist (artist.id)}
-                {/each}
+                <div class="size-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    {#each results.current.data as artist (artist.id)}
+                        <a href={createUserProfileURL(artist)} class="flex flex-col gap-4">
+                            <div class="aspect-square w-full">
+                                <Avatar class="size-full">
+                                    <AvatarImage src={artist.image} alt={artist.name}/>
+                                    <AvatarFallback>{artist.name.charAt(0).toUpperCase()}</AvatarFallback>
+                                </Avatar>
+                            </div>
+                            <div class="text-center">
+                                <h1 class="text-lg font-semibold leading-tight">{artist.name}</h1>
+                                {#if artist.username}
+                                    <p class="text-sm text-muted-foreground leading-tight">@{artist.username}</p>
+                                {/if}
+                            </div>
+                        </a>
+                    {/each}
+                </div>
             {:else if results.current.type === 'posts'}
                 {#each results.current.data as post (post.id)}
+                    <PostCard data={post}/>
                 {/each}
             {/if}
         {/if}

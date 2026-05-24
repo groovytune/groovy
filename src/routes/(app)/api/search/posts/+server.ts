@@ -47,6 +47,35 @@ export async function GET({ url }) {
                 }
             ]
         },
+        include: {
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    image: true
+                }
+            },
+            reference: {
+                select: {
+                    id: true,
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            username: true,
+                            image: true
+                        }
+                    },
+                }
+            },
+            _count: {
+                select: {
+                    likes: true,
+                    replies: true
+                }
+            }
+        },
         orderBy: {
             _relevance: {
                 fields: ["content"],
