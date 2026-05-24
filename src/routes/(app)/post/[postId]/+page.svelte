@@ -220,7 +220,8 @@
     </PostForm>
     {#if replies.length || isLoading}
         <div class="w-full max-w-2xl grid gap-4 pt-2 sm:px-0 px-5" id="replies">
-            {#each replies as reply (reply.id)}
+            <!-- eslint-disable-next-line svelte/require-each-key -->
+            {#each replies as reply}
                 <PostCard data={reply} class="rounded-lg"/>
             {/each}
             {#if isLoading || isAtEnd}

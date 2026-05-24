@@ -1,9 +1,12 @@
-import { resolve } from '$app/paths';
+import { match, resolve } from '$app/paths';
 import { clsx, type ClassValue } from "clsx";
 import { DateTime } from 'luxon';
 import { twMerge } from "tailwind-merge";
-import type { User } from '../server/prisma/browser';
+import type { Release, Track, User } from '../server/prisma/browser';
 import { Appwrite } from '../client/appwrite';
+import { Image } from '../client/image';
+import { ImageFormat } from 'appwrite';
+import { ReleaseInfoCache } from './classes/ReleaseInfoCache.svelte';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -87,4 +90,86 @@ export async function getPostMediaFiles(ids: string[]): Promise<{ type: 'image'|
     }
 
     return files;
+}
+
+export async function fetchPostURLPreview(content: string, origin?: string): Promise<{ title: string; description?: string; image?: string; url: string; }|null> {
+    const tokens = content.split(/\s+/);
+
+    for (const token of tokens) {
+        if (!token.startsWith('http://') && !token.startsWith('https://')) continue;
+
+        let url: URL;
+
+        try {
+            url = new URL(token);
+
+            if (origin && url.origin !== origin) {
+                continue;
+            }
+        } catch {
+            continue;
+        }
+
+        const result = await match(url.pathname);
+        if (!result) continue;
+
+        const releaseInfoCache = ReleaseInfoCache.context.get();
+
+        switch (result.id) {
+            case '/(app)/release/[releaseId]': {
+                const { releaseId } = result.params;
+
+                const response = await fetch(resolve('/(app)/api/release/[releaseId]', { releaseId }));
+                if (!response.ok) continue;
+
+                const data: Release = await response.json();
+                const artist: PartialUser|null = await releaseInfoCache
+                    .fetchInfo({ type: 'artist', releaseId: data.id })
+                    .catch(() => null);
+
+                return {
+                    title: data.name,
+                    url: url.href,
+                    description: [
+                        data.type,
+                        artist?.name
+                    ]
+                        .filter(Boolean)
+                        .join(' · '),
+                    image: data.cover
+                        ? Image.getPreviewPath({
+                            fileId: data.cover,
+                            width: 300,
+                            height: 300,
+                            output: ImageFormat.Webp
+                        })
+                        : undefined,
+                }
+            }
+            case '/(app)/release/[releaseId]/track/[trackId]': {
+                const { trackId } = result.params;
+
+                const response = await fetch(resolve('/(app)/api/track/[trackId]', { trackId }));
+                if (!response.ok) continue;
+
+                const data: Track = await response.json();
+                const artist: PartialUser|null = await releaseInfoCache
+                    .fetchInfo({ type: 'artist', releaseId: data.releaseId })
+                    .catch(() => null);
+
+                return {
+                    title: data.name,
+                    url: url.href,
+                    description: [
+                        data.duration ? formatDuration(data.duration) : undefined,
+                        artist?.name
+                    ]
+                        .filter(Boolean)
+                        .join(' · '),
+                }
+            }
+        }
+    }
+
+    return null;
 }

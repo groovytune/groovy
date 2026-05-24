@@ -5,7 +5,7 @@
     import { Button } from '$lib/components/ui/button';
     import { numberFormatter } from '$lib/helpers/constants';
     import type { GETResponse as PostItemData } from '../../../../../routes/(app)/api/feed/+server';
-    import { createUserProfileURL, getPostMediaFiles } from '$lib/helpers/utils';
+    import { createUserProfileURL, fetchPostURLPreview, getPostMediaFiles } from '$lib/helpers/utils';
     import { DateTime } from 'luxon';
     import { auth } from '$lib/client/auth';
     import FollowButton from '../artist/FollowButton.svelte';
@@ -16,6 +16,8 @@
     import type { ClassValue } from 'clsx';
     import ShareButton from '../release/ShareButton.svelte';
     import { page } from '$app/state';
+    import PostAudioPreview from './PostItemPreview.svelte';
+    import { resource } from 'runed';
 
     let {
         data,
@@ -32,6 +34,11 @@
     let likes = $derived(data._count.likes);
     let replies = $derived(data._count.replies);
     let user = $derived(data.user);
+
+    const itemPreview = resource(
+        () => data.content,
+        async content => fetchPostURLPreview(content)
+    );
 </script>
 
 <Card class={["py-4 gap-2", className]}>
@@ -94,6 +101,14 @@
                 {/if}
             {/await}
         </a>
+        {#if itemPreview.current && !itemPreview.loading}
+            <PostAudioPreview
+                title={itemPreview.current.title}
+                description={itemPreview.current.description}
+                coverURL={itemPreview.current.image}
+                href={itemPreview.current.url}
+            />
+        {/if}
     </CardContent>
     <CardFooter class="px-4 flex gap-2">
         <LikeButton
