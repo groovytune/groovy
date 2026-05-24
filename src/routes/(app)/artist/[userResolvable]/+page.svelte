@@ -116,7 +116,6 @@
                 {#each { length: 6 }}
                     <SquareReleaseItem
                         name="Release Name"
-                        author="Artist Name"
                         description="Artist Name · Album · 1.2K likes"
                         explicit
                         coverURL="https://placehold.co/300x300/png"

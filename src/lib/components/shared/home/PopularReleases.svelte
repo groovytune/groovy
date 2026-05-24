@@ -35,7 +35,6 @@
         {@const href = resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
         <SquareReleaseItem
             name={release.name}
-            author={release.user.name}
             description={`${release.user.name} · ${releaseTypeNames[release.type]} · ${release._count.likes} ${release._count.likes === 1 ? 'like' : 'likes'}`}
             explicit={release.explicit}
             coverURL={coverURL}

@@ -3,14 +3,12 @@
 
     let {
         name,
-        author,
         description,
         explicit,
         coverURL,
         href
     }: {
         name: string;
-        author: string;
         description?: string;
         explicit: boolean;
         coverURL?: string;
@@ -26,7 +24,7 @@
             {description}
         </p>
         <h3 class="font-semibold text-lg">
-            {author}
+            {name}
             {#if explicit}
                 <ExplicitIcon class="inline-block size-5"/>
             {/if}
