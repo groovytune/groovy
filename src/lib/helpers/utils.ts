@@ -97,6 +97,7 @@ export async function fetchPostURLPreview(
     options?: {
         origin?: string;
         fetchReleaseUser?: (id: string) => Promise<PartialUser|null>;
+        fetchReleaseInfo?: (id: string) => Promise<Release|null>;
     }
 ): Promise<{ title: string; description?: string; image?: string; url: string; }|null> {
     const tokens = content.split(/\s+/);
@@ -123,15 +124,27 @@ export async function fetchPostURLPreview(
             case '/(app)/release/[releaseId]': {
                 const { releaseId } = result.params;
 
-                const response = await fetch(resolve('/(app)/api/release/[releaseId]', { releaseId }));
-                if (!response.ok) continue;
+                // eslint-disable-next-line no-useless-assignment
+                let data: Release|null = null;
 
-                const data: Release = await response.json();
+                if (options?.fetchReleaseInfo) {
+                    data = await options.fetchReleaseInfo(releaseId);
+                } else {
+                    const response = await fetch(resolve('/(app)/api/release/[releaseId]', { releaseId }));
+                    if (!response.ok) continue;
+
+                    data = await response.json();
+                }
+
+                if (!data) continue;
+
                 const artist: PartialUser|null = await (
                     options?.fetchReleaseUser
                         ? options.fetchReleaseUser(data.id)
                         : Promise.resolve(null)
                 );
+
+                console.log(artist);
 
                 return {
                     title: data.name,

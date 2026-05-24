@@ -14,34 +14,11 @@ export async function GET({ locals, url }) {
                     id: {
                         not: locals.user.id
                     },
-                    OR: [
-                        {
-                            followers: {
-                                some: {
-                                    followerId: locals.user.id
-                                }
-                            }
-                        },
-                        ...(userId
-                            ? [
-                                {
-                                    followers: {
-                                        some: {
-                                            followerId: userId
-                                        }
-                                    }
-                                },
-                                {
-                                    followings: {
-                                        some: {
-                                            followingId: userId
-                                        }
-                                    }
-                                }
-                            ]
-                            : []
-                        )
-                    ]
+                    followers: {
+                        some: {
+                            followerId: userId ?? locals.user.id
+                        }
+                    }
                 }
             },
             streams: {

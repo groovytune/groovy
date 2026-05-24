@@ -18,36 +18,27 @@ export async function GET({ locals, url }) {
     const artists = await prisma.user.findMany({
         where: {
             id: {
-                notIn: [locals.user.id, userId].filter(Boolean) as string[]
+                not: locals.user.id
             },
             followers: {
                 none: {
                     followerId: locals.user.id
                 },
                 some: {
-                    OR: [
-                        {
-                            follower: {
-                                followers: {
-                                    some: {
-                                        followerId: locals.user.id
-                                    }
+                    follower: {
+                        following: userId
+                            ? {
+                                some: {
+                                    userId
                                 }
                             }
-                        },
-                        ...(userId
-                            ? [
-                                {
-                                    followers: {
-                                        some: {
-                                            followerId: userId
-                                        }
-                                    }
-                                }
-                            ]
-                            : []
-                        )
-                    ]
+                            : undefined,
+                        followers: {
+                            some: {
+                                followerId: locals.user.id
+                            }
+                        }
+                    }
                 }
             }
         },
