@@ -79,7 +79,7 @@
                 description={`${releaseTypeNames[release.type]} · ${DateTime.fromJSDate(new Date(release.createdAt)).toFormat('MMM dd')}`}
                 explicit={release.explicit}
                 coverURL={coverURL}
-                href="#"
+                href={resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
             />
         {/each}
         {#if isLoading}
