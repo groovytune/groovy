@@ -18,7 +18,7 @@
     import { page } from '$app/state';
     import PostItemPreview from './PostItemPreview.svelte';
     import { resource } from 'runed';
-    import { AudioPlayer } from '../../../../helpers/classes/AudioPlayer.svelte';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
 
     let {
         data,
