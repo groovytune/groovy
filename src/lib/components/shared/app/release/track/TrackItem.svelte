@@ -64,7 +64,10 @@
             <img
                 alt={track.name}
                 src={coverURL}
-                class="rounded-md"
+                class={[
+                    "rounded-md",
+                    onclick && "cursor-pointer"
+                ]}
             />
         </ItemMedia>
     {/if}
@@ -72,7 +75,8 @@
         <ItemTitle
             class={[
                 "line-clamp-1 text-balance",
-                isPlaying && "text-primary font-semibold"
+                isPlaying && "text-primary font-semibold",
+                onclick && "cursor-pointer"
             ]}
         >
             {track?.name ?? 'Unavailable Track'}
