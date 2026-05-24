@@ -1,12 +1,18 @@
 <script lang="ts">
+    import { Disc3Icon } from '@lucide/svelte';
+    import { auth } from '../../../../lib/client/auth.js';
     import FollowButton from '../../../../lib/components/shared/app/artist/FollowButton.svelte';
     import ArtistsYouMayKnowCard from '../../../../lib/components/shared/app/home/ArtistsYouMayKnowCard.svelte';
     import SuggestedTracksCard from '../../../../lib/components/shared/app/home/SuggestedTracksCard.svelte';
     import TrackItem from '../../../../lib/components/shared/app/release/track/TrackItem.svelte';
     import { Avatar, AvatarFallback, AvatarImage } from '../../../../lib/components/ui/avatar/index.js';
     import { Badge } from '../../../../lib/components/ui/badge/index.js';
+    import Button from '../../../../lib/components/ui/button/button.svelte';
+    import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../lib/components/ui/card/index.js';
     import { AudioPlayer } from '../../../../lib/helpers/classes/AudioPlayer.svelte.js';
     import { numberFormatter } from '../../../../lib/helpers/constants.js';
+    import SquareReleaseItem from '../../../../lib/components/shared/app/release/SquareReleaseItem.svelte';
+    import MostStreamedTracksCard from '../../../../lib/components/shared/app/artist/MostStreamedTracksCard.svelte';
 
 
     let { data } = $props();
@@ -14,6 +20,7 @@
     let user = $derived(data.user);
 
     const audioPlayer = AudioPlayer.context.get();
+    const session = auth.useSession();
 </script>
 
 <div class="flex gap-4 px-5 justify-center-safe">
@@ -41,7 +48,13 @@
                             {user.name}
                         </h1>
                     </div>
-                    <FollowButton userId={user.id}/>
+                    {#if user.id !== $session.data?.user?.id}
+                        <FollowButton userId={user.id} size="sm"/>
+                    {:else}
+                        <Button variant="outline" size="sm">
+                            Edit Profile
+                        </Button>
+                    {/if}
                 </div>
                 <div class="flex gap-4 w-full text-sm">
                     <p>
@@ -88,6 +101,30 @@
                 </div>
             </div>
         </div>
+        <MostStreamedTracksCard {user}/>
+        <Card>
+            <CardHeader>
+                <CardTitle class="flex items-center gap-1">
+                    <Disc3Icon class="size-5 -mt-1 text-primary"/>
+                    Releases
+                </CardTitle>
+                <CardDescription>
+                    All releases by {user.name}
+                </CardDescription>
+            </CardHeader>
+            <CardContent class="grid grid-cols-2 lg:grid-cols-3 gap-5">
+                {#each { length: 6 }}
+                    <SquareReleaseItem
+                        name="Release Name"
+                        author="Artist Name"
+                        description="Artist Name · Album · 1.2K likes"
+                        explicit
+                        coverURL="https://placehold.co/300x300/png"
+                        href="#"
+                    />
+                {/each}
+            </CardContent>
+        </Card>
     </section>
     <aside class="w-full h-fit max-w-xs hidden lg:grid gap-4 shrink-0">
         <ArtistsYouMayKnowCard/>

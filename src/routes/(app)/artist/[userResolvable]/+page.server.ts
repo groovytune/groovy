@@ -1,5 +1,6 @@
 import { prisma } from '$lib/server/prisma.js';
 import { error } from '@sveltejs/kit';
+import { definePageMetaTags } from 'svelte-meta-tags';
 
 export async function load({ params }) {
     const { userResolvable } = params;
@@ -35,5 +36,24 @@ export async function load({ params }) {
         throw error(404, 'Artist not found');
     }
 
-    return { user };
+    const title = `${user.name} on Groovy`;
+    const description = user.bio || `Listen to ${user.name}'s music on Groovy.`;
+
+    return {
+        user,
+        ...definePageMetaTags({
+            title,
+            description,
+            openGraph: {
+                title,
+                description,
+                image: user.image
+                    ? {
+                        url: user.image,
+                        alt: `${user.name}'s profile picture`
+                    }
+                    : undefined
+            }
+        })
+    };
 }

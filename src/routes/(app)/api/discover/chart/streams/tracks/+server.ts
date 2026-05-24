@@ -11,11 +11,13 @@ export type GETResponse = (Track & {
 
 export async function GET({ url }) {
     const genre = url.searchParams.get('genre');
+    const userId = url.searchParams.get('userId');
     const take = z.coerce.number().int().positive().max(100).safeParse(url.searchParams.get('take'));
 
     const tracks = await prisma.track.findMany({
         where: {
             release: {
+                userId: userId ?? undefined,
                 privacy: 'PUBLIC'
             },
             genres: genre
