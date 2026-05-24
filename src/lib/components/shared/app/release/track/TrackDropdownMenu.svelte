@@ -1,6 +1,6 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { Disc3Icon, DownloadIcon, EllipsisIcon, InfoIcon, MicVocalIcon, MusicIcon, PencilIcon, Share2Icon, Trash2Icon } from '@lucide/svelte';
+    import { Disc3Icon, DownloadIcon, EllipsisIcon, InfoIcon, ListMusicIcon, MicVocalIcon, MusicIcon, PencilIcon, Share2Icon, Trash2Icon } from '@lucide/svelte';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import type { Track } from '$lib/server/prisma/browser';
     import { Button } from '$lib/components/ui/button';
@@ -107,6 +107,22 @@
                     >
                         <MusicIcon/>
                         View Track
+                    </a>
+                {/snippet}
+            </DropdownMenuItem>
+            <DropdownMenuItem class={page.route.id === '/(app)/release/[releaseId]' ? 'hidden' : ''}>
+                {#snippet child({ props })}
+                    <a
+                        {...props}
+                        href={resolve(
+                            '/(app)/release/[releaseId]',
+                            {
+                                releaseId: track.releaseId
+                            }
+                        )}
+                    >
+                        <ListMusicIcon/>
+                        View Release
                     </a>
                 {/snippet}
             </DropdownMenuItem>
