@@ -123,7 +123,7 @@
                 </Button>
             {/snippet}
         </LikeButton>
-        <Button variant="outline" size="sm">
+        <Button href={resolve('/(app)/post/[postId]', { postId: data.id }) + '#replies'} variant="outline" size="sm">
             <MessageCircle/>
             {replies ? numberFormatter.format(replies) : 'Reply'}
         </Button>

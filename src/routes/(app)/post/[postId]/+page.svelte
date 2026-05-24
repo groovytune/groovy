@@ -16,7 +16,7 @@
     import { resolve } from '$app/paths';
     import type { GETResponse as RepliesResponse } from '../../api/post/[postId]/replies/+server.js';
     import PostCard from '$lib/components/shared/app/post/PostCard.svelte';
-    import { afterNavigate, beforeNavigate } from '$app/navigation';
+    import { afterNavigate } from '$app/navigation';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import { page } from '$app/state';
 
@@ -78,16 +78,12 @@
         }
     });
 
-    beforeNavigate(() => {
+    afterNavigate(() => {
         media = [];
         replies = [];
         isAtEnd = false;
-    });
 
-    afterNavigate(() => {
-        if (!replies.length && !isAtEnd) {
-            loadReplies();
-        }
+        loadReplies();
     });
 </script>
 
@@ -214,11 +210,20 @@
             />
         {/snippet}
     </PostForm>
-    {#if replies.length}
-        <div class="w-full max-w-2xl grid gap-4 pt-2 sm:px-0 px-5">
+    {#if replies.length || isLoading}
+        <div class="w-full max-w-2xl grid gap-4 pt-2 sm:px-0 px-5" id="replies">
             {#each replies as reply (reply.id)}
                 <PostCard data={reply} class="rounded-lg"/>
             {/each}
+            {#if isLoading || isAtEnd}
+                <p class="text-center text-sm text-muted-foreground">
+                    {#if isLoading}
+                        Loading...
+                    {:else if isAtEnd}
+                        No more replies.
+                    {/if}
+                </p>
+            {/if}
         </div>
     {/if}
 </section>
