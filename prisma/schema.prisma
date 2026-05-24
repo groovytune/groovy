@@ -15,25 +15,29 @@ enum Privacy {
 }
 
 model User {
-  id            String        @id
-  name          String
-  username      String?
-  role          String        @default("user")
-  email         String
-  emailVerified Boolean       @default(false)
-  image         String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  releases      Release[]
-  streamed      Stream[]
-  posts         Post[]
-  likedReleases ReleaseLike[]
-  likedTracks   TrackLike[]
-  likedPosts    PostLike[]
-  followers     UserFollow[]  @relation("UserFollowers")
-  following     UserFollow[]  @relation("UserFollowing")
+  id              String        @id
+  name            String
+  username        String?
+  role            String        @default("user")
+  email           String
+  emailVerified   Boolean       @default(false)
+  image           String?
+  bio             String?
+  genres          Genre[]       @relation("UserGenres")
+  favoriteTrackId String?
+  favoriteTrack   Track?        @relation("UserFavoriteTrack", fields: [favoriteTrackId], references: [id])
+  sessions        Session[]
+  accounts        Account[]
+  releases        Release[]
+  streamed        Stream[]
+  posts           Post[]
+  likedReleases   ReleaseLike[]
+  likedTracks     TrackLike[]
+  likedPosts      PostLike[]
+  followers       UserFollow[]  @relation("UserFollowers")
+  following       UserFollow[]  @relation("UserFollowing")
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@unique([email])
   @@unique([username])
@@ -114,23 +118,24 @@ model Release {
 }
 
 model Track {
-  id        String   @id @default(cuid())
-  position  Int      @default(1)
-  releaseId String
-  release   Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
-  name      String
-  explicit  Boolean  @default(false)
-  cover     String?
-  file      String
-  duration  Int?
-  lyricsId  String?
-  lyrics    Lyrics?
-  genres    Genre[]  @relation("TrackGenres")
-  streams   Stream[]
-  likes     TrackLike[]
-  metadata  Json?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String      @id @default(cuid())
+  position   Int         @default(1)
+  releaseId  String
+  release    Release     @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  name       String
+  explicit   Boolean     @default(false)
+  cover      String?
+  file       String
+  duration   Int?
+  lyricsId   String?
+  lyrics     Lyrics?
+  genres     Genre[]     @relation("TrackGenres")
+  streams    Stream[]
+  likes      TrackLike[]
+  favoriteOf User[]      @relation("UserFavoriteTrack")
+  metadata   Json?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   @@unique([cover])
   @@unique([file])
@@ -164,6 +169,7 @@ model Genre {
   explicit  Boolean   @default(false)
   tracks    Track[]   @relation("TrackGenres")
   releases  Release[] @relation("ReleaseGenres")
+  users     User[]    @relation("UserGenres")
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
@@ -213,26 +219,26 @@ model UserFollow {
 }
 
 model Post {
-    id       String   @id @default(cuid())
-    userId   String
-    user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    content  String
-    referenceId String?
-    reference   Post?    @relation("PostReference", fields: [referenceId], references: [id], onDelete: SetNull)
-    media    String[] @default([])
-    likes    PostLike[]
-    replies  Post[]   @relation("PostReference")
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id          String     @id @default(cuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content     String
+  referenceId String?
+  reference   Post?      @relation("PostReference", fields: [referenceId], references: [id], onDelete: SetNull)
+  media       String[]   @default([])
+  likes       PostLike[]
+  replies     Post[]     @relation("PostReference")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model PostLike {
-    id       String   @id @default(cuid())
-    postId   String
-    post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-    userId   String
-    user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
-    @@unique([postId, userId])
+  @@unique([postId, userId])
 }

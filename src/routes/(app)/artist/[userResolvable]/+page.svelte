@@ -1,12 +1,92 @@
 <script lang="ts">
-    import FollowButton from '$lib/components/shared/app/artist/FollowButton.svelte';
+    import FollowButton from '../../../../lib/components/shared/app/artist/FollowButton.svelte';
+    import ArtistsYouMayKnowCard from '../../../../lib/components/shared/app/home/ArtistsYouMayKnowCard.svelte';
+    import SuggestedTracksCard from '../../../../lib/components/shared/app/home/SuggestedTracksCard.svelte';
+    import TrackItem from '../../../../lib/components/shared/app/release/track/TrackItem.svelte';
+    import { Avatar, AvatarFallback, AvatarImage } from '../../../../lib/components/ui/avatar/index.js';
+    import { Badge } from '../../../../lib/components/ui/badge/index.js';
+    import { AudioPlayer } from '../../../../lib/helpers/classes/AudioPlayer.svelte.js';
+    import { numberFormatter } from '../../../../lib/helpers/constants.js';
+
 
     let { data } = $props();
+
+    let user = $derived(data.user);
+
+    const audioPlayer = AudioPlayer.context.get();
 </script>
 
-<pre>{JSON.stringify(data.user, null, 2)}</pre>
+<div class="flex gap-4 px-5 justify-center-safe">
+    <section class="w-full max-w-4xl flex flex-col gap-4 pb-5">
+        <div class="flex gap-5 border bg-card p-5 rounded-xl">
+            <Avatar class="size-32">
+                <AvatarImage src={user.image}/>
+                <AvatarFallback>
+                    {user.name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+            </Avatar>
+            <div class="flex flex-col w-full">
+                <div class="flex items-center justify-between w-full py-2">
+                    <div class="flex flex-col">
+                        <p class="text-sm text-muted-foreground leading-tight line-clamp-1">
+                            {#if user.username}
+                                @{user.username ?? 'unknown'}
+                            {/if}
+                        </p>
+                        <h1 class="text-2xl font-bold line-clamp-2">
+                            {user.name}
+                        </h1>
+                    </div>
+                    <FollowButton userId={user.id}/>
+                </div>
+                <div class="flex gap-4 w-full text-sm">
+                    <p>
+                        <span class="font-bold">{numberFormatter.format(user._count.followers)}</span>
+                        <span class="text-muted-foreground"> follower{user._count.followers !== 1 ? 's' : ''}</span>
+                    </p>
+                    <p>
+                        <span class="font-bold">{numberFormatter.format(user._count.following)}</span>
+                        <span class="text-muted-foreground"> following{user._count.following !== 1 ? 's' : ''}</span>
+                    </p>
+                    <p>
+                        <span class="font-bold">{numberFormatter.format(user._count.releases)}</span>
+                        <span class="text-muted-foreground"> release{user._count.releases !== 1 ? 's' : ''}</span>
+                    </p>
+                </div>
+                <div class="mt-2 text-foreground/90 text-base flex flex-col gap-2">
+                    {#if user.genres.length}
+                        <div class="flex gap-1 flex-wrap">
+                            {#each user.genres as genre (genre.id)}
+                                <Badge variant="outline">{genre.name}</Badge>
+                            {/each}
+                        </div>
+                    {/if}
+                    <p class="whitespace-break-spaces leading-tight" style="word-wrap: break-word;">
+                        {#if user.bio}
+                            {user.bio}
+                        {:else}
+                            <i class="text-muted-foreground text-xs">No more information available.</i>
+                        {/if}
+                    </p>
+                    {#if user.favoriteTrack}
+                        <TrackItem
+                            onclick={async () => {
+                                if (!user.favoriteTrack) return;
 
-<img src={data.user.image} alt={data.user.name} class="w-32 h-32 rounded-full"/>
-<h1 class="text-2xl font-bold">{data.user.name}</h1>
-<h3 class="text-lg text-gray-600">@{data.user.username}</h3>
-<FollowButton userId={data.user.id}/>
+                                await audioPlayer.replaceCurrentTrack(user.favoriteTrack);
+                                await audioPlayer.play();
+                            }}
+                            track={user.favoriteTrack}
+                            variant="outline"
+                            cover
+                        />
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </section>
+    <aside class="w-full h-fit max-w-xs hidden lg:grid gap-4 shrink-0">
+        <ArtistsYouMayKnowCard/>
+        <SuggestedTracksCard/>
+    </aside>
+</div>

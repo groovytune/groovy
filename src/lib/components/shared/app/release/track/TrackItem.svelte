@@ -10,6 +10,7 @@
     import { ReleaseInfoCache } from '$lib/helpers/classes/ReleaseInfoCache.svelte';
     import { Image } from '$lib/client/image';
     import TrackDropdownMenu from './TrackDropdownMenu.svelte';
+    import type { ItemVariant } from '../../../../ui/item/item.svelte';
 
     let {
         track,
@@ -17,6 +18,7 @@
         editable = false,
         playingIndicator = true,
         class: className = '',
+        variant = 'default',
         onclick,
         ondelete
     }: {
@@ -25,6 +27,7 @@
         editable?: boolean;
         playingIndicator?: boolean;
         class?: string;
+        variant?: ItemVariant;
         onclick?: (event: MouseEvent & { currentTarget: EventTarget & HTMLDivElement; }) => void;
         ondelete?: (trackId: string) => void;
     } = $props();
@@ -58,9 +61,10 @@
         className
     ]}
     style="content-visibility: auto;"
+    variant={variant}
 >
     {#if cover}
-        <ItemMedia variant="image" onclick={e => onclick?.(e)}>
+        <ItemMedia variant="image" class="-mt-1" onclick={e => onclick?.(e)}>
             <img
                 alt={track.name}
                 src={coverURL}

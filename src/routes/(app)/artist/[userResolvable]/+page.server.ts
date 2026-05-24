@@ -13,10 +13,21 @@ export async function load({ params }) {
             name: true,
             username: true,
             image: true,
-        },
-        cacheStrategy: {
-            ttl: 300,
-            swr: 60
+            bio: true,
+            favoriteTrack: true,
+            genres: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            },
+            _count: {
+                select: {
+                    followers: true,
+                    following: true,
+                    releases: true,
+                }
+            }
         }
     });
 
