@@ -31,14 +31,8 @@
     class={cn("flex flex-col gap-1 py-3", className)}
 >
     {#each audioPlayer.queue as track, index (track.id)}
-        <a
-            href="#/"
-            onclick={e => {
-                e.preventDefault();
-                audioPlayer.next(index);
-            }}
+        <div
             animate:flip={{ duration: 100 }}
-            oncontextmenu={e => e.preventDefault()}
             class={cn("w-full flex gap-2 items-center min-h-14", itemClass)}
         >
             <span
@@ -52,7 +46,11 @@
                 cover={true}
                 track={track.track}
                 playingIndicator={false}
+                onclick={e => {
+                    e.preventDefault();
+                    audioPlayer.next(index);
+                }}
             />
-        </a>
+        </div>
     {/each}
 </div>
