@@ -1,6 +1,6 @@
 <script lang="ts">
     import { resolve } from '$app/paths';
-    import { BoomBoxIcon, MoonIcon, SunIcon, UserRoundPlusIcon } from '@lucide/svelte';
+    import { BoomBoxIcon, CompassIcon, MoonIcon, SunIcon, UserRoundPlusIcon } from '@lucide/svelte';
     import { Button } from '$lib/components/ui/button';
     import { mode, toggleMode } from 'mode-watcher';
     import { Badge } from '$lib/components/ui/badge';
@@ -8,14 +8,10 @@
     import AvatarDropdown from '$lib/components/shared/AvatarDropdown.svelte';
     import { onMount } from 'svelte';
     import { cn } from '$lib/helpers/utils';
-    import { AspectRatio } from '$lib/components/ui/aspect-ratio';
-    import { ImageFormat } from 'appwrite';
-    import placeholderCover from '$lib/assets/cover.webp';
     import AudioPlayerPreview from '$lib/components/shared/home/AudioPlayerPreview.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
-    import { Image } from '$lib/client/image.js';
-
-    let { data } = $props();
+    import PopularReleases from '$lib/components/shared/home/PopularReleases.svelte';
+    import bannerImage from '$lib/assets/banner.jpg';
 
     const session = auth.useSession();
     const audioPlayer = AudioPlayer.context.get();
@@ -45,12 +41,12 @@
 			<span class="mt-1">Groovy</span>
 		</a>
         <nav class="gap-5 hidden md:flex text-sm font-medium text-muted-foreground">
-            <a href="#/">Features</a>
-            <a href="#/">How it works</a>
-            <a href="#/">Artists</a>
-            <a href="#/">Community</a>
+            <a href={resolve('/(app)/home')}>Community</a>
+            <a href={resolve('/(app)/about')}>About Us</a>
+            <a href={resolve('/(app)/artists')}>Artists</a>
+            <a href={resolve('/library')}>Your Library</a>
         </nav>
-        <div class="flex gap-2">
+        <div class="flex gap-2 items-center">
             <Button size="icon" variant="outline" onclick={toggleMode}>
                 {#if mode.current == 'light'}
                     <MoonIcon/>
@@ -70,8 +66,8 @@
     </div>
 </header>
 
-<main class="flex justify-center items-center py-16 px-2 min-h-[600px] h-screen">
-    <section class="container h-full flex flex-col gap-10 justify-center items-center text-center relative">
+<main class="flex flex-col items-center py-16 px-4 size-ful">
+    <section class="container min-h-[600px] h-full flex flex-col gap-10 justify-center items-center text-center relative">
         <span class="h-1/2 w-full max-w-sm bg-primary/20 dark:bg-primary/10 absolute top-0 left-1/2 -translate-x-1/2 -z-10 rounded-full blur-3xl"></span>
         <div class="text-center">
             <Badge variant="outline" class="text-xs border-primary/50 bg-background/10 dark:bg-primary/10 text-primary font-semibold tracking-wide uppercase p-1 px-2.5">
@@ -79,19 +75,19 @@
                 <span>Free Music Sharing Platform</span>
             </Badge>
         </div>
-        <h1 class="text-center text-7xl font-bold font-serif">
+        <h1 class="text-center text-5xl sm:text-6xl md:text-7xl font-bold font-serif">
             <span>Music that</span>
             <br>
             <em class="text-primary italic">moves your soul.</em>
         </h1>
-        <p class="text-muted-foreground max-w-sm">
+        <p class="text-muted-foreground max-w-sm text-sm">
             Publish, discover, and share music freely. Build your artist profile and reach listeners
         </p>
-        <div class="flex justify-center gap-2">
-            <Button href={resolve('/(app)/release/new')} size="lg">
+        <div class="flex sm:flex-row flex-col justify-center gap-2 w-full max-w-2xs">
+            <Button href={resolve('/(app)/release/new')} size="lg" class="w-full sm:w-fit">
                 Start sharing music
             </Button>
-            <Button href={resolve('/(app)/discover')} variant="outline" size="lg">
+            <Button href={resolve('/(app)/discover')} variant="outline" size="lg" class="w-full sm:w-fit">
                 Explore top songs
             </Button>
         </div>
@@ -99,41 +95,41 @@
             <AudioPlayerPreview class="shadow"/>
         </div>
     </section>
+    <section
+        class={cn(
+            "container w-full flex flex-col-reverse sm:grid md:grid-cols-2 sm:min-h-[500px] rounded-4xl overflow-hidden border-2",
+            "bg-linear-to-r from-[#d53369]/20 to-[#daae51]/20 border-[#d53369]/30"
+        )}
+    >
+        <div class="flex flex-col gap-10 w-full justify-center p-10">
+            <h2 class="text-4xl font-bold sm:flex hidden items-center gap-2 text-center justify-center sm:justify-start">
+                <BoomBoxIcon class="size-9"/>
+                Groovy
+            </h2>
+            <p class="text-foreground/90 sm:text-lg text-justify">
+                Groovy is a free music sharing platform that empowers artists to publish their music and connect with their listeners in one unified platform. Discover new music, build your profile, and share your passion with the world. Join our community of music lovers and artists today!
+            </p>
+            <div>
+                <Button
+                    size="lg"
+                    variant="default"
+                    class="w-full sm:w-auto shadow-primary shadow-lg"
+                    href={resolve('/(auth)/signin')}
+                >
+                    Get Started
+                </Button>
+            </div>
+        </div>
+        <div class="w-full h-full p-0 sm:p-5 md:block sm:hidden">
+            <img src={bannerImage} alt="Groovy" class="size-full object-cover rounded-t-2xl sm:rounded-2xl"/>
+        </div>
+    </section>
+    <section class="container w-full flex flex-col gap-10 sm:gap-6 mt-10">
+        <h1 class="text-2xl sm:text-4xl font-bold sm:px-5 text-center sm:text-start relative">
+            <CompassIcon class="text-primary size-6 sm:size-8 hidden sm:inline -mt-2"/>
+            Popular Releases
+            <span class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-primary rounded-full sm:hidden"></span>
+        </h1>
+        <PopularReleases/>
+    </section>
 </main>
-<div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-5">
-    {#each data.releases as release (release.id)}
-        {@const coverURL = release.cover
-            ? Image.getPreviewPath({
-                fileId: release.cover,
-                height: 500,
-                width: 500,
-                output: ImageFormat.Webp
-            })
-            : placeholderCover
-        }
-        <a href={resolve('/(app)/release/[releaseId]', { releaseId: release.id })} class="p-5 w-full max-w-sm relative">
-            <AspectRatio class="w-full rounded-md bg-muted cursor-pointer transition-blur duration-300">
-                <img src={coverURL} alt={release.name} class="size-full object-cover rounded-md"/>
-                <img src={coverURL} alt={release.name} class="size-full object-cover absolute -z-10 top-0 left-0 opacity-50 saturate-150 blur-2xl"/>
-            </AspectRatio>
-            <header class="w-full max-w-sm text-center px-5">
-                <h1
-                    class="text-2xl leading-tight font-semibold line-clamp-3"
-                    style="word-wrap: break-word;"
-                >
-                    {release.name}
-                </h1>
-                <p class="text-sm leading-tight text-muted-foreground">
-                    {release.user.name}
-                </p>
-                <p
-                    class="text-xs leading-tight text-muted-foreground/60 line-clamp-2 hover:line-clamp-none mt-2"
-                    style="word-wrap: break-word;"
-                    title={release.description}
-                >
-                    {release.description}
-                </p>
-            </header>
-        </a>
-    {/each}
-</div>

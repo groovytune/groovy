@@ -34,7 +34,7 @@
     <div class="flex flex-col shrink-0 w-40 sm:w-80" title={name} style="content-visibility: auto;">
         <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
         <a href={href}>
-            <img src={coverURL} alt="Album Cover" class="size-40 sm:size-80 rounded-md object-cover"/>
+            <img src={coverURL} alt="Album Cover" class="size-40 sm:size-80 rounded-md object-cover bg-muted"/>
         </a>
         <div>
             <h2 class="sm:text-lg text-sm font-semibold mt-2 line-clamp-2 truncate text-balance">

@@ -1,35 +1,17 @@
-import { prisma } from '$lib/server/prisma.js';
-import type { Release } from '$lib/server/prisma/client.js';
-import type { PartialUser } from '$lib/helpers/utils.js';
+import { definePageMetaTags } from 'svelte-meta-tags';
 
-export type ReleaseWithUser = Release & { user: PartialUser; };
+export async function load() {
+    const title = `Groovy`;
+    const description = `Discover and share music freely on Groovy, the ultimate platform for artists and listeners. Build your profile, publish your music, and connect with a vibrant community of music lovers. Join us today and let your music move souls!`;
 
-export async function load({ locals }): Promise<{ releases: ReleaseWithUser[] }> {
-    const releases = await prisma.release.findMany({
-        where: {
-            OR: locals.user
-                ? [
-                    { userId: locals.user.id },
-                    { privacy: 'PUBLIC' }
-                ]
-                : [
-                    { privacy: 'PUBLIC' }
-                ]
-        },
-        orderBy: {
-            createdAt: 'desc'
-        },
-        include: {
-            user: {
-                select: {
-                    id: true,
-                    name: true,
-                    username: true,
-                    image: true
-                }
+    return {
+        ...definePageMetaTags({
+            title,
+            description,
+            openGraph: {
+                title,
+                description,
             }
-        }
-    }) as ReleaseWithUser[];
-
-    return { releases };
+        })
+    };
 }
