@@ -101,6 +101,14 @@
             <p class="text-center text-sm text-muted-foreground">Loading more posts...</p>
         {:else if isAtEnd}
             <p class="text-center text-sm text-muted-foreground">No more posts to show.</p>
+        {:else}
+            <Button
+                variant="outline"
+                class="w-fit self-center"
+                onclick={loadPosts}
+            >
+                Load More
+            </Button>
         {/if}
     </section>
     <aside class="w-full h-fit max-w-xs hidden md:grid gap-4">

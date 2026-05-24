@@ -7,7 +7,6 @@
     import { Button } from '$lib/components/ui/button';
     import { CornerUpRightIcon, EllipsisIcon, ForwardIcon, HeartIcon, MessageCircle } from '@lucide/svelte';
     import PostMediaGrid from '$lib/components/shared/app/post/PostMediaGrid.svelte';
-    import { onMount } from 'svelte';
     import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
     import { numberFormatter } from '$lib/helpers/constants.js';
     import PostForm from '$lib/components/shared/app/post/forms/PostForm.svelte';
@@ -84,18 +83,6 @@
             await loadReplies();
         }
     }
-
-    onMount(async () => {
-        if (post.media.length && !media.length) {
-            getPostMediaFiles(post.media)
-                .then(files => media = files)
-                .catch(err => console.error('Failed to load media files:', err));
-        }
-
-        if (!replies.length && !isAtEnd) {
-            loadReplies();
-        }
-    });
 
     afterNavigate(() => {
         media = [];
@@ -244,7 +231,7 @@
         {/snippet}
     </PostForm>
     {#if replies.length || isLoading}
-        <div class="w-full max-w-2xl grid gap-4 pt-2 sm:px-0 px-5" id="replies">
+        <div class="w-full max-w-2xl flex flex-col gap-4 pt-2 sm:px-0 px-5" id="replies">
             <!-- eslint-disable-next-line svelte/require-each-key -->
             {#each replies as reply}
                 <PostCard data={reply} class="rounded-lg"/>
@@ -257,6 +244,14 @@
                         No more replies.
                     {/if}
                 </p>
+            {:else}
+                <Button
+                    variant="outline"
+                    class="w-fit self-center"
+                    onclick={loadReplies}
+                >
+                    Load More
+                </Button>
             {/if}
         </div>
     {/if}
