@@ -18,7 +18,11 @@
 
 <div class="flex gap-4 px-5 justify-center-safe">
     <section class="w-full max-w-4xl flex flex-col gap-4 pb-5">
-        <div class="flex gap-5 border bg-card p-5 rounded-xl">
+        <div class="flex sm:flex-row flex-col gap-5 border bg-card p-5 rounded-xl relative overflow-hidden">
+            <div class="sm:hidden absolute top-0 left-0 h-24 w-full bg-primary">
+                <div class="absolute top-0 left-0 backdrop-blur-2xl size-full brightness-75 saturate-150"></div>
+                <img src={user.image} alt={user.name} class="size-full object-cover"/>
+            </div>
             <Avatar class="size-32">
                 <AvatarImage src={user.image}/>
                 <AvatarFallback>
