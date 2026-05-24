@@ -1,7 +1,7 @@
 import { getSupportedMimeTypes } from 'music-metadata';
 import tsquery from 'pg-tsquery';
 import { getLocale } from './utils';
-import type { ReleaseType } from '../server/prisma/enums';
+import type { ReleaseType } from '$lib/server/prisma/enums';
 
 export const tsQueryParser = new tsquery.Tsquery();
 

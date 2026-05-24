@@ -2,9 +2,9 @@ import { match, resolve } from '$app/paths';
 import { clsx, type ClassValue } from "clsx";
 import { DateTime } from 'luxon';
 import { twMerge } from "tailwind-merge";
-import type { Release, Track, User } from '../server/prisma/browser';
-import { Appwrite } from '../client/appwrite';
-import { Image } from '../client/image';
+import type { Release, Track, User } from '$lib/server/prisma/browser';
+import { Appwrite } from '$lib/client/appwrite';
+import { Image } from '$lib/client/image';
 import { ImageFormat } from 'appwrite';
 import { releaseTypeNames } from './constants';
 

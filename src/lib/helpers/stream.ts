@@ -1,4 +1,4 @@
-import { prisma } from '../server/prisma';
+import { prisma } from '$lib/server/prisma';
 
 export interface CountStreamOptions {
     trackId: string;

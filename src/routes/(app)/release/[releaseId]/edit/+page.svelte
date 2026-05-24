@@ -13,11 +13,10 @@
     import ReleaseFormFields from '$lib/components/shared/app/release/forms/fields/ReleaseFormFields.svelte';
     import { ImageFormat } from 'appwrite';
     import type { GETResponse } from '../../../api/release/[releaseId]/tracks/+server.js';
-    import { DialogState } from '$lib/helpers/classes/DialogState.svelte.js';
-    import DeleteReleaseDialog from '$lib/components/shared/app/release/dialogs/DeleteReleaseDialog.svelte';
-    import { goto } from '$app/navigation';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import { Image } from '$lib/client/image.js';
+    import DeleteReleaseButton from '$lib/components/shared/app/release/DeleteReleaseButton.svelte';
+    import { goto } from '$app/navigation';
 
     let { data } = $props();
 
@@ -55,9 +54,6 @@
 
     const session = auth.useSession();
     const audioPlayer = AudioPlayer.context.get();
-
-    // svelte-ignore state_referenced_locally
-    const deleteDialogState = new DialogState({ id: `delete-release-${data.release.id}` });
 
     let coverInput: HTMLInputElement|null = $state(null);
     let nameInput: HTMLInputElement|null = $state(null);
@@ -146,10 +142,19 @@
     >
         <ReleaseFormFields {form} bind:coverInput bind:nameInput/>
         <div class="flex justify-between gap-2">
-            <Button variant="outline" disabled={$submitting} onclick={() => deleteDialogState.open()}>
-                <Trash2Icon/>
-                Delete Release
-            </Button>
+            {#key data.release.id}
+                <DeleteReleaseButton
+                    release={data.release}
+                    variant="outline"
+                    disabled={$submitting}
+                    ondelete={() => {
+                        goto(resolve('/(app)/library'));
+                    }}
+                >
+                    <Trash2Icon/>
+                    Delete Release
+                </DeleteReleaseButton>
+            {/key}
             <Button
                 type="submit"
                 onclick={() => form.submit()}
@@ -166,12 +171,3 @@
     </form>
 </div>
 
-<DeleteReleaseDialog
-    releaseId={data.release.id}
-    name={data.release.name}
-    dialogState={deleteDialogState}
-    ondelete={() => {
-        deleteDialogState.close({ force: true });
-        goto(resolve('/(app)/library'));
-    }}
-/>

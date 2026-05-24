@@ -21,11 +21,10 @@
     import { formatDuration, formatFileSize } from '$lib/helpers/utils';
     import { Badge } from '$lib/components/ui/badge';
     import { categoryInfos } from '$lib/helpers/constants';
-    import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import { goto } from '$app/navigation';
-    import DeleteTrackDialog from '$lib/components/shared/app/release/dialogs/DeleteTrackDialog.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import { Image } from '$lib/client/image.js';
+    import DeleteTrackButton from '../../../../../../../lib/components/shared/app/release/track/DeleteTrackButton.svelte';
 
     let { data } = $props();
 
@@ -67,9 +66,6 @@
 
     let coverInput: HTMLInputElement|null = $state(null);
     let nameInput: HTMLInputElement|null = $state(null);
-
-    // svelte-ignore state_referenced_locally
-    const deleteDialogState = new DialogState({ id: `delete-track-${data.track.id}` });
 
     let coverURL = $derived(
         $formData.cover
@@ -256,10 +252,20 @@
             <FormFieldErrors/>
         </FormField>
         <div class="flex justify-between gap-2 mt-5">
-            <Button variant="outline" disabled={$submitting} onclick={() => deleteDialogState.open()}>
-                <Trash2Icon/>
-                Delete Track
-            </Button>
+            {#key data.track.id}
+                <DeleteTrackButton
+                    tracks={[data.track]}
+                    releaseId={data.track.releaseId}
+                    variant="outline"
+                    disabled={$submitting}
+                    onclick={() => {
+                        goto(resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId: data.track.releaseId }));
+                    }}
+                >
+                    <Trash2Icon/>
+                    Delete Track
+                </DeleteTrackButton>
+            {/key}
             <Button type="submit" disabled={$submitting} aria-busy={$submitting} aria-disabled={$submitting || !!$allErrors.length}>
                 {#if $submitting}
                     <LoaderIcon class="animate-spin"/>
@@ -269,13 +275,3 @@
         </div>
     </form>
 </div>
-
-<DeleteTrackDialog
-    releaseId={data.track.releaseId}
-    tracks={[data.track]}
-    dialogState={deleteDialogState}
-    ondelete={() => {
-        deleteDialogState.close({ force: true });
-        goto(resolve('/(app)/release/[releaseId]/edit/tracks', { releaseId: data.track.releaseId }));
-    }}
-/>
