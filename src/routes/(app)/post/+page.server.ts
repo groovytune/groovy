@@ -5,10 +5,25 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { newPostSchema } from '$lib/schema/post';
 import { Appwrite } from '$lib/server/appwrite';
 import { prisma } from '$lib/server/prisma';
+import { definePageMetaTags } from 'svelte-meta-tags';
 
 export async function load({ locals, url }) {
     if (!locals.session?.user) {
         throw redirect(302, createAuthRedirect('signin', url));
+    }
+
+    const title = 'Groovy - Create Post';
+    const description = 'Share your thoughts and media with the Groove community. Create a new post to connect with others and express yourself.';
+
+    return {
+        ...definePageMetaTags({
+            title,
+            description,
+            openGraph: {
+                title,
+                description
+            }
+        })
     }
 }
 

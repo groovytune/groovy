@@ -90,7 +90,7 @@
 <svelte:window onscroll={handleScroll}/>
 
 <section class="flex flex-col gap-2 items-center sm:px-2 sm:pt-5 pb-5">
-    <div class="w-full max-w-2xl py-5 border-y sm:border-x border-x-0 sm:rounded-lg grid gap-5">
+    <article class="w-full max-w-2xl py-5 border-y sm:border-x border-x-0 sm:rounded-lg grid gap-5">
         <div class="flex items-center gap-3 px-5">
             <a href={createUserProfileURL(user)}>
                 <Avatar class="size-10">
@@ -190,7 +190,7 @@
                 {/snippet}
         </ShareButton>
         </div>
-    </div>
+    </article>
     <PostForm
         data={{
             content: '',
