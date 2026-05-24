@@ -210,6 +210,7 @@
         </ShareButton>
         </div>
     </article>
+    {#key post.id}
     <PostForm
         data={{
             content: '',
@@ -225,10 +226,11 @@
             <PostFormFields
                 {form}
                 bind:textarea={replyTextarea}
-                placeholder="Write a reply..."
+                placeholder="Write a reply to {user.name}"
             />
         {/snippet}
     </PostForm>
+    {/key}
     {#if replies.length || isLoading}
         <div class="w-full max-w-2xl flex flex-col gap-4 pt-2 sm:px-0 px-5" id="replies">
             <!-- eslint-disable-next-line svelte/require-each-key -->
