@@ -1,9 +1,9 @@
 <script lang="ts">
     import { HeartIcon, LibraryBigIcon } from '@lucide/svelte';
     import ReleasesCard from '$lib/components/shared/app/artist/ReleasesCard.svelte';
-    import { auth } from '../../../lib/client/auth';
+    import { auth } from '$lib/client/auth';
     import { resolve } from '$app/paths';
-    import TracksCard from '../../../lib/components/shared/app/artist/TracksCard.svelte';
+    import TracksCard from '$lib/components/shared/app/artist/TracksCard.svelte';
 
     const session = auth.useSession();
 </script>
@@ -16,6 +16,7 @@
     {#if $session.data?.user}
         <div class="col-span-full">
             <ReleasesCard
+                take={5}
                 user={$session.data.user}
                 title="Your Releases"
                 description="All releases in your library"
@@ -23,6 +24,7 @@
             />
         </div>
         <ReleasesCard
+            take={5}
             user={$session.data.user}
             title="Liked Releases"
             description="All releases you've liked"
@@ -30,6 +32,7 @@
             route={resolve('/(app)/api/liked/releases')}
         />
         <TracksCard
+            take={5}
             title="Liked Tracks"
             description="All tracks you've liked"
             route={resolve('/(app)/api/liked/tracks')}
