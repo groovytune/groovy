@@ -157,19 +157,21 @@
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                         {#snippet child({ props })}
-                            <ShareButton
-                                data={{
-                                    title: audioPlayer.currentTrack?.name,
-                                    url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: audioPlayer.currentTrack!.releaseId }), page.url.origin).href
-                                }}
-                            >
-                                {#snippet child({ onclick })}
-                                    <a {...props} onclick={onclick}>
-                                        <Share2Icon/>
-                                        Share
-                                    </a>
-                                {/snippet}
-                            </ShareButton>
+                            {#key audioPlayer.currentTrack}
+                                <ShareButton
+                                    data={{
+                                        title: audioPlayer.currentTrack?.name,
+                                        url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: audioPlayer.currentTrack!.releaseId }), page.url.origin).href
+                                    }}
+                                >
+                                    {#snippet child({ onclick })}
+                                        <a {...props} onclick={onclick}>
+                                            <Share2Icon/>
+                                            Share
+                                        </a>
+                                    {/snippet}
+                                </ShareButton>
+                            {/key}
                         {/snippet}
                     </DropdownMenuItem>
                 </DropdownMenuContent>

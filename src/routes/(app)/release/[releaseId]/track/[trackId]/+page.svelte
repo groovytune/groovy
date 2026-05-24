@@ -164,19 +164,21 @@
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             {#snippet child({ props })}
-                                <ShareButton
-                                    data={{
-                                        title: release.name,
-                                        url: new URL(resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: release.id, trackId: track.id }), page.url.origin).href
-                                    }}
-                                >
-                                    {#snippet child({ onclick })}
-                                        <a {...props} onclick={onclick}>
-                                            <Share2Icon/>
-                                            Share
-                                        </a>
-                                    {/snippet}
-                                </ShareButton>
+                                {#key track.id}
+                                    <ShareButton
+                                        data={{
+                                            title: release.name,
+                                            url: new URL(resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: release.id, trackId: track.id }), page.url.origin).href
+                                        }}
+                                    >
+                                        {#snippet child({ onclick })}
+                                            <a {...props} onclick={onclick}>
+                                                <Share2Icon/>
+                                                Share
+                                            </a>
+                                        {/snippet}
+                                    </ShareButton>
+                                {/key}
                             {/snippet}
                         </DropdownMenuItem>
                     </DropdownMenuContent>

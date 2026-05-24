@@ -27,23 +27,25 @@
 </script>
 
 {#snippet ShareDropdownItem()}
-    <DropdownMenuItem>
-        {#snippet child({ props })}
-            <ShareButton
-                data={{
-                    title: track.name,
-                    url: new URL(resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: track.releaseId, trackId: track.id }), page.url.origin).href
-                }}
-            >
-                {#snippet child({ onclick })}
-                    <a {...props} {onclick}>
-                        <Share2Icon/>
-                        Share
-                    </a>
-                {/snippet}
-            </ShareButton>
-        {/snippet}
-    </DropdownMenuItem>
+    {#key track.id}
+        <DropdownMenuItem>
+            {#snippet child({ props })}
+                <ShareButton
+                    data={{
+                        title: track.name,
+                        url: new URL(resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: track.releaseId, trackId: track.id }), page.url.origin).href
+                    }}
+                >
+                    {#snippet child({ onclick })}
+                        <a {...props} {onclick}>
+                            <Share2Icon/>
+                            Share
+                        </a>
+                    {/snippet}
+                </ShareButton>
+            {/snippet}
+        </DropdownMenuItem>
+    {/key}
 {/snippet}
 
 <DropdownMenu>

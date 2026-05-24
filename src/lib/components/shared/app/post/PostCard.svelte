@@ -161,19 +161,21 @@
                 <MessageCircle/>
                 {replies ? numberFormatter.format(replies) : 'Reply'}
             </Button>
-            <ShareButton
-                data={{
-                    title: `A post by ${user.name} on Groovy`,
-                    url: new URL(resolve('/(app)/post/[postId]', { postId: data.id }), page.url.origin).href
-                }}
-            >
-                {#snippet child({ onclick })}
-                    <Button variant="outline" size="sm" {onclick}>
-                        <ForwardIcon/>
-                        Share
-                    </Button>
-                {/snippet}
-            </ShareButton>
+            {#key data.id}
+                <ShareButton
+                    data={{
+                        title: `A post by ${user.name} on Groovy`,
+                        url: new URL(resolve('/(app)/post/[postId]', { postId: data.id }), page.url.origin).href
+                    }}
+                >
+                    {#snippet child({ onclick })}
+                        <Button variant="outline" size="sm" {onclick}>
+                            <ForwardIcon/>
+                            Share
+                        </Button>
+                    {/snippet}
+                </ShareButton>
+            {/key}
         </CardFooter>
     {/if}
 </Card>

@@ -144,19 +144,21 @@
                         <DropdownMenuSeparator/>
                         <DropdownMenuItem>
                             {#snippet child({ props })}
-                                <ShareButton
-                                    data={{
-                                        title: data.release.name,
-                                        url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: data.release.id }), page.url.origin).href
-                                    }}
-                                >
-                                    {#snippet child({ onclick })}
-                                        <a {...props} onclick={onclick}>
-                                            <Share2Icon/>
-                                            Share
-                                        </a>
-                                    {/snippet}
-                                </ShareButton>
+                                {#key data.release.id}
+                                    <ShareButton
+                                        data={{
+                                            title: data.release.name,
+                                            url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: data.release.id }), page.url.origin).href
+                                        }}
+                                    >
+                                        {#snippet child({ onclick })}
+                                            <a {...props} onclick={onclick}>
+                                                <Share2Icon/>
+                                                Share
+                                            </a>
+                                        {/snippet}
+                                    </ShareButton>
+                                {/key}
                             {/snippet}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator/>
