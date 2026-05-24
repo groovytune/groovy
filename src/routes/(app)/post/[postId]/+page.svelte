@@ -69,8 +69,10 @@
     }
 
     onMount(async () => {
-        if (post.media) {
-            media = await getPostMediaFiles(post.media);
+        if (post.media.length && !media.length) {
+            getPostMediaFiles(post.media)
+                .then(files => media = files)
+                .catch(err => console.error('Failed to load media files:', err));
         }
 
         if (!replies.length && !isAtEnd) {
@@ -84,6 +86,12 @@
         isAtEnd = false;
 
         loadReplies();
+
+        if (post.media.length) {
+            getPostMediaFiles(post.media)
+                .then(files => media = files)
+                .catch(err => console.error('Failed to load media files:', err));
+        }
     });
 </script>
 
