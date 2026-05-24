@@ -8,7 +8,7 @@
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import type { ClassValue } from 'tailwind-variants';
-    import { createAuthRedirect } from '$lib/helpers/utils';
+    import { createAuthRedirect, createUserProfileURL } from '$lib/helpers/utils';
     import { page } from '$app/state';
 
     let {
@@ -22,7 +22,7 @@
 <DropdownMenu>
     <DropdownMenuTrigger>
         {#snippet child({ props })}
-            <Button {...props} variant="ghost" class={["rounded-full sm:size-9 size-10 p-0", className]}>
+            <Button {...props} href={user && createUserProfileURL(user)} variant="ghost" class={["rounded-full sm:size-9 size-10 p-0", className]}>
                 <Avatar class="size-full">
                     <AvatarImage src={user?.image} />
                     <AvatarFallback>
