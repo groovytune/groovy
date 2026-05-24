@@ -1,13 +1,9 @@
-import { error, redirect } from '@sveltejs/kit';
-import { createAuthRedirect } from '$lib/helpers/utils';
+import { error } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
 import { definePageMetaTags } from 'svelte-meta-tags';
-import { Appwrite } from '../../../../lib/client/appwrite.js';
+import { Appwrite } from '$lib/client/appwrite.js';
 
-export async function load({ locals, url, params }) {
-    if (!locals.session?.user) {
-        throw redirect(302, createAuthRedirect('signin', url));
-    }
+export async function load({ params }) {
 
     const post = await prisma.post.findUnique({
         where: {
