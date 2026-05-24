@@ -144,8 +144,6 @@ export async function fetchPostURLPreview(
                         : Promise.resolve(null)
                 );
 
-                console.log(artist);
-
                 return {
                     title: data.name,
                     url: url.href,
@@ -189,6 +187,14 @@ export async function fetchPostURLPreview(
                     ]
                         .filter(Boolean)
                         .join(' · '),
+                    image: data.cover
+                        ? Image.getPreviewPath({
+                            fileId: data.cover,
+                            width: 300,
+                            height: 300,
+                            output: ImageFormat.Webp
+                        })
+                        : undefined,
                 }
             }
         }
