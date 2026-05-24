@@ -22,7 +22,7 @@
 <DropdownMenu>
     <DropdownMenuTrigger>
         {#snippet child({ props })}
-            <Button {...props} href={user && createUserProfileURL(user)} variant="ghost" class={["rounded-full sm:size-9 size-10 p-0", className]}>
+            <Button {...props} variant="ghost" class={["rounded-full sm:size-9 size-10 p-0", className]}>
                 <Avatar class="size-full">
                     <AvatarImage src={user?.image} />
                     <AvatarFallback>
@@ -71,7 +71,7 @@
         {:else}
             <DropdownMenuItem>
                 {#snippet child({ props })}
-                    <a {...props} href={resolve('/(app)/home')}>
+                    <a {...props} href={createUserProfileURL(user)}>
                         <Avatar class="size-14">
                             <AvatarImage src={user.image} />
                             <AvatarFallback>{user.name?.[0] ?? 'U'}</AvatarFallback>
@@ -85,8 +85,12 @@
             </DropdownMenuItem>
             <DropdownMenuSeparator/>
             <DropdownMenuItem>
-                <MusicIcon/>
-                Releases
+                {#snippet child({ props })}
+                    <a {...props} href={resolve('/library')}>
+                        <MusicIcon/>
+                        Releases
+                    </a>
+                {/snippet}
             </DropdownMenuItem>
             <DropdownMenuItem>
                 <BoltIcon/>
