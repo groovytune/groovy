@@ -20,7 +20,7 @@
     import PostCard from '../../../lib/components/shared/app/post/PostCard.svelte';
 
     let query = $derived(page.url.searchParams.get('q') ?? '');
-    let type = $derived(z.literal(['tracks','releases','artists','posts']).safeParse(page.url.searchParams.get('type')).data || 'artists');
+    let type = $derived(z.literal(['tracks','releases','artists','posts']).safeParse(page.url.searchParams.get('type')).data || 'tracks');
 
     const results = resource(
         [() => query, () => type],
