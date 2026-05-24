@@ -153,7 +153,7 @@
     {#snippet child({ item })}
         {@render ScrollableItem(
             item.name,
-            `${item.user.name} • ${DateTime.fromISO(String(item.createdAt)).toLocaleString(DateTime.DATE_MED)}`,
+            `${item.user.name} · ${DateTime.fromISO(String(item.createdAt)).toFormat('MMM d')}`,
             item.cover
                 ? Image.getPreviewPath({
                     fileId: item.cover,
@@ -216,7 +216,7 @@
     {#snippet child({ item })}
         {@render ScrollableItem(
             item.name,
-            `${item.release.name} • ${numberFormatter.format(item._count.likes)} like${item._count.likes !== 1 ? 's' : ''}`,
+            `${item.release.user.name} · ${numberFormatter.format(item._count.likes)} like${item._count.likes !== 1 ? 's' : ''}`,
             item.cover || item.release.cover
                 ? Image.getPreviewPath({
                     fileId: item.cover || item.release.cover!,
@@ -240,7 +240,7 @@
     {#snippet child({ item })}
         {@render ScrollableItem(
             item.name,
-            `${item.user.name} • ${numberFormatter.format(item._count.likes)} like${item._count.likes !== 1 ? 's' : ''}`,
+            `${item.user.name} · ${numberFormatter.format(item._count.likes)} like${item._count.likes !== 1 ? 's' : ''}`,
             item.cover
                 ? Image.getPreviewPath({
                     fileId: item.cover,

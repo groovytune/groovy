@@ -17,7 +17,7 @@
     variant="muted"
     size="sm"
     {...props}
-    class={cn("w-full max-w-sm rounded-md border p-2", props.class)}
+    class={cn("w-full max-w-sm rounded-lg border p-2", props.class)}
 >
     <ItemMedia variant="image" class="-mt-1">
         <img

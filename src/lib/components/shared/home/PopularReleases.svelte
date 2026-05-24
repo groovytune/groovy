@@ -6,6 +6,7 @@
     import { ImageFormat } from 'appwrite';
     import coverPlaceholder from '$lib/assets/cover.webp';
     import ExplicitIcon from '../icons/ExplicitIcon.svelte';
+    import { releaseTypeNames } from '$lib/helpers/constants';
 
     const releases = resource(
         [],
@@ -21,7 +22,7 @@
     )
 </script>
 
-<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full bg-card border text-card-foreground rounded-lg p-4">
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full">
     {#each releases.current as release (release.id)}
         {@const coverURL = release.cover
             ? Image.getPreviewPath({
@@ -36,7 +37,7 @@
             <img src={coverURL} alt={release.name} class="aspect-square w-full bg-muted rounded-md object-cover"/>
             <div class="absolute bottom-0 z-10 p-5 w-full flex flex-col">
                 <p class="text-white/80 text-sm leading-tight">
-                    {release.user.name} &middot; {release._count.likes} {release._count.likes === 1 ? 'like' : 'likes'}
+                    {release.user.name} &middot; {releaseTypeNames[release.type]} &middot; {release._count.likes} {release._count.likes === 1 ? 'like' : 'likes'}
                 </p>
                 <h3 class="font-semibold text-lg">
                     {release.name}

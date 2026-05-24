@@ -42,9 +42,10 @@
 		</a>
         <nav class="gap-5 hidden md:flex text-sm font-medium text-muted-foreground">
             <a href={resolve('/(app)/home')}>Community</a>
-            <a href={resolve('/(app)/about')}>About Us</a>
+            <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+            <a href={resolve('/(home)') + '#about'}>About Us</a>
             <a href={resolve('/(app)/artists')}>Artists</a>
-            <a href={resolve('/library')}>Your Library</a>
+            <a href={resolve('/(app)/discover/chart')}>Popular</a>
         </nav>
         <div class="flex gap-2 items-center">
             <Button size="icon" variant="outline" onclick={toggleMode}>
@@ -83,12 +84,16 @@
         <p class="text-muted-foreground max-w-sm text-sm">
             Publish, discover, and share music freely. Build your artist profile and reach listeners
         </p>
-        <div class="flex sm:flex-row flex-col justify-center gap-2 w-full max-w-2xs">
-            <Button href={resolve('/(app)/release/new')} size="lg" class="w-full sm:w-fit">
-                Start sharing music
+        <div class="flex  justify-center gap-2 w-full max-w-2xs">
+            <Button href={resolve('/(app)/release/new')} size="lg" class="w-fit">
+                {#if !$session.data?.user}
+                    Get Started
+                {:else}
+                    New Release
+                {/if}
             </Button>
-            <Button href={resolve('/(app)/discover')} variant="outline" size="lg" class="w-full sm:w-fit">
-                Explore top songs
+            <Button href={resolve('/(app)/discover')} variant="outline" size="lg" class="w-fit">
+                View Charts
             </Button>
         </div>
         <div class="w-full flex flex-col items-center gap-5 text-start " class:invisible={!audioPlayer.currentTrack}>
@@ -96,6 +101,7 @@
         </div>
     </section>
     <section
+        id="about"
         class={cn(
             "container w-full flex flex-col-reverse sm:grid md:grid-cols-2 sm:min-h-[500px] rounded-4xl overflow-hidden border-2",
             "bg-linear-to-r from-[#d53369]/20 to-[#daae51]/20 border-[#d53369]/30"
