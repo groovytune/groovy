@@ -1,28 +1,25 @@
 <script lang="ts">
-    import { Disc3Icon, type IconProps } from '@lucide/svelte';
+    import { MusicIcon, type IconProps } from '@lucide/svelte';
     import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
     import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../ui/empty';
     import SquareReleaseItem from '../release/SquareReleaseItem.svelte';
     import { resolve } from '$app/paths';
     import { onMount, type Component } from 'svelte';
-    import type { Release } from '../../../../server/prisma/browser';
+    import type { Release, Track } from '../../../../server/prisma/browser';
     import { Image } from '../../../../client/image';
     import { ImageFormat } from 'appwrite';
-    import { releaseTypeNames } from '../../../../helpers/constants';
-    import { DateTime } from 'luxon';
     import { Skeleton } from '../../../ui/skeleton';
     import { Button } from '../../../ui/button';
+    import { formatDuration } from '../../../../helpers/utils';
 
     let {
-        user,
-        title = 'Releases',
-        description = `All releases by ${user.name}`,
-        icon = Disc3Icon,
+        title = 'Tracks',
+        description,
+        icon = MusicIcon,
         class: className = '',
-        route = resolve('/(app)/api/artist/[artistId]/releases', { artistId: user.id }),
+        route = resolve('/(app)/api/liked/tracks'),
         take = 20
     }: {
-        user: { id: string; name: string; };
         title?: string;
         description?: string;
         icon?: Component<IconProps>;
@@ -31,17 +28,17 @@
         take?: number;
     } = $props();
 
-    let releases: Release[] = $state([]);
+    let tracks: TrackData[] = $state([]);
     let isLoading = $state(false);
     let isAtEnd = $state(false);
 
     async function fetchReleases() {
         isLoading = true;
 
-        const lastRelease = releases.at(-1)?.id;
-        const response = await fetch(route + `?take=${take}${lastRelease ? '&after=' + lastRelease : ''}`)
+        const lastTrack = tracks.at(-1)?.id;
+        const response = await fetch(route + `?take=${take}${lastTrack ? '&after=' + lastTrack : ''}`)
             .then(res => res.ok
-                ? res.json() as Promise<Release[]>
+                ? res.json() as Promise<TrackData[]>
                 : Promise.reject(res)
             )
             .catch(err => {
@@ -54,13 +51,19 @@
 
         if (!response) return;
 
-        releases.push(...response);
+        tracks.push(...response);
         isAtEnd = response.length === 0 || response.length < take;
     }
 
     onMount(() => {
         fetchReleases();
     });
+</script>
+
+<script lang="ts" module>
+    export type TrackData = Track & {
+        release: Pick<Release, 'id'|'name'|'cover'>;
+    }
 </script>
 
 <Card>
@@ -77,10 +80,10 @@
         </CardDescription>
     </CardHeader>
     <CardContent class={["grid grid-cols-2 lg:grid-cols-3 gap-2", className]}>
-        {#each releases as release (release.id)}
-            {@const coverURL = release.cover
+        {#each tracks as track (track.id)}
+            {@const coverURL = track.cover || track.release?.cover
                 ? Image.getPreviewPath({
-                    fileId: release.cover,
+                    fileId: track.cover || track.release.cover!,
                     width: 300,
                     height: 300,
                     output: ImageFormat.Webp
@@ -88,18 +91,18 @@
                 : undefined
             }
             <SquareReleaseItem
-                name={release.name}
-                description={`${releaseTypeNames[release.type]} · ${DateTime.fromJSDate(new Date(release.createdAt)).toFormat('MMM dd')}`}
-                explicit={release.explicit}
+                name={track.name}
+                description={`${track.duration ? formatDuration(track.duration) + ' · ' : ''}${track.release.name}`}
+                explicit={track.explicit}
                 coverURL={coverURL}
-                href={resolve('/(app)/release/[releaseId]', { releaseId: release.id })}
+                href={resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: track.release.id, trackId: track.id })}
             />
         {/each}
         {#if isLoading}
             {#each { length: 6 }}
                 <Skeleton class="aspect-square w-full rounded-md last:odd:hidden"/>
             {/each}
-        {:else if isAtEnd && releases.length === 0}
+        {:else if isAtEnd && tracks.length === 0}
             <Empty class="col-span-full">
                 <EmptyHeader class="gap-0">
                     {#if icon}
