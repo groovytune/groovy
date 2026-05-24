@@ -62,7 +62,7 @@
 
 <svelte:window onscroll={handleScroll}/>
 
-<div class="flex gap-4 px-5 justify-center">
+<div class="flex gap-4 px-5 justify-center-safe">
     <aside class="w-full h-fit max-w-xs hidden xl:grid gap-4">
         <DiscoverReleasesCard/>
         {@render Chart(
@@ -73,7 +73,7 @@
             'black'
         )}
     </aside>
-    <section class="w-full max-w-xl flex flex-col gap-4 pb-5">
+    <section class="w-full md:w-[calc(100%-320px)] max-w-xl flex flex-col gap-4 pb-5">
         <Item variant="outline" size="sm" class="bg-card rounded-xl">
             <ItemMedia>
                 <Avatar class="size-9">
@@ -111,7 +111,7 @@
             </Button>
         {/if}
     </section>
-    <aside class="w-full h-fit max-w-xs hidden md:grid gap-4">
+    <aside class="w-full h-fit max-w-xs hidden md:grid gap-4 shrink-0">
         {#if !$session.data?.user}
             <Card>
                 <CardHeader>

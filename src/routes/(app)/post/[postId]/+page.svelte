@@ -5,7 +5,7 @@
     import FollowButton from '$lib/components/shared/app/artist/FollowButton.svelte';
     import { auth } from '$lib/client/auth.js';
     import { Button } from '$lib/components/ui/button';
-    import { CornerUpRightIcon, EllipsisIcon, ForwardIcon, HeartIcon, MessageCircle } from '@lucide/svelte';
+    import { CornerUpRightIcon, ForwardIcon, HeartIcon, MessageCircle } from '@lucide/svelte';
     import PostMediaGrid from '$lib/components/shared/app/post/PostMediaGrid.svelte';
     import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
     import { numberFormatter } from '$lib/helpers/constants.js';
@@ -21,6 +21,7 @@
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import { resource } from 'runed';
     import PostItemPreview from '$lib/components/shared/app/post/PostItemPreview.svelte';
+    import PostDropdownMenu from '../../../../lib/components/shared/app/post/PostDropdownMenu.svelte';
 
     let { data } = $props();
 
@@ -127,9 +128,7 @@
                 {#if post.userId !== $session.data?.user?.id}
                     <FollowButton userId={post.userId} size="sm" class="ml-auto hidden sm:inline-flex"/>
                 {/if}
-                <Button variant="outline" size="icon-sm" class="ml-auto">
-                    <EllipsisIcon/>
-                </Button>
+                <PostDropdownMenu {post}/>
             </div>
         </div>
         <div class="px-5">

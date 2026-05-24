@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { CornerUpRightIcon, EllipsisIcon, ForwardIcon, HeartIcon, MessageCircle } from '@lucide/svelte';
+    import { CornerUpRightIcon, ForwardIcon, HeartIcon, MessageCircle } from '@lucide/svelte';
     import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
     import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card';
     import { Button } from '$lib/components/ui/button';
@@ -19,6 +19,7 @@
     import PostItemPreview from './PostItemPreview.svelte';
     import { resource } from 'runed';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
+    import PostDropdownMenu from './PostDropdownMenu.svelte';
 
     let {
         data,
@@ -76,9 +77,7 @@
             {#if data.userId !== $session.data?.user?.id}
                 <FollowButton userId={data.userId} size="sm" class="ml-auto hidden sm:inline-flex"/>
             {/if}
-            <Button variant="outline" size="icon-sm" class="ml-auto">
-                <EllipsisIcon/>
-            </Button>
+            <PostDropdownMenu post={data}/>
         </div>
     </CardHeader>
     <CardContent class="px-4 mt-2">
