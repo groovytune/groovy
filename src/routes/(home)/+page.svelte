@@ -139,3 +139,7 @@
         <PopularReleases/>
     </section>
 </main>
+
+<footer class="w-full border-t mt-20 py-10 text-center text-sm text-muted-foreground">
+    <p>&copy; {new Date().getFullYear()} Groovy. All rights reserved.</p>
+</footer>
