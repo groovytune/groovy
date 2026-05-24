@@ -19,7 +19,7 @@ export async function GET({ params, locals }) {
             }
         },
         cacheStrategy: {
-            ttl: 300,
+            ttl: 60,
             swr: 60
         }
     });
@@ -32,7 +32,7 @@ export async function GET({ params, locals }) {
         lyrics,
         {
             headers: {
-                'Cache-Control': 'public, max-age=300'
+                'Cache-Control': 'public, max-age=60'
             }
         }
     );
