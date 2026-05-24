@@ -1,6 +1,6 @@
 <script lang="ts">
     import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '$lib/components/ui/dropdown-menu';
-    import { Disc3Icon, DownloadIcon, EllipsisIcon, InfoIcon, ListMusicIcon, MicVocalIcon, MusicIcon, PencilIcon, Share2Icon, Trash2Icon } from '@lucide/svelte';
+    import { Disc3Icon, DownloadIcon, EllipsisIcon, ListMusicIcon, MicVocalIcon, MusicIcon, PencilIcon, Share2Icon, Trash2Icon } from '@lucide/svelte';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import type { Track } from '$lib/server/prisma/browser';
     import { Button } from '$lib/components/ui/button';
@@ -141,15 +141,6 @@
                     {/snippet}
                 </DropdownMenuItem>
             {/if}
-            <DropdownMenuItem>
-                {#snippet child({ props })}
-                    <!-- TODO: Implement view credits functionality -->
-                    <a {...props}>
-                        <InfoIcon/>
-                        View Credits
-                    </a>
-                {/snippet}
-            </DropdownMenuItem>
             {@render ShareDropdownItem()}
         {/if}
     </DropdownMenuContent>

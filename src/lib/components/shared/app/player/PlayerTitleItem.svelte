@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Button } from '$lib/components/ui/button';
-    import { Disc3Icon, EllipsisIcon, HeartIcon, InfoIcon, ListMusicIcon, Music4Icon, Share2Icon } from '@lucide/svelte';
+    import { Disc3Icon, EllipsisIcon, HeartIcon, ListMusicIcon, Music4Icon, Share2Icon } from '@lucide/svelte';
     import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item';
     import ExplicitIcon from '$lib/components/shared/icons/ExplicitIcon.svelte';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
@@ -147,14 +147,6 @@
                         </DropdownMenuItem>
                     {/if}
                     <DropdownMenuSeparator/>
-                    <DropdownMenuItem>
-                        {#snippet child({ props })}
-                            <a {...props}>
-                                <InfoIcon/>
-                                Credits
-                            </a>
-                        {/snippet}
-                    </DropdownMenuItem>
                     <DropdownMenuItem>
                         {#snippet child({ props })}
                             {#key audioPlayer.currentTrack}
