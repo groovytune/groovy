@@ -113,7 +113,7 @@
             </FormControl>
             <FormFieldErrors/>
         </FormField>
-        <FormField {form} name="name">
+        <FormField {form} name="username">
             <FormControl>
                 {#snippet children({ props })}
                     <FormLabel>Username</FormLabel>
