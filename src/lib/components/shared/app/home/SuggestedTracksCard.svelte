@@ -7,7 +7,9 @@
     import type { Track } from '$lib/server/prisma/browser';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import { LoaderCircleIcon, Music4Icon } from '@lucide/svelte';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
 
+    const audioPlayer = AudioPlayer.context.get();
     const tracks = resource(
         [],
         async () => {
@@ -56,6 +58,10 @@
                     cover
                     class="p-0 bg-transparent!"
                     track={track}
+                    onclick={async () => {
+                        await audioPlayer.replaceCurrentTrack(track);
+                        await audioPlayer.play();
+                    }}
                 />
             {/each}
         {/if}
