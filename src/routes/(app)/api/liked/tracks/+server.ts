@@ -2,6 +2,17 @@ import { error, json } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
 import { orderFilterSchema } from '$lib/schema/filter.js';
 import z from 'zod';
+import type { Track, TrackLike } from '$lib/server/prisma/browser';
+
+export type GETResponse = (TrackLike & {
+    track: Track & {
+        release: {
+            id: string;
+            name: string;
+            cover: string | null;
+        };
+    }
+})[];
 
 export async function GET({ url, locals }) {
     if (!locals.user) {
@@ -12,42 +23,49 @@ export async function GET({ url, locals }) {
     const after = z.cuid2().optional().safeParse(url.searchParams.get('after'));
     const order = orderFilterSchema.optional().safeParse(url.searchParams.get('order'));
 
-    const releases = await prisma.track.findMany({
+    const likes = await prisma.trackLike.findMany({
         where: {
-            likes: {
-                some: {
-                    userId: locals.user?.id
+            userId: locals.user?.id,
+            track: {
+                release: {
+                    AND: locals.user?.id
+                        ? {
+                            OR: [
+                                { privacy: 'PRIVATE', userId: locals.user?.id },
+                                { privacy: { not: 'PRIVATE' } }
+                            ]
+                        }
+                        : { privacy: { not: 'PRIVATE' } }
                 }
-            },
-            release: {
-                AND: locals.user?.id
-                    ? {
-                        OR: [
-                            { privacy: 'PRIVATE', userId: locals.user?.id },
-                            { privacy: { not: 'PRIVATE' } }
-                        ]
-                    }
-                    : { privacy: { not: 'PRIVATE' } }
             }
         },
-        include: {
-            release: {
-                select: {
-                    id: true,
-                    name: true,
-                    cover: true
+        select: {
+            track: {
+                include: {
+                    release: {
+                        select: {
+                            id: true,
+                            name: true,
+                            cover: true
+                        }
+                    }
                 }
             }
         },
         take: take.data || 20,
         skip: after.data ? 1 : 0,
         cursor: after.data
-            ? { id: after.data }
+            ? {
+                trackId_userId: {
+                    trackId: after.data,
+                    userId: locals.user.id
+                }
+            }
             : undefined,
         orderBy: {
-            id: order.data ?? 'desc'
+            createdAt: order.data === 'asc' ? 'asc' : 'desc'
         }
-    });
+    }) as GETResponse;
 
-    return json(releases);
+    return json(likes.map(like => like.track));
 }
