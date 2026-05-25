@@ -15,6 +15,7 @@
     import { page } from '$app/state';
     import { goto } from '$app/navigation';
     import ArtistFeed from '$lib/components/shared/app/artist/ArtistFeed.svelte';
+    import { resolve } from '$app/paths';
 
 
     let { data } = $props();
@@ -60,7 +61,11 @@
                     {#if user.id !== $session.data?.user?.id}
                         <FollowButton userId={user.id} size="sm"/>
                     {:else}
-                        <Button variant="outline" size="sm">
+                        <Button
+                            href={resolve('/(app)/artist/[userResolvable]/edit', { userResolvable: user.username ? `@${user.username}` : user.id })}
+                            variant="outline"
+                            size="sm"
+                        >
                             Edit Profile
                         </Button>
                     {/if}
