@@ -1,20 +1,20 @@
 <script lang="ts">
-    import { auth } from '../../../../lib/client/auth.js';
-    import FollowButton from '../../../../lib/components/shared/app/artist/FollowButton.svelte';
-    import ArtistsYouMayKnowCard from '../../../../lib/components/shared/app/home/ArtistsYouMayKnowCard.svelte';
-    import SuggestedTracksCard from '../../../../lib/components/shared/app/home/SuggestedTracksCard.svelte';
-    import TrackItem from '../../../../lib/components/shared/app/release/track/TrackItem.svelte';
-    import { Avatar, AvatarFallback, AvatarImage } from '../../../../lib/components/ui/avatar/index.js';
-    import { Badge } from '../../../../lib/components/ui/badge/index.js';
-    import Button from '../../../../lib/components/ui/button/button.svelte';
-    import { AudioPlayer } from '../../../../lib/helpers/classes/AudioPlayer.svelte.js';
-    import { numberFormatter } from '../../../../lib/helpers/constants.js';
-    import MostStreamedTracksCard from '../../../../lib/components/shared/app/artist/MostStreamedTracksCard.svelte';
-    import ReleasesCard from '../../../../lib/components/shared/app/artist/ReleasesCard.svelte';
+    import { auth } from '$lib/client/auth.js';
+    import FollowButton from '$lib/components/shared/app/artist/FollowButton.svelte';
+    import ArtistsYouMayKnowCard from '$lib/components/shared/app/home/ArtistsYouMayKnowCard.svelte';
+    import SuggestedTracksCard from '$lib/components/shared/app/home/SuggestedTracksCard.svelte';
+    import TrackItem from '$lib/components/shared/app/release/track/TrackItem.svelte';
+    import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar/index.js';
+    import { Badge } from '$lib/components/ui/badge/index.js';
+    import Button from '$lib/components/ui/button/button.svelte';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
+    import { numberFormatter } from '$lib/helpers/constants.js';
+    import MostStreamedTracksCard from '$lib/components/shared/app/artist/MostStreamedTracksCard.svelte';
+    import ReleasesCard from '$lib/components/shared/app/artist/ReleasesCard.svelte';
     import { MessageCircleIcon, Music4Icon } from '@lucide/svelte';
     import { page } from '$app/state';
     import { goto } from '$app/navigation';
-    import ArtistFeed from '../../../../lib/components/shared/app/artist/ArtistFeed.svelte';
+    import ArtistFeed from '$lib/components/shared/app/artist/ArtistFeed.svelte';
 
 
     let { data } = $props();

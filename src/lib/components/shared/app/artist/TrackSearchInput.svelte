@@ -4,7 +4,7 @@
     import { LoaderIcon, SearchIcon } from '@lucide/svelte';
     import { resource } from 'runed';
     import { resolve } from '$app/paths';
-    import type { Track } from '../../../../server/prisma/browser';
+    import type { Track } from '$lib/server/prisma/browser';
     import TrackItem from '../release/track/TrackItem.svelte';
 
     let {

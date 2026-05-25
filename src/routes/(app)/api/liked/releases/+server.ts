@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit';
 import { prisma } from '$lib/server/prisma.js';
 import { orderFilterSchema } from '$lib/schema/filter.js';
 import z from 'zod';
-import type { Release, ReleaseLike } from '../../../../../lib/server/prisma/browser.js';
+import type { Release, ReleaseLike } from '$lib/server/prisma/browser.js';
 
 export type GETResponse = (ReleaseLike & {
     release: Release;

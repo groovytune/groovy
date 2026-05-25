@@ -2,13 +2,13 @@
     import { Music4Icon } from '@lucide/svelte';
     import TrackItem from '$lib/components/shared/app/release/track/TrackItem.svelte';
     import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
-    import type { PartialUser } from '../../../../helpers/utils';
+    import type { PartialUser } from '$lib/helpers/utils';
     import { resource } from 'runed';
     import { resolve } from '$app/paths';
     import type { GETResponse } from '../../../../../routes/(app)/api/discover/chart/streams/tracks/+server';
-    import { AudioPlayer } from '../../../../helpers/classes/AudioPlayer.svelte';
-    import { Skeleton } from '../../../ui/skeleton';
-    import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../ui/empty';
+    import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
+    import { Skeleton } from '$lib/components/ui/skeleton';
+    import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
 
     let {
         user

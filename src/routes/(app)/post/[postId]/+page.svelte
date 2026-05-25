@@ -21,7 +21,7 @@
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import { resource } from 'runed';
     import PostItemPreview from '$lib/components/shared/app/post/PostItemPreview.svelte';
-    import PostDropdownMenu from '../../../../lib/components/shared/app/post/PostDropdownMenu.svelte';
+    import PostDropdownMenu from '$lib/components/shared/app/post/PostDropdownMenu.svelte';
 
     let { data } = $props();
 

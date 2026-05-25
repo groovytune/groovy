@@ -3,9 +3,9 @@ import { error } from '@sveltejs/kit';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { editUserSchema } from '$lib/schema/user.js';
-import { Appwrite } from '../../../../../lib/server/appwrite';
+import { Appwrite } from '$lib/server/appwrite';
 import path from 'node:path';
-import { Image } from '../../../../../lib/client/image.js';
+import { Image } from '$lib/client/image.js';
 import { ImageFormat } from 'node-appwrite';
 
 export async function load({ params, locals }) {

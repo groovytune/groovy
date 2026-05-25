@@ -4,7 +4,7 @@ import { definePageMetaTags } from 'svelte-meta-tags';
 import { Appwrite } from '$lib/client/appwrite.js';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { deletePostSchema } from '../../../../lib/schema/post.js';
+import { deletePostSchema } from '$lib/schema/post.js';
 
 export async function load({ params }) {
 

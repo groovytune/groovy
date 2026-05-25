@@ -7,17 +7,17 @@
     import { resource } from 'runed';
     import Button from '$lib/components/ui/button/button.svelte';
     import { resolve } from '$app/paths';
-    import type { Post, Release, Track } from '../../../lib/server/prisma/browser';
-    import { createUserProfileURL, type PartialUser } from '../../../lib/helpers/utils';
-    import TrackItem from '../../../lib/components/shared/app/release/track/TrackItem.svelte';
-    import SquareReleaseItem from '../../../lib/components/shared/app/release/SquareReleaseItem.svelte';
-    import { releaseTypeNames } from '../../../lib/helpers/constants';
+    import type { Post, Release, Track } from '$lib/server/prisma/browser';
+    import { createUserProfileURL, type PartialUser } from '$lib/helpers/utils';
+    import TrackItem from '$lib/components/shared/app/release/track/TrackItem.svelte';
+    import SquareReleaseItem from '$lib/components/shared/app/release/SquareReleaseItem.svelte';
+    import { releaseTypeNames } from '$lib/helpers/constants';
     import { DateTime } from 'luxon';
-    import { Image } from '../../../lib/client/image';
+    import { Image } from '$lib/client/image';
     import { ImageFormat } from 'appwrite';
-    import Avatar from '../../../lib/components/ui/avatar/avatar.svelte';
-    import { AvatarFallback, AvatarImage } from '../../../lib/components/ui/avatar';
-    import PostCard from '../../../lib/components/shared/app/post/PostCard.svelte';
+    import Avatar from '$lib/components/ui/avatar/avatar.svelte';
+    import { AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
+    import PostCard from '$lib/components/shared/app/post/PostCard.svelte';
 
     let query = $derived(page.url.searchParams.get('q') ?? '');
     let type = $derived(z.literal(['tracks','releases','artists','posts']).safeParse(page.url.searchParams.get('type')).data || 'tracks');

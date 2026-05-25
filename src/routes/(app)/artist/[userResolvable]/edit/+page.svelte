@@ -6,15 +6,15 @@
     import { LoaderIcon } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
     import { resolve } from '$app/paths';
-    import { editUserSchema } from '../../../../../lib/schema/user.js';
-    import { FormControl, FormField, FormFieldErrors, FormLabel } from '../../../../../lib/components/ui/form/index.js';
-    import { Input } from '../../../../../lib/components/ui/input/index.js';
-    import { Textarea } from '../../../../../lib/components/ui/textarea/index.js';
-    import { InputGroup, InputGroupAddon, InputGroupInput } from '../../../../../lib/components/ui/input-group/index.js';
-    import InputGroupText from '../../../../../lib/components/ui/input-group/input-group-text.svelte';
-    import GenreSearchInput from '../../../../../lib/components/shared/app/release/GenreSearchInput.svelte';
-    import TrackSearchInput from '../../../../../lib/components/shared/app/artist/TrackSearchInput.svelte';
-    import type { Track } from '../../../../../lib/server/prisma/browser.js';
+    import { editUserSchema } from '$lib/schema/user.js';
+    import { FormControl, FormField, FormFieldErrors, FormLabel } from '$lib/components/ui/form/index.js';
+    import { Input } from '$lib/components/ui/input/index.js';
+    import { Textarea } from '$lib/components/ui/textarea/index.js';
+    import { InputGroup, InputGroupAddon, InputGroupInput } from '$lib/components/ui/input-group/index.js';
+    import InputGroupText from '$lib/components/ui/input-group/input-group-text.svelte';
+    import GenreSearchInput from '$lib/components/shared/app/release/GenreSearchInput.svelte';
+    import TrackSearchInput from '$lib/components/shared/app/artist/TrackSearchInput.svelte';
+    import type { Track } from '$lib/server/prisma/browser.js';
 
     let { data } = $props();
 

@@ -1,17 +1,17 @@
 <script lang="ts">
     import { Disc3Icon, type IconProps } from '@lucide/svelte';
     import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
-    import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '../../../ui/empty';
+    import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import SquareReleaseItem from '../release/SquareReleaseItem.svelte';
     import { resolve } from '$app/paths';
     import { onMount, type Component } from 'svelte';
-    import type { Release } from '../../../../server/prisma/browser';
-    import { Image } from '../../../../client/image';
+    import type { Release } from '$lib/server/prisma/browser';
+    import { Image } from '$lib/client/image';
     import { ImageFormat } from 'appwrite';
-    import { releaseTypeNames } from '../../../../helpers/constants';
+    import { releaseTypeNames } from '$lib/helpers/constants';
     import { DateTime } from 'luxon';
-    import { Skeleton } from '../../../ui/skeleton';
-    import { Button } from '../../../ui/button';
+    import { Skeleton } from '$lib/components/ui/skeleton';
+    import { Button } from '$lib/components/ui/button';
 
     let {
         user,

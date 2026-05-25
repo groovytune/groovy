@@ -24,7 +24,7 @@
     import { goto } from '$app/navigation';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import { Image } from '$lib/client/image.js';
-    import DeleteTrackButton from '../../../../../../../lib/components/shared/app/release/track/DeleteTrackButton.svelte';
+    import DeleteTrackButton from '$lib/components/shared/app/release/track/DeleteTrackButton.svelte';
 
     let { data } = $props();
 
