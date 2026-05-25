@@ -28,7 +28,7 @@ export async function GET({ params, url, locals }) {
         orderBy: {
             id: order.data ?? 'desc'
         },
-        cacheStrategy: locals.user?.id === artistId
+        cacheStrategy: locals.user?.id !== artistId
             ? {
                 ttl: 300,
                 swr: 60
