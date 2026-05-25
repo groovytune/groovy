@@ -4,7 +4,7 @@ import { newReleaseSchema } from '$lib/schema/release.js';
 import { orderFilterSchema } from '$lib/schema/filter.js';
 import z from 'zod';
 
-export async function GET({ params, url }) {
+export async function GET({ params, url, locals }) {
     const { artistId } = params;
 
     const take = z.coerce.number().int().positive().max(100).default(20).safeParse(url.searchParams.get('take'));
@@ -28,10 +28,12 @@ export async function GET({ params, url }) {
         orderBy: {
             id: order.data ?? 'desc'
         },
-        cacheStrategy: {
-            ttl: 300,
-            swr: 60
-        }
+        cacheStrategy: locals.user?.id === artistId
+            ? {
+                ttl: 300,
+                swr: 60
+            }
+            : undefined
     });
 
     return json(releases);
