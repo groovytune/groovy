@@ -1,5 +1,6 @@
 <script lang="ts">
     import ExplicitIcon from '../../icons/ExplicitIcon.svelte';
+    import coverPlaceholder from '$lib/assets/cover.webp';
 
     let {
         name,
@@ -18,7 +19,7 @@
 
 <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 <a {href} class="flex flex-col shrink-0" style="content-visibility: auto;">
-    <img src={coverURL} alt={name} class="aspect-square w-full bg-muted rounded-md object-cover"/>
+    <img src={coverURL || coverPlaceholder} alt={name} class="aspect-square w-full bg-muted rounded-md object-cover"/>
     <div class="absolute bottom-0 z-10 p-5 w-full flex flex-col">
         <p class="text-white/80 text-xs sm:text-sm leading-tight">
             {description}
