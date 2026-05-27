@@ -22,6 +22,7 @@
     import { resource } from 'runed';
     import PostItemPreview from '$lib/components/shared/app/post/PostItemPreview.svelte';
     import PostDropdownMenu from '$lib/components/shared/app/post/PostDropdownMenu.svelte';
+    import { Skeleton } from '../../../../lib/components/ui/skeleton/index.js';
 
     let { data } = $props();
 
@@ -30,7 +31,6 @@
 
     let post = $derived(data.post);
     let user = $derived(post.user);
-    let media: { type: 'image'|'video'; url: string; }[] = $state([]);
     let likeCount = $derived(post._count.likes);
     let replyCount = $derived(post._count.replies);
 
@@ -88,17 +88,10 @@
     }
 
     afterNavigate(() => {
-        media = [];
         replies = [];
         isAtEnd = false;
 
         loadReplies();
-
-        if (post.media.length) {
-            getPostMediaFiles(post.media)
-                .then(files => media = files)
-                .catch(err => console.error('Failed to load media files:', err));
-        }
     });
 </script>
 
@@ -133,7 +126,7 @@
                 <PostDropdownMenu
                     {post}
                     ondelete={() => {
-                        goto(resolve('/(home)'));
+                        goto(resolve('/(app)/home'));
                     }}
                 />
             </div>
@@ -166,8 +159,18 @@
                     href={itemPreview.current.url}
                 />
             {/if}
-            {#if media.length}
-                <PostMediaGrid {media} class="mt-4"/>
+            {#if post.media.length}
+                {#await getPostMediaFiles(post.media)}
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        {#each post.media}
+                            <Skeleton class="last:odd:col-span-2 last:odd:aspect-video size-full"/>
+                        {/each}
+                    </div>
+                {:then media}
+                    {#if media.length}
+                        <PostMediaGrid {media} preview disabled class="mb-2"/>
+                    {/if}
+                {/await}
             {/if}
         </div>
         <div class="px-5 flex gap-2">

@@ -7,6 +7,7 @@ import { Image } from '$lib/client/image';
 import { resolve } from '$app/paths';
 import { QueueTrack } from './QueueTrack';
 import { LyricsCache } from './LyricsCache.svelte';
+import { shuffleArray } from '../utils';
 
 export class AudioPlayer {
     public hidden: boolean = $state(false);
@@ -231,10 +232,10 @@ export class AudioPlayer {
         }
     }
 
-    public async replaceQueue(tracks: RawTrack[], history?: RawTrack[]): Promise<void> {
+    public async replaceQueue(tracks: (RawTrack|QueueTrack)[], history?: (RawTrack|QueueTrack)[]): Promise<void> {
         this.clear();
-        this.queue = tracks.map(track => new QueueTrack(track));
-        this.history = (history || []).map(track => new QueueTrack(track));
+        this.queue = tracks.map(track => track instanceof QueueTrack ? track : new QueueTrack(track));
+        this.history = (history || []).map(track => track instanceof QueueTrack ? track : new QueueTrack(track));
 
         const nextTrack = this.queue.shift();
 
@@ -299,12 +300,12 @@ export class AudioPlayer {
         await this.audio.play();
     }
 
-    public async shuffle(): Promise<void> {
-        this.queue = this.queue
-            .map((track, index) => track.regenerateSortId(Date.now() + index))
-            .sort(() => Math.random() - 0.5);
+    public async shuffle(shuffle: (tracks: QueueTrack[]) => QueueTrack[] = shuffleArray): Promise<QueueTrack[]> {
+        const shuffled = this.queue.map((track, index) => track.regenerateSortId(Date.now() + index));
 
+        this.queue = shuffle(shuffled);
         this.shuffled = true;
+        return this.queue;
     }
 
     public async unshuffle(): Promise<void> {

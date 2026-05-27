@@ -20,6 +20,7 @@
     import { resource } from 'runed';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import PostDropdownMenu from './PostDropdownMenu.svelte';
+    import { Skeleton } from '../../../ui/skeleton';
 
     let {
         data,
@@ -114,11 +115,19 @@
                 <p class="line-clamp-3 whitespace-break-spaces" style="word-wrap: break-word;">
                     {data.content}
                 </p>
-                {#await getPostMediaFiles(data.media) then media}
-                    {#if media.length}
-                        <PostMediaGrid {media} preview disabled class="mb-2"/>
-                    {/if}
-                {/await}
+                {#if data.media.length}
+                    {#await getPostMediaFiles(data.media)}
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            {#each data.media}
+                                <Skeleton class="last:odd:col-span-2 last:odd:aspect-video size-full"/>
+                            {/each}
+                        </div>
+                    {:then media}
+                        {#if media.length}
+                            <PostMediaGrid {media} preview disabled class="mb-2"/>
+                        {/if}
+                    {/await}
+                {/if}
             </a>
             {#if itemPreview.current && !itemPreview.loading}
                 <PostItemPreview

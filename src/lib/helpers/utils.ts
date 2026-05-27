@@ -55,10 +55,6 @@ export function formatFileSize(bytes: number, decimals = 2) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-export function roundToTwoDecimals(num: number): number {
-    return Math.round(num * 100) / 100;
-}
-
 export function getLocale(): string {
     if (typeof navigator !== 'undefined') {
         return navigator.language || 'en-US';
@@ -67,8 +63,19 @@ export function getLocale(): string {
     return 'en-US';
 }
 
-export async function getPostMediaFiles(ids: string[]): Promise<{ type: 'image'|'video'; url: string; }[]> {
-    const files: { type: 'image'|'video'; url: string; }[] = [];
+export function shuffleArray<T>(array: T[], mutate: boolean = true): T[] {
+    array = mutate ? array : [...array];
+
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+
+    return array;
+}
+
+export async function getPostMediaFiles(ids: string[]): Promise<{ type: 'image'|'video'; mime?: string; url: string; }[]> {
+    const files: { type: 'image'|'video'; mime?: string; url: string; }[] = [];
 
     for (const id of ids) {
         const data = await Appwrite.storage.getFile({
@@ -85,6 +92,7 @@ export async function getPostMediaFiles(ids: string[]): Promise<{ type: 'image'|
 
         files.push({
             type: data.mimeType.startsWith('video') ? 'video' : 'image',
+            mime: data.mimeType,
             url
         });
     }

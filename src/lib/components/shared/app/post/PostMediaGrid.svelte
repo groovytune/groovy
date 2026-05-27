@@ -14,13 +14,13 @@
         onremove,
         child
     }: {
-        media: { type: 'image'|'video'; url: string; }[];
+        media: { type: 'image'|'video'; mime?: string; url: string; }[];
         preview?: boolean;
         disabled?: boolean;
         class?: ClassValue;
         onremove?: (index: number) => void;
         child?: Snippet<[{
-            item: { type: 'image'|'video'; url: string; };
+            item: { type: 'image'|'video'; mime?: string; url: string; };
             index: number;
         }]>;
     } = $props();
@@ -48,14 +48,16 @@
                         alt="Post Media"
                     />
                 {:else if item.type == 'video'}
-                    <!-- svelte-ignore a11y_media_has_caption -->
                     <video
-                        src={item.url}
                         class="rounded-md bg-black"
                         class:aspect-square={media.length > 1}
                         class:aspect-video={media.length === 1}
                         controls={!preview}
+                        controlslist="nodownload,noplaybackrate"
+                        oncontextmenu={e => e.preventDefault()}
                     >
+                        <source src={item.url} type={item.mime}/>
+                        Your browser does not support the video tag.
                     </video>
                 {/if}
             </a>
