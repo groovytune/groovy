@@ -5,7 +5,7 @@
     import type { ClassValue } from 'clsx';
     import { cn } from '$lib/helpers/utils';
     import type { Snippet } from 'svelte';
-    import { AudioPlayer } from '../../../../helpers/classes/AudioPlayer.svelte';
+    import MediaPlayer from '../../MediaPlayer.svelte';
 
     let {
         media,
@@ -25,8 +25,6 @@
             index: number;
         }]>;
     } = $props();
-
-    const audioPlayer = AudioPlayer.context.get();
 </script>
 
 <div class={cn("grid grid-cols-2 gap-2", className)} class:pointer-events-none={preview}>
@@ -53,18 +51,18 @@
                         </Badge>
                     {/if}
                 {:else if item.type == 'video'}
-                    <video
-                        class="rounded-md bg-black"
-                        class:aspect-square={media.length > 1}
-                        class:aspect-video={media.length === 1}
+                    <MediaPlayer
+                        class={cn(
+                            "rounded-md bg-black",
+                            media.length > 1 && "aspect-square",
+                            media.length === 1 && "aspect-video"
+                        )}
+                        src={item.url}
+                        mime={item.mime}
                         controls={!preview}
                         controlslist="nodownload,noplaybackrate"
                         oncontextmenu={e => e.preventDefault()}
-                        onplay={() => audioPlayer.pause()}
-                    >
-                        <source src={item.url} type={item.mime}/>
-                        Your browser does not support the video tag.
-                    </video>
+                    />
                     {#if preview}
                         <span
                             class={buttonVariants({

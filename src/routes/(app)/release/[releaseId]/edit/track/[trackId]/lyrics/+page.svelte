@@ -20,6 +20,7 @@
     import { resolve } from '$app/paths';
     import { page } from '$app/state';
     import { slug } from 'github-slugger';
+    import MediaPlayer from '../../../../../../../../lib/components/shared/MediaPlayer.svelte';
 
     let { data } = $props();
 
@@ -75,8 +76,6 @@
         { capacity: 200 }
     );
 
-    useEventListener(() => audio, 'play', () => audioPlayer.pause());
-    useEventListener(() => audioPlayer.audio, 'play', () => audio.pause());
     useEventListener(() => audio, ['timeupdate', 'loadedmetadata', 'seeked'], () => currentTime = audio.currentTime);
     useEventListener(() => audio, ['play', 'pause'], () => paused = audio.paused);
     useEventListener(() => audio, ['loadedmetadata', 'loaded'], () => duration = audio.duration);
@@ -200,14 +199,14 @@
     }}
 />
 
-<audio
+<MediaPlayer
     src={audioURL}
-    bind:this={audio}
+    bind:ref={audio}
     preload="auto"
     crossorigin="anonymous"
     class="w-full"
     loop
-></audio>
+/>
 
 <main class="p-5 pb-20 w-full flex flex-col">
     {#if !lines.length}
