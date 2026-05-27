@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { XIcon } from '@lucide/svelte';
+    import { PlayIcon, XIcon } from '@lucide/svelte';
     import { Badge } from '$lib/components/ui/badge';
-    import { Button } from '$lib/components/ui/button';
+    import { Button, buttonVariants } from '$lib/components/ui/button';
     import type { ClassValue } from 'clsx';
     import { cn } from '$lib/helpers/utils';
     import type { Snippet } from 'svelte';
+    import { AudioPlayer } from '../../../../helpers/classes/AudioPlayer.svelte';
 
     let {
         media,
@@ -24,6 +25,8 @@
             index: number;
         }]>;
     } = $props();
+
+    const audioPlayer = AudioPlayer.context.get();
 </script>
 
 <div class={cn("grid grid-cols-2 gap-2", className)} class:pointer-events-none={preview}>
@@ -37,9 +40,6 @@
                         <XIcon/>
                     </Button>
                 {/if}
-                {#if preview}
-                    <Badge variant="outline" class="absolute bottom-1 right-1 bg-secondary text-secondary-foreground capitalize">{item.type}</Badge>
-                {/if}
                 {#if item.type == 'image'}
                     <img
                         src={item.url}
@@ -47,6 +47,11 @@
                         class:aspect-square={media.length > 1 || preview}
                         alt="Post Media"
                     />
+                    {#if preview}
+                        <Badge variant="outline" class="absolute bottom-1 right-1 bg-secondary text-secondary-foreground capitalize">
+                            {item.type}
+                        </Badge>
+                    {/if}
                 {:else if item.type == 'video'}
                     <video
                         class="rounded-md bg-black"
@@ -55,10 +60,22 @@
                         controls={!preview}
                         controlslist="nodownload,noplaybackrate"
                         oncontextmenu={e => e.preventDefault()}
+                        onplay={() => audioPlayer.pause()}
                     >
                         <source src={item.url} type={item.mime}/>
                         Your browser does not support the video tag.
                     </video>
+                    {#if preview}
+                        <span
+                            class={buttonVariants({
+                                variant: 'secondary',
+                                size: 'icon-lg',
+                                class: 'size-12 bg-muted/80 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
+                            })}
+                        >
+                            <PlayIcon class="fill-current size-5"/>
+                        </span>
+                    {/if}
                 {/if}
             </a>
         {/if}
