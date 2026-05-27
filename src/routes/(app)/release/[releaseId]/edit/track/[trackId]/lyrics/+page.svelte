@@ -62,7 +62,7 @@
     let track = $derived(data.track);
     let audioURL: string = $derived(resolve('/(app)/api/track/[trackId]/audio', { trackId: track.id }));
 
-    let audio: HTMLAudioElement = $state()!;
+    let audio: HTMLAudioElement = $state(null)!;
     let currentTime: number = $state(0);
     let paused: boolean = $state(true);
     let duration: number = $state(0);
