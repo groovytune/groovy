@@ -168,7 +168,7 @@
                     </div>
                 {:then media}
                     {#if media.length}
-                        <PostMediaGrid {media} preview disabled class="mb-2"/>
+                        <PostMediaGrid {media} class="mb-2"/>
                     {/if}
                 {/await}
             {/if}
