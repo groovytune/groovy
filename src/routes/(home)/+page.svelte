@@ -44,7 +44,7 @@
             <a href={resolve('/(app)/home')}>Community</a>
             <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
             <a href={resolve('/(home)') + '#about'}>About Us</a>
-            <a href={resolve('/(app)/artists')}>Artists</a>
+            <a href={resolve('/(app)/discover')}>Artists</a>
             <a href={resolve('/(app)/discover/chart')}>Popular</a>
         </nav>
         <div class="flex gap-2 items-center">
@@ -89,7 +89,7 @@
                 {#if !$session.data?.user}
                     Get Started
                 {:else}
-                    New Release
+                    Community
                 {/if}
             </Button>
             <Button href={resolve('/(app)/discover')} variant="outline" size="lg" class="w-fit">
