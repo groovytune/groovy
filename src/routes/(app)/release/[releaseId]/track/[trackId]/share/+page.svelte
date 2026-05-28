@@ -6,7 +6,7 @@
     import coverPlaceholder from '$lib/assets/cover.webp';
     import { fade } from 'svelte/transition';
     import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '$lib/components/ui/item/index.js';
-    import { BoomBoxIcon, DownloadIcon } from '@lucide/svelte';
+    import { BoomBoxIcon, DownloadIcon, SmartphoneIcon, SquareDashedIcon } from '@lucide/svelte';
     import { cn } from '$lib/helpers/utils.js';
     import html2canvas from 'html2canvas-pro';
     import PlayerGradientBackground from '$lib/components/shared/app/player/PlayerGradientBackground.svelte';
@@ -45,6 +45,7 @@
     });
 
     let container: HTMLDivElement|null = $state(null);
+    let fixedAspectRatio = $state(false);
 
     function editRange(num: number, maxRangeSize = 4) {
         if (range.length === 2) {
@@ -119,15 +120,16 @@
                 </Button>
             {/each}
         </div>
-        <div class="flex flex-col gap-4 w-full lg:max-w-[400px] items-center">
+        <div class="w-full lg:max-w-[400px] flex flex-col gap-4">
             <div
                 bind:this={container}
                 class={cn(
-                    "lg:sticky relative lg:top-18 overflow-hidden bg-black p-2 rounded-xl min-h-[200px] max-w-[400px] w-full dark"
+                    "relative overflow-hidden bg-black flex items-center p-2 rounded-xl min-h-[200px] max-w-[400px] w-full dark",
+                    fixedAspectRatio && "aspect-9/16"
                 )}
             >
                 {#if selected.length}
-                <div class="size-full relative z-10">
+                <div class="w-full relative z-10">
                     <Item class="p-2">
                         <ItemMedia>
                             <img src={coverURL} alt={track.name} class="size-16 rounded object-cover"/>
@@ -177,9 +179,16 @@
                 </div>
             </div>
             <div class="flex justify-center">
-                <Button variant="outline" size="sm" onclick={download}>
+                <Button variant="outline" size="lg" onclick={download}>
                     <DownloadIcon/>
                     Download Image
+                </Button>
+                <Button variant="outline" size="icon-lg" onclick={() => fixedAspectRatio = !fixedAspectRatio} class="ml-2">
+                    {#if fixedAspectRatio}
+                        <SquareDashedIcon/>
+                    {:else}
+                        <SmartphoneIcon/>
+                    {/if}
                 </Button>
             </div>
         </div>
