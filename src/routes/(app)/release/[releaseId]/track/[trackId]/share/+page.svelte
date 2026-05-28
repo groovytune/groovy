@@ -11,6 +11,7 @@
     import html2canvas from 'html2canvas-pro';
     import PlayerGradientBackground from '$lib/components/shared/app/player/PlayerGradientBackground.svelte';
     import { onMount } from 'svelte';
+    import { slug } from 'github-slugger';
 
     let { data } = $props();
 
@@ -81,7 +82,7 @@
         const link = document.createElement('a');
 
         link.href = url;
-        link.download = `${track.name}-lyrics.png`;
+        link.download = `${slug(track.name)}-lyrics.png`;
         link.click();
 
         URL.revokeObjectURL(url);
