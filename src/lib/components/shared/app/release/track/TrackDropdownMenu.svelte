@@ -56,7 +56,7 @@
             </Button>
         {/snippet}
     </DropdownMenuTrigger>
-    <DropdownMenuContent class="mx-2 min-w-40">
+    <DropdownMenuContent class="mx-2 min-w-60">
         {#if editable}
             <DropdownMenuItem>
                 {#snippet child({ props })}
@@ -78,70 +78,71 @@
         {/if}
         <PlayerDropdownItems tracks={[track]}/>
         <DropdownMenuSeparator/>
+        <DropdownMenuItem>
+            {#snippet child({ props })}
+                <a
+                    {...props}
+                    href={resolve(
+                        '/(app)/release/[releaseId]/track/[trackId]',
+                        {
+                            releaseId: track.releaseId,
+                            trackId: track.id
+                        }
+                    )}
+                >
+                    <MusicIcon/>
+                    View Track
+                </a>
+            {/snippet}
+        </DropdownMenuItem>
+        <DropdownMenuItem class={page.route.id === '/(app)/release/[releaseId]' ? 'hidden' : ''}>
+            {#snippet child({ props })}
+                <a
+                    {...props}
+                    href={resolve(
+                        '/(app)/release/[releaseId]',
+                        {
+                            releaseId: track.releaseId
+                        }
+                    )}
+                >
+                    <ListMusicIcon/>
+                    View Release
+                </a>
+            {/snippet}
+        </DropdownMenuItem>
+        {#if artistInfo}
+            <DropdownMenuItem>
+                {#snippet child({ props })}
+                    <a
+                        {...props}
+                        href={createUserProfileURL(artistInfo)}
+                    >
+                        <Disc3Icon/>
+                        View Artist
+                    </a>
+                {/snippet}
+            </DropdownMenuItem>
+        {/if}
         {#if editable}
+            <DropdownMenuSeparator/>
             <DropdownMenuItem>
                 {#snippet child({ props })}
                     <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-                    <a {...props} href={resolve('/(app)/api/track/[trackId]/audio', { trackId: track.id }) + '?download'} target="_blank" rel="noopener noreferrer">
+                    <a {...props} href={resolve('/(app)/api/assets/audio/[fileId]', { fileId: track.file }) + '?download'} target="_blank" rel="noopener noreferrer">
                         <DownloadIcon/>
                         Download File
                     </a>
                 {/snippet}
             </DropdownMenuItem>
-            {@render ShareDropdownItem()}
+        {/if}
+        {@render ShareDropdownItem()}
+        {#if editable}
             <DropdownMenuSeparator/>
             <DropdownMenuItem class="text-destructive!" onclick={() => deleteDialogState.open()}>
                 <Trash2Icon class="text-current"/>
                 Delete
             </DropdownMenuItem>
-        {:else}
-            <DropdownMenuItem>
-                {#snippet child({ props })}
-                    <a
-                        {...props}
-                        href={resolve(
-                            '/(app)/release/[releaseId]/track/[trackId]',
-                            {
-                                releaseId: track.releaseId,
-                                trackId: track.id
-                            }
-                        )}
-                    >
-                        <MusicIcon/>
-                        View Track
-                    </a>
-                {/snippet}
-            </DropdownMenuItem>
-            <DropdownMenuItem class={page.route.id === '/(app)/release/[releaseId]' ? 'hidden' : ''}>
-                {#snippet child({ props })}
-                    <a
-                        {...props}
-                        href={resolve(
-                            '/(app)/release/[releaseId]',
-                            {
-                                releaseId: track.releaseId
-                            }
-                        )}
-                    >
-                        <ListMusicIcon/>
-                        View Release
-                    </a>
-                {/snippet}
-            </DropdownMenuItem>
-            {#if artistInfo}
-                <DropdownMenuItem>
-                    {#snippet child({ props })}
-                        <a
-                            {...props}
-                            href={createUserProfileURL(artistInfo)}
-                        >
-                            <Disc3Icon/>
-                            View Artist
-                        </a>
-                    {/snippet}
-                </DropdownMenuItem>
-            {/if}
-            {@render ShareDropdownItem()}
         {/if}
     </DropdownMenuContent>
 </DropdownMenu>
