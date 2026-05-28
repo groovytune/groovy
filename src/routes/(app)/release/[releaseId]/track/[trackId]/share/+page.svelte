@@ -10,6 +10,7 @@
     import { cn } from '$lib/helpers/utils.js';
     import html2canvas from 'html2canvas-pro';
     import PlayerGradientBackground from '$lib/components/shared/app/player/PlayerGradientBackground.svelte';
+    import { onMount } from 'svelte';
 
     let { data } = $props();
 
@@ -25,12 +26,12 @@
 
 
     let backgroundLoaded = $state(false);
-    let coverAPIURL = $derived(
+    let coverURL = $derived(
         track?.cover || track.release.cover
             ? Image.getPreviewPath({
                 fileId: track?.cover || track.release.cover!,
-                width: 300,
-                height: 300,
+                width: 500,
+                height: 500,
                 output: ImageFormat.Webp
             })
             : coverPlaceholder
@@ -85,6 +86,21 @@
         URL.revokeObjectURL(url);
         link.remove();
     }
+
+    onMount(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const origGetContext = HTMLCanvasElement.prototype.getContext as any;
+
+        HTMLCanvasElement.prototype.getContext = function(type, attribs) {
+            attribs ||= {};
+            attribs.preserveDrawingBuffer = true;
+            return origGetContext.call(this, type, attribs);
+        };
+
+        return () => {
+            HTMLCanvasElement.prototype.getContext = origGetContext;
+        };
+    });
 </script>
 
 <section class="flex justify-center px-5 py-10">
@@ -114,7 +130,7 @@
                 <div class="size-full relative z-10">
                     <Item class="p-2">
                         <ItemMedia>
-                            <img src={coverAPIURL} alt={track.name} class="size-16 rounded object-cover"/>
+                            <img src={coverURL} alt={track.name} class="size-16 rounded object-cover"/>
                         </ItemMedia>
                         <ItemContent class="gap-0">
                             <ItemTitle class="text-base font-semibold leading-tight text-white">
@@ -138,7 +154,7 @@
                 </div>
                 {:else}
                     <div class="flex flex-col p-10 sm:p-16 z-10 relative">
-                        <img src={coverAPIURL} alt="Track cover" class="rounded-lg"/>
+                        <img src={coverURL} alt="Track cover" class="rounded-lg"/>
                         <div>
                             <h2 class="text-xl sm:text-2xl font-bold mt-4">{track.name}</h2>
                             <p class="text-sm text-muted-foreground">{track.release.user.name} &middot; {track.release.name}</p>
@@ -147,15 +163,15 @@
                 {/if}
                 <div class="absolute top-0 left-0 size-full">
                     <PlayerGradientBackground
-                        image={coverAPIURL}
-                        staticMode={true}
+                        image={coverURL}
+                        playing={true}
                         bind:loaded={backgroundLoaded}
                         class="size-full"
                     />
                     {#if !backgroundLoaded}
                         <div transition:fade={{ duration: 1000 }} class="size-full absolute top-0 left-0 -z-10">
                             <div class="size-full absolute top-0 left-0 backdrop-blur-3xl backdrop-saturate-150 backdrop-brightness-70"></div>
-                            <img src={coverAPIURL} alt={track?.name} class="size-full object-cover"/>
+                            <img src={coverURL} alt={track?.name} class="size-full object-cover"/>
                         </div>
                     {/if}
                 </div>
