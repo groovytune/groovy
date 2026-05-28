@@ -13,7 +13,7 @@
     import { auth } from '$lib/client/auth.js';
     import ShareButton from '$lib/components/shared/app/release/ShareButton.svelte';
     import Card from '$lib/components/ui/card/card.svelte';
-    import { CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
+    import { CardAction, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
     import CardContent from '$lib/components/ui/card/card-content.svelte';
     import { parseLyrics } from '$lib/helpers/lyrics.js';
     import type { LyricLine } from '@applemusic-like-lyrics/core';
@@ -232,6 +232,14 @@
                     <MicVocalIcon class="text-mauve-500 size-5 -mt-1"/>
                     <span>Lyrics</span>
                 </CardTitle>
+                {#if lyrics}
+                    <CardAction>
+                        <Button href={resolve('/(app)/release/[releaseId]/track/[trackId]/share', { releaseId: release.id, trackId: track.id })} variant="outline" size="sm">
+                            <Share2Icon/>
+                            Share
+                        </Button>
+                    </CardAction>
+                {/if}
             </CardHeader>
             <CardContent class="leading-loose text-sm">
                 {#if lyrics}
