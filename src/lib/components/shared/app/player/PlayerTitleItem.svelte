@@ -153,7 +153,16 @@
                                 <ShareButton
                                     data={{
                                         title: audioPlayer.currentTrack?.name,
-                                        url: new URL(resolve('/(app)/release/[releaseId]', { releaseId: audioPlayer.currentTrack!.releaseId }), page.url.origin).href
+                                        url: new URL(
+                                            resolve(
+                                                '/(app)/release/[releaseId]/track/[trackId]/share',
+                                                {
+                                                    releaseId: audioPlayer.currentTrack!.releaseId,
+                                                    trackId: audioPlayer.currentTrack!.id
+                                                }
+                                            ),
+                                            page.url.origin
+                                        ).href
                                     }}
                                 >
                                     {#snippet child({ onclick })}
