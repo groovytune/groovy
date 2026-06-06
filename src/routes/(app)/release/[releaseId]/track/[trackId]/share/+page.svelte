@@ -121,7 +121,7 @@
                 </Button>
             {/each}
         </div>
-        <div class="w-full lg:max-w-[400px] flex flex-col gap-4">
+        <div class="w-full lg:max-w-[400px] flex flex-col gap-4 items-center">
             <div
                 bind:this={container}
                 class={cn(
