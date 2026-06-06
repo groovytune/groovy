@@ -65,7 +65,6 @@
 >
     <PlayerGradientBackground
         image={coverAPIURL}
-        playing={!audioPlayer.paused}
         bind:loaded={backgroundLoaded}
         class="size-full"
     />

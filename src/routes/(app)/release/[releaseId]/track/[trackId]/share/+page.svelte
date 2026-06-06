@@ -167,7 +167,6 @@
                 <div class="absolute top-0 left-0 size-full">
                     <PlayerGradientBackground
                         image={coverURL}
-                        playing={true}
                         bind:loaded={backgroundLoaded}
                         class="size-full"
                     />

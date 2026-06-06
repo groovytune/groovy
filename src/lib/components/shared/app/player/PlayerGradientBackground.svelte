@@ -1,68 +1,39 @@
 <script lang="ts">
-    import { onDestroy, onMount } from 'svelte';
-    import type { BackgroundRender, MeshGradientRenderer } from '@applemusic-like-lyrics/core';
     import { cn } from '$lib/helpers/utils';
-    import isMobile from 'is-mobile';
+    import Kawarp, { type KawarpOptions } from '@kawarp/core';
 
     let {
         image,
-        loaded = $bindable(false),
-        playing = true,
-        fps = 30,
-        flowSpeed = 2,
-        renderScale = 2,
-        staticMode = isMobile(),
-        lowFreqVolume = 2.5,
-        hasLyric = true,
         class: className,
+        loaded = $bindable(false),
+        ...props
     }: {
-        image: string|HTMLImageElement;
-        loaded?: boolean;
-        playing?: boolean;
-        fps?: number;
-        flowSpeed?: number;
-        renderScale?: number;
-        staticMode?: boolean;
-        lowFreqVolume?: number;
-        hasLyric?: boolean;
+        image: string;
         class?: string;
-    } = $props();
+        loaded?: boolean;
+    } & KawarpOptions = $props();
 
-    let container: HTMLDivElement = $state()!;
-    let renderer: BackgroundRender<MeshGradientRenderer>|null = $state(null);
-
-    onMount(async () => {
-        const { BackgroundRender, MeshGradientRenderer } = await import('@applemusic-like-lyrics/core');
-
-        renderer = BackgroundRender.new(MeshGradientRenderer);
-
-        const element = renderer.getElement();
-        element.style.width = '100%';
-        element.style.height = '100%';
-
-        // eslint-disable-next-line svelte/no-dom-manipulating
-        container.appendChild(element);
-    });
-
-    onDestroy(() => {
-        renderer?.dispose();
-    });
+    let container: HTMLCanvasElement = $state()!;
+    let renderer: Kawarp|null = $state(null);
 
     $effect(() => {
-        if (!renderer) return;
+        renderer = new Kawarp(container,  {
+            // warpIntensity: 1,
+            // blurPasses: 8,
+            // animationSpeed: 0.1,
+            saturation: 1.5,
+            dithering: 0.008,
+            transitionDuration: 500,
+            // // tintColor: [0.16, 0.16, 0.24],
+            tintIntensity: 0, // 0.15
+            scale: 2,
+            ...props
+        });
 
-        if (playing) {
-            renderer.resume();
-        } else {
-            renderer.pause();
-        }
-
-        renderer.setFPS(fps);
-        renderer.setFlowSpeed(flowSpeed);
-        renderer.setRenderScale(renderScale);
-        renderer.setStaticMode(staticMode);
-        renderer.setLowFreqVolume(lowFreqVolume);
-        renderer.setHasLyric(hasLyric);
+        return () => {
+            renderer?.dispose();
+            renderer = null;
+        };
     });
 
     $effect(() => {
@@ -71,15 +42,14 @@
         loaded = false;
 
         renderer
-            .setAlbum(image)
-            .then(() => loaded = hasCover())
+            .loadImage(image)
+            .then(() => {
+                loaded = true;
+                renderer?.start();
+            })
+            .catch(() => loaded = false);
     });
-
-    function hasCover() {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const mesh = (renderer as any)?.renderer as { isNoCover?: boolean; };
-        return mesh && 'isNoCover' in mesh && !mesh.isNoCover;
-    }
 </script>
 
-<div class={cn("size-full", className)} bind:this={container}></div>
+<svelte:window onresize={() => renderer?.resize()}/>
+<canvas class={cn("size-full", className)} bind:this={container}></canvas>

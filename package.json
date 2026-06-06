@@ -58,6 +58,7 @@
 		"@applemusic-like-lyrics/lyric": "^1.0.1",
 		"@fontsource-variable/google-sans-code": "^5.2.4",
 		"@fontsource-variable/google-sans-flex": "^5.2.3",
+		"@kawarp/core": "^1.2.0",
 		"@prisma/client": "^7.8.0",
 		"@prisma/extension-accelerate": "^3.0.1",
 		"appwrite": "^25.1.1",
