@@ -85,7 +85,7 @@
             Publish, discover, and share music freely. Build your artist profile and reach listeners
         </p>
         <div class="flex  justify-center gap-2 w-full max-w-2xs">
-            <Button href={resolve('/(app)/release/new')} size="lg" class="w-fit">
+            <Button href={resolve('/(app)/home')} size="lg" class="w-fit">
                 {#if !$session.data?.user}
                     Get Started
                 {:else}
