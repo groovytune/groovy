@@ -14,9 +14,9 @@
     let wakelock: WakeLockSentinel|null = $state(null);
     let backgroundLoaded = $state(false);
     let coverAPIURL = $derived(
-        audioPlayer.currentTrack?.cover
+        audioPlayer.currentTrack?.cover ?? audioPlayer.releaseInfo.current?.cover
             ? Image.getPreviewPath({
-                fileId: audioPlayer.currentTrack.cover,
+                fileId: audioPlayer.currentTrack?.cover ?? audioPlayer.releaseInfo.current!.cover!,
                 width: 300,
                 height: 300,
                 output: ImageFormat.Webp

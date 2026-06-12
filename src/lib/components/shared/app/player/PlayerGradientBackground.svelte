@@ -18,15 +18,15 @@
 
     $effect(() => {
         renderer = new Kawarp(container,  {
-            // warpIntensity: 1,
-            // blurPasses: 8,
-            // animationSpeed: 0.1,
-            saturation: 1.5,
-            dithering: 0.008,
+            warpIntensity: 2,
+            blurPasses: 15,
+            animationSpeed: 1,
+            saturation: 2,
+            dithering: 0.005,
             transitionDuration: 500,
-            // // tintColor: [0.16, 0.16, 0.24],
-            tintIntensity: 0, // 0.15
-            scale: 2,
+            tintColor: [0.16, 0.16, 0.24],
+            tintIntensity: 0.2,
+            scale: 1.5,
             ...props
         });
 
@@ -52,4 +52,4 @@
 </script>
 
 <svelte:window onresize={() => renderer?.resize()}/>
-<canvas class={cn("size-full", className)} bind:this={container}></canvas>
+<canvas class={cn("size-full brightness-60 saturate-150", className)} bind:this={container}></canvas>
