@@ -52,4 +52,4 @@
 </script>
 
 <svelte:window onresize={() => renderer?.resize()}/>
-<canvas class={cn("size-full", className)} bind:this={container}></canvas>
+<canvas class={cn("size-full brightness-75", className)} bind:this={container}></canvas>
