@@ -22,7 +22,7 @@
             blurPasses: 7,
             animationSpeed: 1,
             saturation: 2.15,
-            dithering: 0.03,
+            // dithering: 0.03,
             transitionDuration: 1000,
             tintColor: [0.16, 0.16, 0.24],
             tintIntensity: 0.5,
