@@ -7,6 +7,7 @@
     import { Button } from '$lib/components/ui/button';
     import { PlayIcon } from '@lucide/svelte';
     import { Textarea } from '$lib/components/ui/textarea';
+    import type { LyricsFormat } from '$lib/server/prisma/enums';
 
     let {
         currentTime = $bindable(0),
@@ -29,8 +30,10 @@
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         lines;
 
-        $formData.format = 'LRC';
-        $formData.content = toLrcString();
+        const { content, format } = toLyricsData();
+
+        $formData.format = format;
+        $formData.content = content;
     });
 
     $effect(() => {
@@ -46,8 +49,12 @@
         if (currentLine) currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    function toLrcString() {
+    function toLyricsData(): { content: string; format: LyricsFormat; } {
         let result = '';
+
+        if (lines.every(line => line.startTime === undefined)) {
+            return { content: lines.map(line => line.text).join('\n'), format: 'TXT' };
+        }
 
         for (const line of lines) {
             const text = line.text;
@@ -58,7 +65,10 @@
             result += `[${formatDuration(timestamp, 'mm:ss.S')}]${text}\n`;
         }
 
-        return result.trimEnd();
+        return {
+            content: result.trimEnd(),
+            format: 'LRC'
+        };
     }
 </script>
 
