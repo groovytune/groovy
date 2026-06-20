@@ -205,6 +205,7 @@
     preload="auto"
     crossorigin="anonymous"
     class="w-full"
+    type="audio"
     loop
 />
 
