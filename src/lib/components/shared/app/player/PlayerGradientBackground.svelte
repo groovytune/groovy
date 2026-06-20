@@ -1,6 +1,7 @@
 <script lang="ts">
     import { cn } from '$lib/helpers/utils';
     import Kawarp, { type KawarpOptions } from '@kawarp/core';
+    import isMobile from 'is-mobile';
 
     let {
         image,
@@ -19,9 +20,9 @@
     $effect(() => {
         renderer = new Kawarp(container,  {
             warpIntensity: 1,
-            blurPasses: 7,
+            blurPasses: isMobile() ? 10 : 7,
             animationSpeed: 0.5,
-            saturation: 2.5,
+            saturation: isMobile() ? 4 : 2.5,
             // dithering: 0.03,
             transitionDuration: 1000,
             tintColor: [0.16, 0.16, 0.24],
@@ -52,4 +53,4 @@
 </script>
 
 <svelte:window onresize={() => renderer?.resize()}/>
-<canvas class={cn("size-full brightness-60", className)} bind:this={container}></canvas>
+<canvas class={cn("size-full brightness-50 sm:brightness-60", className)} bind:this={container}></canvas>
