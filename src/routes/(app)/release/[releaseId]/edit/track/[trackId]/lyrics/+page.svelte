@@ -253,18 +253,20 @@
 </main>
 
 <section class="fixed bottom-16 sm:bottom-0 left-0 select-none flex flex-col items-center w-full pointer-events-none gap-2">
-    <div class="flex md:hidden gap-1 w-full container justify-center lg:px-7 px-5 [&_button]:pointer-events-auto">
-        <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(highlightedIndex - 1)}>
-            <ArrowUpIcon/>
-        </Button>
-        <Button variant="default" size="lg" onclick={() => setLyricTimestamp(highlightedIndex, currentTime)}>
-            <BetweenHorizontalEndIcon/>
-            Update Timestamp
-        </Button>
-            <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(highlightedIndex + 1)}>
-                <ArrowDownIcon/>
+    {#if lines.length}
+        <div class="flex md:hidden gap-1 w-full container justify-center lg:px-7 px-5 [&_button]:pointer-events-auto">
+            <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(highlightedIndex - 1)}>
+                <ArrowUpIcon/>
             </Button>
-    </div>
+            <Button variant="default" size="lg" onclick={() => setLyricTimestamp(highlightedIndex, currentTime)}>
+                <BetweenHorizontalEndIcon/>
+                Update Timestamp
+            </Button>
+                <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(highlightedIndex + 1)}>
+                    <ArrowDownIcon/>
+                </Button>
+        </div>
+    {/if}
     <div class="flex items-center gap-1 rounded-md container pointer-events-auto pb-2 lg:px-7 px-5">
         <Button
             size="icon-lg"
