@@ -153,11 +153,11 @@
                     href="#/"
                     data-line-index={lineIndex}
                     data-distance-from-current={distanceFromCurrent}
-                    style="content-visibility: auto; will-change: auto; interpolate-size: allow-keywords; {(isLinePassed || isLineFuture) && !isUserScrolling ? getOpacityBlur(distanceFromCurrent) : ''}"
+                    style="content-visibility: auto; will-change: transform; transform-origin: bottom {line.isDuet ? 'right' : 'left'}; {(isLinePassed || isLineFuture) && !isUserScrolling ? getOpacityBlur(distanceFromCurrent) : ''}"
                     class={cn(
-                        "block transition-all duration-500 ease-in-out text-balance mt-8 h-fit",
+                        "block transition-all duration-500 ease-in-out text-balance mt-9 h-fit scale-99",
                         lineIndex === 0 && "mt-0",
-                        isLineActive && "active-lrc",
+                        isLineActive && "active-lrc scale-100",
                         hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0! pointer-events-none blur-none",
                         isDone && isLinePassed && "opacity-50! pointer-events-none blur-none!",
                         line.isDuet && "text-end",
@@ -172,10 +172,10 @@
                     {#each line.words as word, wordIndex (wordIndex)}
                         {@const isWordActive = isLineActive && activeWords.includes(wordIndex)}
                         <span
-                            style="will-change: auto;"
+                            style="will-change: transform;"
                             class={cn(
-                                "opacity-50 transition-all duration-500 ease-in-out",
-                                isWordActive && "opacity-100"
+                                "inline opacity-50 transition-all duration-800 ease-in-out",
+                                isWordActive && "opacity-100",
                             )}
                         >
                             {word.word}
