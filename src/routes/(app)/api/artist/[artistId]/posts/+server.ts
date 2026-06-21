@@ -3,7 +3,6 @@ import z from 'zod';
 import { prisma } from '$lib/server/prisma.js';
 import type { Post } from '$lib/server/prisma/browser';
 import type { PartialUser } from '$lib/helpers/utils';
-import { error } from '@sveltejs/kit';
 
 export type GETResponse = (Post & {
     user: PartialUser;
@@ -17,11 +16,7 @@ export type GETResponse = (Post & {
     };
 })[];
 
-export async function GET({ locals, url, params }) {
-    if (!locals.user) {
-        throw error(401, 'Unauthorized');
-    }
-
+export async function GET({ url, params }) {
     const after = z.string().optional().safeParse(url.searchParams.get('after'));
     const replies = z.coerce.boolean().default(false).safeParse(url.searchParams.get('replies'));
     const take = z.coerce.number().int().positive().max(100).default(20).safeParse(url.searchParams.get('take'));
