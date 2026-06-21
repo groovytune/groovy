@@ -195,16 +195,14 @@
             </div>
         </div>
     {/snippet}
-    {#snippet skeletonItem()}
-        {#each { length: 5 }}
-            <div class="flex flex-col shrink-0" style="content-visibility: auto;">
-                <Skeleton class="size-40 rounded-full"/>
-                <div class="mt-2 space-y-2 flex flex-col items-center">
-                    <Skeleton class="w-20 h-4"/>
-                    <Skeleton class="w-14 h-3"/>
-                </div>
+    {#snippet SkeletonItem()}
+        <div class="flex flex-col shrink-0" style="content-visibility: auto;">
+            <Skeleton class="size-40 rounded-full"/>
+            <div class="mt-2 space-y-2 flex flex-col items-center">
+                <Skeleton class="w-20 h-4"/>
+                <Skeleton class="w-14 h-3"/>
             </div>
-        {/each}
+        </div>
     {/snippet}
 </ScrollableReleases>
 <ScrollableReleases

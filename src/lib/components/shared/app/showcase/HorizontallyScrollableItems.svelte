@@ -1,11 +1,12 @@
 <script lang="ts" generics="Item extends { id: string; }">
-    import type { IconProps } from '@lucide/svelte';
+    import { type IconProps } from '@lucide/svelte';
     import type { Component, Snippet } from 'svelte';
-    import { ScrollArea } from '$lib/components/ui/scroll-area';
     import ExplicitIcon from '../../icons/ExplicitIcon.svelte';
     import { Skeleton } from '$lib/components/ui/skeleton';
     import type { ClassValue } from 'clsx';
     import { cn } from '$lib/helpers/utils';
+    import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '../../../ui/carousel';
+    import isMobile from 'is-mobile';
 
     let {
         title,
@@ -13,7 +14,7 @@
         loading = false,
         items = [],
         child,
-        skeletonItem,
+        SkeletonItem,
         class: className
     }: {
         title: string;
@@ -21,13 +22,13 @@
         loading?: boolean;
         items: Item[];
         child?: Snippet<[{ item: Item; index: number; }]>;
-        skeletonItem?: Snippet;
+        SkeletonItem?: Snippet;
         class?: ClassValue;
     } = $props();
 </script>
 
 <script lang="ts" module>
-    export { ScrollableItem };
+    export { ScrollableItem, ScrollableSkeleton };
 </script>
 
 {#snippet ScrollableItem(name: string, description: string, coverURL: string, explicit: boolean, href: string, descriptionHref?: string)}
@@ -56,16 +57,14 @@
     </div>
 {/snippet}
 
-{#snippet ItemSkeletons(length: number = 5)}
-    {#each { length }}
-        <div class="flex flex-col shrink-0" style="content-visibility: auto;">
-            <Skeleton class="size-40 sm:size-80"/>
-            <div class="mt-2 space-y-2">
-                <Skeleton class="w-20 sm:w-48 h-4"/>
-                <Skeleton class="w-14 sm:w-40 h-3"/>
-            </div>
+{#snippet ScrollableSkeleton()}
+    <div class="flex flex-col shrink-0" style="content-visibility: auto;">
+        <Skeleton class="size-40 sm:size-80"/>
+        <div class="mt-2 space-y-2">
+            <Skeleton class="w-20 sm:w-48 h-4"/>
+            <Skeleton class="w-14 sm:w-40 h-3"/>
         </div>
-    {/each}
+    </div>
 {/snippet}
 
 <section class={cn('w-full', className)}>
@@ -77,23 +76,33 @@
         {title}
     </h1>
     <div class="pb-5">
-        <ScrollArea orientation="horizontal">
-            <div class="flex gap-4 px-5 pb-4">
+        <Carousel opts={{ align: 'start', slidesToScroll: 'auto' }}>
+            <CarouselContent class="px-5 pb-4">
                 {#if loading}
-                    {#if skeletonItem}
-                        {@render skeletonItem?.()}
-                    {:else}
-                        {@render ItemSkeletons()}
-                    {/if}
-                {:else if items.length}
+                    {#each Array(5)}
+                        <CarouselItem class="basis-auto">
+                            {#if SkeletonItem}
+                                {@render SkeletonItem?.()}
+                            {:else}
+                                {@render ScrollableSkeleton()}
+                            {/if}
+                        </CarouselItem>
+                    {/each}
+                {:else}
                     {#each items as item, index (item.id)}
-                        {@render child?.({
-                            item,
-                            index
-                        })}
+                        <CarouselItem class="basis-auto">
+                            {@render child?.({
+                                item,
+                                index
+                            })}
+                        </CarouselItem>
                     {/each}
                 {/if}
-            </div>
-        </ScrollArea>
+            </CarouselContent>
+            {#if !isMobile() || (items.length > 0 && !loading)}
+                <CarouselPrevious size="icon-lg" variant="secondary" class="inset-s-2 disabled:hidden"/>
+                <CarouselNext size="icon-lg" variant="secondary" class="inset-e-2 disabled:hidden"/>
+            {/if}
+        </Carousel>
     </div>
 </section>
