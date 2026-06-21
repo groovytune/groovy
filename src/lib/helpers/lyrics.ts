@@ -1,13 +1,10 @@
 import type { LyricLine } from '@applemusic-like-lyrics/core';
-import { parseLrc, parseLyl, parseLys, parseTTML, parseYrc } from '@applemusic-like-lyrics/lyric';
+import { parseLrc, parseTTML } from '@applemusic-like-lyrics/lyric';
 
 export function parseLyrics(lyrics: { format: string; content: string }): LyricLine[]|string {
     switch (lyrics.format) {
         case 'LRC': return parseLrc(lyrics.content);
         case 'TTML': return parseTTML(lyrics.content).lines;
-        case 'LYL': return parseLyl(lyrics.content);
-        case 'LYS': return parseLys(lyrics.content);
-        case 'YRC': return parseYrc(lyrics.content);
         case 'TXT':
         default:
             return lyrics.content;
@@ -33,30 +30,6 @@ export function parseLyricsContent(content: string): LyricLine[] {
         return ttml;
     } catch (e) {
         console.warn('Not TTML format, trying other formats...', e);
-    }
-
-    try {
-        const lyl = parseLyl(content);
-        if (!lyl || !lyl.length) throw new Error('Parsed LYL content is empty');
-        return lyl;
-    } catch (e) {
-        console.warn('Not LYL format, trying other formats...', e);
-    }
-
-    try {
-        const lys = parseLys(content);
-        if (!lys || !lys.length) throw new Error('Parsed LYS content is empty');
-        return lys;
-    } catch (e) {
-        console.warn('Not LYS format, trying other formats...', e);
-    }
-
-    try {
-        const yrc = parseYrc(content);
-        if (!yrc || !yrc.length) throw new Error('Parsed YRC content is empty');
-        return yrc;
-    } catch (e) {
-        console.warn('Not YRC format, treating as TXT', e);
     }
 
     throw new Error('Unsupported lyrics format');

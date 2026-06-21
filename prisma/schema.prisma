@@ -145,9 +145,6 @@ model Track {
 enum LyricsFormat {
   LRC
   TTML
-  LYS
-  YRC
-  LYL
   TXT
 }
 
