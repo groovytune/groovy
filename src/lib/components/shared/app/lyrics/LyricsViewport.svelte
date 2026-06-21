@@ -6,7 +6,6 @@
     import { useDebounce, useEventListener } from 'runed';
     import { getLyricsTimeline } from '$lib/helpers/lyrics';
     import { untrack } from 'svelte';
-    import { isMobile } from 'is-mobile';
 
     let {
         currentTime,
@@ -19,7 +18,7 @@
         viewportClass,
         containerClass,
         hidePassedLines = true,
-        enableBlur = !isMobile(),
+        enableBlur = true,
         scrollBlock = 'center',
         scrollBehavior = 'smooth'
     }: {
