@@ -19,7 +19,7 @@
     import { resolve } from '$app/paths';
     import { page } from '$app/state';
     import { slug } from 'github-slugger';
-    import MediaPlayer from '../../../../../../../../lib/components/shared/MediaPlayer.svelte';
+    import MediaPlayer from '$lib/components/shared/MediaPlayer.svelte';
     import type { LyricLine } from '@applemusic-like-lyrics/lyric';
 
     let { data } = $props();

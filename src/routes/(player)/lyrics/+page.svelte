@@ -18,7 +18,7 @@
 
     const setNotScrolling = useDebounce(() => {
         scrolling = false;
-    }, 1000);
+    }, 2000);
 
     useEventListener(() => scrollContainer, 'touchstart', () => {
         scrolling = true;

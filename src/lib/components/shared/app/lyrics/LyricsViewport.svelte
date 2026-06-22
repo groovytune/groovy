@@ -153,9 +153,9 @@
                     href="#/"
                     data-line-index={lineIndex}
                     data-distance-from-current={distanceFromCurrent}
-                    style="content-visibility: auto; will-change: transform; transform-origin: bottom {line.isDuet ? 'right' : 'left'}; {(isLinePassed || isLineFuture) && !isUserScrolling ? getOpacityBlur(distanceFromCurrent) : ''}"
+                    style="content-visibility: auto; will-change: transform; transform-origin: center {line.isDuet ? 'right' : 'left'}; {(isLinePassed || isLineFuture) && !isUserScrolling ? getOpacityBlur(distanceFromCurrent) : ''}"
                     class={cn(
-                        "block transition-all duration-500 ease-in-out text-balance mt-9 h-fit scale-99",
+                        "block transition-all duration-500 ease-in-out text-balance mt-9 h-fit scale-98",
                         lineIndex === 0 && "mt-0",
                         isLineActive && "active-lrc scale-100",
                         hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0! pointer-events-none blur-none",
