@@ -99,7 +99,7 @@
                     {/each}
                 {/if}
             </CarouselContent>
-            {#if !isMobile() || (items.length > 0 && !loading)}
+            {#if !isMobile() && items.length > 0 && !loading}
                 <CarouselPrevious size="icon-lg" variant="secondary" class="inset-s-2 disabled:hidden"/>
                 <CarouselNext size="icon-lg" variant="secondary" class="inset-e-2 disabled:hidden"/>
             {/if}
