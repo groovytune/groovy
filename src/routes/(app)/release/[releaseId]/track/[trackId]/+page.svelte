@@ -16,12 +16,12 @@
     import { CardAction, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
     import CardContent from '$lib/components/ui/card/card-content.svelte';
     import { parseLyrics } from '$lib/helpers/lyrics.js';
-    import type { LyricLine } from '@applemusic-like-lyrics/core';
     import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '$lib/components/ui/empty';
     import { resource } from 'runed';
     import { createUserProfileURL, formatDuration } from '$lib/helpers/utils.js';
     import LikeButton from '$lib/components/shared/app/LikeButton.svelte';
     import { page } from '$app/state';
+    import type { LyricLine } from '@applemusic-like-lyrics/lyric';
 
     let { data } = $props();
 

@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type { LyricLine } from '@applemusic-like-lyrics/core';
     import { ScrollArea } from '$lib/components/ui/scroll-area';
     import type { ClassValue } from 'clsx';
     import { cn } from '$lib/helpers/utils';
     import { useDebounce, useEventListener } from 'runed';
     import { getLyricsTimeline } from '$lib/helpers/lyrics';
     import { untrack } from 'svelte';
+    import type { LyricLine } from '@applemusic-like-lyrics/lyric';
 
     let {
         currentTime,

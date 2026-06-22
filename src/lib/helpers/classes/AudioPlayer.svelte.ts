@@ -30,6 +30,9 @@ export class AudioPlayer {
     public currentTime: number = $state(0);
     public isDurationEstimated: boolean = $state(true);
 
+    public frameId: number = 0;
+    public lastFrameTime: number = -1;
+
     public skippable: boolean = $derived(!!this.queue.length && !!this.audio);
     public previousable: boolean = $derived(!!this.history.length && !!this.audio);
 
@@ -100,13 +103,13 @@ export class AudioPlayer {
 
         this.audio.preload = 'auto';
         this.audio.crossOrigin = 'anonymous';
+        this.audio.id = 'audio-player-media';
 
         document.body.appendChild(this.audio);
 
-
         useEventListener(
             () => this.audio,
-            ['timeupdate', 'seeked', 'seeking'],
+            ['seeked', 'seeking'],
             event => this.currentTime = event.currentTarget.currentTime,
             { passive: true }
         );
@@ -197,9 +200,12 @@ export class AudioPlayer {
                 }
             }
         );
+
+        this.startFrameLoop();
     }
 
     public destroy(): void {
+        this.stopFrameLoop();
         this.releaseCache.clear();
 
         this.audio?.pause();
@@ -210,6 +216,27 @@ export class AudioPlayer {
         this.queue = [];
         this.history = [];
         this.currentTrack = null;
+    }
+
+    public startFrameLoop(): void {
+        if (typeof requestAnimationFrame === 'undefined') return;
+
+        const onFrame = (frameTime: number) => {
+            this.lastFrameTime = frameTime;
+            this.currentTime = this.audio?.currentTime ?? 0;
+
+            this.frameId = requestAnimationFrame(onFrame);
+        }
+
+        this.frameId = requestAnimationFrame(onFrame);
+    }
+
+    public stopFrameLoop(): void {
+        if (typeof cancelAnimationFrame === 'undefined') return;
+
+        cancelAnimationFrame(this.frameId);
+        this.frameId = 0;
+        this.lastFrameTime = -1;
     }
 
     public add(tracks: AudioPlayer.Track|AudioPlayer.Track[], next: boolean = false): void {

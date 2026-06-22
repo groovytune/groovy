@@ -2,7 +2,6 @@
     import { PressedKeys, StateHistory, useEventListener } from 'runed';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte.js';
     import { parseLyrics } from '$lib/helpers/lyrics';
-    import type { LyricLine } from '@applemusic-like-lyrics/core';
     import LrcLyricsEditor from '$lib/components/shared/app/lyrics/editor/LrcLyricsEditor.svelte';
     import { onMount } from 'svelte';
     import RangeSlider from 'svelte-range-slider-pips';
@@ -21,6 +20,7 @@
     import { page } from '$app/state';
     import { slug } from 'github-slugger';
     import MediaPlayer from '../../../../../../../../lib/components/shared/MediaPlayer.svelte';
+    import type { LyricLine } from '@applemusic-like-lyrics/lyric';
 
     let { data } = $props();
 
@@ -70,13 +70,15 @@
     let lines: LineData[] = $state([]);
     let highlightedIndex: number = $state(0);
 
+    let frameId: number = 0;
+
     const history = new StateHistory(
         () => lines,
         newLines => lines = newLines,
         { capacity: 200 }
     );
 
-    useEventListener(() => audio, ['timeupdate', 'loadedmetadata', 'seeked'], () => currentTime = audio.currentTime);
+    useEventListener(() => audio, ['loadedmetadata', 'seeked'], () => currentTime = audio.currentTime);
     useEventListener(() => audio, ['play', 'pause'], () => paused = audio.paused);
     useEventListener(() => audio, ['loadedmetadata', 'loaded'], () => duration = audio.duration);
 
@@ -93,8 +95,17 @@
 
         return () => {
             audioPlayer.hidden = false;
+            cancelAnimationFrame(frameId);
         };
     });
+
+    frameId = requestAnimationFrame(onFrame);
+
+    function onFrame() {
+        currentTime = audio?.currentTime ?? 0;
+
+        frameId = requestAnimationFrame(onFrame);
+    }
 
     function reset() {
         const lyrics = track.lyrics;

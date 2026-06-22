@@ -1,13 +1,15 @@
-import type { LyricLine } from '@applemusic-like-lyrics/core';
-import { parseLrc, parseTTML } from '@applemusic-like-lyrics/lyric';
+import { parseLrc, parseTTML, type LyricLine } from '@applemusic-like-lyrics/lyric';
 
-export function parseLyrics(lyrics: { format: string; content: string }): LyricLine[]|string {
+
+export function parseLyrics(lyrics: { format: string; content: string }, allowString?: boolean): LyricLine[]|string;
+export function parseLyrics(lyrics: { format: string; content: string }, allowString: false): LyricLine[];
+export function parseLyrics(lyrics: { format: string; content: string }, allowString: boolean = true): LyricLine[]|string {
     switch (lyrics.format) {
         case 'LRC': return parseLrc(lyrics.content);
         case 'TTML': return parseTTML(lyrics.content).lines;
         case 'TXT':
         default:
-            return lyrics.content;
+            return allowString ? lyrics.content : [];
     }
 }
 
