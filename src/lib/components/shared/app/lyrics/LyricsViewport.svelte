@@ -23,7 +23,7 @@
         scrollBehavior = 'smooth'
     }: {
         currentTime: number;
-        lyrics: LyricLine[]|string;
+        lyrics: LyricLine[];
         setCurrentTime?: (time: number) => void;
         ref?: HTMLElement|null;
         viewportRef?: HTMLElement|null;
@@ -136,53 +136,45 @@
     viewportClasses={cn("scroll-pt-20", viewportClass)}
 >
     <div class={cn("h-fit w-full flex flex-col pt-20 pb-[100svh] px-5", containerClass)}>
-        {#if typeof lyrics === 'string'}
-            {#each lyrics.split('\n') as line, index (index)}
-                <p class="block">
-                    {line}
-                </p>
-            {/each}
-        {:else}
-            {#each lyrics as line, lineIndex (lineIndex)}
-                {@const activeWords = lyricsTimeline?.activeLines.get(lineIndex)}
-                {@const isLineActive = activeWords !== undefined}
-                {@const isLinePassed = !isLineActive && !!lyricsTimeline?.passedLines.includes(lineIndex)}
-                {@const isLineFuture = !isLineActive && !!lyricsTimeline?.futureLines.includes(lineIndex)}
-                {@const distanceFromCurrent = calculateLineIndexDistance(lineIndex)}
-                <a
-                    href="#/"
-                    data-line-index={lineIndex}
-                    data-distance-from-current={distanceFromCurrent}
-                    style="content-visibility: auto; will-change: transform; transform-origin: center {line.isDuet ? 'right' : 'left'}; {(isLinePassed || isLineFuture) && !isUserScrolling ? getOpacityBlur(distanceFromCurrent) : ''}"
-                    class={cn(
-                        "block transition-all duration-500 ease-in-out text-balance mt-9 h-fit scale-98",
-                        lineIndex === 0 && "mt-0",
-                        isLineActive && "active-lrc scale-100",
-                        hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0! pointer-events-none blur-none",
-                        isDone && isLinePassed && "opacity-50! pointer-events-none blur-none!",
-                        line.isDuet && "text-end",
-                        line.isBG && "text-[0.6em] mt-2 mb-2 font-semibold",
-                        line.isBG && isLineFuture && "opacity-10!",
-                    )}
-                    onclick={e => {
-                        e.preventDefault();
-                        setCurrentTime?.(parseFloat((line.startTime / 1000).toFixed(3)));
-                    }}
-                >
-                    {#each line.words as word, wordIndex (wordIndex)}
-                        {@const isWordActive = isLineActive && activeWords.includes(wordIndex)}
-                        <span
-                            style="will-change: transform;"
-                            class={cn(
-                                "inline opacity-50 transition-all duration-800 ease-in-out",
-                                isWordActive && "opacity-100",
-                            )}
-                        >
-                            {word.word}
-                        </span>
-                    {/each}
-                </a>
-            {/each}
-        {/if}
+        {#each lyrics as line, lineIndex (lineIndex)}
+            {@const activeWords = lyricsTimeline?.activeLines.get(lineIndex)}
+            {@const isLineActive = activeWords !== undefined}
+            {@const isLinePassed = !isLineActive && !!lyricsTimeline?.passedLines.includes(lineIndex)}
+            {@const isLineFuture = !isLineActive && !!lyricsTimeline?.futureLines.includes(lineIndex)}
+            {@const distanceFromCurrent = calculateLineIndexDistance(lineIndex)}
+            <a
+                href="#/"
+                data-line-index={lineIndex}
+                data-distance-from-current={distanceFromCurrent}
+                style="content-visibility: auto; will-change: transform; transform-origin: center {line.isDuet ? 'right' : 'left'}; {(isLinePassed || isLineFuture) && !isUserScrolling ? getOpacityBlur(distanceFromCurrent) : ''}"
+                class={cn(
+                    "block transition-all duration-500 ease-in-out text-balance mt-9 h-fit scale-98",
+                    lineIndex === 0 && "mt-0",
+                    isLineActive && "active-lrc scale-100",
+                    hidePassedLines && isLinePassed && !isUserScrolling && "opacity-0! pointer-events-none blur-none",
+                    isDone && isLinePassed && "opacity-50! pointer-events-none blur-none!",
+                    line.isDuet && "text-end",
+                    line.isBG && "text-[0.6em] mt-2 mb-2 font-semibold",
+                    line.isBG && isLineFuture && "opacity-10!",
+                )}
+                onclick={e => {
+                    e.preventDefault();
+                    setCurrentTime?.(parseFloat((line.startTime / 1000).toFixed(3)));
+                }}
+            >
+                {#each line.words as word, wordIndex (wordIndex)}
+                    {@const isWordActive = isLineActive && activeWords.includes(wordIndex)}
+                    <span
+                        style="will-change: transform;"
+                        class={cn(
+                            "inline opacity-50 transition-all duration-800 ease-in-out",
+                            isWordActive && "opacity-100",
+                        )}
+                    >
+                        {word.word}
+                    </span>
+                {/each}
+            </a>
+        {/each}
     </div>
 </ScrollArea>

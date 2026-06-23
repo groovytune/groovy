@@ -4,6 +4,7 @@
     import type { LyricLine } from '@applemusic-like-lyrics/lyric';
     import { onDestroy, onMount, untrack } from 'svelte';
     import { cn } from '$lib/helpers/utils';
+    import isMobile from 'is-mobile';
 
     let {
         ref = $bindable(null),
@@ -11,6 +12,9 @@
         currentTime,
         playing,
         hidePassedLines = true,
+        enableScale = true,
+        enableBlur = !isMobile(),
+        enableSpring = true,
         alignAnchor = 'top',
         class: className = '',
         setCurrentTime
@@ -20,6 +24,9 @@
         currentTime: number;
         playing: boolean;
         hidePassedLines?: boolean;
+        enableScale?: boolean;
+        enableBlur?: boolean;
+        enableSpring?: boolean;
         alignAnchor?: LayoutAlignAnchor;
         class?: string;
         setCurrentTime?: (time: number) => void;
@@ -75,6 +82,9 @@
         player.setHidePassedLines(hidePassedLines);
         player.setAlignAnchor(alignAnchor);
         player.setAlignPosition(alignAnchor === 'top' ? 0.05 : 0.45);
+        player.setEnableScale(enableScale);
+        player.setEnableBlur(enableBlur);
+        player.setEnableSpring(enableSpring);
     });
 
     requestAnimationFrame(onFrame);

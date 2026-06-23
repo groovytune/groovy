@@ -10,6 +10,7 @@
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
     import { parseLyrics } from '$lib/helpers/lyrics';
     import LyricsView from '$lib/components/shared/app/lyrics/LyricsView.svelte';
+    import StringLyricsView from '../../../lib/components/shared/app/lyrics/StringLyricsView.svelte';
 
     const audioPlayer = AudioPlayer.context.get();
 
@@ -72,6 +73,15 @@
                 setCurrentTime={(time: number) => audioPlayer.seek(time)}
                 hidePassedLines={!scrolling}
                 alignAnchor="top"
+                class={cn(
+                    "transition-[mask] duration-500 ease-in-out",
+                    "h-[calc(100%-2.6rem)] text-3xl font-bold leading-snug mask-t-from-90% mask-t-to-100% mask-b-from-80% mask-b-to-100%",
+                    (scrolling || audioPlayer.paused) && "mask-b-from-60% mask-b-to-80%"
+                )}
+            />
+        {:else}
+            <StringLyricsView
+                {lyrics}
                 class={cn(
                     "transition-[mask] duration-500 ease-in-out",
                     "h-[calc(100%-2.6rem)] text-3xl font-bold leading-snug mask-t-from-90% mask-t-to-100% mask-b-from-80% mask-b-to-100%",

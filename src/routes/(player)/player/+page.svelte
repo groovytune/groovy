@@ -17,6 +17,7 @@
     import PlayerQueueDialog from '$lib/components/shared/app/player/dialogs/PlayerQueueDialog.svelte';
     import isMobile from 'is-mobile';
     import LyricsView from '../../../lib/components/shared/app/lyrics/LyricsView.svelte';
+    import StringLyricsView from '../../../lib/components/shared/app/lyrics/StringLyricsView.svelte';
 
     const audioPlayer = AudioPlayer.context.get();
     const playerLastNavigate = PlayerLastNavigate.get();
@@ -197,6 +198,11 @@
                     playing={audioPlayer.paused === false}
                     hidePassedLines={true}
                     alignAnchor="center"
+                    class="text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%"
+                />
+            {:else}
+                <StringLyricsView
+                    {lyrics}
                     class="text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%"
                 />
             {/if}
