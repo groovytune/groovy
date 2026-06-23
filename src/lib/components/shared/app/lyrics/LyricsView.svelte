@@ -90,7 +90,8 @@
     }
 
     function onLineClick(event: LyricLineMouseEvent) {
-        setCurrentTime?.(event.timeStamp / 1000);
+        const line = event.line.getLine();
+        setCurrentTime?.(Math.round(line.startTime / 1000));
     }
 </script>
 
