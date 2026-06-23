@@ -107,6 +107,11 @@
             background: rgba(255, 255, 255, 0.1);
         }
     }
+
+    :global(.FmKaba_interludeDots) {
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+    }
 </style>
 
 <div
