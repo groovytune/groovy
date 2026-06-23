@@ -6,7 +6,7 @@
     import { onMount } from 'svelte';
     import RangeSlider from 'svelte-range-slider-pips';
     import { Button } from '$lib/components/ui/button';
-    import { ArrowDownIcon, ArrowUpIcon, BetweenHorizontalEndIcon, DeleteIcon, DownloadIcon, EllipsisVerticalIcon, LoaderCircleIcon, PauseIcon, PlayIcon, RotateCcwIcon, RotateCwIcon, SaveIcon, TimerResetIcon } from '@lucide/svelte';
+    import { DeleteIcon, DownloadIcon, EllipsisVerticalIcon, LoaderCircleIcon, Music4Icon, PauseIcon, PlayIcon, RotateCcwIcon, RotateCwIcon, SaveIcon, TimerResetIcon } from '@lucide/svelte';
     import { formatDuration } from '$lib/helpers/utils.js';
     import LyricsUpload from '$lib/components/shared/app/lyrics/editor/LyricsUpload.svelte';
     import type { Snapshot } from './$types.js';
@@ -93,13 +93,13 @@
         audioPlayer.hidden = true;
         audioPlayer.pause();
 
+        frameId = requestAnimationFrame(onFrame);
+
         return () => {
             audioPlayer.hidden = false;
             cancelAnimationFrame(frameId);
         };
     });
-
-    frameId = requestAnimationFrame(onFrame);
 
     function onFrame() {
         currentTime = audio?.currentTime ?? 0;
@@ -120,37 +120,21 @@
     }
 
     function parseLyricLines(lines: LyricLine[]): LineData[] {
-        return lines.map(l => {
-            let text = l.words.map(w => w.word).join('');
+        return lines
+            .map(l => {
+                let text = l.words.map(w => w.word).join('');
 
-            return {
-                text: l.isBG ? `(${text})` : text,
-                startTime: l.startTime / 1000
-            };
-        })
+                return {
+                    text: l.isBG ? `(${text})` : text,
+                    startTime: l.startTime / 1000
+                };
+            })
+            .sort((a, b) => (a.startTime ?? 0) - (b.startTime ?? 0));
     }
 
     function clear() {
         lines = [];
         history.clear();
-    }
-
-    function setLyricTimestamp(index: number, time: number) {
-        if (index < 0 || index >= lines.length) return;
-
-        const line = lines[index];
-        if (!line) return;
-
-        line.startTime = time;
-
-        setCurrentLyricIndex(index + 1);
-    }
-
-    function setCurrentLyricIndex(index: number) {
-        highlightedIndex = index;
-
-        const currentLine = document.querySelector(`[data-lyric-index="${highlightedIndex}"]`);
-        if (currentLine) currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function downloadContent() {
@@ -225,9 +209,12 @@
         <div class="text-center text-muted-foreground min-h-[calc(100svh-16rem)] flex items-center justify-center">
             <LyricsUpload
                 onParse={(data) => {
-                    lines = data.lines.length
+                    lines = data.format !== 'TXT'
                         ? parseLyricLines(data.lines)
                         : data.content.split('\n').map(text => ({ text }));
+
+                    $formData.format = data.format;
+                    $formData.content = data.content;
 
                     history.clear();
                 }}
@@ -245,39 +232,41 @@
             }
             class="pb-10"
         >
-            <section class="w-full gap-2">
-                <Label class="text-xl font-semibold mb-4">
-                    Lyrics Editor
-                </Label>
-                <LrcLyricsEditor
-                    bind:currentTime={
-                        () => currentTime,
-                        value => audio.currentTime = value
-                    }
-                    bind:lines
-                    bind:highlightedIndex
-                    {form}
-                />
-            </section>
+            {#if $formData.format !== 'TTML'}
+                <section class="w-full gap-2">
+                    <Label class="text-xl font-semibold mb-4">
+                        Lyrics Editor
+                    </Label>
+                    <LrcLyricsEditor
+                        bind:currentTime={
+                            () => currentTime,
+                            value => audio.currentTime = value
+                        }
+                        bind:lines
+                        bind:highlightedIndex
+                        {form}
+                    />
+                </section>
+            {:else}
+                <div class="text-center text-muted-foreground min-h-[calc(100svh-16rem)] flex flex-col items-center justify-center gap-4">
+                    <Label>
+                        Editing TTML lyrics is not supported yet.
+                    </Label>
+                    <Button type="submit">
+                        {#if $submitting}
+                            <LoaderCircleIcon class="animate-spin text-current"/>
+                        {:else}
+                            <SaveIcon class="text-current"/>
+                            <span>Save</span>
+                        {/if}
+                    </Button>
+                </div>
+            {/if}
         </form>
     {/if}
 </main>
 
 <section class="fixed bottom-16 sm:bottom-0 left-0 select-none flex flex-col items-center w-full pointer-events-none gap-2">
-    {#if lines.length}
-        <div class="flex md:hidden gap-1 w-full container justify-center lg:px-7 px-5 [&_button]:pointer-events-auto">
-            <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(highlightedIndex - 1)}>
-                <ArrowUpIcon/>
-            </Button>
-            <Button variant="default" size="lg" onclick={() => setLyricTimestamp(highlightedIndex, currentTime)}>
-                <BetweenHorizontalEndIcon/>
-                Update Timestamp
-            </Button>
-                <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(highlightedIndex + 1)}>
-                    <ArrowDownIcon/>
-                </Button>
-        </div>
-    {/if}
     <div class="flex items-center gap-1 rounded-md container pointer-events-auto pb-2 lg:px-7 px-5">
         <Button
             size="icon-lg"
@@ -357,7 +346,17 @@
                         ⌘+Z
                     </DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator class="md:hidden"/>
+                <DropdownMenuSeparator/>
+                <DropdownMenuItem
+                    disabled={!lines.length}
+                >
+                    {#snippet child({ props })}
+                        <a {...props} href={resolve('/(app)/release/[releaseId]/track/[trackId]', { releaseId: page.params.releaseId!, trackId: page.params.trackId! })}>
+                            <Music4Icon/>
+                            View Track
+                        </a>
+                    {/snippet}
+                </DropdownMenuItem>
                 <DropdownMenuItem
                     disabled={!lines.length}
                     onclick={downloadContent}
@@ -370,6 +369,7 @@
                     class="text-primary md:hidden"
                     aria-disabled={!lines.length || $submitting || !!$allErrors.length}
                     onclick={() => form.submit()}
+                    closeOnSelect={false}
                 >
                     {#if $submitting}
                         <LoaderCircleIcon class="animate-spin text-current"/>

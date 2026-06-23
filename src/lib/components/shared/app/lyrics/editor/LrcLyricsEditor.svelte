@@ -5,7 +5,7 @@
     import type { newLyricsSchema } from '$lib/schema/lyrics';
     import { Item, ItemActions, ItemContent, ItemMedia } from '$lib/components/ui/item';
     import { Button } from '$lib/components/ui/button';
-    import { PlayIcon } from '@lucide/svelte';
+    import { ArrowDownIcon, ArrowUpIcon, BetweenHorizontalEndIcon, PlayIcon } from '@lucide/svelte';
     import { Textarea } from '$lib/components/ui/textarea';
     import type { LyricsFormat } from '$lib/server/prisma/enums';
 
@@ -70,19 +70,31 @@
             format: 'LRC'
         };
     }
+
+    function setLyricTimestamp(index: number, time: number) {
+        if (index < 0 || index >= lines.length) return;
+
+        const line = lines[index];
+        if (!line) return;
+
+        line.startTime = time;
+        lines[index] = line;
+
+        setCurrentLyricIndex(index + 1);
+    }
 </script>
 
 <svelte:window
     onkeydown={event => {
         const hasModifier = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
-        const isFocusedOnInput = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName || '');
+        const isFocusedOnInput = ['INPUT', 'TEXTAREA', 'BUTTON'].includes(document.activeElement?.tagName || '');
         if (hasModifier || isFocusedOnInput && event.key === 'Backspace') return;
 
         switch (event.key) {
             case 'Enter': {
                 event.preventDefault();
 
-                lines[highlightedIndex].startTime = currentTime;
+                setLyricTimestamp(highlightedIndex, currentTime);
                 setCurrentLyricIndex(highlightedIndex + 1);
                 break;
             }
@@ -137,13 +149,6 @@
                 <Button
                     class="w-16 cursor-pointer h-fit py-1 text-xs font-mono"
                     variant="ghost"
-                    onclick={e => {
-                        e.preventDefault();
-
-                        if (timeStamp !== undefined) {
-                            currentTime = timeStamp;
-                        }
-                    }}
                 >
                     {#if isActive}
                         <span class="text-green-500">
@@ -185,4 +190,16 @@
             </ItemActions>
         </Item>
     {/each}
+</div>
+<div class="fixed bottom-30 sm:bottom-14 z-50 left-1/2 -translate-x-1/2 flex md:hidden gap-1 lg:px-7 px-5 [&_button]:pointer-events-auto">
+    <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(highlightedIndex - 1)}>
+        <ArrowUpIcon/>
+    </Button>
+    <Button variant="default" size="lg" onclick={() => setLyricTimestamp(highlightedIndex, currentTime)}>
+        <BetweenHorizontalEndIcon/>
+        Update Timestamp
+    </Button>
+    <Button variant="secondary" size="icon-lg" onclick={() => setCurrentLyricIndex(highlightedIndex + 1)}>
+        <ArrowDownIcon/>
+    </Button>
 </div>

@@ -13,6 +13,7 @@
 		"lint": "eslint ."
 	},
 	"devDependencies": {
+		"@applemusic-like-lyrics/ttml": "^1.0.1",
 		"@eslint/compat": "^2.1.0",
 		"@eslint/js": "^10.0.1",
 		"@fontsource-variable/playfair-display": "^5.2.8",
@@ -27,6 +28,7 @@
 		"@types/luxon": "^3.7.1",
 		"@types/ms": "^2.1.0",
 		"@types/node": "^25.9.1",
+		"@xmldom/xmldom": "^0.9.10",
 		"bits-ui": "^2.18.1",
 		"clsx": "^2.1.1",
 		"embla-carousel-svelte": "^8.6.0",

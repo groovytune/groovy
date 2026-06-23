@@ -6,5 +6,5 @@ export const newLyricsSchema = z.object({
         'TTML',
         'TXT',
     ]),
-    content: z.string().min(1).max(10000)
+    content: z.string().min(1).max(100000)
 });

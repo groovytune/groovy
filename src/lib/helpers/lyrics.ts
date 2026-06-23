@@ -1,5 +1,5 @@
 import { parseLrc, parseTTML, type LyricLine } from '@applemusic-like-lyrics/lyric';
-
+import type { LyricsFormat } from '../server/prisma/enums';
 
 export function parseLyrics(lyrics: { format: string; content: string }, allowString?: boolean): LyricLine[]|string;
 export function parseLyrics(lyrics: { format: string; content: string }, allowString: false): LyricLine[];
@@ -13,7 +13,7 @@ export function parseLyrics(lyrics: { format: string; content: string }, allowSt
     }
 }
 
-export function parseLyricsContent(content: string): LyricLine[] {
+export function parseLyricsContent(content: string): { lines: LyricLine[]; format: Exclude<LyricsFormat, 'TXT'>; } {
     if (!content || !content.trim().length) {
         throw new Error('Lyrics content is empty');
     }
@@ -21,7 +21,7 @@ export function parseLyricsContent(content: string): LyricLine[] {
     try {
         const lrc = parseLrc(content);
         if (!lrc || !lrc.length) throw new Error('Parsed LRC content is empty');
-        return lrc;
+        return { lines: lrc, format: 'LRC' };
     } catch (e) {
         console.warn('Not LRC format, trying other formats...', e);
     }
@@ -29,7 +29,7 @@ export function parseLyricsContent(content: string): LyricLine[] {
     try {
         const ttml = parseTTML(content).lines;
         if (!ttml || !ttml.length) throw new Error('Parsed TTML content is empty');
-        return ttml;
+        return { lines: ttml, format: 'TTML' };
     } catch (e) {
         console.warn('Not TTML format, trying other formats...', e);
     }

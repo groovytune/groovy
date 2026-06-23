@@ -3,15 +3,17 @@
     import { CheckIcon, MicVocalIcon } from '@lucide/svelte';
     import FileInput from '../../../FileInput.svelte';
     import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '$lib/components/ui/input-group';
-    import { parseLrc, parseLyl, parseLys, parseTTML, parseYrc, type LyricLine } from '@applemusic-like-lyrics/lyric';
+    import { parseLrc, parseTTML, type LyricLine } from '@applemusic-like-lyrics/lyric';
     import { toast } from 'svelte-sonner';
-    import { parseLyricsContent, stringifyLyrics } from '$lib/helpers/lyrics';
+    import { parseLyricsContent } from '$lib/helpers/lyrics';
+    import type { LyricsFormat } from '../../../../../server/prisma/enums';
 
     let {
         onParse
     }: {
         onParse: (data: {
             content: string;
+            format: LyricsFormat;
             lines: LyricLine[];
         }) => void;
     } = $props();
@@ -19,7 +21,7 @@
     let isBusy: boolean = $state(false);
     let content: string = $state('');
 
-    async function resolveFromFile(file: File): Promise<LyricLine[]|string> {
+    async function resolveFromFile(file: File): Promise<{ raw: string; lines: LyricLine[]; format: LyricsFormat; }> {
         const reader = new FileReader();
 
         const text: string = await new Promise((resolve, reject) => {
@@ -31,36 +33,34 @@
         const extension = file.name.split('.').pop()?.toLowerCase();
 
         switch (extension) {
-            case 'ttml':
-                return parseTTML(text).lines;
             case 'lrc':
-                return parseLrc(text);
-            case 'yrc':
-                return parseYrc(text);
-            case 'lys':
-                return parseLys(text);
-            case 'lyl':
-                return parseLyl(text);
+                return { raw: text, lines: parseLrc(text), format: 'LRC' };
+            case 'ttml':
+                return { raw: text, lines: parseTTML(text).lines, format: 'TTML' };
             default:
-                return text;
+                try {
+                    return { raw: text, ...parseLyricsContent(text) };
+                } catch {
+                    return { raw: text, lines: [], format: 'TXT' };
+                }
         }
     }
 
-    function parseLyrics(data: LyricLine[]|string) {
-        const lines = typeof data !== 'string' ? data : [];
-        const content = typeof data === 'string' ? data : stringifyLyrics(lines);
-
-        onParse({ content, lines });
+    function parseLyrics(data: { raw: string; lines: LyricLine[]; format: LyricsFormat; }) {
+        onParse({
+            content: data.raw,
+            lines: data.lines,
+            format: typeof data !== 'string' ? data.format : 'TXT'
+        });
     }
 
     function parseContent() {
         isBusy = true;
 
         try {
-            parseLyrics(parseLyricsContent(content));
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (error) {
-            parseLyrics(content);
+            parseLyrics({ raw: content, ...parseLyricsContent(content) });
+        } catch {
+            parseLyrics({ raw: content, lines: [], format: 'TXT' });
         } finally {
             isBusy = false;
         }
@@ -82,7 +82,7 @@
     <EmptyContent class="max-w-lg">
         <FileInput
             disabled={isBusy}
-            accept=".lrc,.txt,.ttml,.yrc,.lyl,.lys"
+            accept=".lrc,.txt,.ttml"
             onchange={async event => {
                 const files = event.currentTarget.files;
                 if (!files?.length) return;

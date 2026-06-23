@@ -5,7 +5,7 @@ import { resolve } from '$app/paths';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { newLyricsSchema } from '$lib/schema/lyrics.js';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { parseLyrics } from '$lib/helpers/lyrics.js';
+import { Lyrics } from '../../../../../../../../lib/server/lyrics.js';
 
 export async function load({ params, locals, url }) {
     if (!locals.session) {
@@ -58,9 +58,7 @@ export const actions = {
             return fail(400, { form, message: 'Please correct the errors.' });
         }
 
-        const lines = parseLyrics(form.data);
-
-        if (typeof lines === 'string' && form.data.format !== 'TXT') {
+        if (!Lyrics.isValidLyrics(form.data)) {
             return fail(400, { form, message: 'Failed to parse lyrics content. Please check the format and content.' });
         }
 
