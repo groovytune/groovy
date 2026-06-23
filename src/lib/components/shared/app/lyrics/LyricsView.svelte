@@ -100,7 +100,9 @@
     }
 
     :global(.FmKaba_lyricLine) {
-        padding: 0.5em 0.5em !important;
+        padding: 0.5em;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
 
         &:hover {
             cursor: pointer;
@@ -109,13 +111,13 @@
     }
 
     :global(.FmKaba_lyricMainLine) {
-        padding-left: 1em !important;
-        padding-right: 1em !important;
+        padding-left: 1em;
+        padding-right: 1em;
     }
 
     :global(.FmKaba_interludeDots) {
-        padding-left: 0.5em;
-        padding-right: 0.5em;
+        padding-left: 1rem;
+        padding-right: 1rem;
     }
 </style>
 
