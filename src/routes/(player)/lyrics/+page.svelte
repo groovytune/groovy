@@ -8,13 +8,14 @@
     import { fade } from 'svelte/transition';
     import { useDebounce, useEventListener } from 'runed';
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
-    import LyricsViewport from '$lib/components/shared/app/lyrics/LyricsViewport.svelte';
     import { parseLyrics } from '$lib/helpers/lyrics';
+    import LyricsView from '$lib/components/shared/app/lyrics/LyricsView.svelte';
 
     const audioPlayer = AudioPlayer.context.get();
 
     let scrolling = $state(false);
     let scrollContainer: HTMLElement|null = $state(null);
+    let lyrics = $derived(audioPlayer.lyrics.current && !audioPlayer.lyrics.loading ? parseLyrics(audioPlayer.lyrics.current) : []);
 
     const setNotScrolling = useDebounce(() => {
         scrolling = false;
@@ -62,13 +63,15 @@
                     No lyrics found for this track.
                 </p>
             </div>
-        {:else}
-            <LyricsViewport
+        {:else if typeof lyrics !== 'string'}
+            <LyricsView
+                {lyrics}
                 bind:ref={scrollContainer}
+                playing={audioPlayer.paused === false}
                 currentTime={audioPlayer.currentTime}
-                lyrics={audioPlayer.lyrics.current && !audioPlayer.lyrics.loading ? parseLyrics(audioPlayer.lyrics.current) : []}
-                setCurrentTime={(time) => audioPlayer.seek(time)}
-                scrollBlock="start"
+                setCurrentTime={(time: number) => audioPlayer.seek(time)}
+                hidePassedLines={!scrolling}
+                alignAnchor="top"
                 class={cn(
                     "transition-[mask] duration-500 ease-in-out",
                     "h-[calc(100%-2.6rem)] text-3xl font-bold leading-snug mask-t-from-90% mask-t-to-100% mask-b-from-80% mask-b-to-100%",

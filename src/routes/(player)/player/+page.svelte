@@ -12,11 +12,11 @@
     import { PlayerLastNavigate } from '$lib/contexts/player';
     import PlayerProgressBar from '$lib/components/shared/app/player/PlayerProgressBar.svelte';
     import PlayerControls from '$lib/components/shared/app/player/PlayerControls.svelte';
-    import LyricsViewport from '$lib/components/shared/app/lyrics/LyricsViewport.svelte';
     import { parseLyrics } from '$lib/helpers/lyrics';
     import { DialogState } from '$lib/helpers/classes/DialogState.svelte';
     import PlayerQueueDialog from '$lib/components/shared/app/player/dialogs/PlayerQueueDialog.svelte';
     import isMobile from 'is-mobile';
+    import LyricsView from '../../../lib/components/shared/app/lyrics/LyricsView.svelte';
 
     const audioPlayer = AudioPlayer.context.get();
     const playerLastNavigate = PlayerLastNavigate.get();
@@ -26,6 +26,8 @@
 
     let isLyricsEnabled = $derived(true);
     let isFullscreen = $state(false);
+
+    let lyrics = $derived(audioPlayer.lyrics.current && !audioPlayer.lyrics.loading ? parseLyrics(audioPlayer.lyrics.current) : []);
 
     keysPressed.onKeys(['Escape'], async () => {
         if (document.fullscreenElement != null) {
@@ -187,14 +189,15 @@
                 <p class="text-2xl text-center text-white/50">
                     No lyrics found for this track.
                 </p>
-            {:else}
-                <LyricsViewport
+            {:else if typeof lyrics !== 'string'}
+                <LyricsView
+                    {lyrics}
                     currentTime={audioPlayer.currentTime}
-                    lyrics={audioPlayer.lyrics.current ? parseLyrics(audioPlayer.lyrics.current) : []}
-                    setCurrentTime={(time) => audioPlayer.seek(time)}
-                    scrollBlock="center"
+                    setCurrentTime={(time: number) => audioPlayer.seek(time)}
+                    playing={audioPlayer.paused === false}
+                    hidePassedLines={true}
+                    alignAnchor="center"
                     class="text-4xl lg:text-5xl font-bold leading-snug mask-t-from-80% mask-t-to-100% mask-b-from-80% mask-b-to-100%"
-                    containerClass="pt-[50svh]"
                 />
             {/if}
         </div>
