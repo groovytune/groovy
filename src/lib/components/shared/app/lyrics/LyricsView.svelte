@@ -100,12 +100,17 @@
     }
 
     :global(.FmKaba_lyricLine) {
-        padding: 0.5em;
+        padding: 0.5em 0.5em !important;
 
         &:hover {
             cursor: pointer;
             background: rgba(255, 255, 255, 0.1);
         }
+    }
+
+    :global(.FmKaba_lyricMainLine) {
+        padding-left: 1em !important;
+        padding-right: 1em !important;
     }
 
     :global(.FmKaba_interludeDots) {
