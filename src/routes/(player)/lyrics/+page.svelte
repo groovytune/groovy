@@ -71,8 +71,8 @@
                 playing={audioPlayer.paused === false}
                 currentTime={audioPlayer.currentTime}
                 setCurrentTime={(time: number) => audioPlayer.seek(time)}
-                hidePassedLines={!scrolling}
                 alignAnchor="top"
+                fontSize="2.2rem"
                 class={cn(
                     "transition-[mask] duration-500 ease-in-out",
                     "h-[calc(100%-2.6rem)] text-3xl font-bold leading-snug mask-t-from-90% mask-t-to-100% mask-b-from-80% mask-b-to-100%",

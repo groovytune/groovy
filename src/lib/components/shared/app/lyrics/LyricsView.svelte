@@ -17,6 +17,7 @@
         enableSpring = true,
         alignAnchor = 'top',
         class: className = '',
+        fontSize,
         setCurrentTime
     }: {
         ref?: HTMLElement|null;
@@ -29,10 +30,12 @@
         enableSpring?: boolean;
         alignAnchor?: LayoutAlignAnchor;
         class?: string;
+        fontSize?: string;
         setCurrentTime?: (time: number) => void;
     } = $props();
 
     let player: LyricPlayer|null = $state(null);
+
     let lastFrameTime = -1;
 
     onMount(async () => {
@@ -133,6 +136,7 @@
 </style>
 
 <div
+    style={fontSize ? `--amll-lp-font-size: ${fontSize};` : ""}
     class={cn("size-full font-bold", className)}
     bind:this={ref}
 ></div>
