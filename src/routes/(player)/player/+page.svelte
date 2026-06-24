@@ -78,7 +78,7 @@
     <div
         class={cn(
             "min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:py-14 shrink-0",
-            "max-w-lg min-[900px]:max-w-[26rem] lg:max-w-lg w-full",
+            "max-w-lg min-[900px]:max-w-[26rem] lg:max-w-lg xl:max-w-xl w-full",
             "[@media(max-height:700px)]:md:pl-10 [@media(max-height:700px)]:md:pt-20",
             isMobile() && 'max-w-sm'
         )}
