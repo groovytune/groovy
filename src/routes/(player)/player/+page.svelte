@@ -79,6 +79,7 @@
         class={cn(
             "min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:py-14 shrink-0",
             "max-w-lg min-[900px]:max-w-[26rem] lg:max-w-lg w-full",
+            "[@media(max-height:700px)]:md:pl-10 [@media(max-height:700px)]:md:pt-20",
             isMobile() && 'max-w-sm'
         )}
     >
@@ -123,7 +124,7 @@
                 </Button>
             </div>
         </header>
-        <section class="flex flex-col gap-0 pt-4">
+        <section class="flex flex-col gap-0 pt-4 p-5">
             <AspectRatio
                 class={cn(
                     "w-full rounded-md shadow-lg overflow-hidden transition-transform ease-in-out duration-300",
