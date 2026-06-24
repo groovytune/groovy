@@ -159,7 +159,7 @@
                 )}
                 onclick={
                     () => !isLargeWindow.current
-                        ? goto(resolve('/(player)/lyrics'))
+                        ? goto(resolve('/(player)/lyrics'), { replaceState: true })
                         : isLyricsEnabled = !isLyricsEnabled
                 }
             >
@@ -172,7 +172,7 @@
                 class="bg-white/10! shadow-none"
                 onclick={
                     () => !isLargeWindow.current
-                        ? goto(resolve('/(player)/queue'))
+                        ? goto(resolve('/(player)/queue'), { replaceState: true })
                         : queueDialogState.open()
                 }
             >

@@ -44,7 +44,7 @@
             artistClassName="text-xs! font-medium"
             cover={true}
             addReleaseName={true}
-            oncoverclick={() => goto(resolve('/(player)/player'))}
+            oncoverclick={() => goto(resolve('/(player)/player'), { replaceState: true })}
         />
         {#if audioPlayer.lyrics.loading}
             <div
