@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { LoaderCircleIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, ShuffleIcon, SkipBackIcon, SkipForwardIcon } from '@lucide/svelte';
+    import { FastForwardIcon, LoaderCircleIcon, PauseIcon, PlayIcon, Repeat1Icon, RepeatIcon, RewindIcon, ShuffleIcon } from '@lucide/svelte';
     import { Button } from '$lib/components/ui/button';
     import { AudioPlayer } from '$lib/helpers/classes/AudioPlayer.svelte';
     import { cn } from '$lib/helpers/utils';
@@ -21,11 +21,11 @@
 <Button
     variant="ghost"
     size="icon-lg"
-    class="size-18 bg-transparent! shadow-none"
+    class="size-15 hover:bg-white/5! bg-transparent! shadow-none"
     disabled={!audioPlayer.previousable}
     onclick={() => audioPlayer.previous()}
 >
-    <SkipBackIcon fill="currentColor" class="size-6"/>
+    <RewindIcon fill="currentColor" class="size-7"/>
 </Button>
 <Button
     variant="ghost"
@@ -45,11 +45,11 @@
 <Button
     variant="ghost"
     size="icon-lg"
-    class="size-18 bg-transparent! shadow-none"
+    class="size-15 hover:bg-white/5! bg-transparent! shadow-none"
     disabled={!audioPlayer.skippable}
     onclick={() => audioPlayer.next()}
 >
-    <SkipForwardIcon class="size-6" fill="currentColor"/>
+    <FastForwardIcon class="size-7" fill="currentColor"/>
 </Button>
 <Button
     variant="ghost"
