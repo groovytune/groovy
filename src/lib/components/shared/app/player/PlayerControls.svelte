@@ -28,18 +28,18 @@
     <SkipBackIcon fill="currentColor" class="size-6"/>
 </Button>
 <Button
-    variant="secondary"
+    variant="ghost"
     size="icon-lg"
-    class="size-18 bg-white/20! shadow-none"
+    class="size-18 shadow-none hover:bg-white/5!"
     disabled={!audioPlayer.currentTrack}
     onclick={() => audioPlayer.togglePlay()}
 >
     {#if audioPlayer.status == 'buffering'}
-        <LoaderCircleIcon class="animate-spin size-6"/>
+        <LoaderCircleIcon class="animate-spin size-12"/>
     {:else if audioPlayer.paused}
-        <PlayIcon fill="currentColor" class="size-6"/>
+        <PlayIcon fill="currentColor" class="size-12"/>
     {:else}
-        <PauseIcon fill="currentColor" class="size-6"/>
+        <PauseIcon fill="currentColor" class="size-12"/>
     {/if}
 </Button>
 <Button
