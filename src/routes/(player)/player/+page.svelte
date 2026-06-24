@@ -78,8 +78,8 @@
     <div
         class={cn(
             "min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:py-14 shrink-0",
-            "max-w-lg min-[900px]:max-w-[26rem] lg:max-w-lg xl:max-w-xl w-full",
-            "[@media(max-height:700px)]:md:pl-10 [@media(max-height:700px)]:md:pt-20",
+            "max-w-lg min-[1097px]:max-w-[26rem] lg:max-w-lg xl:max-w-xl w-full",
+            "md:max-[1097px]:[@media(max-height:700px)]:max-w-[26rem] md:max-[1097px]:[@media(max-height:700px)]:ml-10 md:max-[1097px]:[@media(max-height:700px)]:py-0",
             isMobile() && 'max-w-sm'
         )}
     >
