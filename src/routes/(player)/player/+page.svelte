@@ -78,7 +78,7 @@
     <div
         class={cn(
             "min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:py-14 shrink-0",
-            "max-w-lg min-[900px]:max-w-md lg:max-w-lg w-full",
+            "max-w-lg min-[900px]:max-w-[26rem] lg:max-w-lg w-full",
             isMobile() && 'max-w-sm'
         )}
     >
@@ -127,7 +127,7 @@
             <AspectRatio
                 class={cn(
                     "w-full rounded-md shadow-lg overflow-hidden transition-transform ease-in-out duration-300",
-                    audioPlayer.paused && "scale-95"
+                    audioPlayer.paused && "scale-90"
                 )}
             >
                 <img
@@ -181,7 +181,7 @@
         </footer>
     </div>
     {#if isLyricsEnabled}
-        <div class="max-w-3xl size-full hidden min-[900px]:flex justify-center items-center-safe p-6">
+        <div class="max-w-3xl size-full hidden min-[900px]:flex justify-center items-center-safe px-6">
             {#if audioPlayer.lyrics.loading}
                 <p class="text-2xl text-center text-white/50">
                     Loading lyrics...
