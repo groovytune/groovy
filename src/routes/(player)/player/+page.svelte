@@ -77,7 +77,7 @@
 <main class="flex size-full items-center-safe justify-evenly relative gap-2 text-white! dark select-none">
     <div
         class={cn(
-            "min-[900px]:h-fit h-full flex flex-col justify-between px-6 min-[900px]:py-14 shrink-0",
+            "min-[900px]:h-fit h-full flex flex-col justify-between sm:px-6 min-[900px]:py-14 shrink-0",
             "max-w-lg min-[1097px]:max-w-[26rem] lg:max-w-lg xl:max-w-xl w-full",
             "md:max-[1097px]:[@media(max-height:700px)]:max-w-[26rem] md:max-[1097px]:[@media(max-height:700px)]:ml-10 md:max-[1097px]:[@media(max-height:700px)]:py-0",
             isMobile() && 'max-w-sm'
