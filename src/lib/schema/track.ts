@@ -22,7 +22,7 @@ export const newTrackSchema = z.object({
             { message: 'Cover must be a JPG or PNG file' }
         )
         .refine(
-            file => !dev && file.size <= 10 * 1024 * 1024,
+            file => dev || file.size <= 10 * 1024 * 1024,
             { message: 'Cover must be less than 10MB' }
         )
         .optional(),
